@@ -2617,6 +2617,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@thinksys/react-native-mediapipe@npm:^0.0.19":
+  version: 0.0.19
+  resolution: "@thinksys/react-native-mediapipe@npm:0.0.19"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 090e34632569d5e0994cdd5c560eb7bd8c99089fa277e15afad918d29c53b175765738ad57c132e6b07483c2cf2abd2ddd9f8cf93a9e2964c5c97da79823c00b
+  languageName: node
+  linkType: hard
+
 "@tybys/wasm-util@npm:^0.10.0":
   version: 0.10.1
   resolution: "@tybys/wasm-util@npm:0.10.1"
@@ -9736,6 +9746,7 @@ __metadata:
     "@react-navigation/bottom-tabs": ^7.4.0
     "@react-navigation/elements": ^2.6.3
     "@react-navigation/native": ^7.1.8
+    "@thinksys/react-native-mediapipe": ^0.0.19
     "@types/react": ~19.1.0
     eslint: ^9.25.0
     eslint-config-expo: ~10.0.0

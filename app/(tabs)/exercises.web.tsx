@@ -17,7 +17,7 @@ export default function ExercisesWebScreen() {
   const poseRef = useRef<any>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const rafRef = useRef<number>();
+  const rafRef = useRef<number | undefined>(undefined);
   const streamRef = useRef<MediaStream | null>(null);
 
   useEffect(() => {
