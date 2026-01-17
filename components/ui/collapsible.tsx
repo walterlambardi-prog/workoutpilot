@@ -1,4 +1,4 @@
-import { PropsWithChildren, useState } from "react";
+import { PropsWithChildren, useCallback, useState } from "react";
 import { StyleSheet, TouchableOpacity } from "react-native";
 
 import { ThemedText } from "@/components/themed-text";
@@ -14,12 +14,20 @@ export function Collapsible({
   const [isOpen, setIsOpen] = useState(false);
   const theme = useColorScheme() ?? "light";
 
+  const toggleOpen = useCallback(() => {
+    setIsOpen((value) => !value);
+  }, []);
+
   return (
     <ThemedView>
       <TouchableOpacity
         style={styles.heading}
-        onPress={() => setIsOpen((value) => !value)}
+        onPress={toggleOpen}
         activeOpacity={0.8}
+        accessible={true}
+        accessibilityLabel={`${title} section`}
+        accessibilityRole="button"
+        accessibilityState={{ expanded: isOpen }}
       >
         <IconSymbol
           name="chevron.right"
