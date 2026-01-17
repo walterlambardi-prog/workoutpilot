@@ -1871,6 +1871,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@mediapipe/tasks-vision@npm:0.10.21":
+  version: 0.10.21
+  resolution: "@mediapipe/tasks-vision@npm:0.10.21"
+  checksum: a9b2e540be3bc5e74301a6c26136f4689665589c93ef2ca4ee8072d190888dd6624888f3992492bc520c28d7505b39b9e9f234287dc87aab430062d342726427
+  languageName: node
+  linkType: hard
+
 "@napi-rs/wasm-runtime@npm:^0.2.11":
   version: 0.2.12
   resolution: "@napi-rs/wasm-runtime@npm:0.2.12"
@@ -9725,6 +9732,7 @@ __metadata:
   resolution: "workoutpilot@workspace:."
   dependencies:
     "@expo/vector-icons": ^15.0.3
+    "@mediapipe/tasks-vision": 0.10.21
     "@react-navigation/bottom-tabs": ^7.4.0
     "@react-navigation/elements": ^2.6.3
     "@react-navigation/native": ^7.1.8
