@@ -6,6 +6,24 @@ export type Status =
   | "detecting"
   | "error";
 
+export type PoseMessageKey =
+  | "cameraReady"
+  | "poseDetected"
+  | "noPoseDetected"
+  | "processingError"
+  | "cameraSwitched"
+  | "cameraSwitchError"
+  | "promptCameraAccess"
+  | "modelNotReady"
+  | "requestingWebcam"
+  | "processing"
+  | "webcamStartError"
+  | "webcamStopped"
+  | "modelLoading"
+  | "modelLoaded"
+  | "modelLoadError"
+  | "liveLandmarks";
+
 export interface PoseStats {
   poseCount?: number;
 }

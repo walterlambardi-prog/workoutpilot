@@ -1,14 +1,14 @@
 import { switchCamera } from "@thinksys/react-native-mediapipe";
 import { useCallback, useState } from "react";
 
-import type { Status } from "../exercises.types";
+import type { PoseMessageKey, Status } from "../exercises.types";
 
 /**
  * Hook for managing MediaPipe pose detection state and callbacks (native)
  */
 export const usePoseDetection = () => {
   const [status, setStatus] = useState<Status>("idle");
-  const [message, setMessage] = useState("Cámara iniciada");
+  const [messageKey, setMessageKey] = useState<PoseMessageKey>("cameraReady");
   const [poseCount, setPoseCount] = useState(0);
 
   const handleLandmark = useCallback((data: unknown) => {
@@ -16,14 +16,14 @@ export const usePoseDetection = () => {
       if (data && Array.isArray(data) && data.length > 0) {
         setStatus("detecting");
         setPoseCount(1);
-        setMessage("Pose detectada");
+        setMessageKey("poseDetected");
       } else {
         setPoseCount(0);
-        setMessage("Sin pose detectada");
+        setMessageKey("noPoseDetected");
       }
     } catch (error) {
       setStatus("error");
-      setMessage("Error procesando landmarks");
+      setMessageKey("processingError");
       console.error("Error processing landmarks:", error);
     }
   }, []);
@@ -31,17 +31,17 @@ export const usePoseDetection = () => {
   const handleSwitchCamera = useCallback(() => {
     try {
       switchCamera();
-      setMessage("Cámara cambiada");
+      setMessageKey("cameraSwitched");
     } catch (error) {
       setStatus("error");
-      setMessage("Error al cambiar cámara");
+      setMessageKey("cameraSwitchError");
       console.error("Error switching camera:", error);
     }
   }, []);
 
   return {
     status,
-    message,
+    messageKey,
     poseCount,
     handleLandmark,
     handleSwitchCamera,

@@ -1,8 +1,8 @@
 import { Href } from "expo-router";
 
+export type HomeActionKey = "explore" | "exercises";
+
 export interface HomeNavAction {
   href: Href;
-  title: string;
-  description: string;
-  accessibilityHint?: string;
+  key: HomeActionKey;
 }

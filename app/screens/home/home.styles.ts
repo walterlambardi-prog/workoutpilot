@@ -11,6 +11,35 @@ const styles = StyleSheet.create({
     gap: 8,
     marginBottom: 16,
   },
+  languageContainer: {
+    gap: 8,
+    marginBottom: 16,
+    padding: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#3A3D46",
+    backgroundColor: "#0F1626",
+  },
+  languageActions: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8,
+  },
+  languageButton: {
+    borderRadius: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderWidth: 1,
+    borderColor: "#3A3D46",
+    backgroundColor: "#0F1626",
+  },
+  languageButtonActive: {
+    borderColor: "#60A5FA",
+    backgroundColor: "#111827",
+  },
+  languageButtonText: {
+    fontWeight: "600",
+  },
   actionsContainer: {
     gap: 12,
     marginBottom: 16,

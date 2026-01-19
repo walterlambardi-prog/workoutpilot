@@ -5,12 +5,15 @@ import {
 } from "@react-navigation/native";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { useTranslation } from "react-i18next";
 import { Platform } from "react-native";
 import "react-native-reanimated";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
+import "@/locales/i18n";
 
 export default function RootLayout() {
+  const { t } = useTranslation();
   const colorScheme = useColorScheme();
 
   return (
@@ -21,10 +24,13 @@ export default function RootLayout() {
         }}
       >
         <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="explore/index" options={{ title: "Explorar" }} />
+        <Stack.Screen
+          name="explore/index"
+          options={{ title: t("navigation.explore") }}
+        />
         <Stack.Screen
           name="exercises/index"
-          options={{ title: "Ejercicios" }}
+          options={{ title: t("navigation.exercises") }}
         />
       </Stack>
       <StatusBar style="auto" />

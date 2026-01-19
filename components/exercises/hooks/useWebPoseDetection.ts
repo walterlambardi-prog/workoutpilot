@@ -6,7 +6,12 @@ import {
     POSE_MODEL_URL,
     WASM_BASE_URL,
 } from "../exercises.constants";
-import type { MediaPipeResult, PoseStats, Status } from "../exercises.types";
+import type {
+    MediaPipeResult,
+    PoseMessageKey,
+    PoseStats,
+    Status,
+} from "../exercises.types";
 
 /**
  * Hook for managing MediaPipe pose detection on web platform
@@ -15,9 +20,8 @@ import type { MediaPipeResult, PoseStats, Status } from "../exercises.types";
  */
 export const useWebPoseDetection = () => {
   const [status, setStatus] = useState<Status>("idle");
-  const [message, setMessage] = useState(
-    'Permite la cámara y presiona "Iniciar webcam".',
-  );
+  const [messageKey, setMessageKey] =
+    useState<PoseMessageKey>("promptCameraAccess");
   const [stats, setStats] = useState<PoseStats | null>(null);
 
   const poseRef = useRef<any>(null);
@@ -65,10 +69,10 @@ export const useWebPoseDetection = () => {
       if (landmarks) {
         drawPoseLandmarks({ canvas, landmarks });
         setStats({ poseCount: 1 });
-        setMessage("Landmarks en vivo");
+        setMessageKey("liveLandmarks");
       } else {
         setStats({ poseCount: 0 });
-        setMessage("Sin pose detectada");
+        setMessageKey("noPoseDetected");
       }
     }
 
@@ -77,13 +81,13 @@ export const useWebPoseDetection = () => {
 
   const startCamera = useCallback(async () => {
     if (!poseRef.current) {
-      setMessage("Modelo aún no listo");
+      setMessageKey("modelNotReady");
       return;
     }
 
     try {
       setStatus("running");
-      setMessage("Solicitando acceso a la webcam...");
+      setMessageKey("requestingWebcam");
 
       const stream = await navigator.mediaDevices.getUserMedia({
         video: true,
@@ -97,11 +101,12 @@ export const useWebPoseDetection = () => {
 
       video.srcObject = stream;
       await video.play();
-      setMessage("Procesando...");
+      setMessageKey("processing");
       rafRef.current = requestAnimationFrame(processFrame);
     } catch (error: any) {
       setStatus("error");
-      setMessage(error?.message ?? "No se pudo iniciar la webcam");
+      setMessageKey("webcamStartError");
+      console.error("Error starting webcam:", error);
     }
   }, [processFrame]);
 
@@ -111,7 +116,7 @@ export const useWebPoseDetection = () => {
     streamRef.current?.getTracks()?.forEach((t) => t.stop());
     streamRef.current = null;
     setStatus("ready");
-    setMessage("Webcam detenida.");
+    setMessageKey("webcamStopped");
   }, []);
 
   useEffect(() => {
@@ -120,6 +125,7 @@ export const useWebPoseDetection = () => {
     const loadModel = async () => {
       try {
         setStatus("loading");
+        setMessageKey("modelLoading");
         const vision = await import("@mediapipe/tasks-vision");
         const { FilesetResolver, PoseLandmarker } = vision;
 
@@ -141,10 +147,11 @@ export const useWebPoseDetection = () => {
 
         poseRef.current = poseLandmarker;
         setStatus("ready");
-        setMessage('Modelo cargado. Presiona "Iniciar webcam".');
+        setMessageKey("modelLoaded");
       } catch (error: any) {
         setStatus("error");
-        setMessage(error?.message ?? "Error al cargar el modelo");
+        setMessageKey("modelLoadError");
+        console.error("Error loading model:", error);
       }
     };
 
@@ -160,7 +167,7 @@ export const useWebPoseDetection = () => {
 
   return {
     status,
-    message,
+    messageKey,
     stats,
     videoRef,
     canvasRef,

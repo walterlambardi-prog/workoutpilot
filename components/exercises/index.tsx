@@ -1,5 +1,6 @@
 import { RNMediapipe } from "@thinksys/react-native-mediapipe";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Text, TouchableOpacity, View } from "react-native";
 
 import { CAMERA_HEIGHT, CAMERA_WIDTH } from "./exercises.constants";
@@ -11,16 +12,17 @@ import { usePoseDetection } from "./hooks/usePoseDetection";
  * Uses @thinksys/react-native-mediapipe for iOS/Android
  */
 export default function ExercisesNativeScreen() {
-  const { status, message, poseCount, handleLandmark, handleSwitchCamera } =
+  const { t } = useTranslation();
+  const { status, messageKey, poseCount, handleLandmark, handleSwitchCamera } =
     usePoseDetection();
+  const footerItems =
+    (t("exercises.native.footer", { returnObjects: true }) as string[]) ?? [];
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Exercises (Native)</Text>
-        <Text style={styles.subtitle}>
-          Demo con @thinksys/react-native-mediapipe
-        </Text>
+        <Text style={styles.title}>{t("exercises.native.title")}</Text>
+        <Text style={styles.subtitle}>{t("exercises.native.subtitle")}</Text>
       </View>
 
       <View style={styles.cameraContainer}>
@@ -47,36 +49,44 @@ export default function ExercisesNativeScreen() {
           style={styles.button}
           activeOpacity={0.8}
           accessible={true}
-          accessibilityLabel="Cambiar cámara"
+          accessibilityLabel={t("exercises.native.switchCamera.label")}
           accessibilityRole="button"
-          accessibilityHint="Cambia entre cámara frontal y trasera"
+          accessibilityHint={t(
+            "exercises.native.switchCamera.accessibilityHint",
+          )}
         >
-          <Text style={styles.buttonText}>Cambiar Cámara</Text>
+          <Text style={styles.buttonText}>
+            {t("exercises.native.switchCamera.label")}
+          </Text>
         </TouchableOpacity>
 
         <View style={styles.statsContainer}>
           <View style={styles.statRow}>
-            <Text style={styles.statLabel}>Status:</Text>
-            <Text style={styles.statValue}>{status}</Text>
+            <Text style={styles.statLabel}>
+              {t("exercises.native.stats.status")}:
+            </Text>
+            <Text style={styles.statValue}>
+              {t(`exercises.statuses.${status}`)}
+            </Text>
           </View>
           <View style={styles.statRow}>
-            <Text style={styles.statLabel}>Poses:</Text>
+            <Text style={styles.statLabel}>
+              {t("exercises.native.stats.poses")}:
+            </Text>
             <Text style={styles.statValue}>{poseCount}</Text>
           </View>
-          <Text style={styles.message}>{message}</Text>
+          <Text style={styles.message}>
+            {t(`exercises.messages.${messageKey}`)}
+          </Text>
         </View>
       </View>
 
       <View style={styles.footer}>
-        <Text style={styles.footerText}>
-          • Detección en tiempo real con MediaPipe
-        </Text>
-        <Text style={styles.footerText}>
-          • Muestra 33 puntos de referencia del cuerpo
-        </Text>
-        <Text style={styles.footerText}>
-          • Callback onLandmark para procesar datos
-        </Text>
+        {footerItems.map((item) => (
+          <Text key={item} style={styles.footerText}>
+            • {item}
+          </Text>
+        ))}
       </View>
     </View>
   );

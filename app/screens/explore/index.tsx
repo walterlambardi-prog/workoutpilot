@@ -1,5 +1,6 @@
 import { Image } from "expo-image";
-import React from "react";
+import React, { useCallback, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { Platform } from "react-native";
 
 import { ExternalLink } from "@/components/external-link";
@@ -12,88 +13,96 @@ import { Fonts } from "@/constants/theme";
 import styles from "./explore.styles";
 import { ExploreInfoItem } from "./explore.types";
 
-const infoItems: ExploreInfoItem[] = [
-  {
-    title: "Ruteo por archivos",
-    content: (
-      <>
-        <ThemedText>
-          La app usa rutas en app/: home vive en app/index.tsx, explore en
-          app/explore/index.tsx y exercises en app/exercises/index.tsx.
-        </ThemedText>
-        <ThemedText>
-          Ajusta la navegación en app/_layout.tsx usando un Stack.
-        </ThemedText>
-      </>
-    ),
-  },
-  {
-    title: "Soporte multiplataforma",
-    content: (
-      <>
-        <ThemedText>
-          Abre el proyecto en Android, iOS y web. Presiona
-          <ThemedText type="defaultSemiBold"> w </ThemedText> en la terminal
-          para levantar la versión web.
-        </ThemedText>
-        <ThemedText>
-          Exercises usa un componente nativo y otro web según la plataforma.
-        </ThemedText>
-      </>
-    ),
-  },
-  {
-    title: "Imágenes",
-    content: (
-      <>
-        <ThemedText>
-          Usa sufijos @2x y @3x para activos estáticos y asegurar buena
-          resolución.
-        </ThemedText>
-        <Image
-          source={require("@/assets/images/react-logo.png")}
-          style={{ width: 100, height: 100, alignSelf: "center" }}
-        />
-        <ExternalLink href="https://reactnative.dev/docs/images">
-          <ThemedText type="link">Más info</ThemedText>
-        </ExternalLink>
-      </>
-    ),
-  },
-  {
-    title: "Theming claro/oscuro",
-    content: (
-      <>
-        <ThemedText>
-          Usa el hook useColorScheme() para adaptar colores. Los componentes
-          ThemedText y ThemedView ya responden al tema.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/develop/user-interface/color-themes/">
-          <ThemedText type="link">Ver guía</ThemedText>
-        </ExternalLink>
-      </>
-    ),
-  },
-  {
-    title: "Animaciones",
-    content: (
-      <>
-        <ThemedText>
-          HelloWave usa react-native-reanimated para un gesto simple.
-        </ThemedText>
-        {Platform.select({
-          ios: (
-            <ThemedText>
-              ParallaxScrollView aplica efecto parallax en iOS.
-            </ThemedText>
-          ),
-        })}
-      </>
-    ),
-  },
-];
-
 const ExploreScreen: React.FC = () => {
+  const { t } = useTranslation();
+
+  const paragraphs = useCallback(
+    (key: string) => (t(key, { returnObjects: true }) as string[]) ?? [],
+    [t],
+  );
+
+  const infoItems: ExploreInfoItem[] = useMemo(() => {
+    const routingParagraphs = paragraphs("explore.cards.routing.paragraphs");
+    const platformParagraphs = paragraphs("explore.cards.platforms.paragraphs");
+    const imageParagraphs = paragraphs("explore.cards.images.paragraphs");
+    const themingParagraphs = paragraphs("explore.cards.theming.paragraphs");
+    const animationParagraphs = paragraphs(
+      "explore.cards.animations.paragraphs",
+    );
+
+    return [
+      {
+        title: t("explore.cards.routing.title"),
+        content: (
+          <>
+            {routingParagraphs.map((text, index) => (
+              <ThemedText key={`routing-${index}`}>{text}</ThemedText>
+            ))}
+          </>
+        ),
+      },
+      {
+        title: t("explore.cards.platforms.title"),
+        content: (
+          <>
+            {platformParagraphs.map((text, index) => (
+              <ThemedText key={`platform-${index}`}>{text}</ThemedText>
+            ))}
+          </>
+        ),
+      },
+      {
+        title: t("explore.cards.images.title"),
+        content: (
+          <>
+            {imageParagraphs.map((text, index) => (
+              <ThemedText key={`images-${index}`}>{text}</ThemedText>
+            ))}
+            <Image
+              source={require("@/assets/images/react-logo.png")}
+              style={{ width: 100, height: 100, alignSelf: "center" }}
+            />
+            <ExternalLink href="https://reactnative.dev/docs/images">
+              <ThemedText type="link">{t("explore.links.images")}</ThemedText>
+            </ExternalLink>
+          </>
+        ),
+      },
+      {
+        title: t("explore.cards.theming.title"),
+        content: (
+          <>
+            {themingParagraphs.map((text, index) => (
+              <ThemedText key={`theming-${index}`}>{text}</ThemedText>
+            ))}
+            <ExternalLink href="https://docs.expo.dev/develop/user-interface/color-themes/">
+              <ThemedText type="link">
+                {t("explore.links.themesGuide")}
+              </ThemedText>
+            </ExternalLink>
+          </>
+        ),
+      },
+      {
+        title: t("explore.cards.animations.title"),
+        content: (
+          <>
+            {animationParagraphs[0] ? (
+              <ThemedText key="animation-0">
+                {animationParagraphs[0]}
+              </ThemedText>
+            ) : null}
+            {Platform.OS === "ios" && animationParagraphs[1] ? (
+              <ThemedText key="animation-1">
+                {animationParagraphs[1]}
+              </ThemedText>
+            ) : null}
+          </>
+        ),
+      },
+    ];
+  }, [paragraphs, t]);
+
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: "#D0D0D0", dark: "#353636" }}
@@ -113,7 +122,7 @@ const ExploreScreen: React.FC = () => {
             fontFamily: Fonts.rounded,
           }}
         >
-          Explore
+          {t("explore.title")}
         </ThemedText>
       </ThemedView>
 

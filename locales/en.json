@@ -1,0 +1,150 @@
+{
+  "navigation": {
+    "home": "Home",
+    "explore": "Explore",
+    "exercises": "Exercises"
+  },
+  "home": {
+    "title": "WorkoutPilot",
+    "subtitle": "Your launch hub",
+    "description": "Start here and jump into the app's key views. Use quick links to explore and try the pose demo.",
+    "language": {
+      "title": "Language",
+      "description": "Follows the system language automatically. Switch to override while the app is open.",
+      "system": "System language: {{language}}",
+      "english": "English",
+      "spanish": "Spanish"
+    },
+    "actions": {
+      "explore": {
+        "title": "Explore",
+        "description": "Review the project guide and how to navigate it.",
+        "accessibilityHint": "Opens the guide and internal documentation screen"
+      },
+      "exercises": {
+        "title": "Exercises",
+        "description": "Try the pose demo: native on mobile and web in the browser.",
+        "accessibilityHint": "Opens the exercises screen with pose detection"
+      }
+    },
+    "devShortcuts": {
+      "title": "Developer shortcuts",
+      "description": "Edit routes in app/index.tsx, app/explore/index.tsx and app/exercises/index.tsx. Adjust navigation in app/_layout.tsx.",
+      "devtools": "Open devtools with {{shortcut}}."
+    },
+    "reset": {
+      "title": "Need a reset?",
+      "description": "Run npm run reset-project to regenerate the app folder from the base template."
+    }
+  },
+  "explore": {
+    "title": "Explore",
+    "cards": {
+      "routing": {
+        "title": "File-based routing",
+        "paragraphs": [
+          "The app uses routes in app/: home lives in app/index.tsx, explore in app/explore/index.tsx, and exercises in app/exercises/index.tsx.",
+          "Adjust navigation in app/_layout.tsx using a Stack."
+        ]
+      },
+      "platforms": {
+        "title": "Cross-platform support",
+        "paragraphs": [
+          "Open the project on Android, iOS, and web. Press w in the terminal to launch the web build.",
+          "Exercises uses a native component and a web component depending on the platform."
+        ]
+      },
+      "images": {
+        "title": "Images",
+        "paragraphs": [
+          "Use @2x and @3x suffixes for static assets to keep sharp resolution."
+        ]
+      },
+      "theming": {
+        "title": "Light/dark theming",
+        "paragraphs": [
+          "Use the useColorScheme() hook to adapt colors. ThemedText and ThemedView already respond to the theme."
+        ]
+      },
+      "animations": {
+        "title": "Animations",
+        "paragraphs": [
+          "HelloWave uses react-native-reanimated for a simple gesture.",
+          "ParallaxScrollView applies a parallax effect on iOS."
+        ]
+      }
+    },
+    "links": {
+      "images": "More info",
+      "themesGuide": "View guide"
+    }
+  },
+  "exercises": {
+    "statuses": {
+      "idle": "Idle",
+      "loading": "Loading",
+      "ready": "Ready",
+      "running": "Running",
+      "detecting": "Detecting",
+      "error": "Error"
+    },
+    "messages": {
+      "cameraReady": "Camera started",
+      "poseDetected": "Pose detected",
+      "noPoseDetected": "No pose detected",
+      "processingError": "Error processing landmarks",
+      "cameraSwitched": "Camera switched",
+      "cameraSwitchError": "Error while switching camera",
+      "promptCameraAccess": "Allow the camera and press \"Start webcam\".",
+      "modelNotReady": "Model not ready yet",
+      "requestingWebcam": "Requesting webcam access...",
+      "processing": "Processing...",
+      "webcamStartError": "Could not start the webcam",
+      "webcamStopped": "Webcam stopped",
+      "modelLoading": "Loading model...",
+      "modelLoaded": "Model loaded. Press \"Start webcam\".",
+      "modelLoadError": "Could not load the model",
+      "liveLandmarks": "Live landmarks"
+    },
+    "native": {
+      "title": "Exercises (Native)",
+      "subtitle": "Demo with @thinksys/react-native-mediapipe",
+      "switchCamera": {
+        "label": "Switch Camera",
+        "accessibilityHint": "Switch between front and back camera"
+      },
+      "stats": {
+        "status": "Status",
+        "poses": "Poses"
+      },
+      "footer": [
+        "Real-time detection with MediaPipe",
+        "Shows 33 body landmarks",
+        "onLandmark callback to process data"
+      ]
+    },
+    "web": {
+      "title": "Exercises (Web)",
+      "subtitle": "Quick demo with @mediapipe/tasks-vision (ImageSegmenter).",
+      "buttons": {
+        "start": "Start webcam",
+        "starting": "Requesting webcam...",
+        "loading": "Loading model...",
+        "processing": "Processing..."
+      },
+      "stop": "Stop",
+      "status": "Status",
+      "poseCount": "Poses",
+      "overlayLabel": "Webcam",
+      "footer": [
+        "Model and WASM are served from /public.",
+        "Pose uses PoseLandmarker and draws 33 joints on the canvas.",
+        "RequestAnimationFrame keeps detection live."
+      ],
+      "aria": {
+        "start": "Start webcam",
+        "stop": "Stop webcam"
+      }
+    }
+  }
+}
