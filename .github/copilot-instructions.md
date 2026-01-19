@@ -9,6 +9,13 @@
 3. Fix ALL errors and warnings before proceeding
 4. Never skip these checks - they prevent production bugs
 
+## 🗣 Copy & Localization
+
+- Every user-visible string must come from a copy source (e.g., locales/en.json and locales/es.json). Do not hardcode UI text in components, hooks, or utilities.
+- When adding or changing copy, update both languages and keep placeholders/variables consistent.
+- If you touch a file and remove its usage of a copy key, delete that key from the locale files unless it is still used elsewhere (avoid orphaned translations).
+- Reuse existing keys when possible; keep key names descriptive and scoped to the feature/screen for maintainability.
+
 ## 📁 File Structure & Organization
 
 ### Component Structure
@@ -343,6 +350,7 @@ const processPoseLandmarks = (
 - Compress images before adding to project
 - Use appropriate sizes (don't load 4K for thumbnails)
 - Lazy load images off-screen
+- Remove unused style entries: if a style is deleted from usage and not referenced elsewhere, delete it from the StyleSheet to avoid orphaned styles.
 
 ## 🌐 Platform-Specific Code
 
