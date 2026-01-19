@@ -16,7 +16,9 @@ import type {
   PoseStats,
   Status,
 } from "../exercises.types";
+import { useHammerCurlsCounter } from "./useHammerCurlsCounter";
 import { useLateralRaisesCounter } from "./useLateralRaisesCounter";
+import { useSquatsCounter } from "./useSquatsCounter";
 
 /**
  * Hook for managing MediaPipe pose detection on web platform
@@ -30,7 +32,9 @@ export const useWebPoseDetection = (exerciseId?: ExerciseId) => {
   const lastRepCountRef = useRef(0);
 
   const { t } = useTranslation();
+  const hammerCurls = useHammerCurlsCounter(t);
   const lateralRaises = useLateralRaisesCounter(t);
+  const squats = useSquatsCounter(t);
   const reportedRepRef = useRef(0);
 
   const poseRef = useRef<any>(null);
@@ -98,6 +102,46 @@ export const useWebPoseDetection = (exerciseId?: ExerciseId) => {
             progress: next?.progress,
             feedback: next?.feedback,
           });
+        } else if (exerciseId === ExerciseId.HAMMER_CURLS) {
+          const next = hammerCurls.processLandmarks(landmarks);
+          const rep = next?.repCount ?? 0;
+          const stableRep = Math.max(lastRepCountRef.current, rep);
+          lastRepCountRef.current = stableRep;
+          if (exerciseId) {
+            const prev = reportedRepRef.current;
+            if (stableRep > prev) {
+              useExerciseSessionStore
+                .getState()
+                .addRep(exerciseId, stableRep - prev);
+              reportedRepRef.current = stableRep;
+            }
+          }
+          setStats({
+            poseCount: 1,
+            repCount: stableRep,
+            progress: next?.progress,
+            feedback: next?.feedback,
+          });
+        } else if (exerciseId === ExerciseId.SQUATS) {
+          const next = squats.processLandmarks(landmarks);
+          const rep = next?.repCount ?? 0;
+          const stableRep = Math.max(lastRepCountRef.current, rep);
+          lastRepCountRef.current = stableRep;
+          if (exerciseId) {
+            const prev = reportedRepRef.current;
+            if (stableRep > prev) {
+              useExerciseSessionStore
+                .getState()
+                .addRep(exerciseId, stableRep - prev);
+              reportedRepRef.current = stableRep;
+            }
+          }
+          setStats({
+            poseCount: 1,
+            repCount: stableRep,
+            progress: next?.progress,
+            feedback: next?.feedback,
+          });
         } else {
           setStats({ poseCount: 1 });
         }
@@ -105,6 +149,46 @@ export const useWebPoseDetection = (exerciseId?: ExerciseId) => {
       } else {
         if (exerciseId === ExerciseId.LATERAL_RAISES) {
           const next = lateralRaises.processLandmarks(undefined);
+          const rep = next?.repCount ?? 0;
+          const stableRep = Math.max(lastRepCountRef.current, rep);
+          lastRepCountRef.current = stableRep;
+          if (exerciseId) {
+            const prev = reportedRepRef.current;
+            if (stableRep > prev) {
+              useExerciseSessionStore
+                .getState()
+                .addRep(exerciseId, stableRep - prev);
+              reportedRepRef.current = stableRep;
+            }
+          }
+          setStats({
+            poseCount: 0,
+            repCount: stableRep,
+            progress: next?.progress,
+            feedback: next?.feedback,
+          });
+        } else if (exerciseId === ExerciseId.HAMMER_CURLS) {
+          const next = hammerCurls.processLandmarks(undefined);
+          const rep = next?.repCount ?? 0;
+          const stableRep = Math.max(lastRepCountRef.current, rep);
+          lastRepCountRef.current = stableRep;
+          if (exerciseId) {
+            const prev = reportedRepRef.current;
+            if (stableRep > prev) {
+              useExerciseSessionStore
+                .getState()
+                .addRep(exerciseId, stableRep - prev);
+              reportedRepRef.current = stableRep;
+            }
+          }
+          setStats({
+            poseCount: 0,
+            repCount: stableRep,
+            progress: next?.progress,
+            feedback: next?.feedback,
+          });
+        } else if (exerciseId === ExerciseId.SQUATS) {
+          const next = squats.processLandmarks(undefined);
           const rep = next?.repCount ?? 0;
           const stableRep = Math.max(lastRepCountRef.current, rep);
           lastRepCountRef.current = stableRep;
@@ -131,7 +215,7 @@ export const useWebPoseDetection = (exerciseId?: ExerciseId) => {
     }
 
     rafRef.current = requestAnimationFrame(processFrame);
-  }, [exerciseId, lateralRaises]);
+  }, [exerciseId, hammerCurls, lateralRaises, squats]);
 
   const startCamera = useCallback(async () => {
     if (!poseRef.current) {

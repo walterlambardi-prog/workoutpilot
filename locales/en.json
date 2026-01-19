@@ -151,6 +151,51 @@
         "stop": "Stop webcam"
       }
     },
+    "hammerCurls": {
+      "feedback": {
+        "showArms": "Show your arms to the camera",
+        "noPose": "No pose detected",
+        "improveLight": "Improve lighting and face the camera",
+        "counting": "Counting {{arm}}",
+        "bothDown": "Arms down — curl one at a time",
+        "curl": "Curl and alternate arms"
+      },
+      "armLabel": {
+        "left": "Left arm",
+        "right": "Right arm"
+      }
+    },
+    "squats": {
+      "feedback": {
+        "noBody": "Show your full body to the camera",
+        "noPose": "No pose detected",
+        "standStraight": "Stand tall to start",
+        "ready": "Ready — begin your descent",
+        "goingDown": "Lower into the squat",
+        "perfectDepth": "Great depth, hold briefly",
+        "goDeeper": "Go a bit deeper",
+        "keepGoing": "Keep descending ({{angle}}°)",
+        "push": "Drive up through your heels",
+        "goodPush": "Hold the bottom, then push",
+        "keepPushing": "Keep pushing up",
+        "excellent": "Excellent rep!",
+        "almost": "Almost there ({{angle}}°)"
+      },
+      "stateLabel": "State",
+      "stateLabelValue": {
+        "idle": "Idle",
+        "ready": "Ready",
+        "descending": "Descending",
+        "bottom": "Bottom",
+        "ascending": "Ascending"
+      },
+      "counterLabel": "Knee angle",
+      "instructions": [
+        "Stand tall with feet shoulder-width apart",
+        "Lower hips back and down, keep heels grounded",
+        "Reach parallel depth, then drive up"
+      ]
+    },
     "lateralRaises": {
       "feedback": {
         "showShoulders": "Show your shoulders to the camera",

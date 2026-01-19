@@ -7,7 +7,9 @@ import { ExerciseId } from "@/constants/exercises";
 
 import type { TFunction } from "i18next";
 import type { PoseLandmark, PoseMessageKey, Status } from "../exercises.types";
+import { useHammerCurlsCounter } from "./useHammerCurlsCounter";
 import { useLateralRaisesCounter } from "./useLateralRaisesCounter";
+import { useSquatsCounter } from "./useSquatsCounter";
 
 /**
  * Hook for managing MediaPipe pose detection state and callbacks (native)
@@ -25,7 +27,9 @@ export const usePoseDetection = (params: {
   const lastRepCountRef = useRef(0);
   const reportedRepRef = useRef(0);
 
+  const hammerCurls = useHammerCurlsCounter(t);
   const lateralRaises = useLateralRaisesCounter(t);
+  const squats = useSquatsCounter(t);
 
   const extractLandmarks = useCallback((rawPayload: unknown) => {
     let payload = rawPayload;
@@ -131,11 +135,119 @@ export const usePoseDetection = (params: {
             }
             setFeedback(next?.feedback);
           }
+
+          if (exerciseId === ExerciseId.HAMMER_CURLS) {
+            const next = hammerCurls.processLandmarks(landmarks);
+            const rep = next?.repCount ?? 0;
+            const stableRep = Math.max(lastRepCountRef.current, rep);
+            lastRepCountRef.current = stableRep;
+            setRepCount(stableRep);
+            if (exerciseId) {
+              const prev = reportedRepRef.current;
+              if (stableRep > prev) {
+                useExerciseSessionStore
+                  .getState()
+                  .addRep(exerciseId, stableRep - prev);
+                reportedRepRef.current = stableRep;
+              }
+            }
+            setFeedback(next?.feedback);
+          }
+
+          if (exerciseId === ExerciseId.HAMMER_CURLS) {
+            const next = hammerCurls.processLandmarks(landmarks);
+            const rep = next?.repCount ?? 0;
+            const stableRep = Math.max(lastRepCountRef.current, rep);
+            lastRepCountRef.current = stableRep;
+            setRepCount(stableRep);
+            if (exerciseId) {
+              const prev = reportedRepRef.current;
+              if (stableRep > prev) {
+                useExerciseSessionStore
+                  .getState()
+                  .addRep(exerciseId, stableRep - prev);
+                reportedRepRef.current = stableRep;
+              }
+            }
+            setFeedback(next?.feedback);
+          }
+
+          if (exerciseId === ExerciseId.SQUATS) {
+            const next = squats.processLandmarks(landmarks);
+            const rep = next?.repCount ?? 0;
+            const stableRep = Math.max(lastRepCountRef.current, rep);
+            lastRepCountRef.current = stableRep;
+            setRepCount(stableRep);
+            if (exerciseId) {
+              const prev = reportedRepRef.current;
+              if (stableRep > prev) {
+                useExerciseSessionStore
+                  .getState()
+                  .addRep(exerciseId, stableRep - prev);
+                reportedRepRef.current = stableRep;
+              }
+            }
+            setFeedback(next?.feedback);
+          }
         } else {
           setPoseCount(0);
           setMessageKey("noPoseDetected");
           if (exerciseId === ExerciseId.LATERAL_RAISES) {
             const next = lateralRaises.processLandmarks(undefined);
+            const rep = next?.repCount ?? 0;
+            const stableRep = Math.max(lastRepCountRef.current, rep);
+            lastRepCountRef.current = stableRep;
+            setRepCount(stableRep);
+            if (exerciseId) {
+              const prev = reportedRepRef.current;
+              if (stableRep > prev) {
+                useExerciseSessionStore
+                  .getState()
+                  .addRep(exerciseId, stableRep - prev);
+                reportedRepRef.current = stableRep;
+              }
+            }
+            setFeedback(next?.feedback);
+          }
+
+          if (exerciseId === ExerciseId.HAMMER_CURLS) {
+            const next = hammerCurls.processLandmarks(undefined);
+            const rep = next?.repCount ?? 0;
+            const stableRep = Math.max(lastRepCountRef.current, rep);
+            lastRepCountRef.current = stableRep;
+            setRepCount(stableRep);
+            if (exerciseId) {
+              const prev = reportedRepRef.current;
+              if (stableRep > prev) {
+                useExerciseSessionStore
+                  .getState()
+                  .addRep(exerciseId, stableRep - prev);
+                reportedRepRef.current = stableRep;
+              }
+            }
+            setFeedback(next?.feedback);
+          }
+
+          if (exerciseId === ExerciseId.HAMMER_CURLS) {
+            const next = hammerCurls.processLandmarks(undefined);
+            const rep = next?.repCount ?? 0;
+            const stableRep = Math.max(lastRepCountRef.current, rep);
+            lastRepCountRef.current = stableRep;
+            setRepCount(stableRep);
+            if (exerciseId) {
+              const prev = reportedRepRef.current;
+              if (stableRep > prev) {
+                useExerciseSessionStore
+                  .getState()
+                  .addRep(exerciseId, stableRep - prev);
+                reportedRepRef.current = stableRep;
+              }
+            }
+            setFeedback(next?.feedback);
+          }
+
+          if (exerciseId === ExerciseId.SQUATS) {
+            const next = squats.processLandmarks(undefined);
             const rep = next?.repCount ?? 0;
             const stableRep = Math.max(lastRepCountRef.current, rep);
             lastRepCountRef.current = stableRep;
@@ -158,7 +270,7 @@ export const usePoseDetection = (params: {
         console.error("Error processing landmarks:", error);
       }
     },
-    [exerciseId, extractLandmarks, lateralRaises],
+    [exerciseId, extractLandmarks, hammerCurls, lateralRaises, squats],
   );
 
   const handleSwitchCamera = useCallback(() => {

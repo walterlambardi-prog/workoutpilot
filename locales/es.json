@@ -151,6 +151,51 @@
         "stop": "Detener webcam"
       }
     },
+    "hammerCurls": {
+      "feedback": {
+        "showArms": "Muestra tus brazos a la cámara",
+        "noPose": "Sin pose detectada",
+        "improveLight": "Mejora la luz y mira a la cámara",
+        "counting": "Contando {{arm}}",
+        "bothDown": "Brazos abajo — flexiona uno a la vez",
+        "curl": "Flexiona y alterna brazos"
+      },
+      "armLabel": {
+        "left": "Brazo izquierdo",
+        "right": "Brazo derecho"
+      }
+    },
+    "squats": {
+      "feedback": {
+        "noBody": "Muestra todo tu cuerpo a la cámara",
+        "noPose": "Sin pose detectada",
+        "standStraight": "Ponte erguido para iniciar",
+        "ready": "Listo — comienza a bajar",
+        "goingDown": "Baja en la sentadilla",
+        "perfectDepth": "Buena profundidad, mantén un instante",
+        "goDeeper": "Baja un poco más",
+        "keepGoing": "Sigue bajando ({{angle}}°)",
+        "push": "Empuja hacia arriba con los talones",
+        "goodPush": "Mantén abajo y luego empuja",
+        "keepPushing": "Sigue empujando hacia arriba",
+        "excellent": "¡Excelente repetición!",
+        "almost": "Casi listo ({{angle}}°)"
+      },
+      "stateLabel": "Estado",
+      "stateLabelValue": {
+        "idle": "En espera",
+        "ready": "Listo",
+        "descending": "Bajando",
+        "bottom": "Fondo",
+        "ascending": "Subiendo"
+      },
+      "counterLabel": "Ángulo de rodilla",
+      "instructions": [
+        "Párate erguido con pies al ancho de hombros",
+        "Baja caderas hacia atrás y abajo, talones apoyados",
+        "Llega a paralelo y empuja hacia arriba"
+      ]
+    },
     "lateralRaises": {
       "feedback": {
         "showShoulders": "Muestra tus hombros a la cámara",
