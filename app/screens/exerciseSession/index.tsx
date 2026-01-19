@@ -6,6 +6,7 @@ import { EXERCISE_DEFINITION_MAP } from "@/app/screens/exercises/exercises.data"
 import Exercises from "@/components/exercises";
 import { ThemedView } from "@/components/themedView";
 import { ExerciseId } from "@/constants/exercises";
+import { useExerciseSessionStore } from "@/stores/exerciseSessionStore";
 import styles from "./exerciseSession.styles";
 
 const ExerciseSessionScreen: React.FC = () => {
@@ -36,6 +37,18 @@ const ExerciseSessionScreen: React.FC = () => {
       router.replace("/exercises");
     }
   }, [exerciseDefinition, router]);
+
+  useEffect(() => {
+    if (exerciseDefinition) {
+      useExerciseSessionStore
+        .getState()
+        .startSession({ exerciseId: exerciseDefinition.id });
+    }
+
+    return () => {
+      useExerciseSessionStore.getState().endSession();
+    };
+  }, [exerciseDefinition]);
 
   if (!exerciseDefinition) {
     return null;

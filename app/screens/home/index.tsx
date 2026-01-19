@@ -64,6 +64,10 @@ const actions: HomeNavAction[] = [
     href: "/exercises",
     key: "exercises",
   },
+  {
+    href: "/sessions",
+    key: "sessions",
+  },
 ];
 
 /**

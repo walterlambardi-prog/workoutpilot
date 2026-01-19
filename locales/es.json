@@ -1,7 +1,8 @@
 {
   "navigation": {
     "home": "Inicio",
-    "exercises": "Ejercicios"
+    "exercises": "Ejercicios",
+    "sessions": "Sesiones"
   },
   "home": {
     "title": "WorkoutPilot",
@@ -18,7 +19,37 @@
         "title": "Ejercicios",
         "description": "Prueba la demo de pose: nativa en móvil y web en navegador.",
         "accessibilityHint": "Abre la pantalla de ejercicios con detección de pose"
+      },
+      "sessions": {
+        "title": "Sesiones",
+        "description": "Consulta tus sesiones registradas, reps e historial reciente.",
+        "accessibilityHint": "Abre la pantalla de insights de sesiones"
       }
+    }
+  },
+  "sessions": {
+    "title": "Insights de sesiones",
+    "subtitle": "Revisa tu sesión activa y el historial de entrenamiento.",
+    "labels": {
+      "reps": "reps",
+      "duration": "Duración",
+      "ended": "Finalizó"
+    },
+    "stats": {
+      "title": "Estadísticas",
+      "totalSessions": "Sesiones totales",
+      "totalReps": "Reps totales",
+      "bestSession": "Mejor sesión (reps)",
+      "lastSession": "Última sesión"
+    },
+    "history": {
+      "title": "Sesiones recientes",
+      "empty": "Aún no hay sesiones registradas",
+      "meta": "{{duration}} · {{ended}}"
+    },
+    "empty": {
+      "bestSession": "Sin sesiones",
+      "lastSession": "Sin sesiones recientes"
     }
   },
   "exercises": {

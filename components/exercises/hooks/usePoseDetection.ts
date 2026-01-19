@@ -1,6 +1,8 @@
 import { switchCamera } from "@thinksys/react-native-mediapipe";
 import { useCallback, useRef, useState } from "react";
 
+import { useExerciseSessionStore } from "@/stores/exerciseSessionStore";
+
 import { ExerciseId } from "@/constants/exercises";
 
 import type { TFunction } from "i18next";
@@ -21,6 +23,7 @@ export const usePoseDetection = (params: {
   const [repCount, setRepCount] = useState<number | undefined>(undefined);
   const [feedback, setFeedback] = useState<string | undefined>(undefined);
   const lastRepCountRef = useRef(0);
+  const reportedRepRef = useRef(0);
 
   const lateralRaises = useLateralRaisesCounter(t);
 
@@ -117,6 +120,15 @@ export const usePoseDetection = (params: {
             const stableRep = Math.max(lastRepCountRef.current, rep);
             lastRepCountRef.current = stableRep;
             setRepCount(stableRep);
+            if (exerciseId) {
+              const prev = reportedRepRef.current;
+              if (stableRep > prev) {
+                useExerciseSessionStore
+                  .getState()
+                  .addRep(exerciseId, stableRep - prev);
+                reportedRepRef.current = stableRep;
+              }
+            }
             setFeedback(next?.feedback);
           }
         } else {
@@ -128,6 +140,15 @@ export const usePoseDetection = (params: {
             const stableRep = Math.max(lastRepCountRef.current, rep);
             lastRepCountRef.current = stableRep;
             setRepCount(stableRep);
+            if (exerciseId) {
+              const prev = reportedRepRef.current;
+              if (stableRep > prev) {
+                useExerciseSessionStore
+                  .getState()
+                  .addRep(exerciseId, stableRep - prev);
+                reportedRepRef.current = stableRep;
+              }
+            }
             setFeedback(next?.feedback);
           }
         }

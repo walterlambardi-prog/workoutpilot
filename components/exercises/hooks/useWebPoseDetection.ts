@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { ExerciseId } from "@/constants/exercises";
+import { useExerciseSessionStore } from "@/stores/exerciseSessionStore";
 import { drawPoseLandmarks } from "@/utils/poseDrawing";
 
 import {
@@ -30,6 +31,7 @@ export const useWebPoseDetection = (exerciseId?: ExerciseId) => {
 
   const { t } = useTranslation();
   const lateralRaises = useLateralRaisesCounter(t);
+  const reportedRepRef = useRef(0);
 
   const poseRef = useRef<any>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -81,6 +83,15 @@ export const useWebPoseDetection = (exerciseId?: ExerciseId) => {
           const rep = next?.repCount ?? 0;
           const stableRep = Math.max(lastRepCountRef.current, rep);
           lastRepCountRef.current = stableRep;
+          if (exerciseId) {
+            const prev = reportedRepRef.current;
+            if (stableRep > prev) {
+              useExerciseSessionStore
+                .getState()
+                .addRep(exerciseId, stableRep - prev);
+              reportedRepRef.current = stableRep;
+            }
+          }
           setStats({
             poseCount: 1,
             repCount: stableRep,
@@ -97,6 +108,15 @@ export const useWebPoseDetection = (exerciseId?: ExerciseId) => {
           const rep = next?.repCount ?? 0;
           const stableRep = Math.max(lastRepCountRef.current, rep);
           lastRepCountRef.current = stableRep;
+          if (exerciseId) {
+            const prev = reportedRepRef.current;
+            if (stableRep > prev) {
+              useExerciseSessionStore
+                .getState()
+                .addRep(exerciseId, stableRep - prev);
+              reportedRepRef.current = stableRep;
+            }
+          }
           setStats({
             poseCount: 0,
             repCount: stableRep,
