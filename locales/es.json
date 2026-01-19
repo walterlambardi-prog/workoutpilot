@@ -1,82 +1,24 @@
 {
   "navigation": {
     "home": "Inicio",
-    "explore": "Explorar",
     "exercises": "Ejercicios"
   },
   "home": {
     "title": "WorkoutPilot",
     "subtitle": "Tu hub inicial",
-    "description": "Arranca aquí y salta directo a las vistas clave de la app. Usa los accesos rápidos para explorar y probar la demo de pose.",
+    "description": "Arranca aquí y salta directo a las vistas clave de la app. Usa el acceso rápido para probar la demo de pose.",
     "language": {
       "title": "Idioma",
-      "description": "Sigue el idioma del sistema automáticamente. Cámbialo para sobreescribir mientras la app está abierta.",
-      "system": "Idioma del sistema: {{language}}",
+      "hint": "Sigue el idioma del sistema automáticamente. Cámbialo para sobreescribir mientras la app está abierta.",
       "english": "Inglés",
       "spanish": "Español"
     },
     "actions": {
-      "explore": {
-        "title": "Explorar",
-        "description": "Revisa la guía del proyecto y cómo navegarlo.",
-        "accessibilityHint": "Abre la pantalla de guía y documentación interna"
-      },
       "exercises": {
         "title": "Ejercicios",
         "description": "Prueba la demo de pose: nativa en móvil y web en navegador.",
         "accessibilityHint": "Abre la pantalla de ejercicios con detección de pose"
       }
-    },
-    "devShortcuts": {
-      "title": "Atajos para desarrollo",
-      "description": "Edita las rutas en app/index.tsx, app/explore/index.tsx y app/exercises/index.tsx. Ajusta la navegación en app/_layout.tsx.",
-      "devtools": "Abre las devtools con {{shortcut}}."
-    },
-    "reset": {
-      "title": "¿Necesitas un reset?",
-      "description": "Ejecuta npm run reset-project para regenerar la carpeta app con el template base."
-    }
-  },
-  "explore": {
-    "title": "Explorar",
-    "cards": {
-      "routing": {
-        "title": "Ruteo por archivos",
-        "paragraphs": [
-          "La app usa rutas en app/: home vive en app/index.tsx, explore en app/explore/index.tsx y exercises en app/exercises/index.tsx.",
-          "Ajusta la navegación en app/_layout.tsx usando un Stack."
-        ]
-      },
-      "platforms": {
-        "title": "Soporte multiplataforma",
-        "paragraphs": [
-          "Abre el proyecto en Android, iOS y web. Presiona w en la terminal para levantar la versión web.",
-          "Exercises usa un componente nativo y otro web según la plataforma."
-        ]
-      },
-      "images": {
-        "title": "Imágenes",
-        "paragraphs": [
-          "Usa sufijos @2x y @3x para activos estáticos y asegurar buena resolución."
-        ]
-      },
-      "theming": {
-        "title": "Theming claro/oscuro",
-        "paragraphs": [
-          "Usa el hook useColorScheme() para adaptar colores. Los componentes ThemedText y ThemedView ya responden al tema."
-        ]
-      },
-      "animations": {
-        "title": "Animaciones",
-        "paragraphs": [
-          "HelloWave usa react-native-reanimated para un gesto simple.",
-          "ParallaxScrollView aplica efecto parallax en iOS."
-        ]
-      }
-    },
-    "links": {
-      "images": "Más info",
-      "themesGuide": "Ver guía"
     }
   },
   "exercises": {

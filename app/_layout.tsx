@@ -25,10 +25,6 @@ export default function RootLayout() {
       >
         <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen
-          name="explore/index"
-          options={{ title: t("navigation.explore") }}
-        />
-        <Stack.Screen
           name="exercises/index"
           options={{ title: t("navigation.exercises") }}
         />

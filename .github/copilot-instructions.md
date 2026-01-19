@@ -416,3 +416,12 @@ Before submitting code:
 - Promote to Context when shared
 - Consider Zustand/Redux for complex global state
 - Keep stores modular and focused
+
+### Product Focus: Workout AI Coach
+
+- The product is an Expo React Native app (web + mobile) to monitor exercise form with MediaPipe and guide users through routines.
+- Users create routines with multiple exercise sessions (e.g., squats, push-ups, lateral raises, alternating hammer raises, etc.).
+- Provide detailed history and session/routine reports (per-exercise metrics, timestamps, form feedback).
+- Include AI (chatbot-style) to generate user-appropriate routines and coaching suggestions.
+- UI/UX must feel current and fitness-focused: clean, high-contrast, motion-aware; surfaces should clearly differentiate active vs. resting states.
+- Prioritize form verification flows: stable camera permissions, session start/stop, switch camera, and feedback to the user when detection is active or paused.

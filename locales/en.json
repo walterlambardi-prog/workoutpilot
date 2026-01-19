@@ -1,82 +1,24 @@
 {
   "navigation": {
     "home": "Home",
-    "explore": "Explore",
     "exercises": "Exercises"
   },
   "home": {
     "title": "WorkoutPilot",
     "subtitle": "Your launch hub",
-    "description": "Start here and jump into the app's key views. Use quick links to explore and try the pose demo.",
+    "description": "Start here and jump into the app's key views. Use the quick link to try the pose demo.",
     "language": {
       "title": "Language",
-      "description": "Follows the system language automatically. Switch to override while the app is open.",
-      "system": "System language: {{language}}",
+      "hint": "Follows the system language automatically. Switch to override while the app is open.",
       "english": "English",
       "spanish": "Spanish"
     },
     "actions": {
-      "explore": {
-        "title": "Explore",
-        "description": "Review the project guide and how to navigate it.",
-        "accessibilityHint": "Opens the guide and internal documentation screen"
-      },
       "exercises": {
         "title": "Exercises",
         "description": "Try the pose demo: native on mobile and web in the browser.",
         "accessibilityHint": "Opens the exercises screen with pose detection"
       }
-    },
-    "devShortcuts": {
-      "title": "Developer shortcuts",
-      "description": "Edit routes in app/index.tsx, app/explore/index.tsx and app/exercises/index.tsx. Adjust navigation in app/_layout.tsx.",
-      "devtools": "Open devtools with {{shortcut}}."
-    },
-    "reset": {
-      "title": "Need a reset?",
-      "description": "Run npm run reset-project to regenerate the app folder from the base template."
-    }
-  },
-  "explore": {
-    "title": "Explore",
-    "cards": {
-      "routing": {
-        "title": "File-based routing",
-        "paragraphs": [
-          "The app uses routes in app/: home lives in app/index.tsx, explore in app/explore/index.tsx, and exercises in app/exercises/index.tsx.",
-          "Adjust navigation in app/_layout.tsx using a Stack."
-        ]
-      },
-      "platforms": {
-        "title": "Cross-platform support",
-        "paragraphs": [
-          "Open the project on Android, iOS, and web. Press w in the terminal to launch the web build.",
-          "Exercises uses a native component and a web component depending on the platform."
-        ]
-      },
-      "images": {
-        "title": "Images",
-        "paragraphs": [
-          "Use @2x and @3x suffixes for static assets to keep sharp resolution."
-        ]
-      },
-      "theming": {
-        "title": "Light/dark theming",
-        "paragraphs": [
-          "Use the useColorScheme() hook to adapt colors. ThemedText and ThemedView already respond to the theme."
-        ]
-      },
-      "animations": {
-        "title": "Animations",
-        "paragraphs": [
-          "HelloWave uses react-native-reanimated for a simple gesture.",
-          "ParallaxScrollView applies a parallax effect on iOS."
-        ]
-      }
-    },
-    "links": {
-      "images": "More info",
-      "themesGuide": "View guide"
     }
   },
   "exercises": {
