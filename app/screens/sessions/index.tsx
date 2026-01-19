@@ -6,6 +6,7 @@ import { EXERCISE_DEFINITION_MAP } from "@/app/screens/exercises/exercises.data"
 import { ThemedText } from "@/components/themedText";
 import { ThemedView } from "@/components/themedView";
 import { ExerciseId } from "@/constants/exercises";
+import { useThemeColor } from "@/hooks/useThemeColor";
 import { useExerciseSessionStore } from "@/stores/exerciseSessionStore";
 import styles from "./sessions.styles";
 import type { SessionListItem, SessionStatItem } from "./sessions.types";
@@ -26,6 +27,27 @@ const formatDate = (timestamp?: number) => {
 const SessionsScreen: React.FC = () => {
   const { t } = useTranslation();
   const { currentSession, history } = useExerciseSessionStore();
+  const backgroundColor = useThemeColor({}, "background");
+  const surfaceColor = useThemeColor(
+    { light: "#f8fafc", dark: "#0b1220" },
+    "background",
+  );
+  const borderColor = useThemeColor(
+    { light: "#e2e8f0", dark: "#1f2937" },
+    "background",
+  );
+  const mutedText = useThemeColor(
+    { light: "#475569", dark: "#cbd5e1" },
+    "text",
+  );
+  const subtleText = useThemeColor(
+    { light: "#64748b", dark: "#94a3b8" },
+    "text",
+  );
+  const thumbBackground = useThemeColor(
+    { light: "#f1f5f9", dark: "#111827" },
+    "background",
+  );
 
   const totals = useMemo(() => {
     const now = Date.now();
@@ -166,45 +188,69 @@ const SessionsScreen: React.FC = () => {
     });
 
   return (
-    <ScrollView style={styles.page} showsVerticalScrollIndicator={false}>
+    <ScrollView
+      style={[styles.page, { backgroundColor }]}
+      showsVerticalScrollIndicator={false}
+    >
       <View style={styles.header}>
         <ThemedText style={styles.title}>{t("sessions.title")}</ThemedText>
-        <ThemedText style={styles.subtitle}>
+        <ThemedText style={[styles.subtitle, { color: mutedText }]}>
           {t("sessions.subtitle")}
         </ThemedText>
       </View>
 
       <View style={styles.cards}>
-        <ThemedView style={styles.card}>
+        <ThemedView
+          style={[styles.card, { backgroundColor: surfaceColor, borderColor }]}
+          lightColor="transparent"
+          darkColor="transparent"
+        >
           <ThemedText style={styles.cardTitle}>
             {t("sessions.stats.title")}
           </ThemedText>
           {statItems.map((item) => (
             <View key={item.label} style={styles.statRow}>
-              <ThemedText style={styles.statLabel}>{item.label}</ThemedText>
+              <ThemedText style={[styles.statLabel, { color: mutedText }]}>
+                {item.label}
+              </ThemedText>
               <ThemedText style={styles.statValue}>{item.value}</ThemedText>
             </View>
           ))}
         </ThemedView>
-        <ThemedView style={styles.card}>
+        <ThemedView
+          style={[styles.card, { backgroundColor: surfaceColor, borderColor }]}
+          lightColor="transparent"
+          darkColor="transparent"
+        >
           <ThemedText style={styles.cardTitle}>
             {t("sessions.breakdown.title")}
           </ThemedText>
           {breakdown.map((item) => (
-            <View key={item.definition.id} style={styles.breakdownRow}>
-              <Image source={item.definition.image} style={styles.thumb} />
+            <View
+              key={item.definition.id}
+              style={[styles.breakdownRow, { borderBottomColor: borderColor }]}
+            >
+              <Image
+                source={item.definition.image}
+                style={[
+                  styles.thumb,
+                  { borderColor, backgroundColor: thumbBackground },
+                ]}
+              />
               <View style={styles.breakdownContent}>
                 <ThemedText style={styles.historyTitle}>
                   {t(`${item.definition.copyKey}.title`)}
                 </ThemedText>
-                <ThemedText style={styles.historySubtitle}>
+                <ThemedText
+                  style={[styles.historySubtitle, { color: mutedText }]}
+                >
                   {t("sessions.breakdown.sessionsLabel", {
                     count: item.sessions,
                   })}
                   {" · "}
                   {formatDuration(item.totalDuration)}
                 </ThemedText>
-                <ThemedText style={styles.historyMeta}>
+                <ThemedText style={[styles.historyMeta, { color: subtleText }]}>
                   {item.last
                     ? t("sessions.breakdown.last", {
                         date: formatDate(
@@ -216,7 +262,7 @@ const SessionsScreen: React.FC = () => {
               </View>
               <View style={styles.breakdownBadge}>
                 <ThemedText style={styles.statValue}>{item.reps}</ThemedText>
-                <ThemedText style={styles.historyMeta}>
+                <ThemedText style={[styles.historyMeta, { color: subtleText }]}>
                   {t("sessions.labels.reps")}
                 </ThemedText>
               </View>
@@ -224,33 +270,46 @@ const SessionsScreen: React.FC = () => {
           ))}
         </ThemedView>
 
-        <ThemedView style={styles.card}>
+        <ThemedView
+          style={[styles.card, { backgroundColor: surfaceColor, borderColor }]}
+          lightColor="transparent"
+          darkColor="transparent"
+        >
           <ThemedText style={styles.cardTitle}>
             {t("sessions.history.title")}
           </ThemedText>
           {recentHistory.length === 0 ? (
-            <ThemedText style={styles.empty}>
+            <ThemedText style={[styles.empty, { color: subtleText }]}>
               {t("sessions.history.empty")}
             </ThemedText>
           ) : (
             recentHistory.map((item) => (
-              <View key={item.id} style={styles.historyItem}>
+              <View
+                key={item.id}
+                style={[styles.historyItem, { borderBottomColor: borderColor }]}
+              >
                 <ThemedText style={styles.historyTitle}>
                   {item.title}
                 </ThemedText>
-                <ThemedText style={styles.historySubtitle}>
+                <ThemedText
+                  style={[styles.historySubtitle, { color: mutedText }]}
+                >
                   {item.subtitle}
                 </ThemedText>
-                <ThemedText style={styles.historyMeta}>
+                <ThemedText style={[styles.historyMeta, { color: subtleText }]}>
                   {item.repsLabel}
                 </ThemedText>
                 {item.durationLabel ? (
-                  <ThemedText style={styles.historyMeta}>
+                  <ThemedText
+                    style={[styles.historyMeta, { color: subtleText }]}
+                  >
                     {item.durationLabel}
                   </ThemedText>
                 ) : null}
                 {item.endedLabel ? (
-                  <ThemedText style={styles.historyMeta}>
+                  <ThemedText
+                    style={[styles.historyMeta, { color: subtleText }]}
+                  >
                     {item.endedLabel}
                   </ThemedText>
                 ) : null}

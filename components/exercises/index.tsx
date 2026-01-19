@@ -1,9 +1,12 @@
 import { RNMediapipe } from "@thinksys/react-native-mediapipe";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ScrollView, TouchableOpacity } from "react-native";
 
+import { ThemedText } from "@/components/themedText";
+import { ThemedView } from "@/components/themedView";
 import { EXERCISE_COPY_KEYS, ExerciseId } from "@/constants/exercises";
+import { useThemeColor } from "@/hooks/useThemeColor";
 
 import { CAMERA_HEIGHT, CAMERA_WIDTH } from "./exercises.constants";
 import styles from "./exercises.styles";
@@ -39,18 +42,46 @@ export default function ExercisesNativeScreen({ exerciseId }: ExercisesProps) {
     ? t(`${copyKey}.description`)
     : t("exercises.native.subtitle");
 
+  const backgroundColor = useThemeColor({}, "background");
+  const surfaceColor = useThemeColor(
+    { light: "#f8fafc", dark: "#0b1220" },
+    "background",
+  );
+  const borderColor = useThemeColor(
+    { light: "#e2e8f0", dark: "#1f2937" },
+    "background",
+  );
+  const accentColor = useThemeColor({}, "tint");
+  const buttonTextColor = useThemeColor(
+    { light: "#0b1220", dark: "#0b1220" },
+    "text",
+  );
+  const mutedText = useThemeColor(
+    { light: "#475569", dark: "#cbd5e1" },
+    "text",
+  );
+
   return (
     <ScrollView
-      style={styles.container}
+      style={[styles.container, { backgroundColor }]}
       contentContainerStyle={styles.scrollContent}
       showsVerticalScrollIndicator={false}
     >
-      <View style={styles.header}>
-        <Text style={styles.title}>{headerTitle}</Text>
-        <Text style={styles.subtitle}>{headerSubtitle}</Text>
-      </View>
+      <ThemedView style={styles.header}>
+        <ThemedText style={styles.title}>{headerTitle}</ThemedText>
+        <ThemedText style={[styles.subtitle, { color: mutedText }]}>
+          {headerSubtitle}
+        </ThemedText>
+      </ThemedView>
 
-      <View style={styles.cameraContainer}>
+      <ThemedView
+        style={[
+          styles.cameraContainer,
+          { backgroundColor: surfaceColor, borderColor },
+        ]}
+        lightColor="transparent"
+        darkColor="transparent"
+      >
         <RNMediapipe
           width={CAMERA_WIDTH}
           height={CAMERA_HEIGHT}
@@ -66,12 +97,12 @@ export default function ExercisesNativeScreen({ exerciseId }: ExercisesProps) {
           leftAnkle={true}
           rightAnkle={true}
         />
-      </View>
+      </ThemedView>
 
-      <View style={styles.controls}>
+      <ThemedView style={styles.controls}>
         <TouchableOpacity
           onPress={handleSwitchCamera}
-          style={styles.button}
+          style={[styles.button, { backgroundColor: accentColor }]}
           activeOpacity={0.8}
           accessible={true}
           accessibilityLabel={t("exercises.native.switchCamera.label")}
@@ -80,47 +111,55 @@ export default function ExercisesNativeScreen({ exerciseId }: ExercisesProps) {
             "exercises.native.switchCamera.accessibilityHint",
           )}
         >
-          <Text style={styles.buttonText}>
+          <ThemedText style={[styles.buttonText, { color: buttonTextColor }]}>
             {t("exercises.native.switchCamera.label")}
-          </Text>
+          </ThemedText>
         </TouchableOpacity>
 
-        <View style={styles.statsContainer}>
-          <View style={styles.statRow}>
-            <Text style={styles.statLabel}>
+        <ThemedView
+          style={[
+            styles.statsContainer,
+            { backgroundColor: surfaceColor, borderColor },
+          ]}
+        >
+          <ThemedView style={styles.statRow}>
+            <ThemedText style={[styles.statLabel, { color: mutedText }]}>
               {t("exercises.native.stats.status")}:
-            </Text>
-            <Text style={styles.statValue}>
+            </ThemedText>
+            <ThemedText style={styles.statValue}>
               {t(`exercises.statuses.${status}`)}
-            </Text>
-          </View>
-          <View style={styles.statRow}>
-            <Text style={styles.statLabel}>
+            </ThemedText>
+          </ThemedView>
+          <ThemedView style={styles.statRow}>
+            <ThemedText style={[styles.statLabel, { color: mutedText }]}>
               {t("exercises.native.stats.poses")}:
-            </Text>
-            <Text style={styles.statValue}>{poseCount}</Text>
-          </View>
+            </ThemedText>
+            <ThemedText style={styles.statValue}>{poseCount}</ThemedText>
+          </ThemedView>
           {typeof repCount === "number" && (
-            <View style={styles.statRow}>
-              <Text style={styles.statLabel}>
+            <ThemedView style={styles.statRow}>
+              <ThemedText style={[styles.statLabel, { color: mutedText }]}>
                 {t("exercises.native.stats.reps")}:
-              </Text>
-              <Text style={styles.statValue}>{repCount}</Text>
-            </View>
+              </ThemedText>
+              <ThemedText style={styles.statValue}>{repCount}</ThemedText>
+            </ThemedView>
           )}
-          <Text style={styles.message}>
+          <ThemedText style={[styles.message, { color: mutedText }]}>
             {feedback ?? t(`exercises.messages.${messageKey}`)}
-          </Text>
-        </View>
-      </View>
+          </ThemedText>
+        </ThemedView>
+      </ThemedView>
 
-      <View style={styles.footer}>
+      <ThemedView style={styles.footer}>
         {footerItems.map((item) => (
-          <Text key={item} style={styles.footerText}>
+          <ThemedText
+            key={item}
+            style={[styles.footerText, { color: mutedText }]}
+          >
             • {item}
-          </Text>
+          </ThemedText>
         ))}
-      </View>
+      </ThemedView>
     </ScrollView>
   );
 }

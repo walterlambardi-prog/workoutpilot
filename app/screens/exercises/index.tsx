@@ -1,7 +1,7 @@
 import { useRouter } from "expo-router";
 import React, { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { FlatList, View, type ListRenderItemInfo } from "react-native";
+import { FlatList, type ListRenderItemInfo } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import ExerciseCard from "@/components/ExerciseCard";
@@ -74,7 +74,7 @@ const ExercisesScreen: React.FC<ExercisesScreenProps> = () => {
             paddingBottom: insets.bottom + 24,
           },
         ]}
-        ItemSeparatorComponent={() => <View style={styles.separator} />}
+        ItemSeparatorComponent={() => <ThemedView style={styles.separator} />}
         ListHeaderComponent={
           <ThemedView style={styles.header}>
             <ThemedText style={styles.title} type="title">
