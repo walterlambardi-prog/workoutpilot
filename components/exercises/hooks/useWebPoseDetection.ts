@@ -1,28 +1,35 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 
+import { ExerciseId } from "@/constants/exercises";
 import { drawPoseLandmarks } from "@/utils/poseDrawing";
+
 import {
-    MEDIAPIPE_CONFIG,
-    POSE_MODEL_URL,
-    WASM_BASE_URL,
+  MEDIAPIPE_CONFIG,
+  POSE_MODEL_URL,
+  WASM_BASE_URL,
 } from "../exercises.constants";
 import type {
-    MediaPipeResult,
-    PoseMessageKey,
-    PoseStats,
-    Status,
+  MediaPipeResult,
+  PoseMessageKey,
+  PoseStats,
+  Status,
 } from "../exercises.types";
+import { useLateralRaisesCounter } from "./useLateralRaisesCounter";
 
 /**
  * Hook for managing MediaPipe pose detection on web platform
- * Uses @mediapipe/tasks-vision for WASM-based pose detection
- * @returns Web pose detection state, refs, and control functions
+ * Uses @mediapipe/tasks-vision for browser-based pose detection
  */
-export const useWebPoseDetection = () => {
+export const useWebPoseDetection = (exerciseId?: ExerciseId) => {
   const [status, setStatus] = useState<Status>("idle");
   const [messageKey, setMessageKey] =
     useState<PoseMessageKey>("promptCameraAccess");
   const [stats, setStats] = useState<PoseStats | null>(null);
+  const lastRepCountRef = useRef(0);
+
+  const { t } = useTranslation();
+  const lateralRaises = useLateralRaisesCounter(t);
 
   const poseRef = useRef<any>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -68,16 +75,43 @@ export const useWebPoseDetection = () => {
 
       if (landmarks) {
         drawPoseLandmarks({ canvas, landmarks });
-        setStats({ poseCount: 1 });
+
+        if (exerciseId === ExerciseId.LATERAL_RAISES) {
+          const next = lateralRaises.processLandmarks(landmarks);
+          const rep = next?.repCount ?? 0;
+          const stableRep = Math.max(lastRepCountRef.current, rep);
+          lastRepCountRef.current = stableRep;
+          setStats({
+            poseCount: 1,
+            repCount: stableRep,
+            progress: next?.progress,
+            feedback: next?.feedback,
+          });
+        } else {
+          setStats({ poseCount: 1 });
+        }
         setMessageKey("liveLandmarks");
       } else {
-        setStats({ poseCount: 0 });
+        if (exerciseId === ExerciseId.LATERAL_RAISES) {
+          const next = lateralRaises.processLandmarks(undefined);
+          const rep = next?.repCount ?? 0;
+          const stableRep = Math.max(lastRepCountRef.current, rep);
+          lastRepCountRef.current = stableRep;
+          setStats({
+            poseCount: 0,
+            repCount: stableRep,
+            progress: next?.progress,
+            feedback: next?.feedback,
+          });
+        } else {
+          setStats({ poseCount: 0 });
+        }
         setMessageKey("noPoseDetected");
       }
     }
 
     rafRef.current = requestAnimationFrame(processFrame);
-  }, []);
+  }, [exerciseId, lateralRaises]);
 
   const startCamera = useCallback(async () => {
     if (!poseRef.current) {

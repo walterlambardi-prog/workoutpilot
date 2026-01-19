@@ -87,7 +87,8 @@
       },
       "stats": {
         "status": "Status",
-        "poses": "Poses"
+        "poses": "Poses",
+        "reps": "Reps"
       },
       "footer": [
         "Real-time detection with MediaPipe",
@@ -107,6 +108,7 @@
       "stop": "Stop",
       "status": "Status",
       "poseCount": "Poses",
+      "reps": "Reps",
       "overlayLabel": "Webcam",
       "footer": [
         "Model and WASM are served from /public.",
@@ -116,6 +118,21 @@
       "aria": {
         "start": "Start webcam",
         "stop": "Stop webcam"
+      }
+    },
+    "lateralRaises": {
+      "feedback": {
+        "showShoulders": "Show your shoulders to the camera",
+        "noPose": "No pose detected",
+        "improveLight": "Improve lighting and face the camera",
+        "armsDown": "Arms down, start raising",
+        "raise": "Raise both arms to the sides",
+        "upHold": "Arms up — hold briefly",
+        "lower": "Lower with control"
+      },
+      "armLabel": {
+        "left": "Left arm",
+        "right": "Right arm"
       }
     }
   }

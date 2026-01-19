@@ -1,7 +1,7 @@
 import { RNMediapipe } from "@thinksys/react-native-mediapipe";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Text, TouchableOpacity, View } from "react-native";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 import { EXERCISE_COPY_KEYS, ExerciseId } from "@/constants/exercises";
 
@@ -19,8 +19,15 @@ export interface ExercisesProps {
 
 export default function ExercisesNativeScreen({ exerciseId }: ExercisesProps) {
   const { t } = useTranslation();
-  const { status, messageKey, poseCount, handleLandmark, handleSwitchCamera } =
-    usePoseDetection();
+  const {
+    status,
+    messageKey,
+    poseCount,
+    repCount,
+    feedback,
+    handleLandmark,
+    handleSwitchCamera,
+  } = usePoseDetection({ exerciseId, t });
   const footerItems =
     (t("exercises.native.footer", { returnObjects: true }) as string[]) ?? [];
 
@@ -33,7 +40,11 @@ export default function ExercisesNativeScreen({ exerciseId }: ExercisesProps) {
     : t("exercises.native.subtitle");
 
   return (
-    <View style={styles.container}>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.scrollContent}
+      showsVerticalScrollIndicator={false}
+    >
       <View style={styles.header}>
         <Text style={styles.title}>{headerTitle}</Text>
         <Text style={styles.subtitle}>{headerSubtitle}</Text>
@@ -89,8 +100,16 @@ export default function ExercisesNativeScreen({ exerciseId }: ExercisesProps) {
             </Text>
             <Text style={styles.statValue}>{poseCount}</Text>
           </View>
+          {typeof repCount === "number" && (
+            <View style={styles.statRow}>
+              <Text style={styles.statLabel}>
+                {t("exercises.native.stats.reps")}:
+              </Text>
+              <Text style={styles.statValue}>{repCount}</Text>
+            </View>
+          )}
           <Text style={styles.message}>
-            {t(`exercises.messages.${messageKey}`)}
+            {feedback ?? t(`exercises.messages.${messageKey}`)}
           </Text>
         </View>
       </View>
@@ -102,6 +121,6 @@ export default function ExercisesNativeScreen({ exerciseId }: ExercisesProps) {
           </Text>
         ))}
       </View>
-    </View>
+    </ScrollView>
   );
 }

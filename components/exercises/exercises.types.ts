@@ -26,6 +26,9 @@ export type PoseMessageKey =
 
 export interface PoseStats {
   poseCount?: number;
+  repCount?: number;
+  progress?: number;
+  feedback?: string;
 }
 
 export interface PoseLandmark {

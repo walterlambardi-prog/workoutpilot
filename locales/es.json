@@ -87,7 +87,8 @@
       },
       "stats": {
         "status": "Estado",
-        "poses": "Poses"
+        "poses": "Poses",
+        "reps": "Repeticiones"
       },
       "footer": [
         "Detección en tiempo real con MediaPipe",
@@ -107,6 +108,7 @@
       "stop": "Detener",
       "status": "Estado",
       "poseCount": "Poses",
+      "reps": "Repeticiones",
       "overlayLabel": "Webcam",
       "footer": [
         "El modelo y el WASM se sirven desde /public.",
@@ -116,6 +118,21 @@
       "aria": {
         "start": "Iniciar webcam",
         "stop": "Detener webcam"
+      }
+    },
+    "lateralRaises": {
+      "feedback": {
+        "showShoulders": "Muestra tus hombros a la cámara",
+        "noPose": "Sin pose detectada",
+        "improveLight": "Mejora la luz y mira a la cámara",
+        "armsDown": "Baja los brazos, inicia la subida",
+        "raise": "Eleva ambos brazos hacia los lados",
+        "upHold": "Brazos arriba — mantén un momento",
+        "lower": "Baja con control"
+      },
+      "armLabel": {
+        "left": "Brazo izquierdo",
+        "right": "Brazo derecho"
       }
     }
   }

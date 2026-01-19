@@ -22,7 +22,7 @@ export default function ExercisesWebScreen({ exerciseId }: ExercisesProps) {
     canvasRef,
     startCamera,
     stopCamera,
-  } = useWebPoseDetection();
+  } = useWebPoseDetection(exerciseId);
   const { t } = useTranslation();
 
   const copyKey = exerciseId ? EXERCISE_COPY_KEYS[exerciseId] : undefined;
@@ -76,7 +76,7 @@ export default function ExercisesWebScreen({ exerciseId }: ExercisesProps) {
               {t(`exercises.statuses.${status}`)}
             </div>
             <div style={styles.message}>
-              {t(`exercises.messages.${messageKey}`)}
+              {stats?.feedback ?? t(`exercises.messages.${messageKey}`)}
             </div>
             {stats && (
               <div style={styles.statsBox}>
@@ -84,6 +84,11 @@ export default function ExercisesWebScreen({ exerciseId }: ExercisesProps) {
                   <div>
                     <strong>{t("exercises.web.poseCount")}:</strong>{" "}
                     {stats.poseCount}
+                  </div>
+                )}
+                {typeof stats.repCount === "number" && (
+                  <div>
+                    <strong>{t("exercises.web.reps")}:</strong> {stats.repCount}
                   </div>
                 )}
               </div>
