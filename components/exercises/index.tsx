@@ -2,9 +2,9 @@ import { RNMediapipe } from "@thinksys/react-native-mediapipe";
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 
-import { CAMERA_HEIGHT, CAMERA_WIDTH } from "@/constants/exercises";
-import { usePoseDetection } from "@/hooks/usePoseDetection";
+import { CAMERA_HEIGHT, CAMERA_WIDTH } from "./exercises.constants";
 import styles from "./exercises.styles";
+import { usePoseDetection } from "./hooks/usePoseDetection";
 
 /**
  * Native exercises screen with MediaPipe pose detection

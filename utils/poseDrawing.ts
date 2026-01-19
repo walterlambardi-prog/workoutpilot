@@ -1,5 +1,5 @@
+import { POSE_CONNECTIONS } from "@/components/exercises/exercises.constants";
 import type { PoseLandmark } from "@/components/exercises/exercises.types";
-import { POSE_CONNECTIONS } from "@/constants/exercises";
 
 interface DrawPoseOptions {
   canvas: HTMLCanvasElement;

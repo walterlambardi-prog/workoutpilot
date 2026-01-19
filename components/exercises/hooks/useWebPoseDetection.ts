@@ -1,15 +1,12 @@
-import type {
-    MediaPipeResult,
-    PoseStats,
-    Status,
-} from "@/components/exercises/exercises.types";
+import { useCallback, useEffect, useRef, useState } from "react";
+
+import { drawPoseLandmarks } from "@/utils/poseDrawing";
 import {
     MEDIAPIPE_CONFIG,
     POSE_MODEL_URL,
     WASM_BASE_URL,
-} from "@/constants/exercises";
-import { drawPoseLandmarks } from "@/utils/poseDrawing";
-import { useCallback, useEffect, useRef, useState } from "react";
+} from "../exercises.constants";
+import type { MediaPipeResult, PoseStats, Status } from "../exercises.types";
 
 /**
  * Hook for managing MediaPipe pose detection on web platform

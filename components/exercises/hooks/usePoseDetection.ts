@@ -1,10 +1,10 @@
-import type { Status } from "@/components/exercises/exercises.types";
 import { switchCamera } from "@thinksys/react-native-mediapipe";
 import { useCallback, useState } from "react";
 
+import type { Status } from "../exercises.types";
+
 /**
- * Hook for managing MediaPipe pose detection state and callbacks
- * @returns Pose detection state and handlers
+ * Hook for managing MediaPipe pose detection state and callbacks (native)
  */
 export const usePoseDetection = () => {
   const [status, setStatus] = useState<Status>("idle");

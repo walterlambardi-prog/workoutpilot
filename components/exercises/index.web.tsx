@@ -1,7 +1,7 @@
 import React from "react";
 
-import { useWebPoseDetection } from "@/hooks/useWebPoseDetection";
 import styles from "./exercises.web.styles";
+import { useWebPoseDetection } from "./hooks/useWebPoseDetection";
 
 /**
  * Web exercises screen with MediaPipe pose detection
