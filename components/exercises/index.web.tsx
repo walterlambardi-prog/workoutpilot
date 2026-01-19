@@ -1,6 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 
+import { EXERCISE_COPY_KEYS, ExerciseId } from "@/constants/exercises";
 import styles from "./exercises.web.styles";
 import { useWebPoseDetection } from "./hooks/useWebPoseDetection";
 
@@ -8,7 +9,11 @@ import { useWebPoseDetection } from "./hooks/useWebPoseDetection";
  * Web exercises screen with MediaPipe pose detection
  * Uses @mediapipe/tasks-vision for browser-based pose detection
  */
-export default function ExercisesWebScreen() {
+export interface ExercisesProps {
+  exerciseId?: ExerciseId;
+}
+
+export default function ExercisesWebScreen({ exerciseId }: ExercisesProps) {
   const {
     status,
     messageKey,
@@ -19,6 +24,14 @@ export default function ExercisesWebScreen() {
     stopCamera,
   } = useWebPoseDetection();
   const { t } = useTranslation();
+
+  const copyKey = exerciseId ? EXERCISE_COPY_KEYS[exerciseId] : undefined;
+  const headerTitle = copyKey
+    ? t(`${copyKey}.title`)
+    : t("exercises.web.title");
+  const headerSubtitle = copyKey
+    ? t(`${copyKey}.description`)
+    : t("exercises.web.subtitle");
 
   const footerItems =
     (t("exercises.web.footer", { returnObjects: true }) as string[]) ?? [];
@@ -36,8 +49,8 @@ export default function ExercisesWebScreen() {
     <main style={styles.page}>
       <section style={styles.card}>
         <header style={styles.header}>
-          <h1 style={styles.title}>{t("exercises.web.title")}</h1>
-          <p style={styles.subtitle}>{t("exercises.web.subtitle")}</p>
+          <h1 style={styles.title}>{headerTitle}</h1>
+          <p style={styles.subtitle}>{headerSubtitle}</p>
         </header>
 
         <div style={styles.row}>

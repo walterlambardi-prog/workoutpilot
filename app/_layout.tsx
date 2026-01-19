@@ -28,6 +28,10 @@ export default function RootLayout() {
           name="exercises/index"
           options={{ title: t("navigation.exercises") }}
         />
+        <Stack.Screen
+          name="exercises/[exerciseId]"
+          options={{ title: t("navigation.exercises") }}
+        />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>

@@ -48,6 +48,36 @@
       "modelLoadError": "No se pudo cargar el modelo",
       "liveLandmarks": "Landmarks en vivo"
     },
+    "list": {
+      "title": "Elige tu ejercicio",
+      "subtitle": "Selecciona un movimiento para iniciar el seguimiento de pose en tiempo real.",
+      "card": {
+        "cta": "Comenzar sesión",
+        "accessibilityHint": "Abre la sesión de {{exercise}}"
+      },
+      "items": {
+        "hammerCurls": {
+          "title": "Curl martillo alternado",
+          "description": "Alterna brazos para trabajar bíceps y antebrazo."
+        },
+        "lateralRaises": {
+          "title": "Levantamiento lateral de brazos",
+          "description": "Eleva ambos brazos para trabajar hombros con control."
+        },
+        "pushups": {
+          "title": "Flexiones de brazo",
+          "description": "Controla core y pecho en cada repetición."
+        },
+        "squats": {
+          "title": "Sentadillas",
+          "description": "Impulsa con talones para estabilizar caderas y rodillas."
+        }
+      }
+    },
+    "session": {
+      "fallbackTitle": "Sesión de ejercicio",
+      "subtitle": "Detección de pose en vivo para este movimiento."
+    },
     "native": {
       "title": "Ejercicios (Nativo)",
       "subtitle": "Demo con @thinksys/react-native-mediapipe",

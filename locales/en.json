@@ -48,6 +48,36 @@
       "modelLoadError": "Could not load the model",
       "liveLandmarks": "Live landmarks"
     },
+    "list": {
+      "title": "Pick your exercise",
+      "subtitle": "Select a movement to start real-time pose tracking.",
+      "card": {
+        "cta": "Start session",
+        "accessibilityHint": "Open session for {{exercise}}"
+      },
+      "items": {
+        "hammerCurls": {
+          "title": "Alternating hammer curls",
+          "description": "Alternate arms to strengthen biceps and forearms."
+        },
+        "lateralRaises": {
+          "title": "Lateral raises",
+          "description": "Lift both arms to target shoulders with control."
+        },
+        "pushups": {
+          "title": "Push-ups",
+          "description": "Control your core and chest through each rep."
+        },
+        "squats": {
+          "title": "Squats",
+          "description": "Drive through your heels to stabilize hips and knees."
+        }
+      }
+    },
+    "session": {
+      "fallbackTitle": "Exercise session",
+      "subtitle": "Live pose detection for this movement."
+    },
     "native": {
       "title": "Exercises (Native)",
       "subtitle": "Demo with @thinksys/react-native-mediapipe",

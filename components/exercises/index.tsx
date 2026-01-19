@@ -3,6 +3,8 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { Text, TouchableOpacity, View } from "react-native";
 
+import { EXERCISE_COPY_KEYS, ExerciseId } from "@/constants/exercises";
+
 import { CAMERA_HEIGHT, CAMERA_WIDTH } from "./exercises.constants";
 import styles from "./exercises.styles";
 import { usePoseDetection } from "./hooks/usePoseDetection";
@@ -11,18 +13,30 @@ import { usePoseDetection } from "./hooks/usePoseDetection";
  * Native exercises screen with MediaPipe pose detection
  * Uses @thinksys/react-native-mediapipe for iOS/Android
  */
-export default function ExercisesNativeScreen() {
+export interface ExercisesProps {
+  exerciseId?: ExerciseId;
+}
+
+export default function ExercisesNativeScreen({ exerciseId }: ExercisesProps) {
   const { t } = useTranslation();
   const { status, messageKey, poseCount, handleLandmark, handleSwitchCamera } =
     usePoseDetection();
   const footerItems =
     (t("exercises.native.footer", { returnObjects: true }) as string[]) ?? [];
 
+  const copyKey = exerciseId ? EXERCISE_COPY_KEYS[exerciseId] : undefined;
+  const headerTitle = copyKey
+    ? t(`${copyKey}.title`)
+    : t("exercises.native.title");
+  const headerSubtitle = copyKey
+    ? t(`${copyKey}.description`)
+    : t("exercises.native.subtitle");
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>{t("exercises.native.title")}</Text>
-        <Text style={styles.subtitle}>{t("exercises.native.subtitle")}</Text>
+        <Text style={styles.title}>{headerTitle}</Text>
+        <Text style={styles.subtitle}>{headerSubtitle}</Text>
       </View>
 
       <View style={styles.cameraContainer}>
