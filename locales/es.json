@@ -39,8 +39,17 @@
       "title": "Estadísticas",
       "totalSessions": "Sesiones totales",
       "totalReps": "Reps totales",
+      "totalDuration": "Tiempo total",
+      "averageReps": "Promedio reps / sesión",
+      "exercisesTracked": "Ejercicios registrados",
       "bestSession": "Mejor sesión (reps)",
       "lastSession": "Última sesión"
+    },
+    "breakdown": {
+      "title": "Detalle por ejercicio",
+      "sessionsLabel": "{{count}} sesiones",
+      "last": "Última: {{date}}",
+      "never": "Aún sin registros"
     },
     "history": {
       "title": "Sesiones recientes",

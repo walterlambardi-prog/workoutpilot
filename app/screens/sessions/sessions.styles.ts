@@ -10,11 +10,13 @@ const styles = StyleSheet.create({
   },
   header: {
     marginBottom: 16,
+    paddingTop: 24,
   },
   title: {
     fontSize: 26,
     fontWeight: "700",
     color: "#f8fafc",
+    lineHeight: 36,
   },
   subtitle: {
     fontSize: 14,
@@ -93,6 +95,28 @@ const styles = StyleSheet.create({
     color: "#94a3b8",
     fontSize: 12,
     marginTop: 4,
+  },
+  breakdownRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: "#1f2937",
+  },
+  thumb: {
+    width: 56,
+    height: 56,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#1f2937",
+    backgroundColor: "#111827",
+  },
+  breakdownContent: {
+    flex: 1,
+  },
+  breakdownBadge: {
+    alignItems: "flex-end",
   },
 });
 

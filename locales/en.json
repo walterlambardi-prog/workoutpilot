@@ -39,8 +39,17 @@
       "title": "Stats",
       "totalSessions": "Total sessions",
       "totalReps": "Total reps",
+      "totalDuration": "Total time",
+      "averageReps": "Avg reps / session",
+      "exercisesTracked": "Exercises tracked",
       "bestSession": "Best session (reps)",
       "lastSession": "Last session"
+    },
+    "breakdown": {
+      "title": "Exercise breakdown",
+      "sessionsLabel": "{{count}} sessions",
+      "last": "Last: {{date}}",
+      "never": "Not yet logged"
     },
     "history": {
       "title": "Recent sessions",
