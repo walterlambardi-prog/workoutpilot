@@ -2,7 +2,7 @@ import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import React, { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
-import { EXERCISE_DEFINITION_MAP } from "@/app/screens/exercises/exercises.data";
+import { EXERCISE_DEFINITION_MAP } from "@/app/exercises/exercises.data";
 import Exercises from "@/components/exercises";
 import { ThemedView } from "@/components/themedView";
 import { ExerciseId } from "@/constants/exercises";

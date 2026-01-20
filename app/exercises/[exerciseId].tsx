@@ -1,1 +1,1 @@
-export { default } from "@/app/screens/exerciseSession";
+export { default } from "@/app/exerciseSession";
