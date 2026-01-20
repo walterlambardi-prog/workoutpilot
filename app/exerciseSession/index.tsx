@@ -39,14 +39,15 @@ const ExerciseSessionScreen: React.FC = () => {
   }, [exerciseDefinition, router]);
 
   useEffect(() => {
-    if (exerciseDefinition) {
-      useExerciseSessionStore
-        .getState()
-        .startSession({ exerciseId: exerciseDefinition.id });
+    if (!exerciseDefinition) {
+      return undefined;
     }
 
     return () => {
-      useExerciseSessionStore.getState().endSession();
+      const store = useExerciseSessionStore.getState();
+      if (store.currentSession?.exerciseId === exerciseDefinition.id) {
+        store.endSession();
+      }
     };
   }, [exerciseDefinition]);
 

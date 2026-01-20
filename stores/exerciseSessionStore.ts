@@ -85,6 +85,12 @@ export const useExerciseSessionStore = createTyped<ExerciseSessionState>(
         });
       },
       addRep: (exerciseId, delta = 1) => {
+        const ensureSession = get().startSession;
+        const current = get().currentSession;
+        if (!current || current.exerciseId !== exerciseId) {
+          ensureSession({ exerciseId });
+        }
+
         const now = Date.now();
         set((state: ExerciseSessionState) => {
           const session = state.currentSession;

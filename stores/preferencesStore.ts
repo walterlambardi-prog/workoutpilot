@@ -3,7 +3,6 @@ import type { StateCreator } from "zustand";
 import type { SupportedLanguage } from "@/locales/i18n";
 import { createCrossPlatformStorage } from "@/utils/storage";
 
-// Use require to force CJS entry (avoids import.meta in ESM build on web)
 const { create: createFn } = require("zustand");
 const { persist } = require("zustand/middleware");
 
