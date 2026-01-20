@@ -36,6 +36,10 @@ export default function RootLayout() {
           name="sessions/index"
           options={{ title: t("navigation.sessions") }}
         />
+        <Stack.Screen
+          name="settings/index"
+          options={{ title: t("navigation.settings") }}
+        />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>

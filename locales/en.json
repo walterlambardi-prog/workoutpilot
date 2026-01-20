@@ -2,7 +2,8 @@
   "navigation": {
     "home": "Home",
     "exercises": "Exercises",
-    "sessions": "Sessions"
+    "sessions": "Sessions",
+    "settings": "Settings"
   },
   "home": {
     "title": "WorkoutPilot",
@@ -24,7 +25,31 @@
         "title": "Sessions",
         "description": "View your tracked sessions, reps, and recent history.",
         "accessibilityHint": "Opens the session insights screen"
+      },
+      "settings": {
+        "title": "Settings",
+        "description": "Configure language and manage your data.",
+        "accessibilityHint": "Opens the settings screen"
       }
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Configure your preferences and manage app data.",
+    "language": {
+      "title": "Language",
+      "english": "English",
+      "spanish": "Spanish"
+    },
+    "data": {
+      "title": "Data",
+      "clearHistory": "Clear session history",
+      "clearHistoryConfirmTitle": "Clear history?",
+      "clearHistoryConfirmMessage": "This will permanently delete all your session data. This action cannot be undone.",
+      "clearHistoryConfirm": "Clear",
+      "cancel": "Cancel",
+      "clearedTitle": "History cleared",
+      "clearedMessage": "All session data has been deleted."
     }
   },
   "sessions": {
