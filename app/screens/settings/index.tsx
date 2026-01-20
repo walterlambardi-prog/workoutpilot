@@ -6,6 +6,7 @@ import { ThemedText } from "@/components/themedText";
 import { useAppLanguage } from "@/hooks/useAppLanguage";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { useExerciseSessionStore } from "@/stores/exerciseSessionStore";
+import { usePreferencesStore, type ThemeMode } from "@/stores/preferencesStore";
 import styles from "./settings.styles";
 
 type LanguageCode = ReturnType<
@@ -45,13 +46,56 @@ const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
               selected ? styles.languagePillTextActive : null,
             ]}
           >
-            {code.toUpperCase()}
+            {label}
           </ThemedText>
         </Pressable>
       );
     })}
   </View>
 );
+
+interface ThemeSwitcherProps {
+  value: ThemeMode;
+  onChange: (mode: ThemeMode) => void;
+}
+
+const ThemeSwitcher: React.FC<ThemeSwitcherProps> = ({ value, onChange }) => {
+  const modes: { mode: ThemeMode; label: string }[] = [
+    { mode: "light", label: "LIGHT" },
+    { mode: "dark", label: "DARK" },
+  ];
+
+  return (
+    <View style={styles.languageToggle}>
+      {modes.map(({ mode, label }) => {
+        const selected = value === mode;
+        return (
+          <Pressable
+            key={mode}
+            onPress={() => onChange(mode)}
+            style={({ pressed }) => [
+              styles.languagePill,
+              selected ? styles.languagePillActive : null,
+              pressed ? styles.languagePillPressed : null,
+            ]}
+            accessibilityRole="button"
+            accessibilityLabel={label}
+            accessibilityState={{ selected }}
+          >
+            <ThemedText
+              style={[
+                styles.languagePillText,
+                selected ? styles.languagePillTextActive : null,
+              ]}
+            >
+              {label}
+            </ThemedText>
+          </Pressable>
+        );
+      })}
+    </View>
+  );
+};
 
 /**
  * Settings screen for WorkoutPilot
@@ -62,6 +106,12 @@ const SettingsScreen: React.FC = () => {
   const { language, changeLanguage, supportedLanguages } = useAppLanguage();
   const resetHistory = useExerciseSessionStore((state) => state.resetHistory);
   const backgroundColor = useThemeColor({}, "background");
+  const themeMode = usePreferencesStore(
+    (state: { themeMode: ThemeMode | null }) => state.themeMode,
+  );
+  const setThemeMode = usePreferencesStore(
+    (state: { setThemeMode: (mode: ThemeMode) => void }) => state.setThemeMode,
+  );
 
   const languageLabels = {
     en: t("settings.language.english"),
@@ -113,7 +163,20 @@ const SettingsScreen: React.FC = () => {
 
       <View style={styles.section}>
         <ThemedText type="subtitle" style={styles.sectionTitle}>
+          {t("settings.appearance.title")}
+        </ThemedText>
+        <ThemedText style={styles.sectionDescription}>
+          {t("settings.appearance.themeDescription")}
+        </ThemedText>
+        <ThemeSwitcher value={themeMode ?? "light"} onChange={setThemeMode} />
+      </View>
+
+      <View style={styles.section}>
+        <ThemedText type="subtitle" style={styles.sectionTitle}>
           {t("settings.language.title")}
+        </ThemedText>
+        <ThemedText style={styles.sectionDescription}>
+          {t("settings.language.description")}
         </ThemedText>
         <LanguageSwitcher
           value={language}

@@ -2,18 +2,39 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import {
-    changeAppLanguage,
-    DEFAULT_LANGUAGE,
-    getActiveLanguage,
-    resolveLanguageTag,
-    SUPPORTED_LANGUAGES,
-    type SupportedLanguage,
+  changeAppLanguage,
+  DEFAULT_LANGUAGE,
+  getActiveLanguage,
+  initializeLanguage,
+  resolveLanguageTag,
+  SUPPORTED_LANGUAGES,
+  type SupportedLanguage
 } from "@/locales/i18n";
+import { usePreferencesStore } from "@/stores/preferencesStore";
 
 export const useAppLanguage = () => {
   const { i18n } = useTranslation();
   const [language, setLanguage] =
     useState<SupportedLanguage>(getActiveLanguage());
+
+  const storedLanguage = usePreferencesStore(
+    (state: { language: SupportedLanguage | null }) => state.language,
+  );
+  const setStoredLanguage = usePreferencesStore(
+    (state: { setLanguage: (language: SupportedLanguage) => void }) =>
+      state.setLanguage,
+  );
+
+  // Initialize language from system if not set
+  useEffect(() => {
+    if (storedLanguage === null) {
+      const systemLanguage = getActiveLanguage();
+      setStoredLanguage(systemLanguage);
+      initializeLanguage(systemLanguage);
+    } else {
+      initializeLanguage(storedLanguage);
+    }
+  }, [storedLanguage, setStoredLanguage]);
 
   useEffect(() => {
     const handleLanguageChanged = (lng: string) => {
@@ -33,9 +54,10 @@ export const useAppLanguage = () => {
         return;
       }
 
+      setStoredLanguage(nextLanguage);
       changeAppLanguage(nextLanguage);
     },
-    [language],
+    [language, setStoredLanguage],
   );
 
   const supportedLanguages = useMemo(() => [...SUPPORTED_LANGUAGES], []);

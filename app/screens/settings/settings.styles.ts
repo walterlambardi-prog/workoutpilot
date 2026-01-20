@@ -23,6 +23,11 @@ const styles = StyleSheet.create({
   sectionTitle: {
     marginBottom: 8,
   },
+  sectionDescription: {
+    opacity: 0.7,
+    fontSize: 14,
+    lineHeight: 20,
+  },
   languageToggle: {
     flexDirection: "row",
     gap: 12,

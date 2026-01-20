@@ -41,7 +41,7 @@ export default function RootLayout() {
           options={{ title: t("navigation.settings") }}
         />
       </Stack>
-      <StatusBar style="auto" />
+      <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
     </ThemeProvider>
   );
 }

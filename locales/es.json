@@ -36,8 +36,13 @@
   "settings": {
     "title": "Configuración",
     "subtitle": "Configura tus preferencias y gestiona los datos de la app.",
+    "appearance": {
+      "title": "Apariencia",
+      "themeDescription": "Elige entre modo claro y oscuro."
+    },
     "language": {
       "title": "Idioma",
+      "description": "Elige tu idioma preferido.",
       "english": "Inglés",
       "spanish": "Español"
     },

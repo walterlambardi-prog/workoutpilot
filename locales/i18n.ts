@@ -39,8 +39,6 @@ const locales = Localization.getLocales();
 const initialLanguage =
   resolveLanguageTag(locales?.[0]?.languageTag) ?? DEFAULT_LANGUAGE;
 
-let hasManualLanguageOverride = false;
-
 i18n.use(initReactI18next).init({
   resources,
   lng: initialLanguage,
@@ -50,9 +48,19 @@ i18n.use(initReactI18next).init({
   react: { useSuspense: false },
 });
 
+export const initializeLanguage = async (
+  storedLanguage: SupportedLanguage | null,
+) => {
+  if (storedLanguage && storedLanguage !== i18n.language) {
+    await i18n.changeLanguage(storedLanguage);
+  }
+};
+
 const { addLocalizationListener } = Localization as {
   addLocalizationListener?: (listener: () => void) => void;
 };
+
+let hasManualLanguageOverride = false;
 
 addLocalizationListener?.(() => {
   if (hasManualLanguageOverride) {
@@ -71,6 +79,16 @@ addLocalizationListener?.(() => {
 export const changeAppLanguage = async (language: SupportedLanguage) => {
   hasManualLanguageOverride = true;
   return i18n.changeLanguage(language);
+};
+
+export const resetToSystemLanguage = () => {
+  hasManualLanguageOverride = false;
+  const systemLanguage = resolveLanguageTag(
+    Localization.getLocales()?.[0]?.languageTag,
+  );
+  if (systemLanguage) {
+    i18n.changeLanguage(systemLanguage);
+  }
 };
 
 export const getActiveLanguage = (): SupportedLanguage => {

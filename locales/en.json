@@ -36,8 +36,13 @@
   "settings": {
     "title": "Settings",
     "subtitle": "Configure your preferences and manage app data.",
+    "appearance": {
+      "title": "Appearance",
+      "themeDescription": "Choose between light and dark mode."
+    },
     "language": {
       "title": "Language",
+      "description": "Choose your preferred language.",
       "english": "English",
       "spanish": "Spanish"
     },
