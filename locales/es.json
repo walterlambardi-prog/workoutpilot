@@ -92,7 +92,6 @@
       "title": "Elige tu ejercicio",
       "subtitle": "Selecciona un movimiento para iniciar el seguimiento de pose en tiempo real.",
       "card": {
-        "cta": "Comenzar sesión",
         "accessibilityHint": "Abre la sesión de {{exercise}}"
       },
       "items": {
@@ -149,12 +148,6 @@
       "status": "Estado",
       "poseCount": "Poses",
       "reps": "Repeticiones",
-      "overlayLabel": "Webcam",
-      "footer": [
-        "El modelo y el WASM se sirven desde /public.",
-        "Pose usa PoseLandmarker y dibuja 33 joints sobre el canvas.",
-        "RequestAnimationFrame mantiene la detección en vivo."
-      ],
       "aria": {
         "start": "Iniciar webcam",
         "stop": "Detener webcam"

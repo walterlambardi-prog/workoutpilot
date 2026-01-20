@@ -33,8 +33,6 @@ const ExercisesScreen: React.FC<ExercisesScreenProps> = () => {
     [t],
   );
 
-  const ctaLabel = t("exercises.list.card.cta");
-
   const handlePress = useCallback(
     (exerciseId: ExerciseId) => {
       router.push({
@@ -50,7 +48,6 @@ const ExercisesScreen: React.FC<ExercisesScreenProps> = () => {
       <ExerciseCard
         title={item.title}
         description={item.description}
-        cta={ctaLabel}
         image={item.image}
         accessibilityHint={t("exercises.list.card.accessibilityHint", {
           exercise: item.title,
@@ -58,7 +55,7 @@ const ExercisesScreen: React.FC<ExercisesScreenProps> = () => {
         onPress={() => handlePress(item.id)}
       />
     ),
-    [ctaLabel, handlePress, t],
+    [handlePress, t],
   );
 
   return (

@@ -92,7 +92,6 @@
       "title": "Pick your exercise",
       "subtitle": "Select a movement to start real-time pose tracking.",
       "card": {
-        "cta": "Start session",
         "accessibilityHint": "Open session for {{exercise}}"
       },
       "items": {
@@ -149,12 +148,6 @@
       "status": "Status",
       "poseCount": "Poses",
       "reps": "Reps",
-      "overlayLabel": "Webcam",
-      "footer": [
-        "Model and WASM are served from /public.",
-        "Pose uses PoseLandmarker and draws 33 joints on the canvas.",
-        "RequestAnimationFrame keeps detection live."
-      ],
       "aria": {
         "start": "Start webcam",
         "stop": "Stop webcam"

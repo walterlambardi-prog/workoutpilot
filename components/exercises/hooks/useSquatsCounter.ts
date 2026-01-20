@@ -18,7 +18,7 @@ interface Metrics {
 
 const MIN_VISIBILITY = 0.55;
 const UI_UPDATE_THROTTLE_MS = 140;
-const REP_DEBOUNCE_MS = 400; // allow faster consecutive reps
+const REP_DEBOUNCE_MS = 300; // allow faster consecutive reps
 
 // Thresholds aligned to original controller with slight lockout tolerance
 const ANGLE_TOP_READY = 150;

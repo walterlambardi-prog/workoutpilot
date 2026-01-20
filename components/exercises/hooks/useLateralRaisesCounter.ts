@@ -10,7 +10,7 @@ const ANGLE_UP_RELEASE = 54; // was 64
 const ANGLE_DOWN = 38; // was 32
 const ANGLE_DOWN_RESET = 44; // was 38
 const UI_UPDATE_THROTTLE_MS = 120;
-const REP_DEBOUNCE_MS = 850;
+const REP_DEBOUNCE_MS = 300;
 
 const calculateAngle = (
   p1: PoseLandmark,

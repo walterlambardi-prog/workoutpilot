@@ -10,7 +10,7 @@ const MIN_VISIBILITY = 0.55;
 const ELBOW_EXTENDED_ANGLE = 155;
 const ELBOW_TOP_ANGLE = 60;
 const UI_UPDATE_THROTTLE_MS = 140;
-const REP_DEBOUNCE_MS = 650;
+const REP_DEBOUNCE_MS = 300;
 
 const calculateAngle = (
   p1: PoseLandmark,

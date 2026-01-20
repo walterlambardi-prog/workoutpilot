@@ -1,8 +1,11 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 
+import { ThemedText } from "@/components/themedText";
+import { ThemedView } from "@/components/themedView";
 import { EXERCISE_COPY_KEYS, ExerciseId } from "@/constants/exercises";
-import styles from "./exercises.web.styles";
+import { useThemeColor } from "@/hooks/useThemeColor";
+import { buttonStyles, rnStyles, webMediaStyles } from "./exercises.web.styles";
 import { useWebPoseDetection } from "./hooks/useWebPoseDetection";
 
 /**
@@ -25,6 +28,8 @@ export default function ExercisesWebScreen({ exerciseId }: ExercisesProps) {
   } = useWebPoseDetection(exerciseId);
   const { t } = useTranslation();
 
+  const pageBackground = useThemeColor({}, "background");
+
   const copyKey = exerciseId ? EXERCISE_COPY_KEYS[exerciseId] : undefined;
   const headerTitle = copyKey
     ? t(`${copyKey}.title`)
@@ -32,9 +37,6 @@ export default function ExercisesWebScreen({ exerciseId }: ExercisesProps) {
   const headerSubtitle = copyKey
     ? t(`${copyKey}.description`)
     : t("exercises.web.subtitle");
-
-  const footerItems =
-    (t("exercises.web.footer", { returnObjects: true }) as string[]) ?? [];
 
   const startLabel =
     status === "loading"
@@ -46,19 +48,36 @@ export default function ExercisesWebScreen({ exerciseId }: ExercisesProps) {
           : t("exercises.web.buttons.starting");
 
   return (
-    <main style={styles.page}>
-      <section style={styles.card}>
-        <header style={styles.header}>
-          <h1 style={styles.title}>{headerTitle}</h1>
-          <p style={styles.subtitle}>{headerSubtitle}</p>
-        </header>
+    <ThemedView
+      style={[rnStyles.page, { backgroundColor: pageBackground }]}
+      lightColor="transparent"
+      darkColor="transparent"
+    >
+      <ThemedView
+        style={[rnStyles.card]}
+        lightColor="transparent"
+        darkColor="transparent"
+      >
+        <ThemedView style={rnStyles.header}>
+          <ThemedText style={rnStyles.title} type="title">
+            {headerTitle}
+          </ThemedText>
+          <ThemedText style={[rnStyles.subtitle]}>{headerSubtitle}</ThemedText>
+        </ThemedView>
 
-        <div style={styles.row}>
-          <div style={styles.actions}>
+        <ThemedView style={rnStyles.row}>
+          <ThemedView
+            style={[rnStyles.actions]}
+            lightColor="transparent"
+            darkColor="transparent"
+          >
             <button
               onClick={startCamera}
               disabled={status !== "ready"}
-              style={styles.button}
+              style={{
+                ...buttonStyles.primary,
+                marginBottom: 12,
+              }}
               aria-label={t("exercises.web.aria.start")}
             >
               {startLabel}
@@ -66,54 +85,55 @@ export default function ExercisesWebScreen({ exerciseId }: ExercisesProps) {
             <button
               onClick={stopCamera}
               disabled={status !== "running"}
-              style={styles.secondaryButton}
+              style={{
+                ...buttonStyles.primary,
+                marginBottom: 12,
+              }}
               aria-label={t("exercises.web.aria.stop")}
             >
               {t("exercises.web.stop")}
             </button>
-            <div style={styles.status}>
+            <ThemedText style={[rnStyles.status, { marginBottom: 8 }]}>
               <strong>{t("exercises.web.status")}:</strong>{" "}
               {t(`exercises.statuses.${status}`)}
-            </div>
-            <div style={styles.message}>
+            </ThemedText>
+            <ThemedText style={[rnStyles.message, { marginBottom: 8 }]}>
               {stats?.feedback ?? t(`exercises.messages.${messageKey}`)}
-            </div>
+            </ThemedText>
             {stats && (
-              <div style={styles.statsBox}>
+              <ThemedView style={rnStyles.statsBox}>
                 {typeof stats.poseCount === "number" && (
-                  <div>
+                  <ThemedText style={{ marginRight: 12 }}>
                     <strong>{t("exercises.web.poseCount")}:</strong>{" "}
                     {stats.poseCount}
-                  </div>
+                  </ThemedText>
                 )}
                 {typeof stats.repCount === "number" && (
-                  <div>
+                  <ThemedText>
                     <strong>{t("exercises.web.reps")}:</strong> {stats.repCount}
-                  </div>
+                  </ThemedText>
                 )}
-              </div>
+              </ThemedView>
             )}
-          </div>
+          </ThemedView>
 
-          <div style={styles.overlayColumn}>
-            <div style={styles.overlayLabel}>
-              {t("exercises.web.overlayLabel")}
-            </div>
-            <div style={styles.videoShell}>
-              <video ref={videoRef} style={styles.video} playsInline muted />
-              <canvas ref={canvasRef} style={styles.canvas} />
-            </div>
-          </div>
-        </div>
-
-        <footer style={styles.footer}>
-          <ul>
-            {footerItems.map((item) => (
-              <li key={item}>{item}</li>
-            ))}
-          </ul>
-        </footer>
-      </section>
-    </main>
+          <ThemedView style={rnStyles.overlayColumn}>
+            <ThemedView
+              style={rnStyles.videoShell}
+              lightColor="transparent"
+              darkColor="transparent"
+            >
+              <video
+                ref={videoRef}
+                style={webMediaStyles.video}
+                playsInline
+                muted
+              />
+              <canvas ref={canvasRef} style={webMediaStyles.canvas} />
+            </ThemedView>
+          </ThemedView>
+        </ThemedView>
+      </ThemedView>
+    </ThemedView>
   );
 }

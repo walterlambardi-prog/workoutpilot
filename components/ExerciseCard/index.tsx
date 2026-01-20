@@ -9,7 +9,6 @@ import type { ExerciseCardProps } from "./ExerciseCard.types";
 const ExerciseCard: React.FC<ExerciseCardProps> = ({
   title,
   description,
-  cta,
   image,
   accessibilityHint,
   onPress,
@@ -33,7 +32,6 @@ const ExerciseCard: React.FC<ExerciseCardProps> = ({
       <View style={styles.content}>
         <ThemedText type="subtitle">{title}</ThemedText>
         <ThemedText style={styles.description}>{description}</ThemedText>
-        <ThemedText style={styles.cta}>{cta}</ThemedText>
       </View>
     </Pressable>
   );
