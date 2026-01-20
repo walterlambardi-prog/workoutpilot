@@ -153,12 +153,7 @@
         "status": "Estado",
         "poses": "Poses",
         "reps": "Repeticiones"
-      },
-      "footer": [
-        "Detección en tiempo real con MediaPipe",
-        "Muestra 33 puntos de referencia del cuerpo",
-        "Callback onLandmark para procesar datos"
-      ]
+      }
     },
     "web": {
       "title": "Ejercicios (Web)",

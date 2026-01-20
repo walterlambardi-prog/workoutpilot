@@ -31,8 +31,6 @@ export default function ExercisesNativeScreen({ exerciseId }: ExercisesProps) {
     handleLandmark,
     handleSwitchCamera,
   } = usePoseDetection({ exerciseId, t });
-  const footerItems =
-    (t("exercises.native.footer", { returnObjects: true }) as string[]) ?? [];
 
   const copyKey = exerciseId ? EXERCISE_COPY_KEYS[exerciseId] : undefined;
   const headerTitle = copyKey
@@ -148,17 +146,6 @@ export default function ExercisesNativeScreen({ exerciseId }: ExercisesProps) {
             {feedback ?? t(`exercises.messages.${messageKey}`)}
           </ThemedText>
         </ThemedView>
-      </ThemedView>
-
-      <ThemedView style={styles.footer}>
-        {footerItems.map((item) => (
-          <ThemedText
-            key={item}
-            style={[styles.footerText, { color: mutedText }]}
-          >
-            • {item}
-          </ThemedText>
-        ))}
       </ThemedView>
     </ScrollView>
   );

@@ -153,12 +153,7 @@
         "status": "Status",
         "poses": "Poses",
         "reps": "Reps"
-      },
-      "footer": [
-        "Real-time detection with MediaPipe",
-        "Shows 33 body landmarks",
-        "onLandmark callback to process data"
-      ]
+      }
     },
     "web": {
       "title": "Exercises (Web)",

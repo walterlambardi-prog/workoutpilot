@@ -16,6 +16,7 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: "700",
     marginBottom: 4,
+    lineHeight: 32,
   },
   subtitle: {
     fontSize: 14,
@@ -66,9 +67,6 @@ const styles = StyleSheet.create({
     marginTop: 16,
     paddingHorizontal: 16,
     gap: 4,
-  },
-  footerText: {
-    fontSize: 12,
   },
 });
 
