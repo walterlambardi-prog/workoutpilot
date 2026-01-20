@@ -20,13 +20,26 @@ export function useColorScheme() {
   const setThemeMode = usePreferencesStore(
     (state: { setThemeMode: (mode: ThemeMode) => void }) => state.setThemeMode,
   );
+  const storeHasHydrated = usePreferencesStore(
+    (state: { _hasHydrated: boolean }) => state._hasHydrated,
+  );
 
-  // Initialize theme from system if not set (only after hydration)
+  // Initialize theme from system if not set (only after both hydrations)
   useEffect(() => {
-    if (hasHydrated && themeMode === null && systemColorScheme) {
+    if (!hasHydrated || !storeHasHydrated) {
+      return; // Wait for both to hydrate
+    }
+
+    if (themeMode === null && systemColorScheme) {
       setThemeMode(systemColorScheme as ThemeMode);
     }
-  }, [hasHydrated, themeMode, systemColorScheme, setThemeMode]);
+  }, [
+    hasHydrated,
+    storeHasHydrated,
+    themeMode,
+    systemColorScheme,
+    setThemeMode,
+  ]);
 
   if (!hasHydrated) {
     return "light";

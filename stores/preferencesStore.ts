@@ -11,9 +11,11 @@ export type ThemeMode = "light" | "dark";
 interface PreferencesState {
   language: SupportedLanguage | null;
   themeMode: ThemeMode | null;
+  _hasHydrated: boolean;
   setLanguage: (language: SupportedLanguage) => void;
   setThemeMode: (mode: ThemeMode) => void;
   clearLanguage: () => void;
+  setHasHydrated: (hasHydrated: boolean) => void;
 }
 
 const hasLocalStorage = typeof window !== "undefined" && !!window.localStorage;
@@ -52,14 +54,29 @@ const storage = createJSONStorage(() => ({
 const storeCreator: StateCreator<PreferencesState> = (set) => ({
   language: null,
   themeMode: null,
-  setLanguage: (language) => set({ language }),
+  _hasHydrated: false,
+  setLanguage: (language) => {
+    console.log("[PreferencesStore] Setting language to:", language);
+    set({ language });
+  },
   setThemeMode: (themeMode) => set({ themeMode }),
   clearLanguage: () => set({ language: null }),
+  setHasHydrated: (hasHydrated) => {
+    console.log("[PreferencesStore] Hydration complete");
+    set({ _hasHydrated: hasHydrated });
+  },
 });
 
 export const usePreferencesStore = createFn(
   persist(storeCreator, {
     name: "workoutpilot-preferences",
     storage,
+    onRehydrateStorage: () => (state: PreferencesState | undefined) => {
+      console.log(
+        "[PreferencesStore] Rehydrating from storage, language:",
+        state?.language,
+      );
+      state?.setHasHydrated(true);
+    },
   }),
 );

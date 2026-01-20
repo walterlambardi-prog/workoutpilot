@@ -5,10 +5,10 @@ import {
   changeAppLanguage,
   DEFAULT_LANGUAGE,
   getActiveLanguage,
-  initializeLanguage,
+  getSystemLanguage,
   resolveLanguageTag,
   SUPPORTED_LANGUAGES,
-  type SupportedLanguage
+  type SupportedLanguage,
 } from "@/locales/i18n";
 import { usePreferencesStore } from "@/stores/preferencesStore";
 
@@ -24,17 +24,41 @@ export const useAppLanguage = () => {
     (state: { setLanguage: (language: SupportedLanguage) => void }) =>
       state.setLanguage,
   );
+  const hasHydrated = usePreferencesStore(
+    (state: { _hasHydrated: boolean }) => state._hasHydrated,
+  );
+  const [initialized, setInitialized] = useState(false);
 
-  // Initialize language from system if not set
+  // Initialize language from store or system after hydration (only once)
   useEffect(() => {
-    if (storedLanguage === null) {
-      const systemLanguage = getActiveLanguage();
-      setStoredLanguage(systemLanguage);
-      initializeLanguage(systemLanguage);
-    } else {
-      initializeLanguage(storedLanguage);
+    if (!hasHydrated || initialized) {
+      return; // Wait for store to hydrate or already initialized
     }
-  }, [storedLanguage, setStoredLanguage]);
+
+    const initLanguage = async () => {
+      if (storedLanguage === null) {
+        // First time: use system language and save it
+        const systemLanguage = getSystemLanguage();
+        console.log(
+          "[useAppLanguage] First time - setting system language:",
+          systemLanguage,
+        );
+        setStoredLanguage(systemLanguage);
+        if (systemLanguage !== i18n.language) {
+          await changeAppLanguage(systemLanguage);
+        }
+      } else {
+        // Use stored preference
+        console.log("[useAppLanguage] Using stored language:", storedLanguage);
+        if (storedLanguage !== i18n.language) {
+          await changeAppLanguage(storedLanguage);
+        }
+      }
+      setInitialized(true);
+    };
+
+    initLanguage();
+  }, [hasHydrated, initialized, storedLanguage, setStoredLanguage, i18n]);
 
   useEffect(() => {
     const handleLanguageChanged = (lng: string) => {
@@ -48,12 +72,20 @@ export const useAppLanguage = () => {
     };
   }, [i18n]);
 
+  // Sync local state with stored language after hydration
+  useEffect(() => {
+    if (hasHydrated && storedLanguage !== null) {
+      setLanguage(storedLanguage);
+    }
+  }, [hasHydrated, storedLanguage]);
+
   const changeLanguage = useCallback(
     (nextLanguage: SupportedLanguage) => {
       if (nextLanguage === language) {
         return;
       }
 
+      console.log("[useAppLanguage] Changing language to:", nextLanguage);
       setStoredLanguage(nextLanguage);
       changeAppLanguage(nextLanguage);
     },

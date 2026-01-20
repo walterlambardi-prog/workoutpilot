@@ -95,4 +95,9 @@ export const getActiveLanguage = (): SupportedLanguage => {
   return resolveLanguageTag(i18n.language) ?? DEFAULT_LANGUAGE;
 };
 
+export const getSystemLanguage = (): SupportedLanguage => {
+  const locales = Localization.getLocales();
+  return resolveLanguageTag(locales?.[0]?.languageTag) ?? DEFAULT_LANGUAGE;
+};
+
 export { i18n };
