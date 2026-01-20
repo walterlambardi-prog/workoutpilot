@@ -3,11 +3,18 @@ import { StyleSheet } from "react-native";
 const styles = StyleSheet.create({
   page: {
     flex: 1,
+    paddingTop: 24,
     paddingHorizontal: 16,
   },
   headerContainer: {
-    marginBottom: 16,
-    gap: 8,
+    marginBottom: 12,
+  },
+  title: {
+    lineHeight: 36,
+  },
+  subtitle: {
+    opacity: 0.8,
+    marginTop: 6,
   },
   section: {
     marginTop: 24,

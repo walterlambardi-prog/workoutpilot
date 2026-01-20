@@ -1,12 +1,12 @@
-import { Link } from "expo-router";
-import React from "react";
+import { useRouter } from "expo-router";
+import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { Pressable } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import ActionCard from "@/components/ActionCard";
 import { HelloWave } from "@/components/helloWave";
 import { ThemedText } from "@/components/themedText";
 import { ThemedView } from "@/components/themedView";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import styles from "./home.styles";
 import type { HomeNavAction } from "./home.types";
 
@@ -14,14 +14,20 @@ const actions: HomeNavAction[] = [
   {
     href: "/exercises",
     key: "exercises",
+    icon: "barbell-outline" as const,
+    color: "#60A5FA",
   },
   {
     href: "/sessions",
     key: "sessions",
+    icon: "stats-chart-outline" as const,
+    color: "#34D399",
   },
   {
     href: "/settings",
     key: "settings",
+    icon: "settings-outline" as const,
+    color: "#A78BFA",
   },
 ];
 
@@ -32,6 +38,14 @@ const actions: HomeNavAction[] = [
 const HomeScreen: React.FC = () => {
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
+  const router = useRouter();
+
+  const handleActionPress = useCallback(
+    (href: HomeNavAction["href"]) => {
+      router.push(href);
+    },
+    [router],
+  );
 
   return (
     <ThemedView style={[styles.page, { paddingTop: 30 + insets.top }]}>
@@ -47,26 +61,17 @@ const HomeScreen: React.FC = () => {
 
       <ThemedView style={styles.actionsContainer}>
         {actions.map((action) => (
-          <Link key={action.key} href={action.href} asChild>
-            <Pressable
-              style={({ pressed }) => [
-                styles.actionCard,
-                pressed ? styles.actionCardPressed : null,
-              ]}
-              accessibilityRole="button"
-              accessibilityLabel={t(`home.actions.${action.key}.title`)}
-              accessibilityHint={t(
-                `home.actions.${action.key}.accessibilityHint`,
-              )}
-            >
-              <ThemedText type="subtitle">
-                {t(`home.actions.${action.key}.title`)}
-              </ThemedText>
-              <ThemedText>
-                {t(`home.actions.${action.key}.description`)}
-              </ThemedText>
-            </Pressable>
-          </Link>
+          <ActionCard
+            key={action.key}
+            title={t(`home.actions.${action.key}.title`)}
+            subtitle={t(`home.actions.${action.key}.description`)}
+            icon={action.icon}
+            iconColor={action.color}
+            accessibilityHint={t(
+              `home.actions.${action.key}.accessibilityHint`,
+            )}
+            onPress={() => handleActionPress(action.href)}
+          />
         ))}
       </ThemedView>
     </ThemedView>

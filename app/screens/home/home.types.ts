@@ -5,4 +5,6 @@ export type HomeActionKey = "exercises" | "sessions" | "settings";
 export interface HomeNavAction {
   href: Href;
   key: HomeActionKey;
+  icon: string;
+  color: string;
 }

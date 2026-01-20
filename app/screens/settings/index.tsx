@@ -1,10 +1,10 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Alert, Pressable, ScrollView, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { ThemedText } from "@/components/themedText";
 import { useAppLanguage } from "@/hooks/useAppLanguage";
+import { useThemeColor } from "@/hooks/useThemeColor";
 import { useExerciseSessionStore } from "@/stores/exerciseSessionStore";
 import styles from "./settings.styles";
 
@@ -59,9 +59,9 @@ const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
  */
 const SettingsScreen: React.FC = () => {
   const { t } = useTranslation();
-  const insets = useSafeAreaInsets();
   const { language, changeLanguage, supportedLanguages } = useAppLanguage();
   const resetHistory = useExerciseSessionStore((state) => state.resetHistory);
+  const backgroundColor = useThemeColor({}, "background");
 
   const languageLabels = {
     en: t("settings.language.english"),
@@ -98,10 +98,17 @@ const SettingsScreen: React.FC = () => {
   };
 
   return (
-    <ScrollView style={[styles.page, { paddingTop: 16 + insets.top }]}>
+    <ScrollView
+      style={[styles.page, { backgroundColor }]}
+      showsVerticalScrollIndicator={false}
+    >
       <View style={styles.headerContainer}>
-        <ThemedText type="title">{t("settings.title")}</ThemedText>
-        <ThemedText>{t("settings.subtitle")}</ThemedText>
+        <ThemedText style={styles.title} type="title">
+          {t("settings.title")}
+        </ThemedText>
+        <ThemedText style={styles.subtitle}>
+          {t("settings.subtitle")}
+        </ThemedText>
       </View>
 
       <View style={styles.section}>

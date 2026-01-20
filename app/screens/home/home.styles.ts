@@ -21,16 +21,6 @@ const styles = StyleSheet.create({
     gap: 12,
     marginBottom: 16,
   },
-  actionCard: {
-    borderRadius: 12,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: "#3A3D46",
-    backgroundColor: "#111827",
-  },
-  actionCardPressed: {
-    opacity: 0.85,
-  },
 });
 
 export default styles;
