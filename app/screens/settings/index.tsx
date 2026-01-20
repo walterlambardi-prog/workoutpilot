@@ -1,12 +1,13 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Alert, Pressable, ScrollView, View } from "react-native";
+import { Pressable, ScrollView, View } from "react-native";
 
 import { ThemedText } from "@/components/themedText";
 import { useAppLanguage } from "@/hooks/useAppLanguage";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { useExerciseSessionStore } from "@/stores/exerciseSessionStore";
 import { usePreferencesStore, type ThemeMode } from "@/stores/preferencesStore";
+import { showAlert } from "@/utils/alert";
 import styles from "./settings.styles";
 
 type LanguageCode = ReturnType<
@@ -124,7 +125,7 @@ const SettingsScreen: React.FC = () => {
   }));
 
   const handleClearHistory = () => {
-    Alert.alert(
+    showAlert(
       t("settings.data.clearHistoryConfirmTitle"),
       t("settings.data.clearHistoryConfirmMessage"),
       [
@@ -137,7 +138,7 @@ const SettingsScreen: React.FC = () => {
           style: "destructive",
           onPress: () => {
             resetHistory();
-            Alert.alert(
+            showAlert(
               t("settings.data.clearedTitle"),
               t("settings.data.clearedMessage"),
             );
