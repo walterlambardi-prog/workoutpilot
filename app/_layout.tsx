@@ -10,6 +10,7 @@ import { Platform } from "react-native";
 import "react-native-reanimated";
 
 import AppLoader from "@/components/AppLoader";
+import "@/config/initReactotron";
 import { useAppLanguage } from "@/hooks/useAppLanguage";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import "@/locales/i18n";

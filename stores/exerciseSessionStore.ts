@@ -2,12 +2,12 @@ import type { StateCreator, StoreApi, UseBoundStore } from "zustand";
 import type { PersistOptions } from "zustand/middleware";
 
 import { ExerciseId } from "@/constants/exercises";
+import { createCrossPlatformStorage } from "@/utils/storage";
+
 // Use require to force CJS entry (avoids import.meta in ESM build on web)
 // while keeping types via the imports above.
- 
 const { create: createFn } = require("zustand");
- 
-const { createJSONStorage, persist } = require("zustand/middleware");
+const { persist } = require("zustand/middleware");
 
 export interface ExerciseSessionEntry {
   id: string;
@@ -38,38 +38,7 @@ const HISTORY_LIMIT = 200;
 const createId = () =>
   `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
 
-const hasLocalStorage = typeof window !== "undefined" && !!window.localStorage;
-
-const getAsyncStorage = async () => {
-  const mod = await import("@react-native-async-storage/async-storage");
-  return mod.default;
-};
-
-const storage = createJSONStorage(() => ({
-  getItem: async (name: string) => {
-    if (hasLocalStorage) {
-      return window.localStorage.getItem(name);
-    }
-    const asyncStorage = await getAsyncStorage();
-    return asyncStorage.getItem(name);
-  },
-  setItem: async (name: string, value: string) => {
-    if (hasLocalStorage) {
-      window.localStorage.setItem(name, value);
-      return;
-    }
-    const asyncStorage = await getAsyncStorage();
-    return asyncStorage.setItem(name, value);
-  },
-  removeItem: async (name: string) => {
-    if (hasLocalStorage) {
-      window.localStorage.removeItem(name);
-      return;
-    }
-    const asyncStorage = await getAsyncStorage();
-    return asyncStorage.removeItem(name);
-  },
-}));
+const storage = createCrossPlatformStorage();
 
 type PersistedState = ExerciseSessionState;
 
@@ -161,3 +130,21 @@ export const useExerciseSessionStore = createTyped<ExerciseSessionState>(
     },
   ),
 );
+
+// Subscribe to store changes for Reactotron debugging (native only)
+if (
+  __DEV__ &&
+  typeof navigator !== "undefined" &&
+  navigator.product === "ReactNative"
+) {
+  const reactotron = require("@/config/reactotron").default;
+  if (reactotron) {
+    useExerciseSessionStore.subscribe((state: ExerciseSessionState) => {
+      reactotron?.display?.({
+        name: "ExerciseSessionStore",
+        value: state,
+        preview: `session=${state.currentSession?.exerciseId ?? "-"} reps=${state.currentSession?.reps ?? 0}`,
+      });
+    });
+  }
+}

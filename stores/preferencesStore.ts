@@ -1,10 +1,11 @@
 import type { StateCreator } from "zustand";
 
 import type { SupportedLanguage } from "@/locales/i18n";
+import { createCrossPlatformStorage } from "@/utils/storage";
 
 // Use require to force CJS entry (avoids import.meta in ESM build on web)
 const { create: createFn } = require("zustand");
-const { createJSONStorage, persist } = require("zustand/middleware");
+const { persist } = require("zustand/middleware");
 
 export type ThemeMode = "light" | "dark";
 
@@ -18,38 +19,7 @@ interface PreferencesState {
   setHasHydrated: (hasHydrated: boolean) => void;
 }
 
-const hasLocalStorage = typeof window !== "undefined" && !!window.localStorage;
-
-const getAsyncStorage = async () => {
-  const mod = await import("@react-native-async-storage/async-storage");
-  return mod.default;
-};
-
-const storage = createJSONStorage(() => ({
-  getItem: async (name: string) => {
-    if (hasLocalStorage) {
-      return window.localStorage.getItem(name);
-    }
-    const AsyncStorage = await getAsyncStorage();
-    return AsyncStorage.getItem(name);
-  },
-  setItem: async (name: string, value: string) => {
-    if (hasLocalStorage) {
-      window.localStorage.setItem(name, value);
-      return;
-    }
-    const AsyncStorage = await getAsyncStorage();
-    await AsyncStorage.setItem(name, value);
-  },
-  removeItem: async (name: string) => {
-    if (hasLocalStorage) {
-      window.localStorage.removeItem(name);
-      return;
-    }
-    const AsyncStorage = await getAsyncStorage();
-    await AsyncStorage.removeItem(name);
-  },
-}));
+const storage = createCrossPlatformStorage();
 
 const storeCreator: StateCreator<PreferencesState> = (set) => ({
   language: null,
@@ -76,3 +46,21 @@ export const usePreferencesStore = createFn(
     },
   }),
 );
+
+// Subscribe to store changes for Reactotron debugging (native only)
+if (
+  __DEV__ &&
+  typeof navigator !== "undefined" &&
+  navigator.product === "ReactNative"
+) {
+  const reactotron = require("@/config/reactotron").default;
+  if (reactotron) {
+    usePreferencesStore.subscribe((state: PreferencesState) => {
+      reactotron?.display?.({
+        name: "PreferencesStore",
+        value: state,
+        preview: `lang=${state.language ?? "-"} theme=${state.themeMode ?? "-"}`,
+      });
+    });
+  }
+}
