@@ -48,8 +48,12 @@ export const useAppLanguage = () => {
           await changeAppLanguage(systemLanguage);
         }
       } else {
-        // Use stored preference
-        console.log("[useAppLanguage] Using stored language:", storedLanguage);
+        console.log(
+          "[useAppLanguage] Using stored language:",
+          storedLanguage,
+          "current i18n language:",
+          i18n.language,
+        );
         if (storedLanguage !== i18n.language) {
           await changeAppLanguage(storedLanguage);
         }

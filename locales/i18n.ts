@@ -78,7 +78,8 @@ addLocalizationListener?.(() => {
 
 export const changeAppLanguage = async (language: SupportedLanguage) => {
   hasManualLanguageOverride = true;
-  return i18n.changeLanguage(language);
+  const result = await i18n.changeLanguage(language);
+  return result;
 };
 
 export const resetToSystemLanguage = () => {

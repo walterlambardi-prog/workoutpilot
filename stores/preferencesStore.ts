@@ -72,10 +72,6 @@ export const usePreferencesStore = createFn(
     name: "workoutpilot-preferences",
     storage,
     onRehydrateStorage: () => (state: PreferencesState | undefined) => {
-      console.log(
-        "[PreferencesStore] Rehydrating from storage, language:",
-        state?.language,
-      );
       state?.setHasHydrated(true);
     },
   }),

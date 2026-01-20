@@ -9,12 +9,16 @@ import { useTranslation } from "react-i18next";
 import { Platform } from "react-native";
 import "react-native-reanimated";
 
+import { useAppLanguage } from "@/hooks/useAppLanguage";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import "@/locales/i18n";
 
 export default function RootLayout() {
   const { t } = useTranslation();
   const colorScheme = useColorScheme();
+
+  // Initialize language preference on app startup
+  useAppLanguage();
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
