@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
+import { drawPoseLandmarks } from "@/components/exercises/utils/poseDrawing";
 import { ExerciseId } from "@/constants/exercises";
 import { useExerciseSessionStore } from "@/stores/exerciseSessionStore";
-import { drawPoseLandmarks } from "@/utils/poseDrawing";
 
 import {
   MEDIAPIPE_CONFIG,
