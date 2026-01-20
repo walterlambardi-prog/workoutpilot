@@ -192,12 +192,14 @@ const SessionsScreen: React.FC = () => {
       style={[styles.page, { backgroundColor }]}
       showsVerticalScrollIndicator={false}
     >
-      <View style={styles.header}>
-        <ThemedText style={styles.title}>{t("sessions.title")}</ThemedText>
-        <ThemedText style={[styles.subtitle, { color: mutedText }]}>
+      <ThemedView style={styles.header}>
+        <ThemedText style={styles.title} type="title">
+          {t("sessions.title")}
+        </ThemedText>
+        <ThemedText style={styles.subtitle}>
           {t("sessions.subtitle")}
         </ThemedText>
-      </View>
+      </ThemedView>
 
       <View style={styles.cards}>
         <ThemedView

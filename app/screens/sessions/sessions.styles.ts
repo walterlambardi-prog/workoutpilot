@@ -4,21 +4,18 @@ const styles = StyleSheet.create({
   page: {
     flex: 1,
     paddingHorizontal: 16,
-    paddingTop: 16,
+    paddingTop: 24,
     paddingBottom: 32,
   },
   header: {
-    marginBottom: 16,
-    paddingTop: 24,
+    marginBottom: 12,
   },
   title: {
-    fontSize: 26,
-    fontWeight: "700",
     lineHeight: 36,
   },
   subtitle: {
-    fontSize: 14,
-    marginTop: 4,
+    opacity: 0.8,
+    marginTop: 6,
   },
   cards: {
     gap: 12,
