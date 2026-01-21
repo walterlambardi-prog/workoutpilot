@@ -44,6 +44,10 @@ export default function RootLayout() {
           options={{ title: t("navigation.routine") }}
         />
         <Stack.Screen
+          name="routine/complete/index"
+          options={{ title: t("routineComplete.navTitle") }}
+        />
+        <Stack.Screen
           name="exercises/index"
           options={{ title: t("navigation.exercises") }}
         />

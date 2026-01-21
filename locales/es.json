@@ -119,6 +119,38 @@
     },
     "cta": "Iniciar rutina"
   },
+  "routineRun": {
+    "chips": {
+      "target": "Meta",
+      "round": "Ronda",
+      "roundValue": "Ronda {{current}}/{{total}}",
+      "step": "Paso",
+      "stepValue": "Paso {{current}}/{{total}}"
+    },
+    "progressLabel": "Progreso: {{current}} / {{target}} reps",
+    "nextExercise": "Siguiente: {{exercise}}"
+  },
+  "routineComplete": {
+    "navTitle": "Rutina completa",
+    "title": "¡Rutina completada!",
+    "subtitle": "Terminaste {{rounds}} rondas.",
+    "encourage": "Gran trabajo: sigue con el impulso.",
+    "stats": {
+      "totalReps": "Reps totales",
+      "duration": "Duración",
+      "rounds": "Rondas",
+      "exercises": "Ejercicios"
+    },
+    "actions": {
+      "repeat": "Repetir rutina",
+      "backToRoutine": "Volver a rutina",
+      "home": "Ir al inicio"
+    },
+    "summary": {
+      "title": "Resumen de sesión",
+      "meta": "Ronda {{round}} · {{reps}} reps (meta {{target}})"
+    }
+  },
   "exercises": {
     "statuses": {
       "idle": "En espera",
@@ -266,5 +298,16 @@
         "right": "Brazo derecho"
       }
     }
+  },
+  "routineRun": {
+    "chips": {
+      "target": "Objetivo",
+      "round": "Ronda",
+      "roundValue": "{{current}} de {{total}}",
+      "step": "Paso",
+      "stepValue": "{{current}} / {{total}}"
+    },
+    "progressLabel": "Reps {{current}} / {{target}}",
+    "nextExercise": "Siguiente: {{exercise}}"
   }
 }

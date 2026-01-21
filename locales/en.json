@@ -119,6 +119,38 @@
     },
     "cta": "Start routine"
   },
+  "routineRun": {
+    "chips": {
+      "target": "Target",
+      "round": "Round",
+      "roundValue": "Round {{current}}/{{total}}",
+      "step": "Step",
+      "stepValue": "Step {{current}}/{{total}}"
+    },
+    "progressLabel": "Progress: {{current}} / {{target}} reps",
+    "nextExercise": "Next: {{exercise}}"
+  },
+  "routineComplete": {
+    "navTitle": "Routine complete",
+    "title": "Routine complete!",
+    "subtitle": "You finished {{rounds}} rounds.",
+    "encourage": "Amazing work—keep the momentum going.",
+    "stats": {
+      "totalReps": "Total reps",
+      "duration": "Duration",
+      "rounds": "Rounds",
+      "exercises": "Exercises"
+    },
+    "actions": {
+      "repeat": "Repeat routine",
+      "backToRoutine": "Back to routine",
+      "home": "Go home"
+    },
+    "summary": {
+      "title": "Session summary",
+      "meta": "Round {{round}} · {{reps}} reps (target {{target}})"
+    }
+  },
   "exercises": {
     "statuses": {
       "idle": "Idle",
@@ -266,5 +298,16 @@
         "right": "Right arm"
       }
     }
+  },
+  "routineRun": {
+    "chips": {
+      "target": "Target",
+      "round": "Round",
+      "roundValue": "{{current}} of {{total}}",
+      "step": "Step",
+      "stepValue": "{{current}} / {{total}}"
+    },
+    "progressLabel": "Reps {{current}} / {{target}}",
+    "nextExercise": "Next: {{exercise}}"
   }
 }

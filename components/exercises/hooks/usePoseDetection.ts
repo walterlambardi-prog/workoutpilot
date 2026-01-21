@@ -1,5 +1,5 @@
 import { switchCamera } from "@thinksys/react-native-mediapipe";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { useExerciseSessionStore } from "@/stores/exerciseSessionStore";
 
@@ -17,8 +17,9 @@ import { useSquatsCounter } from "./useSquatsCounter";
 export const usePoseDetection = (params: {
   exerciseId?: ExerciseId;
   t: TFunction;
+  resetKey?: string | number;
 }) => {
-  const { exerciseId, t } = params;
+  const { exerciseId, t, resetKey } = params;
   const [status, setStatus] = useState<Status>("idle");
   const [messageKey, setMessageKey] = useState<PoseMessageKey>("cameraReady");
   const [poseCount, setPoseCount] = useState(0);
@@ -30,6 +31,16 @@ export const usePoseDetection = (params: {
   const hammerCurls = useHammerCurlsCounter(t);
   const lateralRaises = useLateralRaisesCounter(t);
   const squats = useSquatsCounter(t);
+
+  useEffect(() => {
+    lastRepCountRef.current = 0;
+    reportedRepRef.current = 0;
+    setRepCount(undefined);
+    setPoseCount(0);
+    setFeedback(undefined);
+    setStatus("idle");
+    setMessageKey("cameraReady");
+  }, [exerciseId, resetKey]);
 
   const extractLandmarks = useCallback((rawPayload: unknown) => {
     let payload = rawPayload;

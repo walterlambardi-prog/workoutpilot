@@ -24,7 +24,10 @@ import { useSquatsCounter } from "./useSquatsCounter";
  * Hook for managing MediaPipe pose detection on web platform
  * Uses @mediapipe/tasks-vision for browser-based pose detection
  */
-export const useWebPoseDetection = (exerciseId?: ExerciseId) => {
+export const useWebPoseDetection = (
+  exerciseId?: ExerciseId,
+  resetKey?: string | number,
+) => {
   const [status, setStatus] = useState<Status>("idle");
   const [messageKey, setMessageKey] =
     useState<PoseMessageKey>("promptCameraAccess");
@@ -42,6 +45,13 @@ export const useWebPoseDetection = (exerciseId?: ExerciseId) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const rafRef = useRef<number | undefined>(undefined);
   const streamRef = useRef<MediaStream | null>(null);
+
+  useEffect(() => {
+    lastRepCountRef.current = 0;
+    reportedRepRef.current = 0;
+    setStats(null);
+    setMessageKey("processing");
+  }, [exerciseId, resetKey]);
 
   const processFrame = useCallback(() => {
     const video = videoRef.current;

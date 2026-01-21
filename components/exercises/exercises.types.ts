@@ -1,3 +1,5 @@
+import { ExerciseId } from "@/constants/exercises";
+
 export type Status =
   | "idle"
   | "loading"
@@ -40,4 +42,22 @@ export interface PoseLandmark {
 
 export interface MediaPipeResult {
   landmarks?: PoseLandmark[][];
+}
+
+export interface RoutineContext {
+  isActive: boolean;
+  routineId: string | null;
+  targetReps: number;
+  currentRound: number;
+  totalRounds: number;
+  stepIndex: number;
+  totalSteps: number;
+  nextExerciseId?: ExerciseId;
+  onProgress?: (reps: number) => void;
+  onComplete?: (reps: number) => void;
+}
+
+export interface ExercisesProps {
+  exerciseId?: ExerciseId;
+  routineContext?: RoutineContext;
 }

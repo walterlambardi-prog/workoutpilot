@@ -3,6 +3,7 @@ import React, { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
 import { EXERCISE_DEFINITION_MAP } from "@/app/exercises/exercises.data";
+import { useRoutineStep } from "@/app/routine/useRoutineStep";
 import Exercises from "@/components/exercises";
 import { ThemedView } from "@/components/themedView";
 import { ExerciseId } from "@/constants/exercises";
@@ -23,6 +24,8 @@ const ExerciseSessionScreen: React.FC = () => {
   const exerciseDefinition = normalizedId
     ? EXERCISE_DEFINITION_MAP[normalizedId as ExerciseId]
     : undefined;
+
+  const routineStep = useRoutineStep(exerciseDefinition?.id);
 
   const exerciseTitle = exerciseDefinition
     ? t(`${exerciseDefinition.copyKey}.title`)
@@ -51,13 +54,48 @@ const ExerciseSessionScreen: React.FC = () => {
     };
   }, [exerciseDefinition]);
 
+  const routineContext = useMemo(
+    () =>
+      routineStep.isRoutine &&
+      routineStep.targetReps &&
+      routineStep.stepIndex !== null
+        ? {
+            isActive: true,
+            routineId: routineStep.routineId,
+            targetReps: routineStep.targetReps,
+            currentRound: routineStep.currentRound ?? 1,
+            totalRounds: routineStep.totalRounds ?? 1,
+            stepIndex: routineStep.stepIndex ?? 0,
+            totalSteps: routineStep.totalSteps ?? 1,
+            nextExerciseId: routineStep.nextExerciseId ?? undefined,
+            onProgress: routineStep.onProgress,
+            onComplete: routineStep.onComplete,
+          }
+        : undefined,
+    [
+      routineStep.currentRound,
+      routineStep.isRoutine,
+      routineStep.nextExerciseId,
+      routineStep.onComplete,
+      routineStep.onProgress,
+      routineStep.routineId,
+      routineStep.stepIndex,
+      routineStep.targetReps,
+      routineStep.totalRounds,
+      routineStep.totalSteps,
+    ],
+  );
+
   if (!exerciseDefinition) {
     return null;
   }
 
   return (
     <ThemedView style={styles.container}>
-      <Exercises exerciseId={exerciseDefinition.id} />
+      <Exercises
+        exerciseId={exerciseDefinition.id}
+        routineContext={routineContext}
+      />
     </ThemedView>
   );
 };

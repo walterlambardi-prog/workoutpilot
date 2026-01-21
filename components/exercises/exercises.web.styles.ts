@@ -95,6 +95,40 @@ export const rnStyles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 22,
   },
+  progressCard: {
+    borderRadius: 20,
+    padding: 16,
+    borderWidth: 1,
+    borderStyle: "solid",
+    gap: 12,
+  },
+  progressHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  progressLabel: {
+    fontSize: 14,
+    fontWeight: "600",
+  },
+  progressValue: {
+    fontSize: 14,
+    fontWeight: "700",
+  },
+  progressTrack: {
+    height: 10,
+    borderRadius: 999,
+    overflow: "hidden",
+    backgroundColor: "rgba(255,255,255,0.08)",
+  },
+  progressFill: {
+    height: "100%",
+    borderRadius: 999,
+  },
+  nextExercise: {
+    fontSize: 13,
+    fontWeight: "600",
+  },
 });
 
 export const webMediaStyles: { video: CSSProperties; canvas: CSSProperties } = {

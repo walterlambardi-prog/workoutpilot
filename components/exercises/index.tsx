@@ -1,27 +1,30 @@
 import { RNMediapipe } from "@thinksys/react-native-mediapipe";
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { TouchableOpacity, useWindowDimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { ThemedText } from "@/components/themedText";
 import { ThemedView } from "@/components/themedView";
-import { EXERCISE_COPY_KEYS, ExerciseId } from "@/constants/exercises";
+import { EXERCISE_COPY_KEYS } from "@/constants/exercises";
 import { useThemeColor } from "@/hooks/useThemeColor";
 
 import { CAMERA_HEIGHT, CAMERA_WIDTH } from "./exercises.constants";
 import styles from "./exercises.styles";
+import type { ExercisesProps } from "./exercises.types";
 import { usePoseDetection } from "./hooks/usePoseDetection";
 
 /**
  * Native exercises screen with MediaPipe pose detection
  * Uses @thinksys/react-native-mediapipe for iOS/Android
  */
-export interface ExercisesProps {
-  exerciseId?: ExerciseId;
-}
 
-export default function ExercisesNativeScreen({ exerciseId }: ExercisesProps) {
+export default function ExercisesNativeScreen({
+  exerciseId,
+  routineContext,
+}: ExercisesProps) {
+  const screenKey = `${exerciseId ?? "unknown"}-${routineContext?.stepIndex ?? "solo"}`;
+  const [showCamera, setShowCamera] = useState(true);
   const { t } = useTranslation();
   const {
     status,
@@ -31,7 +34,69 @@ export default function ExercisesNativeScreen({ exerciseId }: ExercisesProps) {
     feedback,
     handleLandmark,
     handleSwitchCamera,
-  } = usePoseDetection({ exerciseId, t });
+  } = usePoseDetection({
+    exerciseId,
+    t,
+    resetKey: routineContext?.stepIndex,
+  });
+
+  const advanceRef = useRef(false);
+  const lastStepIndexRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    advanceRef.current = false;
+  }, [exerciseId, routineContext?.routineId, routineContext?.stepIndex]);
+
+  // Force RNMediapipe to unmount/remount when the routine step changes to
+  // restart the native camera session reliably.
+  useEffect(() => {
+    setShowCamera(false);
+    const timer = setTimeout(() => setShowCamera(true), 50);
+    return () => clearTimeout(timer);
+  }, [screenKey]);
+
+  const routineIsActive = routineContext?.isActive ?? false;
+  const routineStepIndex = routineContext?.stepIndex ?? null;
+  const routineTargetReps = routineContext?.targetReps ?? 0;
+  const routineOnProgress = routineContext?.onProgress;
+  const routineOnComplete = routineContext?.onComplete;
+
+  useEffect(() => {
+    if (!routineIsActive) {
+      lastStepIndexRef.current = null;
+      return;
+    }
+
+    const stepChanged = routineStepIndex !== lastStepIndexRef.current;
+
+    if (stepChanged && (repCount ?? 0) > 0) {
+      return;
+    }
+
+    if (stepChanged) {
+      lastStepIndexRef.current = routineStepIndex;
+    }
+
+    if (typeof repCount !== "number") return;
+
+    routineOnProgress?.(repCount);
+
+    if (repCount >= routineTargetReps && routineTargetReps > 0) {
+      if (!advanceRef.current) {
+        advanceRef.current = true;
+        routineOnComplete?.(repCount);
+      }
+    } else {
+      advanceRef.current = false;
+    }
+  }, [
+    repCount,
+    routineIsActive,
+    routineOnComplete,
+    routineOnProgress,
+    routineStepIndex,
+    routineTargetReps,
+  ]);
 
   const copyKey = exerciseId ? EXERCISE_COPY_KEYS[exerciseId] : undefined;
   const headerTitle = copyKey
@@ -100,28 +165,87 @@ export default function ExercisesNativeScreen({ exerciseId }: ExercisesProps) {
       });
     }
 
+    if (routineContext?.isActive && routineContext.targetReps > 0) {
+      const safeProgress = Math.max(
+        0,
+        Math.min(routineContext.targetReps, repCount ?? 0),
+      );
+
+      chips.push({
+        key: "target",
+        label: t("routineRun.chips.target"),
+        value: `${safeProgress}/${routineContext.targetReps}`,
+      });
+
+      chips.push({
+        key: "round",
+        label: t("routineRun.chips.round"),
+        value: t("routineRun.chips.roundValue", {
+          current: routineContext.currentRound,
+          total: routineContext.totalRounds,
+        }),
+      });
+
+      chips.push({
+        key: "step",
+        label: t("routineRun.chips.step"),
+        value: t("routineRun.chips.stepValue", {
+          current: routineContext.stepIndex + 1,
+          total: routineContext.totalSteps,
+        }),
+      });
+    }
+
     return chips;
-  }, [poseCount, repCount, status, t]);
+  }, [poseCount, repCount, routineContext, status, t]);
+
+  const routineProgress = useMemo(() => {
+    if (!routineContext?.isActive || routineContext.targetReps <= 0) {
+      return null;
+    }
+
+    const completed = Math.max(
+      0,
+      Math.min(routineContext.targetReps, repCount ?? 0),
+    );
+    const ratio = Math.min(1, completed / routineContext.targetReps);
+
+    return { completed, target: routineContext.targetReps, ratio };
+  }, [repCount, routineContext]);
+
+  const nextExerciseTitle = useMemo(() => {
+    if (!routineContext?.nextExerciseId) return null;
+    const nextKey = EXERCISE_COPY_KEYS[routineContext.nextExerciseId];
+    return t(`${nextKey}.title`);
+  }, [routineContext?.nextExerciseId, t]);
 
   return (
-    <ThemedView style={styles.screen} lightColor="#000" darkColor="#000">
+    <ThemedView
+      key={screenKey}
+      style={styles.screen}
+      lightColor="#000"
+      darkColor="#000"
+    >
       <ThemedView style={styles.cameraWrapper} pointerEvents="none">
-        <RNMediapipe
-          width={cameraWidth}
-          height={cameraHeight}
-          onLandmark={handleLandmark}
-          cameraOverlayColor={scrimColor}
-          face={true}
-          leftArm={true}
-          rightArm={true}
-          leftWrist={true}
-          rightWrist={true}
-          torso={true}
-          leftLeg={true}
-          rightLeg={true}
-          leftAnkle={true}
-          rightAnkle={true}
-        />
+        {showCamera ? (
+          <RNMediapipe
+            key={screenKey}
+            width={cameraWidth}
+            height={cameraHeight}
+            onLandmark={handleLandmark}
+            cameraOverlayColor={scrimColor}
+            face={true}
+            leftArm={true}
+            rightArm={true}
+            leftWrist={true}
+            rightWrist={true}
+            torso={true}
+            leftLeg={true}
+            rightLeg={true}
+            leftAnkle={true}
+            rightAnkle={true}
+          />
+        ) : null}
       </ThemedView>
 
       <ThemedView
@@ -191,6 +315,75 @@ export default function ExercisesNativeScreen({ exerciseId }: ExercisesProps) {
                     style={[styles.chipValue, { color: overlayHeading }]}
                   >
                     {chip.value}
+
+                    {routineProgress ? (
+                      <ThemedView
+                        style={[
+                          styles.progressCard,
+                          { borderColor: overlayBorder },
+                        ]}
+                        lightColor="transparent"
+                        darkColor="transparent"
+                      >
+                        <ThemedView
+                          style={styles.progressHeader}
+                          lightColor="transparent"
+                          darkColor="transparent"
+                        >
+                          <ThemedText
+                            style={[
+                              styles.progressLabel,
+                              { color: overlayHeading },
+                            ]}
+                          >
+                            {t("routineRun.progressLabel", {
+                              current: routineProgress.completed,
+                              target: routineProgress.target,
+                            })}
+                          </ThemedText>
+                          <ThemedText
+                            style={[
+                              styles.progressValue,
+                              { color: overlayHeading },
+                            ]}
+                          >
+                            {Math.round(routineProgress.ratio * 100)}%
+                          </ThemedText>
+                        </ThemedView>
+
+                        <ThemedView
+                          style={styles.progressTrack}
+                          lightColor="transparent"
+                          darkColor="transparent"
+                        >
+                          <ThemedView
+                            style={[
+                              styles.progressFill,
+                              {
+                                width: `${Math.min(100, Math.max(0, routineProgress.ratio * 100))}%`,
+                                backgroundColor: accentColor,
+                              },
+                            ]}
+                            lightColor="transparent"
+                            darkColor="transparent"
+                          />
+                        </ThemedView>
+
+                        {nextExerciseTitle ? (
+                          <ThemedText
+                            style={[
+                              styles.nextExercise,
+                              { color: overlayMuted },
+                            ]}
+                            numberOfLines={1}
+                          >
+                            {t("routineRun.nextExercise", {
+                              exercise: nextExerciseTitle,
+                            })}
+                          </ThemedText>
+                        ) : null}
+                      </ThemedView>
+                    ) : null}
                   </ThemedText>
                 </ThemedView>
               ))}

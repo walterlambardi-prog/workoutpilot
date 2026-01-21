@@ -70,6 +70,38 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 22,
   },
+  progressCard: {
+    borderRadius: 18,
+    padding: 16,
+    borderWidth: 1,
+    gap: 10,
+  },
+  progressHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  progressLabel: {
+    fontSize: 14,
+    fontWeight: "600",
+  },
+  progressValue: {
+    fontSize: 14,
+    fontWeight: "700",
+  },
+  progressTrack: {
+    height: 10,
+    borderRadius: 999,
+    overflow: "hidden",
+  },
+  progressFill: {
+    height: "100%",
+    borderRadius: 999,
+  },
+  nextExercise: {
+    fontSize: 13,
+    fontWeight: "600",
+  },
   switchButton: {
     borderRadius: 16,
     paddingVertical: 16,

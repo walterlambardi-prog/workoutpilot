@@ -219,6 +219,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#16A34A",
   },
+  ctaButtonDisabled: {
+    opacity: 0.45,
+  },
   ctaButtonPressed: {
     opacity: 0.85,
   },

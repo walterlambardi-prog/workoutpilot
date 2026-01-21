@@ -1,27 +1,29 @@
 import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 import React, { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import {
-    FlatList,
-    ImageBackground,
-    Pressable,
-    View,
-    type ListRenderItemInfo,
+  FlatList,
+  ImageBackground,
+  Pressable,
+  View,
+  type ListRenderItemInfo,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { EXERCISE_DEFINITIONS } from "@/app/exercises/exercises.data";
 import type {
-    RoutineBuilderScreenProps,
-    RoutineExerciseListItem,
+  RoutineBuilderScreenProps,
+  RoutineExerciseListItem,
 } from "@/app/routine/routine.types";
 import { ThemedText } from "@/components/themedText";
 import { ThemedView } from "@/components/themedView";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import {
-    ROUTINE_DEFAULT_REPS,
-    useRoutineBuilderStore,
+  ROUTINE_DEFAULT_REPS,
+  useRoutineBuilderStore,
 } from "@/stores/routineBuilderStore";
+import { useRoutineSessionStore } from "@/stores/routineSessionStore";
 import styles from "./routine.styles";
 
 interface StepperButtonProps {
@@ -69,6 +71,7 @@ const RoutineBuilderScreen: React.FC<RoutineBuilderScreenProps> = () => {
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const colorScheme = (useColorScheme() ?? "light") as "light" | "dark";
+  const router = useRouter();
 
   const roundsCardTone =
     colorScheme === "dark" ? styles.roundsCardDark : styles.roundsCardLight;
@@ -87,6 +90,9 @@ const RoutineBuilderScreen: React.FC<RoutineBuilderScreenProps> = () => {
   const decrementReps = useRoutineBuilderStore((state) => state.decrementReps);
   const toggleExercise = useRoutineBuilderStore(
     (state) => state.toggleExercise,
+  );
+  const startRoutineSession = useRoutineSessionStore(
+    (state) => state.startSession,
   );
 
   const exerciseList = useMemo<RoutineExerciseListItem[]>(
@@ -313,10 +319,45 @@ const RoutineBuilderScreen: React.FC<RoutineBuilderScreenProps> = () => {
         accessibilityRole="button"
         accessibilityLabel={t("routineBuilder.cta")}
         accessibilityHint={t("routineBuilder.cta")}
+        disabled={selectedCount === 0}
         style={({ pressed }) => [
           styles.ctaButton,
+          selectedCount === 0 ? styles.ctaButtonDisabled : null,
           pressed ? styles.ctaButtonPressed : null,
         ]}
+        onPress={() => {
+          const selectedExercises = EXERCISE_DEFINITIONS.filter(
+            ({ id }) => exercises[id]?.isSelected,
+          );
+
+          if (selectedExercises.length === 0) {
+            return;
+          }
+
+          const plan = Array.from({ length: rounds }).flatMap((_, roundIndex) =>
+            selectedExercises.map(({ id }) => ({
+              exerciseId: id,
+              targetReps: exercises[id]?.reps ?? ROUTINE_DEFAULT_REPS,
+              round: roundIndex + 1,
+            })),
+          );
+
+          const sessionId = startRoutineSession(plan, rounds);
+          const firstStep = plan[0];
+
+          if (!sessionId || !firstStep) {
+            return;
+          }
+
+          router.push({
+            pathname: "/exercises/[exerciseId]",
+            params: {
+              exerciseId: firstStep.exerciseId,
+              routineId: sessionId,
+              stepIndex: "0",
+            },
+          });
+        }}
       >
         <ThemedText
           style={styles.ctaLabel}
