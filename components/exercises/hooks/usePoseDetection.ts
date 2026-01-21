@@ -165,24 +165,6 @@ export const usePoseDetection = (params: {
             setFeedback(next?.feedback);
           }
 
-          if (exerciseId === ExerciseId.HAMMER_CURLS) {
-            const next = hammerCurls.processLandmarks(landmarks);
-            const rep = next?.repCount ?? 0;
-            const stableRep = Math.max(lastRepCountRef.current, rep);
-            lastRepCountRef.current = stableRep;
-            setRepCount(stableRep);
-            if (exerciseId) {
-              const prev = reportedRepRef.current;
-              if (stableRep > prev) {
-                useExerciseSessionStore
-                  .getState()
-                  .addRep(exerciseId, stableRep - prev);
-                reportedRepRef.current = stableRep;
-              }
-            }
-            setFeedback(next?.feedback);
-          }
-
           if (exerciseId === ExerciseId.SQUATS) {
             const next = squats.processLandmarks(landmarks);
             const rep = next?.repCount ?? 0;
@@ -205,24 +187,6 @@ export const usePoseDetection = (params: {
           setMessageKey("noPoseDetected");
           if (exerciseId === ExerciseId.LATERAL_RAISES) {
             const next = lateralRaises.processLandmarks(undefined);
-            const rep = next?.repCount ?? 0;
-            const stableRep = Math.max(lastRepCountRef.current, rep);
-            lastRepCountRef.current = stableRep;
-            setRepCount(stableRep);
-            if (exerciseId) {
-              const prev = reportedRepRef.current;
-              if (stableRep > prev) {
-                useExerciseSessionStore
-                  .getState()
-                  .addRep(exerciseId, stableRep - prev);
-                reportedRepRef.current = stableRep;
-              }
-            }
-            setFeedback(next?.feedback);
-          }
-
-          if (exerciseId === ExerciseId.HAMMER_CURLS) {
-            const next = hammerCurls.processLandmarks(undefined);
             const rep = next?.repCount ?? 0;
             const stableRep = Math.max(lastRepCountRef.current, rep);
             lastRepCountRef.current = stableRep;

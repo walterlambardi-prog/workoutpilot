@@ -24,7 +24,10 @@ export default function ExercisesNativeScreen({
   routineContext,
 }: ExercisesProps) {
   const screenKey = `${exerciseId ?? "unknown"}-${routineContext?.stepIndex ?? "solo"}`;
-  const [showCamera, setShowCamera] = useState(true);
+  const [showCamera, setShowCamera] = useState(false);
+  const [cameraSessionKey, setCameraSessionKey] = useState(0);
+  const isFirstRenderRef = useRef(true);
+  const remountTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { t } = useTranslation();
   const {
     status,
@@ -47,13 +50,40 @@ export default function ExercisesNativeScreen({
     advanceRef.current = false;
   }, [exerciseId, routineContext?.routineId, routineContext?.stepIndex]);
 
-  // Force RNMediapipe to unmount/remount when the routine step changes to
-  // restart the native camera session reliably.
+  // Force RNMediapipe to unmount/remount when the routine step/exercise changes
+  // to restart the native camera session reliably. Avoid double init on first
+  // mount and ensure we never leave the camera hidden if the effect cleans up.
   useEffect(() => {
+    if (remountTimerRef.current) {
+      clearTimeout(remountTimerRef.current);
+    }
+
+    const delay = isFirstRenderRef.current ? 220 : 300;
+    isFirstRenderRef.current = false;
+
     setShowCamera(false);
-    const timer = setTimeout(() => setShowCamera(true), 50);
-    return () => clearTimeout(timer);
+    remountTimerRef.current = setTimeout(() => {
+      setCameraSessionKey((prev) => prev + 1);
+      setShowCamera(true);
+    }, delay);
+
+    return () => {
+      if (remountTimerRef.current) {
+        clearTimeout(remountTimerRef.current);
+        remountTimerRef.current = null;
+      }
+      setShowCamera(true);
+    };
   }, [screenKey]);
+
+  useEffect(() => {
+    return () => {
+      if (remountTimerRef.current) {
+        clearTimeout(remountTimerRef.current);
+      }
+      setShowCamera(true);
+    };
+  }, []);
 
   const routineIsActive = routineContext?.isActive ?? false;
   const routineStepIndex = routineContext?.stepIndex ?? null;
@@ -220,16 +250,11 @@ export default function ExercisesNativeScreen({
   }, [routineContext?.nextExerciseId, t]);
 
   return (
-    <ThemedView
-      key={screenKey}
-      style={styles.screen}
-      lightColor="#000"
-      darkColor="#000"
-    >
+    <ThemedView style={styles.screen} lightColor="#000" darkColor="#000">
       <ThemedView style={styles.cameraWrapper} pointerEvents="none">
         {showCamera ? (
           <RNMediapipe
-            key={screenKey}
+            key={cameraSessionKey}
             width={cameraWidth}
             height={cameraHeight}
             onLandmark={handleLandmark}
