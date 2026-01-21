@@ -1,72 +1,82 @@
 import { StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
-  container: {
+  screen: {
     flex: 1,
+    backgroundColor: "#000",
   },
-  scrollContent: {
-    paddingBottom: 32,
+  cameraWrapper: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "#000",
   },
-  header: {
-    paddingTop: 20,
-    paddingHorizontal: 16,
-    paddingBottom: 16,
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    paddingHorizontal: 20,
   },
-  title: {
-    fontSize: 28,
+  scrim: {
+    ...StyleSheet.absoluteFillObject,
+  },
+  overlayContent: {
+    flex: 1,
+    justifyContent: "space-between",
+  },
+  topSection: {
+    gap: 24,
+  },
+  headerBlock: {
+    gap: 8,
+    maxWidth: "85%",
+  },
+  heading: {
+    fontSize: 34,
+    lineHeight: 38,
     fontWeight: "700",
-    marginBottom: 4,
-    lineHeight: 32,
   },
-  subtitle: {
-    fontSize: 14,
+  subheading: {
+    fontSize: 16,
+    lineHeight: 22,
   },
-  cameraContainer: {
-    alignItems: "center",
-    marginVertical: 16,
-    borderRadius: 12,
-    overflow: "hidden",
-    marginHorizontal: 16,
+  chipRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 12,
   },
-  controls: {
+  chip: {
+    borderRadius: 999,
+    paddingVertical: 10,
     paddingHorizontal: 16,
-    gap: 16,
-  },
-  button: {
-    paddingVertical: 14,
-    paddingHorizontal: 24,
-    borderRadius: 10,
+    flexDirection: "row",
     alignItems: "center",
+    gap: 8,
   },
-  buttonText: {
+  chipLabel: {
+    fontSize: 12,
+    textTransform: "uppercase",
+    letterSpacing: 0.8,
+    fontWeight: "600",
+  },
+  chipValue: {
     fontSize: 16,
     fontWeight: "700",
   },
-  statsContainer: {
-    borderRadius: 12,
-    padding: 16,
+  bottomCard: {
+    borderRadius: 24,
+    padding: 20,
     borderWidth: 1,
-    gap: 8,
-  },
-  statRow: {
-    flexDirection: "row",
-    gap: 8,
-  },
-  statLabel: {
-    fontSize: 14,
-    fontWeight: "600",
-  },
-  statValue: {
-    fontSize: 14,
+    gap: 16,
   },
   message: {
-    fontSize: 14,
-    marginTop: 4,
+    fontSize: 16,
+    lineHeight: 22,
   },
-  footer: {
-    marginTop: 16,
-    paddingHorizontal: 16,
-    gap: 4,
+  switchButton: {
+    borderRadius: 16,
+    paddingVertical: 16,
+    alignItems: "center",
+  },
+  switchButtonText: {
+    fontSize: 16,
+    fontWeight: "700",
   },
 });
 

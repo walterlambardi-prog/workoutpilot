@@ -1,7 +1,8 @@
 import { RNMediapipe } from "@thinksys/react-native-mediapipe";
-import React from "react";
+import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { ScrollView, TouchableOpacity } from "react-native";
+import { TouchableOpacity, useWindowDimensions } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { ThemedText } from "@/components/themedText";
 import { ThemedView } from "@/components/themedView";
@@ -40,49 +41,77 @@ export default function ExercisesNativeScreen({ exerciseId }: ExercisesProps) {
     ? t(`${copyKey}.description`)
     : t("exercises.native.subtitle");
 
-  const backgroundColor = useThemeColor({}, "background");
-  const surfaceColor = useThemeColor(
-    { light: "#f8fafc", dark: "#0b1220" },
+  const { width, height } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
+
+  const cameraWidth = Math.max(width, CAMERA_WIDTH);
+  const cameraHeight = Math.max(height, CAMERA_HEIGHT);
+
+  const scrimColor = useThemeColor(
+    { light: "rgba(7,12,22,0.55)", dark: "rgba(2,6,23,0.7)" },
     "background",
   );
-  const borderColor = useThemeColor(
-    { light: "#e2e8f0", dark: "#1f2937" },
+  const overlaySurface = useThemeColor(
+    { light: "transparent", dark: "transparent" },
     "background",
+  );
+  const overlayBorder = useThemeColor(
+    { light: "rgba(15,23,42,0.15)", dark: "rgba(248,250,252,0.12)" },
+    "background",
+  );
+  const overlayHeading = useThemeColor(
+    { light: "#f8fafc", dark: "#f8fafc" },
+    "text",
+  );
+  const overlayMuted = useThemeColor(
+    { light: "rgba(226,232,240,0.9)", dark: "rgba(148,163,184,0.9)" },
+    "text",
+  );
+  const chipBackground = useThemeColor(
+    { light: "rgba(255,255,255,0.25)", dark: "rgba(15,23,42,0.45)" },
+    "background",
+  );
+  const messageColor = useThemeColor(
+    { light: "#e2e8f0", dark: "#cbd5f5" },
+    "text",
   );
   const accentColor = useThemeColor({}, "tint");
   const buttonTextColor = useThemeColor(
     { light: "#0b1220", dark: "#0b1220" },
     "text",
   );
-  const mutedText = useThemeColor(
-    { light: "#475569", dark: "#cbd5e1" },
-    "text",
-  );
+
+  const statChips = useMemo(() => {
+    const chips = [
+      {
+        key: "status",
+        label: t("exercises.native.stats.status"),
+        value: t(`exercises.statuses.${status}`),
+      },
+      {
+        key: "poses",
+        label: t("exercises.native.stats.poses"),
+        value: String(poseCount ?? 0),
+      },
+    ];
+
+    if (typeof repCount === "number") {
+      chips.push({
+        key: "reps",
+        label: t("exercises.native.stats.reps"),
+        value: String(repCount),
+      });
+    }
+
+    return chips;
+  }, [poseCount, repCount, status, t]);
 
   return (
-    <ScrollView
-      style={[styles.container, { backgroundColor }]}
-      contentContainerStyle={styles.scrollContent}
-      showsVerticalScrollIndicator={false}
-    >
-      <ThemedView style={styles.header}>
-        <ThemedText style={styles.title}>{headerTitle}</ThemedText>
-        <ThemedText style={[styles.subtitle, { color: mutedText }]}>
-          {headerSubtitle}
-        </ThemedText>
-      </ThemedView>
-
-      <ThemedView
-        style={[
-          styles.cameraContainer,
-          { backgroundColor: surfaceColor, borderColor },
-        ]}
-        lightColor="transparent"
-        darkColor="transparent"
-      >
+    <ThemedView style={styles.screen} lightColor="#000" darkColor="#000">
+      <ThemedView style={styles.cameraWrapper} pointerEvents="none">
         <RNMediapipe
-          width={CAMERA_WIDTH}
-          height={CAMERA_HEIGHT}
+          width={cameraWidth}
+          height={cameraHeight}
           onLandmark={handleLandmark}
           face={true}
           leftArm={true}
@@ -97,56 +126,111 @@ export default function ExercisesNativeScreen({ exerciseId }: ExercisesProps) {
         />
       </ThemedView>
 
-      <ThemedView style={styles.controls}>
-        <TouchableOpacity
-          onPress={handleSwitchCamera}
-          style={[styles.button, { backgroundColor: accentColor }]}
-          activeOpacity={0.8}
-          accessible={true}
-          accessibilityLabel={t("exercises.native.switchCamera.label")}
-          accessibilityRole="button"
-          accessibilityHint={t(
-            "exercises.native.switchCamera.accessibilityHint",
-          )}
-        >
-          <ThemedText style={[styles.buttonText, { color: buttonTextColor }]}>
-            {t("exercises.native.switchCamera.label")}
-          </ThemedText>
-        </TouchableOpacity>
+      <ThemedView
+        style={[
+          styles.overlay,
+          {
+            paddingTop: insets.top + 24,
+            paddingBottom: insets.bottom + 32,
+          },
+        ]}
+        lightColor="transparent"
+        darkColor="transparent"
+        pointerEvents="box-none"
+      >
+        <ThemedView
+          style={[styles.scrim, { backgroundColor: scrimColor }]}
+          lightColor="transparent"
+          darkColor="transparent"
+          pointerEvents="none"
+        />
 
         <ThemedView
-          style={[
-            styles.statsContainer,
-            { backgroundColor: surfaceColor, borderColor },
-          ]}
+          style={styles.overlayContent}
+          pointerEvents="box-none"
+          lightColor="transparent"
+          darkColor="transparent"
         >
-          <ThemedView style={styles.statRow}>
-            <ThemedText style={[styles.statLabel, { color: mutedText }]}>
-              {t("exercises.native.stats.status")}:
-            </ThemedText>
-            <ThemedText style={styles.statValue}>
-              {t(`exercises.statuses.${status}`)}
-            </ThemedText>
-          </ThemedView>
-          <ThemedView style={styles.statRow}>
-            <ThemedText style={[styles.statLabel, { color: mutedText }]}>
-              {t("exercises.native.stats.poses")}:
-            </ThemedText>
-            <ThemedText style={styles.statValue}>{poseCount}</ThemedText>
-          </ThemedView>
-          {typeof repCount === "number" && (
-            <ThemedView style={styles.statRow}>
-              <ThemedText style={[styles.statLabel, { color: mutedText }]}>
-                {t("exercises.native.stats.reps")}:
+          <ThemedView
+            style={styles.topSection}
+            pointerEvents="box-none"
+            lightColor="transparent"
+            darkColor="transparent"
+          >
+            <ThemedView
+              style={styles.headerBlock}
+              pointerEvents="none"
+              lightColor="transparent"
+              darkColor="transparent"
+            >
+              <ThemedText style={[styles.heading, { color: overlayHeading }]}>
+                {headerTitle}
               </ThemedText>
-              <ThemedText style={styles.statValue}>{repCount}</ThemedText>
+              <ThemedText style={[styles.subheading, { color: messageColor }]}>
+                {headerSubtitle}
+              </ThemedText>
             </ThemedView>
-          )}
-          <ThemedText style={[styles.message, { color: mutedText }]}>
-            {feedback ?? t(`exercises.messages.${messageKey}`)}
-          </ThemedText>
+
+            <ThemedView
+              style={styles.chipRow}
+              pointerEvents="box-none"
+              lightColor="transparent"
+              darkColor="transparent"
+            >
+              {statChips.map((chip) => (
+                <ThemedView
+                  key={chip.key}
+                  style={[styles.chip, { backgroundColor: chipBackground }]}
+                  lightColor="transparent"
+                  darkColor="transparent"
+                >
+                  <ThemedText
+                    style={[styles.chipLabel, { color: overlayMuted }]}
+                  >
+                    {chip.label}
+                  </ThemedText>
+                  <ThemedText
+                    style={[styles.chipValue, { color: overlayHeading }]}
+                  >
+                    {chip.value}
+                  </ThemedText>
+                </ThemedView>
+              ))}
+            </ThemedView>
+          </ThemedView>
+
+          <ThemedView
+            style={[
+              styles.bottomCard,
+              { backgroundColor: overlaySurface, borderColor: overlayBorder },
+            ]}
+            lightColor="transparent"
+            darkColor="transparent"
+          >
+            <ThemedText style={[styles.message, { color: overlayMuted }]}>
+              {feedback ?? t(`exercises.messages.${messageKey}`)}
+            </ThemedText>
+
+            <TouchableOpacity
+              onPress={handleSwitchCamera}
+              style={[styles.switchButton, { backgroundColor: accentColor }]}
+              activeOpacity={0.85}
+              accessible={true}
+              accessibilityLabel={t("exercises.native.switchCamera.label")}
+              accessibilityRole="button"
+              accessibilityHint={t(
+                "exercises.native.switchCamera.accessibilityHint",
+              )}
+            >
+              <ThemedText
+                style={[styles.switchButtonText, { color: buttonTextColor }]}
+              >
+                {t("exercises.native.switchCamera.label")}
+              </ThemedText>
+            </TouchableOpacity>
+          </ThemedView>
         </ThemedView>
       </ThemedView>
-    </ScrollView>
+    </ThemedView>
   );
 }
