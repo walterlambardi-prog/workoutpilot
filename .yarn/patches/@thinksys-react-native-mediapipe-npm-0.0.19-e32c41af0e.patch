@@ -1,0 +1,251 @@
+diff --git a/android/src/main/java/com/tsmediapipe/GlobalState.java b/android/src/main/java/com/tsmediapipe/GlobalState.java
+index ac0995ba0367d93747cfe62fc0a2b743877b66da..4ba9b6c2873ba8d9d731975837c67da407204f55 100644
+--- a/android/src/main/java/com/tsmediapipe/GlobalState.java
++++ b/android/src/main/java/com/tsmediapipe/GlobalState.java
+@@ -13,4 +13,5 @@ public class GlobalState {
+   public static boolean isRightAnkleEnabled = false;
+ 
+   public static String orientation = "portrait";
++  public static Integer cameraOverlayColor = null;
+ }
+diff --git a/android/src/main/java/com/tsmediapipe/TsMediapipeViewManager.java b/android/src/main/java/com/tsmediapipe/TsMediapipeViewManager.java
+index 1bac2273d8506919a73f50586ee8aab4f6ca256d..c3143d5aefac80fd024c2fe07033d41843233a08 100644
+--- a/android/src/main/java/com/tsmediapipe/TsMediapipeViewManager.java
++++ b/android/src/main/java/com/tsmediapipe/TsMediapipeViewManager.java
+@@ -1,5 +1,6 @@
+ package com.tsmediapipe;
+ 
++import android.graphics.Color;
+ import android.util.Log;
+ import android.view.Choreographer;
+ import android.view.View;
+@@ -121,6 +122,7 @@ public class TsMediapipeViewManager extends ViewGroupManager<FrameLayout> {
+     Log.d("TsMediapipe", "createViewInstance");
+     FrameLayout frameLayout = new FrameLayout(reactContext);
+     frameLayout.setId(View.generateViewId());
++    frameLayout.setBackgroundColor(Color.TRANSPARENT);
+ 
+ 
+     return frameLayout;
+@@ -227,6 +229,18 @@ public class TsMediapipeViewManager extends ViewGroupManager<FrameLayout> {
+     }
+   }
+ 
++  @ReactProp(name = "cameraOverlayColor", customType = "Color")
++  public void setCameraOverlayColor(FrameLayout view, @Nullable Integer color) {
++    GlobalState.cameraOverlayColor = color;
++    int resolvedColor = color != null ? color : Color.TRANSPARENT;
++    view.setBackgroundColor(resolvedColor);
++
++    CameraFragment fragment = CameraFragmentManager.INSTANCE.getCameraFragment();
++    if (fragment != null) {
++      fragment.updateOverlayColor(color);
++    }
++  }
++
+   @ReactProp(name = "face")
+   public void setFaceProp(View view, boolean face) {
+     GlobalState.isFaceEnabled = face;
+diff --git a/android/src/main/java/com/tsmediapipe/fragment/CameraFragment.kt b/android/src/main/java/com/tsmediapipe/fragment/CameraFragment.kt
+index 8b61fa3c757c18e3544a90e32f2a693a27df4693..a5e2ad596d9edf19c0491b0dbbcd6dd11ab46325 100644
+--- a/android/src/main/java/com/tsmediapipe/fragment/CameraFragment.kt
++++ b/android/src/main/java/com/tsmediapipe/fragment/CameraFragment.kt
+@@ -6,6 +6,7 @@ import android.content.Context
+ import android.content.pm.PackageManager
+ import android.content.res.Configuration
+ import android.os.Bundle
++import android.graphics.Color
+ import android.util.Log
+ import android.view.LayoutInflater
+ import android.view.View
+@@ -30,6 +31,7 @@ import com.tsmediapipe.MainViewModel
+ import com.tsmediapipe.PoseLandmarkerHelper
+ import com.tsmediapipe.ReactContextProvider
+ import com.tsmediapipe.databinding.FragmentMyCameraBinding
++import com.tsmediapipe.GlobalState
+ import java.util.concurrent.ExecutorService
+ import java.util.concurrent.Executors
+ import java.util.concurrent.TimeUnit
+@@ -53,6 +55,7 @@ class CameraFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
+   private var camera: Camera? = null
+   private var cameraProvider: ProcessCameraProvider? = null
+   private var cameraFacing = CameraSelector.LENS_FACING_FRONT
++  private var overlayColor: Int? = null
+ 
+   /** Blocking ML operations are performed using this executor */
+   private lateinit var backgroundExecutor: ExecutorService
+@@ -142,6 +145,7 @@ class CameraFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
+   override fun onCreate(savedInstanceState: Bundle?) {
+     super.onCreate(savedInstanceState)
+     CameraFragmentManager.cameraFragment = this
++    overlayColor = GlobalState.cameraOverlayColor
+   }
+ 
+   override fun onDestroy() {
+@@ -166,6 +170,7 @@ class CameraFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
+ 
+     // Initialize our background executor
+     backgroundExecutor = Executors.newSingleThreadExecutor()
++    applyOverlayColor()
+ 
+     if (!hasPermissions(requireContext())) {
+       requestPermissionLauncher.launch(
+@@ -247,6 +252,16 @@ class CameraFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
+     bindCameraUseCases()
+   }
+ 
++  fun updateOverlayColor(color: Int?) {
++    overlayColor = color
++    applyOverlayColor()
++  }
++
++  private fun applyOverlayColor() {
++    val resolvedColor = overlayColor ?: Color.TRANSPARENT
++    _fragmentCameraBinding?.myOverlay?.setBackgroundColor(resolvedColor)
++  }
++
+   override fun onConfigurationChanged(newConfig: Configuration) {
+     super.onConfigurationChanged(newConfig)
+     _fragmentCameraBinding?.viewFinder?.display?.let { display ->
+diff --git a/ios/ViewContoller/CameraView.swift b/ios/ViewContoller/CameraView.swift
+index c9629cc0c05786badc87065c48cd169608930738..e107dc08ac8ec0d00abba6ca63a47b8652e0b06f 100644
+--- a/ios/ViewContoller/CameraView.swift
++++ b/ios/ViewContoller/CameraView.swift
+@@ -1,6 +1,7 @@
+ import AVFoundation
+ import MediaPipeTasksVision
+ import UIKit
++import React
+ 
+ class CameraView: UIView {
+     private struct Constants {
+@@ -16,6 +17,7 @@ class CameraView: UIView {
+     var cameraUnavailableLabel: UILabel!
+     var resumeButton: UIButton!
+     var overlayView: OverlayView!
++    private var overlayBackgroundColor: UIColor = UIColor.white.withAlphaComponent(0.0)
+ 
+     var heightInfo: CGFloat = 0
+     var widthInfo: CGFloat = 0
+@@ -138,6 +140,17 @@ class CameraView: UIView {
+     }
+ 
+     @objc var onLandmark: RCTDirectEventBlock?
++    @objc var cameraOverlayColor: NSNumber? {
++        didSet {
++            if let colorValue = cameraOverlayColor, let convertedColor = RCTConvert.uiColor(colorValue) {
++                overlayBackgroundColor = convertedColor
++            } else {
++                overlayBackgroundColor = UIColor.white.withAlphaComponent(0.0)
++            }
++
++            overlayView?.backgroundColor = overlayBackgroundColor
++        }
++    }
+ 
+     // MARK: - Initializers
+ 
+@@ -217,7 +230,7 @@ class CameraView: UIView {
+         cameraUnavailableLabel = UILabel()
+         resumeButton = UIButton()
+         overlayView = OverlayView()
+-        overlayView.backgroundColor = UIColor.white.withAlphaComponent(0.0)
++        overlayView.backgroundColor = overlayBackgroundColor
+         addSubview(previewView)
+         addSubview(cameraUnavailableLabel)
+         //    addSubview(resumeButton)
+diff --git a/lib/commonjs/index.js b/lib/commonjs/index.js
+index bd16681e79c39ebc925aa0d2e5fa316bfa76f1d2..1ecda25efd395b1845cfb764a7453506f0735981 100644
+--- a/lib/commonjs/index.js
++++ b/lib/commonjs/index.js
+@@ -44,6 +44,7 @@ const TsMediapipeView = props => {
+     rightLeg = true,
+     leftAnkle = true,
+     rightAnkle = true,
++    cameraOverlayColor,
+     frameLimit = 20 // ios only(set the frame rate during initialization)
+   } = props;
+   const ref = (0, _react.useRef)(null);
+@@ -91,6 +92,7 @@ const TsMediapipeView = props => {
+     rightLeg: rightLeg,
+     leftAnkle: leftAnkle,
+     rightAnkle: rightAnkle,
++    cameraOverlayColor: cameraOverlayColor,
+     ref: ref,
+     frameLimit: frameLimit // ios only(set the frame rate during initialization)
+   }));
+diff --git a/lib/module/index.js b/lib/module/index.js
+index 3566b80aa5792736a214b867df6a51f75e4cbd92..2c042acbeed8fb7561dfdec07c0a65589137d1f8 100644
+--- a/lib/module/index.js
++++ b/lib/module/index.js
+@@ -37,6 +37,7 @@ const TsMediapipeView = props => {
+     rightLeg = true,
+     leftAnkle = true,
+     rightAnkle = true,
++    cameraOverlayColor,
+     frameLimit = 20 // ios only(set the frame rate during initialization)
+   } = props;
+   const ref = useRef(null);
+@@ -84,6 +85,7 @@ const TsMediapipeView = props => {
+     rightLeg: rightLeg,
+     leftAnkle: leftAnkle,
+     rightAnkle: rightAnkle,
++    cameraOverlayColor: cameraOverlayColor,
+     ref: ref,
+     frameLimit: frameLimit // ios only(set the frame rate during initialization)
+   }));
+diff --git a/lib/typescript/src/index.d.ts b/lib/typescript/src/index.d.ts
+index 495edf5d78fe7d37403e0fefc60588d697ad20d3..2cffd1423e2b1d02346d9585e39a388a5bb15e72 100644
+--- a/lib/typescript/src/index.d.ts
++++ b/lib/typescript/src/index.d.ts
+@@ -1,5 +1,5 @@
+ import React, { type MutableRefObject } from 'react';
+-import { type ViewStyle, View } from 'react-native';
++import { type ViewStyle, View, type ColorValue } from 'react-native';
+ type TsMediapipeProps = {
+     ref?: MutableRefObject<View | null>;
+     onLandmark?: (event: any) => void;
+@@ -17,6 +17,7 @@ type TsMediapipeProps = {
+     width?: number;
+     poseStarted?: number;
+     frameLimit?: number;
++    cameraOverlayColor?: ColorValue;
+ };
+ type MediapipeComponentProps = TsMediapipeProps & {
+     style?: ViewStyle;
+diff --git a/src/index.tsx b/src/index.tsx
+index c76f8fca114cc0f727ef5ba30454667b14b15508..be3072198d93ce9afc9ef80dabc02c38e3d39b5a 100644
+--- a/src/index.tsx
++++ b/src/index.tsx
+@@ -4,6 +4,7 @@ import {
+   UIManager,
+   Platform,
+   type ViewStyle,
++  type ColorValue,
+   findNodeHandle,
+   View,
+   PixelRatio,
+@@ -38,6 +39,7 @@ type TsMediapipeProps = {
+   width?: number;
+   poseStarted?: number;
+   frameLimit?: number; // ios only(set the frame rate during initialization)
++  cameraOverlayColor?: ColorValue;
+ };
+ 
+ type MediapipeComponentProps = TsMediapipeProps & {
+@@ -83,6 +85,7 @@ const TsMediapipeView: React.FC<MediapipeComponentProps> = (props) => {
+     rightLeg = true,
+     leftAnkle = true,
+     rightAnkle = true,
++    cameraOverlayColor,
+     frameLimit = 20, // ios only(set the frame rate during initialization)
+   } = props;
+   const ref = useRef(null);
+@@ -141,6 +144,7 @@ const TsMediapipeView: React.FC<MediapipeComponentProps> = (props) => {
+         rightLeg={rightLeg}
+         leftAnkle={leftAnkle}
+         rightAnkle={rightAnkle}
++        cameraOverlayColor={cameraOverlayColor}
+         ref={ref}
+         frameLimit={frameLimit} // ios only(set the frame rate during initialization)
+       />

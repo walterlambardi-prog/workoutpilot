@@ -18,7 +18,7 @@
     "@react-navigation/bottom-tabs": "^7.4.0",
     "@react-navigation/elements": "^2.6.3",
     "@react-navigation/native": "^7.1.8",
-    "@thinksys/react-native-mediapipe": "^0.0.19",
+    "@thinksys/react-native-mediapipe": "patch:@thinksys/react-native-mediapipe@npm:^0.0.19#./.yarn/patches/@thinksys-react-native-mediapipe-npm-0.0.19-e32c41af0e.patch",
     "expo": "~54.0.31",
     "expo-constants": "~18.0.13",
     "expo-font": "~14.0.10",
@@ -53,5 +53,8 @@
     "typescript": "~5.9.2"
   },
   "private": true,
-  "packageManager": "yarn@3.6.4+sha512.e70835d4d6d62c07be76b3c1529cb640c7443f0fe434ef4b6478a5a399218cbaf1511b396b3c56eb03bc86424cff2320f6167ad2fde273aa0df6e60b7754029f"
+  "packageManager": "yarn@3.6.4+sha512.e70835d4d6d62c07be76b3c1529cb640c7443f0fe434ef4b6478a5a399218cbaf1511b396b3c56eb03bc86424cff2320f6167ad2fde273aa0df6e60b7754029f",
+  "resolutions": {
+    "@thinksys/react-native-mediapipe@^0.0.19": "patch:@thinksys/react-native-mediapipe@npm%3A0.0.19#./.yarn/patches/@thinksys-react-native-mediapipe-npm-0.0.19-e32c41af0e.patch"
+  }
 }

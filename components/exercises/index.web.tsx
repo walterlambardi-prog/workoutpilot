@@ -50,7 +50,7 @@ export default function ExercisesWebScreen({ exerciseId }: ExercisesProps) {
 
   const pageBackground = useThemeColor({}, "background");
   const heroBorder = useThemeColor(
-    { light: "rgba(148, 163, 184, 0.4)", dark: "rgba(15, 23, 42, 0.65)" },
+    { light: "rgba(249, 252, 255, 0.4)", dark: "rgba(15, 23, 42, 0.65)" },
     "background",
   );
   const scrimColor = useThemeColor(
