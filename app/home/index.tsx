@@ -12,6 +12,12 @@ import type { HomeNavAction } from "./home.types";
 
 const actions: HomeNavAction[] = [
   {
+    href: "/routine",
+    key: "routine",
+    icon: "repeat-outline" as const,
+    color: "#F87171",
+  },
+  {
     href: "/exercises",
     key: "exercises",
     icon: "barbell-outline" as const,

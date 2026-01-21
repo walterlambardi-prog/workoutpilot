@@ -3,7 +3,8 @@
     "home": "Inicio",
     "exercises": "Ejercicios",
     "sessions": "Sesiones",
-    "settings": "Configuración"
+    "settings": "Configuración",
+    "routine": "Rutina"
   },
   "home": {
     "title": "WorkoutPilot",
@@ -16,6 +17,11 @@
       "spanish": "Español"
     },
     "actions": {
+      "routine": {
+        "title": "Crear rutina",
+        "description": "Configura rondas y repeticiones antes de iniciar el flujo guiado.",
+        "accessibilityHint": "Abre la pantalla para crear una rutina"
+      },
       "exercises": {
         "title": "Ejercicios",
         "description": "Prueba la demo de pose: nativa en móvil y web en navegador.",
@@ -90,6 +96,28 @@
       "bestSession": "Sin sesiones",
       "lastSession": "Sin sesiones recientes"
     }
+  },
+  "routineBuilder": {
+    "title": "Crea tu rutina",
+    "subtitle": "Selecciona ejercicios, rondas y repeticiones antes de comenzar.",
+    "rounds": {
+      "label": "Rondas",
+      "description": "Cantidad de ciclos que completarás en la rutina.",
+      "increment": "Aumentar rondas",
+      "decrement": "Disminuir rondas"
+    },
+    "exercises": {
+      "title": "Ejercicios",
+      "subtitle": "Activa movimientos y ajusta las reps por ronda.",
+      "toggleA11y": "Alternar {{exercise}} en la rutina",
+      "buttonAdd": "Agregar",
+      "buttonSelected": "Seleccionado",
+      "repsLabel": "Reps",
+      "increment": "Aumentar reps para {{exercise}}",
+      "decrement": "Disminuir reps para {{exercise}}",
+      "selectedCount": "Ejercicios seleccionados: {{count}}"
+    },
+    "cta": "Iniciar rutina"
   },
   "exercises": {
     "statuses": {

@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { useWindowDimensions } from "react-native";
 
 import { ThemedText } from "@/components/themedText";
 import { ThemedView } from "@/components/themedView";
@@ -29,8 +28,6 @@ export default function ExercisesWebScreen({ exerciseId }: ExercisesProps) {
   } = useWebPoseDetection(exerciseId);
   const { t } = useTranslation();
   const autoStartAttemptedRef = useRef(false);
-  const { height: viewportHeight } = useWindowDimensions();
-  const heroHeight = Math.max(viewportHeight - 100, 640);
 
   useEffect(() => {
     if (status !== "ready" || autoStartAttemptedRef.current) {
@@ -126,17 +123,11 @@ export default function ExercisesWebScreen({ exerciseId }: ExercisesProps) {
         darkColor="transparent"
       >
         <ThemedView
-          style={[
-            rnStyles.hero,
-            { borderColor: heroBorder, minHeight: heroHeight },
-          ]}
+          style={[rnStyles.hero, { borderColor: heroBorder }]}
           lightColor="transparent"
           darkColor="transparent"
         >
-          <ThemedView
-            style={[rnStyles.mediaLayer, { minHeight: heroHeight }]}
-            pointerEvents="none"
-          >
+          <ThemedView style={rnStyles.mediaLayer} pointerEvents="none">
             <video
               ref={videoRef}
               style={webMediaStyles.video}

@@ -20,10 +20,12 @@ export const rnStyles = StyleSheet.create({
     overflow: "hidden",
     borderWidth: 1,
     minHeight: 560,
+    aspectRatio: 16 / 9,
+    width: "100%",
   },
   mediaLayer: {
     flex: 1,
-    minHeight: 560,
+    height: "100%",
     position: "relative",
   },
   mediaTint: {

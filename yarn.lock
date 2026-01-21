@@ -2640,11 +2640,11 @@ __metadata:
 
 "@thinksys/react-native-mediapipe@patch:@thinksys/react-native-mediapipe@npm:^0.0.19#./.yarn/patches/@thinksys-react-native-mediapipe-npm-0.0.19-e32c41af0e.patch::locator=workoutpilot%40workspace%3A.":
   version: 0.0.19
-  resolution: "@thinksys/react-native-mediapipe@patch:@thinksys/react-native-mediapipe@npm%3A0.0.19#./.yarn/patches/@thinksys-react-native-mediapipe-npm-0.0.19-e32c41af0e.patch::version=0.0.19&hash=5e887f&locator=workoutpilot%40workspace%3A."
+  resolution: "@thinksys/react-native-mediapipe@patch:@thinksys/react-native-mediapipe@npm%3A0.0.19#./.yarn/patches/@thinksys-react-native-mediapipe-npm-0.0.19-e32c41af0e.patch::version=0.0.19&hash=cda69b&locator=workoutpilot%40workspace%3A."
   peerDependencies:
     react: "*"
     react-native: "*"
-  checksum: f8103550e5b25fd7576df1859698563e24d95752b539fe2725a3442fd03f7e48cd979d9ce1c038997c4e11ccff6ba575db251d57300c259392354bae76b2281e
+  checksum: 313994b37f41d351a5b764579b48e356e46266616d02446da46c077d740a66bfe9b12fdb276fa8f73b1d655e2492ee08f3f684197d1fcf73fa5e531ad04073c5
   languageName: node
   linkType: hard
 

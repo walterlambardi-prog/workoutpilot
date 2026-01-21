@@ -3,7 +3,8 @@
     "home": "Home",
     "exercises": "Exercises",
     "sessions": "Sessions",
-    "settings": "Settings"
+    "settings": "Settings",
+    "routine": "Routine"
   },
   "home": {
     "title": "WorkoutPilot",
@@ -16,6 +17,11 @@
       "spanish": "Spanish"
     },
     "actions": {
+      "routine": {
+        "title": "Create routine",
+        "description": "Pick rounds and reps to prep a guided workout flow.",
+        "accessibilityHint": "Opens the routine builder screen"
+      },
       "exercises": {
         "title": "Exercises",
         "description": "Try the pose demo: native on mobile and web in the browser.",
@@ -90,6 +96,28 @@
       "bestSession": "No sessions yet",
       "lastSession": "No recent sessions"
     }
+  },
+  "routineBuilder": {
+    "title": "Build your routine",
+    "subtitle": "Select exercises, rounds, and reps before you press start.",
+    "rounds": {
+      "label": "Rounds",
+      "description": "Number of passes you'll complete for the routine.",
+      "increment": "Increase rounds",
+      "decrement": "Decrease rounds"
+    },
+    "exercises": {
+      "title": "Exercises",
+      "subtitle": "Toggle movements and fine-tune reps per round.",
+      "toggleA11y": "Toggle {{exercise}} in the routine",
+      "buttonAdd": "Add",
+      "buttonSelected": "Selected",
+      "repsLabel": "Reps",
+      "increment": "Increase reps for {{exercise}}",
+      "decrement": "Decrease reps for {{exercise}}",
+      "selectedCount": "Selected exercises: {{count}}"
+    },
+    "cta": "Start routine"
   },
   "exercises": {
     "statuses": {
