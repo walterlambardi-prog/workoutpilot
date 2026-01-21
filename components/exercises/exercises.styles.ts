@@ -25,7 +25,8 @@ const styles = StyleSheet.create({
   },
   headerBlock: {
     gap: 8,
-    maxWidth: "85%",
+    borderRadius: 24,
+    padding: 20,
   },
   heading: {
     fontSize: 34,

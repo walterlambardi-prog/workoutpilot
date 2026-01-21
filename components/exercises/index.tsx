@@ -48,13 +48,10 @@ export default function ExercisesNativeScreen({ exerciseId }: ExercisesProps) {
   const cameraHeight = Math.max(height, CAMERA_HEIGHT);
 
   const scrimColor = useThemeColor(
-    { light: "rgba(7,12,22,0.55)", dark: "rgba(2,6,23,0.7)" },
+    { light: "rgba(7,12,22,0.55)", dark: "rgba(15,23,42,0.45)" },
     "background",
   );
-  const overlaySurface = useThemeColor(
-    { light: "transparent", dark: "transparent" },
-    "background",
-  );
+
   const overlayBorder = useThemeColor(
     { light: "rgba(15,23,42,0.15)", dark: "rgba(248,250,252,0.12)" },
     "background",
@@ -67,7 +64,7 @@ export default function ExercisesNativeScreen({ exerciseId }: ExercisesProps) {
     { light: "rgba(226,232,240,0.9)", dark: "rgba(148,163,184,0.9)" },
     "text",
   );
-  const chipBackground = useThemeColor(
+  const cardBackground = useThemeColor(
     { light: "rgba(255,255,255,0.25)", dark: "rgba(15,23,42,0.45)" },
     "background",
   );
@@ -81,7 +78,7 @@ export default function ExercisesNativeScreen({ exerciseId }: ExercisesProps) {
     "text",
   );
 
-  const statChips = useMemo(() => {
+  const heroChips = useMemo(() => {
     const chips = [
       {
         key: "status",
@@ -158,7 +155,7 @@ export default function ExercisesNativeScreen({ exerciseId }: ExercisesProps) {
             darkColor="transparent"
           >
             <ThemedView
-              style={styles.headerBlock}
+              style={[styles.headerBlock, { backgroundColor: cardBackground }]}
               pointerEvents="none"
               lightColor="transparent"
               darkColor="transparent"
@@ -177,10 +174,10 @@ export default function ExercisesNativeScreen({ exerciseId }: ExercisesProps) {
               lightColor="transparent"
               darkColor="transparent"
             >
-              {statChips.map((chip) => (
+              {heroChips.map((chip) => (
                 <ThemedView
                   key={chip.key}
-                  style={[styles.chip, { backgroundColor: chipBackground }]}
+                  style={[styles.chip, { backgroundColor: cardBackground }]}
                   lightColor="transparent"
                   darkColor="transparent"
                 >
@@ -202,7 +199,7 @@ export default function ExercisesNativeScreen({ exerciseId }: ExercisesProps) {
           <ThemedView
             style={[
               styles.bottomCard,
-              { backgroundColor: overlaySurface, borderColor: overlayBorder },
+              { backgroundColor: cardBackground, borderColor: overlayBorder },
             ]}
             lightColor="transparent"
             darkColor="transparent"

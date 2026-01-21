@@ -2,92 +2,106 @@ import type { CSSProperties } from "react";
 import { StyleSheet } from "react-native";
 
 export const rnStyles = StyleSheet.create({
-  page: {
+  screen: {
     flex: 1,
+    width: "100%",
+    paddingHorizontal: 32,
+    paddingVertical: 48,
+    alignItems: "center",
   },
-  card: {
-    marginLeft: "auto",
-    marginRight: "auto",
-    padding: 24,
+  content: {
+    width: "100%",
+    maxWidth: 1280,
+    alignSelf: "center",
   },
-  header: {
-    marginBottom: 16,
-  },
-  title: {
-    marginTop: 0,
-    marginBottom: 0,
-    fontSize: 28,
-    fontWeight: "700",
-  },
-  subtitle: {
-    marginTop: 6,
-    marginBottom: 0,
-    fontSize: 14,
-  },
-  row: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-  },
-  actions: {
-    width: 320,
-    borderWidth: 1,
-    borderStyle: "solid",
-    borderRadius: 12,
-    padding: 16,
-    marginRight: 16,
-  },
-  status: {
-    fontSize: 14,
-  },
-  message: {
-    fontSize: 14,
-    minHeight: 20,
-  },
-  statsBox: {
-    flexDirection: "row",
-  },
-  overlayColumn: {
-    flex: 1,
-  },
-  videoShell: {
+  hero: {
     position: "relative",
-    borderRadius: 12,
+    borderRadius: 32,
     overflow: "hidden",
     borderWidth: 1,
+    minHeight: 560,
+  },
+  mediaLayer: {
+    flex: 1,
+    minHeight: 560,
+    position: "relative",
+  },
+  mediaTint: {
+    ...StyleSheet.absoluteFillObject,
+    zIndex: 2,
+  },
+  overlayLayer: {
+    ...StyleSheet.absoluteFillObject,
+    padding: 40,
+    justifyContent: "space-between",
+  },
+  overlayTop: {
+    gap: 24,
+    maxWidth: "55%",
+  },
+  headerBlock: {
+    borderRadius: 24,
+    padding: 32,
+    borderWidth: 1,
     borderStyle: "solid",
-    minHeight: 320,
+    gap: 12,
+    maxWidth: 680,
+  },
+  title: {
+    fontSize: 48,
+    fontWeight: "700",
+    lineHeight: 52,
+    marginBottom: 0,
+  },
+  subtitle: {
+    fontSize: 18,
+    lineHeight: 24,
+    marginBottom: 0,
+  },
+  chipRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 12,
+  },
+  chip: {
+    borderRadius: 999,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderWidth: 1,
+    borderStyle: "solid",
+  },
+  chipLabel: {
+    fontSize: 12,
+    fontWeight: "600",
+    letterSpacing: 0.8,
+    textTransform: "uppercase",
+    marginBottom: 2,
+  },
+  chipValue: {
+    fontSize: 18,
+    fontWeight: "700",
+  },
+  overlayBottom: {
+    borderRadius: 24,
+    padding: 32,
+    borderWidth: 1,
+    borderStyle: "solid",
+    maxWidth: 480,
+    gap: 16,
+  },
+  message: {
+    fontSize: 16,
+    lineHeight: 22,
   },
 });
 
-export const buttonStyles: {
-  primary: CSSProperties;
-  secondary: CSSProperties;
-} = {
-  primary: {
-    padding: "12px 16px",
-    borderRadius: 10,
-    border: "none",
-    cursor: "pointer",
-    fontWeight: 700,
-    fontSize: 16,
-  },
-  secondary: {
-    padding: "10px 16px",
-    borderRadius: 10,
-    borderWidth: 1,
-    borderStyle: "solid",
-    cursor: "pointer",
-    background: "transparent",
-    fontWeight: 600,
-    fontSize: 15,
-  },
-};
-
 export const webMediaStyles: { video: CSSProperties; canvas: CSSProperties } = {
   video: {
+    position: "absolute",
+    top: 0,
+    left: 0,
     width: "100%",
     height: "100%",
-    display: "block",
     objectFit: "cover",
     zIndex: 1,
   },
@@ -98,6 +112,6 @@ export const webMediaStyles: { video: CSSProperties; canvas: CSSProperties } = {
     width: "100%",
     height: "100%",
     pointerEvents: "none",
-    zIndex: 2,
+    zIndex: 3,
   },
 };
