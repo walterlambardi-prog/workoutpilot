@@ -1,12 +1,21 @@
 # Copilot Instructions for WorkoutPilot
 
+## ⚠️ Important: app-example Directory
+
+**DO NOT MODIFY FILES IN `app-example/`**
+
+- The `app-example/` directory is a reference implementation only
+- Ignore TypeScript and linting errors from `app-example/` files
+- Only fix errors in the main `app/`, `stores/`, `components/`, etc. directories
+- Use `app-example/` as inspiration but don't edit it
+
 ## 🔍 Quality Assurance
 
 **MANDATORY**: After EVERY code change in `.tsx`, `.ts`, or `.js` files:
 
 1. Run `yarn tsc` to check TypeScript errors
 2. Run `yarn lint` to check linting errors
-3. Fix ALL errors and warnings before proceeding
+3. Fix ALL errors and warnings before proceeding (except those in `app-example/`)
 4. Never skip these checks - they prevent production bugs
 
 ## 🗣 Copy & Localization
@@ -199,6 +208,38 @@ const styles = StyleSheet.create({
 - Prefer flex layouts over fixed dimensions
 - Test on multiple screen sizes
 - Use percentage or flex for widths
+
+### Touch Event Handling
+
+**CRITICAL**: When using overlays or nested Views with TouchableOpacity, pointer events must be configured correctly:
+
+```typescript
+// ✅ GOOD - Proper pointer events configuration
+<ImageBackground pointerEvents="box-none">
+  <View style={styles.overlay} pointerEvents="none" />
+  <View style={styles.content} pointerEvents="box-none">
+    <TouchableOpacity onPress={handlePress}>
+      <Ionicons name="icon" pointerEvents="none" />
+      <Text pointerEvents="none">Button</Text>
+    </TouchableOpacity>
+  </View>
+</ImageBackground>
+
+// ❌ BAD - Overlays/children block touch events
+<ImageBackground>
+  <View style={styles.overlay} /> {/* Blocks all touches! */}
+  <TouchableOpacity onPress={handlePress}>
+    <Text>Button</Text> {/* Text captures touch instead of parent */}
+  </TouchableOpacity>
+</ImageBackground>
+```
+
+**Rules**:
+
+- Overlays with `position: absolute` or `StyleSheet.absoluteFillObject` → `pointerEvents="none"`
+- Container Views that should pass touches to children → `pointerEvents="box-none"`
+- Children inside TouchableOpacity (Text, Icons, etc.) → `pointerEvents="none"`
+- Never leave pointerEvents unconfigured when using overlays or complex layouts
 
 ## 🚨 Error Handling
 
