@@ -8,6 +8,10 @@ import { ThemedView } from "@/components/themedView";
 import { ExerciseId } from "@/constants/exercises";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { useExerciseSessionStore } from "@/stores/exerciseSessionStore";
+import {
+  type RoutineSession,
+  useRoutineSessionStore,
+} from "@/stores/routineSessionStore";
 import styles from "./sessions.styles";
 import type { SessionListItem, SessionStatItem } from "./sessions.types";
 
@@ -27,6 +31,8 @@ const formatDate = (timestamp?: number) => {
 const SessionsScreen: React.FC = () => {
   const { t } = useTranslation();
   const { currentSession, history } = useExerciseSessionStore();
+  const { history: routineHistory, lastCompletedSession } =
+    useRoutineSessionStore();
   const backgroundColor = useThemeColor({}, "background");
   const surfaceColor = useThemeColor(
     { light: "#f8fafc", dark: "#0b1220" },
@@ -91,6 +97,81 @@ const SessionsScreen: React.FC = () => {
     };
   }, [currentSession, history]);
 
+  const routineSessions = useMemo(() => {
+    const sessions: RoutineSession[] = [...routineHistory];
+    if (
+      lastCompletedSession &&
+      !sessions.find((entry) => entry.id === lastCompletedSession.id)
+    ) {
+      sessions.unshift(lastCompletedSession);
+    }
+    return sessions;
+  }, [lastCompletedSession, routineHistory]);
+
+  const routineTotals = useMemo(() => {
+    if (routineSessions.length === 0) {
+      return {
+        totalSessions: 0,
+        totalReps: 0,
+        totalDurationMs: 0,
+        averageReps: 0,
+        bestRoutine: null as RoutineSession | null,
+        topExercise: null as { exerciseId: ExerciseId; reps: number } | null,
+      };
+    }
+
+    const totalReps = routineSessions.reduce(
+      (sum, session) => sum + (session.totalReps ?? 0),
+      0,
+    );
+    const totalDurationMs = routineSessions.reduce((sum, session) => {
+      if (session.completedAt && session.startedAt) {
+        return sum + Math.max(0, session.completedAt - session.startedAt);
+      }
+      return sum;
+    }, 0);
+
+    const bestRoutine = routineSessions.reduce(
+      (best, session) => {
+        if (!best) return session;
+        return session.totalReps > (best?.totalReps ?? 0) ? session : best;
+      },
+      null as RoutineSession | null,
+    );
+
+    const exerciseReps = routineSessions.reduce<Record<ExerciseId, number>>(
+      (acc, session) => {
+        session.stepResults.forEach((step) => {
+          acc[step.exerciseId] = (acc[step.exerciseId] ?? 0) + step.reps;
+        });
+        return acc;
+      },
+      {} as Record<ExerciseId, number>,
+    );
+
+    const topExerciseEntry = Object.entries(exerciseReps).reduce(
+      (best, [exerciseId, reps]) => {
+        if (!best || reps > best.reps) {
+          return { exerciseId: exerciseId as ExerciseId, reps };
+        }
+        return best;
+      },
+      null as { exerciseId: ExerciseId; reps: number } | null,
+    );
+
+    return {
+      totalSessions: routineSessions.length,
+      totalReps,
+      totalDurationMs,
+      averageReps:
+        routineSessions.length > 0
+          ? Math.round(totalReps / routineSessions.length)
+          : 0,
+      bestRoutine,
+      topExercise: topExerciseEntry,
+    };
+  }, [routineSessions]);
+
   const breakdown = useMemo(() => {
     const now = Date.now();
     const sessions = [
@@ -127,41 +208,127 @@ const SessionsScreen: React.FC = () => {
       .sort((a, b) => b.reps - a.reps);
   }, [currentSession, history]);
 
-  const statItems: SessionStatItem[] = [
+  const statItems: SessionStatItem[] = useMemo(() => {
+    const exerciseTotals: Record<ExerciseId, number> = {} as Record<
+      ExerciseId,
+      number
+    >;
+
+    history.forEach((entry) => {
+      exerciseTotals[entry.exerciseId] =
+        (exerciseTotals[entry.exerciseId] ?? 0) + (entry.reps ?? 0);
+    });
+
+    routineSessions.forEach((session) => {
+      session.stepResults.forEach((step) => {
+        exerciseTotals[step.exerciseId] =
+          (exerciseTotals[step.exerciseId] ?? 0) + step.reps;
+      });
+    });
+
+    const topExercise = Object.entries(exerciseTotals).reduce(
+      (best, [exerciseId, reps]) => {
+        if (!best || reps > best.reps) {
+          return { exerciseId: exerciseId as ExerciseId, reps };
+        }
+        return best;
+      },
+      null as { exerciseId: ExerciseId; reps: number } | null,
+    );
+
+    return [
+      {
+        label: t("sessions.stats.totalSessions"),
+        value: `${totals.totalSessions}`,
+      },
+      { label: t("sessions.stats.totalReps"), value: `${totals.totalReps}` },
+      {
+        label: t("sessions.stats.totalDuration"),
+        value: formatDuration(totals.totalDurationMs),
+      },
+      {
+        label: t("sessions.stats.averageReps"),
+        value: `${totals.averageReps}`,
+      },
+      {
+        label: t("sessions.stats.bestSession"),
+        value: totals.bestSession
+          ? `${t(
+              `${
+                EXERCISE_DEFINITION_MAP[
+                  totals.bestSession.exerciseId as ExerciseId
+                ].copyKey
+              }.title`,
+            )} · ${totals.bestSession.reps} ${t("sessions.labels.reps")}`
+          : t("sessions.empty.bestSession"),
+      },
+      {
+        label: t("sessions.stats.lastSession"),
+        value: totals.lastSession
+          ? `${t(
+              `${
+                EXERCISE_DEFINITION_MAP[
+                  totals.lastSession.exerciseId as ExerciseId
+                ].copyKey
+              }.title`,
+            )} · ${formatDate(
+              totals.lastSession.endedAt ?? totals.lastSession.startedAt,
+            )}`
+          : t("sessions.empty.lastSession"),
+      },
+      {
+        label: t("sessions.stats.exercisesTracked"),
+        value: `${totals.uniqueExercises}`,
+      },
+      topExercise
+        ? {
+            label: t("sessions.stats.topExercise"),
+            value: `${t(
+              `${EXERCISE_DEFINITION_MAP[topExercise.exerciseId].copyKey}.title`,
+            )} · ${topExercise.reps} ${t("sessions.labels.reps")}`,
+          }
+        : {
+            label: t("sessions.stats.topExercise"),
+            value: t("sessions.empty.topExercise"),
+          },
+    ];
+  }, [history, routineSessions, t, totals]);
+
+  const routineStatItems: SessionStatItem[] = [
     {
-      label: t("sessions.stats.totalSessions"),
-      value: `${totals.totalSessions}`,
+      label: t("sessions.routines.totalSessions"),
+      value: `${routineTotals.totalSessions}`,
     },
-    { label: t("sessions.stats.totalReps"), value: `${totals.totalReps}` },
     {
-      label: t("sessions.stats.totalDuration"),
-      value: formatDuration(totals.totalDurationMs),
+      label: t("sessions.routines.totalReps"),
+      value: `${routineTotals.totalReps}`,
     },
     {
-      label: t("sessions.stats.averageReps"),
-      value: `${totals.averageReps}`,
+      label: t("sessions.routines.totalDuration"),
+      value: formatDuration(routineTotals.totalDurationMs),
     },
     {
-      label: t("sessions.stats.bestSession"),
-      value: totals.bestSession
+      label: t("sessions.routines.averageReps"),
+      value: `${routineTotals.averageReps}`,
+    },
+    {
+      label: t("sessions.routines.bestRoutine"),
+      value: routineTotals.bestRoutine
+        ? `${t("sessions.routines.bestRoutine")}: ${
+            routineTotals.bestRoutine.totalReps ?? 0
+          } ${t("sessions.labels.reps")}`
+        : t("sessions.routines.empty"),
+    },
+    {
+      label: t("sessions.routines.topExercise"),
+      value: routineTotals.topExercise
         ? `${t(
-            `${EXERCISE_DEFINITION_MAP[totals.bestSession.exerciseId as ExerciseId].copyKey}.title`,
-          )} · ${totals.bestSession.reps} ${t("sessions.labels.reps")}`
-        : t("sessions.empty.bestSession"),
-    },
-    {
-      label: t("sessions.stats.lastSession"),
-      value: totals.lastSession
-        ? `${t(
-            `${EXERCISE_DEFINITION_MAP[totals.lastSession.exerciseId as ExerciseId].copyKey}.title`,
-          )} · ${formatDate(
-            totals.lastSession.endedAt ?? totals.lastSession.startedAt,
-          )}`
-        : t("sessions.empty.lastSession"),
-    },
-    {
-      label: t("sessions.stats.exercisesTracked"),
-      value: `${totals.uniqueExercises}`,
+            `${
+              EXERCISE_DEFINITION_MAP[routineTotals.topExercise.exerciseId]
+                .copyKey
+            }.title`,
+          )} · ${routineTotals.topExercise.reps} ${t("sessions.labels.reps")}`
+        : t("sessions.routines.empty"),
     },
   ];
 
@@ -211,6 +378,23 @@ const SessionsScreen: React.FC = () => {
             {t("sessions.stats.title")}
           </ThemedText>
           {statItems.map((item) => (
+            <View key={item.label} style={styles.statRow}>
+              <ThemedText style={[styles.statLabel, { color: mutedText }]}>
+                {item.label}
+              </ThemedText>
+              <ThemedText style={styles.statValue}>{item.value}</ThemedText>
+            </View>
+          ))}
+        </ThemedView>
+        <ThemedView
+          style={[styles.card, { backgroundColor: surfaceColor, borderColor }]}
+          lightColor="transparent"
+          darkColor="transparent"
+        >
+          <ThemedText style={styles.cardTitle}>
+            {t("sessions.routines.title")}
+          </ThemedText>
+          {routineStatItems.map((item) => (
             <View key={item.label} style={styles.statRow}>
               <ThemedText style={[styles.statLabel, { color: mutedText }]}>
                 {item.label}

@@ -60,7 +60,13 @@
       "clearHistoryConfirm": "Borrar",
       "cancel": "Cancelar",
       "clearedTitle": "Historial borrado",
-      "clearedMessage": "Todos los datos de sesiones han sido eliminados."
+      "clearedMessage": "Todos los datos de sesiones han sido eliminados.",
+      "clearRoutineHistory": "Borrar historial de rutinas",
+      "clearRoutineHistoryConfirmTitle": "¿Borrar historial de rutinas?",
+      "clearRoutineHistoryConfirmMessage": "Esto eliminará permanentemente todas tus sesiones de rutina. Esta acción no se puede deshacer.",
+      "clearRoutineHistoryConfirm": "Borrar rutinas",
+      "clearedRoutineTitle": "Historial de rutinas borrado",
+      "clearedRoutineMessage": "Todos los datos de rutinas han sido eliminados."
     }
   },
   "sessions": {
@@ -78,8 +84,19 @@
       "totalDuration": "Tiempo total",
       "averageReps": "Promedio reps / sesión",
       "exercisesTracked": "Ejercicios registrados",
+      "topExercise": "Ejercicio destacado",
       "bestSession": "Mejor sesión (reps)",
       "lastSession": "Última sesión"
+    },
+    "routines": {
+      "title": "Estadísticas de rutinas",
+      "totalSessions": "Rutinas totales",
+      "totalReps": "Reps totales",
+      "totalDuration": "Tiempo total",
+      "averageReps": "Promedio reps / rutina",
+      "bestRoutine": "Mejor rutina",
+      "topExercise": "Ejercicio destacado en rutina",
+      "empty": "Sin historial de rutinas"
     },
     "breakdown": {
       "title": "Detalle por ejercicio",
@@ -94,7 +111,8 @@
     },
     "empty": {
       "bestSession": "Sin sesiones",
-      "lastSession": "Sin sesiones recientes"
+      "lastSession": "Sin sesiones recientes",
+      "topExercise": "Sin datos de ejercicios"
     }
   },
   "routineBuilder": {
@@ -148,6 +166,9 @@
     },
     "summary": {
       "title": "Resumen de sesión",
+      "round": "Ronda {{round}}",
+      "roundMeta": "{{count}} ejercicios · {{reps}} reps",
+      "roundDuration": "Tiempo: {{duration}}",
       "meta": "Ronda {{round}} · {{reps}} reps (meta {{target}})"
     }
   },

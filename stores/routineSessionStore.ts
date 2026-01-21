@@ -57,6 +57,7 @@ interface RoutineSessionState {
   jumpToStep: (stepIndex: number) => void;
   restartFromSession: (sessionId: string) => string | null;
   resetActive: () => void;
+  resetHistory: () => void;
 }
 
 type PersistedState = RoutineSessionState;
@@ -263,6 +264,12 @@ export const useRoutineSessionStore = createTyped<RoutineSessionState>(
         );
       },
       resetActive: () => set((state) => ({ ...state, activeSession: null })),
+      resetHistory: () =>
+        set({
+          activeSession: null,
+          lastCompletedSession: null,
+          history: [],
+        }),
     }),
     {
       name: "routine-session-store",

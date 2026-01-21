@@ -60,7 +60,13 @@
       "clearHistoryConfirm": "Clear",
       "cancel": "Cancel",
       "clearedTitle": "History cleared",
-      "clearedMessage": "All session data has been deleted."
+      "clearedMessage": "All session data has been deleted.",
+      "clearRoutineHistory": "Clear routine history",
+      "clearRoutineHistoryConfirmTitle": "Clear routine history?",
+      "clearRoutineHistoryConfirmMessage": "This will permanently delete all your routine sessions. This action cannot be undone.",
+      "clearRoutineHistoryConfirm": "Clear routines",
+      "clearedRoutineTitle": "Routine history cleared",
+      "clearedRoutineMessage": "All routine session data has been deleted."
     }
   },
   "sessions": {
@@ -78,8 +84,19 @@
       "totalDuration": "Total time",
       "averageReps": "Avg reps / session",
       "exercisesTracked": "Exercises tracked",
+      "topExercise": "Top exercise",
       "bestSession": "Best session (reps)",
       "lastSession": "Last session"
+    },
+    "routines": {
+      "title": "Routine stats",
+      "totalSessions": "Total routines",
+      "totalReps": "Total reps",
+      "totalDuration": "Total time",
+      "averageReps": "Avg reps / routine",
+      "bestRoutine": "Top routine",
+      "topExercise": "Top routine exercise",
+      "empty": "No routine history"
     },
     "breakdown": {
       "title": "Exercise breakdown",
@@ -94,7 +111,8 @@
     },
     "empty": {
       "bestSession": "No sessions yet",
-      "lastSession": "No recent sessions"
+      "lastSession": "No recent sessions",
+      "topExercise": "No exercise data"
     }
   },
   "routineBuilder": {
@@ -148,6 +166,9 @@
     },
     "summary": {
       "title": "Session summary",
+      "round": "Round {{round}}",
+      "roundMeta": "{{count}} exercises · {{reps}} reps",
+      "roundDuration": "Time: {{duration}}",
       "meta": "Round {{round}} · {{reps}} reps (target {{target}})"
     }
   },

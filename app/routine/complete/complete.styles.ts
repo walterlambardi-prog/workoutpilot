@@ -72,6 +72,28 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     gap: 8,
   },
+  summaryRounds: {
+    gap: 12,
+  },
+  summaryRound: {
+    borderWidth: 1,
+    borderRadius: 14,
+    padding: 12,
+    gap: 8,
+  },
+  summaryRoundHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  summaryRoundTitle: {
+    fontSize: 15,
+    fontWeight: "800",
+  },
+  summaryRoundMeta: {
+    fontSize: 13,
+    fontWeight: "600",
+  },
   summaryHeader: {
     fontSize: 18,
     fontWeight: "800",

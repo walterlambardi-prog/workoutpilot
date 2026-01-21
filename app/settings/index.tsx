@@ -7,6 +7,7 @@ import { useAppLanguage } from "@/hooks/useAppLanguage";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { useExerciseSessionStore } from "@/stores/exerciseSessionStore";
 import { usePreferencesStore, type ThemeMode } from "@/stores/preferencesStore";
+import { useRoutineSessionStore } from "@/stores/routineSessionStore";
 import { showAlert } from "@/utils/alert";
 import styles from "./settings.styles";
 
@@ -106,6 +107,9 @@ const SettingsScreen: React.FC = () => {
   const { t } = useTranslation();
   const { language, changeLanguage, supportedLanguages } = useAppLanguage();
   const resetHistory = useExerciseSessionStore((state) => state.resetHistory);
+  const resetRoutineHistory = useRoutineSessionStore(
+    (state) => state.resetHistory,
+  );
   const backgroundColor = useThemeColor({}, "background");
   const themeMode = usePreferencesStore(
     (state: { themeMode: ThemeMode | null }) => state.themeMode,
@@ -141,6 +145,30 @@ const SettingsScreen: React.FC = () => {
             showAlert(
               t("settings.data.clearedTitle"),
               t("settings.data.clearedMessage"),
+            );
+          },
+        },
+      ],
+    );
+  };
+
+  const handleClearRoutineHistory = () => {
+    showAlert(
+      t("settings.data.clearRoutineHistoryConfirmTitle"),
+      t("settings.data.clearRoutineHistoryConfirmMessage"),
+      [
+        {
+          text: t("settings.data.cancel"),
+          style: "cancel",
+        },
+        {
+          text: t("settings.data.clearRoutineHistoryConfirm"),
+          style: "destructive",
+          onPress: () => {
+            resetRoutineHistory();
+            showAlert(
+              t("settings.data.clearedRoutineTitle"),
+              t("settings.data.clearedRoutineMessage"),
             );
           },
         },
@@ -207,6 +235,25 @@ const SettingsScreen: React.FC = () => {
             ]}
           >
             {t("settings.data.clearHistory")}
+          </ThemedText>
+        </Pressable>
+        <Pressable
+          onPress={handleClearRoutineHistory}
+          style={({ pressed }) => [
+            styles.actionButton,
+            styles.actionButtonDestructive,
+            pressed ? styles.actionButtonPressed : null,
+          ]}
+          accessibilityRole="button"
+          accessibilityLabel={t("settings.data.clearRoutineHistory")}
+        >
+          <ThemedText
+            style={[
+              styles.actionButtonText,
+              styles.actionButtonTextDestructive,
+            ]}
+          >
+            {t("settings.data.clearRoutineHistory")}
           </ThemedText>
         </Pressable>
       </View>
