@@ -1,11 +1,11 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 
 import { ThemedText } from "@/components/themedText";
 import { ThemedView } from "@/components/themedView";
 import { EXERCISE_COPY_KEYS, ExerciseId } from "@/constants/exercises";
 import { useThemeColor } from "@/hooks/useThemeColor";
-import { buttonStyles, rnStyles, webMediaStyles } from "./exercises.web.styles";
+import { rnStyles, webMediaStyles } from "./exercises.web.styles";
 import { useWebPoseDetection } from "./hooks/useWebPoseDetection";
 
 /**
@@ -27,6 +27,23 @@ export default function ExercisesWebScreen({ exerciseId }: ExercisesProps) {
     stopCamera,
   } = useWebPoseDetection(exerciseId);
   const { t } = useTranslation();
+  const autoStartAttemptedRef = useRef(false);
+
+  useEffect(() => {
+    if (status !== "ready" || autoStartAttemptedRef.current) {
+      return;
+    }
+
+    autoStartAttemptedRef.current = true;
+    startCamera();
+  }, [status, startCamera]);
+
+  useEffect(() => {
+    return () => {
+      autoStartAttemptedRef.current = false;
+      stopCamera();
+    };
+  }, [stopCamera]);
 
   const pageBackground = useThemeColor({}, "background");
 
@@ -37,15 +54,6 @@ export default function ExercisesWebScreen({ exerciseId }: ExercisesProps) {
   const headerSubtitle = copyKey
     ? t(`${copyKey}.description`)
     : t("exercises.web.subtitle");
-
-  const startLabel =
-    status === "loading"
-      ? t("exercises.web.buttons.loading")
-      : status === "running"
-        ? t("exercises.web.buttons.processing")
-        : status === "ready"
-          ? t("exercises.web.buttons.start")
-          : t("exercises.web.buttons.starting");
 
   return (
     <ThemedView
@@ -71,28 +79,6 @@ export default function ExercisesWebScreen({ exerciseId }: ExercisesProps) {
             lightColor="transparent"
             darkColor="transparent"
           >
-            <button
-              onClick={startCamera}
-              disabled={status !== "ready"}
-              style={{
-                ...buttonStyles.primary,
-                marginBottom: 12,
-              }}
-              aria-label={t("exercises.web.aria.start")}
-            >
-              {startLabel}
-            </button>
-            <button
-              onClick={stopCamera}
-              disabled={status !== "running"}
-              style={{
-                ...buttonStyles.primary,
-                marginBottom: 12,
-              }}
-              aria-label={t("exercises.web.aria.stop")}
-            >
-              {t("exercises.web.stop")}
-            </button>
             <ThemedText style={[rnStyles.status, { marginBottom: 8 }]}>
               <strong>{t("exercises.web.status")}:</strong>{" "}
               {t(`exercises.statuses.${status}`)}
