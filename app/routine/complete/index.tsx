@@ -1,5 +1,5 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { Pressable, ScrollView, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -7,7 +7,10 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ThemedText } from "@/components/themedText";
 import { ThemedView } from "@/components/themedView";
 import { EXERCISE_COPY_KEYS } from "@/constants/exercises";
-import { useRoutineSessionStore } from "@/stores/routineSessionStore";
+import {
+  useRoutineSessionStore,
+  type RoutineSession,
+} from "@/stores/routineSessionStore";
 
 import styles from "./complete.styles";
 import type { RoutineCompleteScreenProps } from "./complete.types";
@@ -27,24 +30,24 @@ const RoutineCompleteScreen: React.FC<RoutineCompleteScreenProps> = () => {
   const insets = useSafeAreaInsets();
   const { sessionId } = useLocalSearchParams<{ sessionId?: string }>();
 
-  const { history, lastCompletedSession } = useRoutineSessionStore((state) => ({
-    history: state.history,
-    lastCompletedSession: state.lastCompletedSession,
-  }));
-  const restartFromSession = useRoutineSessionStore(
-    (state) => state.restartFromSession,
-  );
+  const { history, lastCompletedSession, restartFromSession } =
+    useRoutineSessionStore();
+
+  const missingSessionRedirectedRef = useRef(false);
 
   const session = useMemo(() => {
     if (sessionId) {
-      const found = history.find((entry) => entry.id === sessionId);
+      const found = history.find(
+        (entry: RoutineSession) => entry.id === sessionId,
+      );
       if (found) return found;
     }
     return lastCompletedSession ?? history[0] ?? null;
   }, [history, lastCompletedSession, sessionId]);
 
   useEffect(() => {
-    if (!session) {
+    if (!session && !missingSessionRedirectedRef.current) {
+      missingSessionRedirectedRef.current = true;
       router.replace("/routine");
     }
   }, [router, session]);

@@ -4,6 +4,12 @@ import { useCallback, useEffect, useMemo, useRef } from "react";
 import { ExerciseId } from "@/constants/exercises";
 import { useRoutineSessionStore } from "@/stores/routineSessionStore";
 
+const debug = (...args: unknown[]) => {
+  if (__DEV__) {
+    console.log("[useRoutineStep]", ...args);
+  }
+};
+
 const normalizeParam = (value?: string | string[]) =>
   Array.isArray(value) ? value[0] : value;
 
@@ -22,19 +28,18 @@ export const useRoutineStep = (exerciseId?: ExerciseId) => {
   const stepIndexFromParams = toStepIndex(stepIndexParam);
 
   const session = useRoutineSessionStore((state) => state.activeSession);
-  const recordProgress = useRoutineSessionStore(
-    (state) => state.recordProgress,
-  );
-  const completeCurrentStep = useRoutineSessionStore(
-    (state) => state.completeCurrentStep,
-  );
   const jumpToStep = useRoutineSessionStore((state) => state.jumpToStep);
   const resetActive = useRoutineSessionStore((state) => state.resetActive);
+
+  const activeSessionIdRef = useRef<string | null>(null);
 
   const isRoutine = Boolean(routineIdParam);
   const routineId = routineIdParam;
 
   const handledMissingSessionRef = useRef(false);
+  const awaitingCompletionRef = useRef(false);
+  const completionGuardRef = useRef(false);
+  const completionNavigatedRef = useRef(false);
   const appliedInitialStepRef = useRef(false);
   const pendingSyncRef = useRef<{
     routineId: string | null;
@@ -42,12 +47,60 @@ export const useRoutineStep = (exerciseId?: ExerciseId) => {
   } | null>(null);
 
   useEffect(() => {
+    const nextSessionId = session?.id ?? null;
+    const prevSessionId = activeSessionIdRef.current;
+    const sessionChanged = nextSessionId !== prevSessionId;
+
+    if (sessionChanged) {
+      debug("sessionChanged", { prevSessionId, nextSessionId });
+    }
+
+    // When the session completes, the store clears activeSession. Preserve the
+    // completion flags so we can finish navigation to the complete screen
+    // without bouncing back to the builder.
+    if (sessionChanged && !session && completionNavigatedRef.current) {
+      debug("sessionClearedAfterCompletionNavigation");
+      activeSessionIdRef.current = nextSessionId;
+      awaitingCompletionRef.current = false;
+      return;
+    }
+
+    if (sessionChanged && awaitingCompletionRef.current && !session) {
+      debug("sessionClearedWhileAwaitingCompletion");
+      activeSessionIdRef.current = nextSessionId;
+      awaitingCompletionRef.current = false;
+      return;
+    }
+
+    activeSessionIdRef.current = nextSessionId;
+
+    if (sessionChanged) {
+      awaitingCompletionRef.current = false;
+      completionGuardRef.current = false;
+      completionNavigatedRef.current = false;
+      appliedInitialStepRef.current = false;
+      pendingSyncRef.current = null;
+      handledMissingSessionRef.current = false;
+      debug("resetFlagsAfterSessionChange");
+    }
+
+    if (session && !awaitingCompletionRef.current) {
+      completionGuardRef.current = false;
+      completionNavigatedRef.current = false;
+    }
+  }, [session]);
+
+  useEffect(() => {
     if (!isRoutine) return;
+    if (completionNavigatedRef.current) return;
+    if (awaitingCompletionRef.current) return;
     if (!session || (routineId && session.id !== routineId)) {
       if (handledMissingSessionRef.current) {
         return;
       }
+
       handledMissingSessionRef.current = true;
+      debug("missingSessionRedirect", { routineId, sessionId: session?.id });
       resetActive();
       router.replace("/routine");
       return;
@@ -60,6 +113,7 @@ export const useRoutineStep = (exerciseId?: ExerciseId) => {
   // source of truth and the route is kept in sync with the store.
   useEffect(() => {
     if (!isRoutine || !session) return;
+    if (completionNavigatedRef.current) return;
     if (appliedInitialStepRef.current) return;
 
     const clamped = Math.min(
@@ -69,6 +123,11 @@ export const useRoutineStep = (exerciseId?: ExerciseId) => {
 
     if (clamped !== session.currentStepIndex) {
       jumpToStep(clamped);
+      debug("initialStepJump", {
+        fromParam: stepIndexFromParams,
+        clamped,
+        sessionIndex: session.currentStepIndex,
+      });
     }
 
     appliedInitialStepRef.current = true;
@@ -87,6 +146,8 @@ export const useRoutineStep = (exerciseId?: ExerciseId) => {
   // Keep the route aligned with the store's active step (exercise + index).
   useEffect(() => {
     if (!isRoutine || !session || !currentStep) return;
+    if (completionNavigatedRef.current) return;
+    if (awaitingCompletionRef.current) return;
     if (!exerciseId) return;
 
     const needsSync =
@@ -113,6 +174,13 @@ export const useRoutineStep = (exerciseId?: ExerciseId) => {
     }
 
     pendingSyncRef.current = target;
+    debug("syncRouteToStore", {
+      currentExercise: exerciseId,
+      targetExercise: currentStep.exerciseId,
+      paramStep: stepIndexFromParams,
+      storeStep: session.currentStepIndex,
+      routineId: session.id,
+    });
     router.replace({
       pathname: "/exercises/[exerciseId]",
       params: {
@@ -125,7 +193,6 @@ export const useRoutineStep = (exerciseId?: ExerciseId) => {
     currentStep,
     exerciseId,
     isRoutine,
-    pendingSyncRef,
     router,
     session,
     stepIndexFromParams,
@@ -133,44 +200,101 @@ export const useRoutineStep = (exerciseId?: ExerciseId) => {
 
   const handleProgress = useCallback(
     (reps: number) => {
-      if (!isRoutine || !session) return;
-      recordProgress(reps);
+      if (!isRoutine) return;
+
+      const state = useRoutineSessionStore.getState();
+      const activeSession = state.activeSession;
+
+      if (!activeSession) return;
+      if (
+        activeSessionIdRef.current &&
+        activeSession.id !== activeSessionIdRef.current
+      ) {
+        return;
+      }
+
+      state.recordProgress(reps);
+      debug("progress", {
+        reps,
+        step: activeSession.currentStepIndex,
+        sessionId: activeSession.id,
+      });
     },
-    [isRoutine, recordProgress, session],
+    [isRoutine],
   );
 
   const handleComplete = useCallback(
     (reps: number) => {
-      if (!isRoutine || !session) return;
+      if (!isRoutine) return;
+      if (completionNavigatedRef.current) return;
+      if (completionGuardRef.current) return;
+
+      const state = useRoutineSessionStore.getState();
+      const activeSession = state.activeSession;
+
+      if (!activeSession) return;
+      if (
+        activeSessionIdRef.current &&
+        activeSession.id !== activeSessionIdRef.current
+      ) {
+        return;
+      }
+
+      const isFinalStep =
+        activeSession.currentStepIndex >= activeSession.plan.length - 1;
+
+      if (isFinalStep) {
+        awaitingCompletionRef.current = true;
+        completionGuardRef.current = true;
+        debug("finalStepCompleteStart", {
+          sessionId: activeSession.id,
+          stepIndex: activeSession.currentStepIndex,
+        });
+      }
 
       const {
         nextStep: following,
         completedSession,
         nextStepIndex,
-      } = completeCurrentStep({ repsOverride: reps });
+      } = state.completeCurrentStep({ repsOverride: reps });
 
-      if (
-        following &&
-        session.plan[nextStepIndex ?? session.currentStepIndex + 1]
-      ) {
+      if (!completedSession && isFinalStep) {
+        awaitingCompletionRef.current = false;
+        completionGuardRef.current = false;
+        debug("finalStepCompleteCancelled", {
+          sessionId: activeSession.id,
+          stepIndex: activeSession.currentStepIndex,
+        });
+      }
+
+      if (following && nextStepIndex !== null) {
+        debug("advanceToNextStep", {
+          nextStepIndex,
+          exerciseId: following.exerciseId,
+          sessionId: activeSession.id,
+        });
         router.replace({
           pathname: "/exercises/[exerciseId]",
           params: {
             exerciseId: following.exerciseId,
-            routineId: session.id,
-            stepIndex: String(nextStepIndex ?? session.currentStepIndex + 1),
+            routineId: activeSession.id,
+            stepIndex: String(nextStepIndex),
           },
         });
         return;
       }
 
-      const resolvedSessionId = completedSession?.id ?? session.id;
+      if (completionNavigatedRef.current) return;
+      completionNavigatedRef.current = true;
+
+      const resolvedSessionId = (completedSession ?? activeSession).id;
+      debug("navigateToComplete", { resolvedSessionId });
       router.replace({
         pathname: "/routine/complete",
         params: { sessionId: resolvedSessionId },
       });
     },
-    [completeCurrentStep, isRoutine, router, session],
+    [isRoutine, router],
   );
 
   return {
