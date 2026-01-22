@@ -127,6 +127,8 @@ const buildSystemPrompt = (
   hasAge: boolean,
   hasFrequency: boolean,
   profilePrompt: string,
+  agePrompt: string,
+  frequencyPrompt: string,
   ageLabel: string,
   frequencyLabel: string,
   submitLabel: string,
@@ -147,8 +149,8 @@ const buildSystemPrompt = (
       !hasAge && !hasFrequency
         ? profilePrompt
         : !hasAge
-          ? ageLabel
-          : frequencyLabel,
+          ? agePrompt
+          : frequencyPrompt,
     ageLabel,
     frequencyLabel,
     submitLabel,
@@ -510,8 +512,8 @@ export function useAiCoach() {
           missingAge && missingFrequency
             ? t("aiCoach.profilePromptTitle")
             : missingAge
-              ? t("aiCoach.profileAgeLabel")
-              : t("aiCoach.profileFrequencyLabel"),
+              ? t("aiCoach.profileAgePrompt")
+              : t("aiCoach.profileFrequencyPrompt"),
         ageLabel: t("aiCoach.profileAgeLabel"),
         frequencyLabel: t("aiCoach.profileFrequencyLabel"),
         submitLabel: t("aiCoach.profileSubmit"),
@@ -652,6 +654,8 @@ export function useAiCoach() {
                 agePresent,
                 frequencyPresent,
                 t("aiCoach.profilePromptTitle"),
+                t("aiCoach.profileAgePrompt"),
+                t("aiCoach.profileFrequencyPrompt"),
                 t("aiCoach.profileAgeLabel"),
                 t("aiCoach.profileFrequencyLabel"),
                 t("aiCoach.profileSubmit"),
