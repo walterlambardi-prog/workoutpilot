@@ -498,11 +498,6 @@ export function useAiCoach() {
       const frequencyDetectedInline = FREQUENCY_REGEX.test(query.toLowerCase());
       const frequencyPresent = frequencyDetected || frequencyDetectedInline;
 
-      const hasPendingProfilePrompt = historyForContext.some(
-        (msg) =>
-          msg.role === "assistant" && Boolean(parseProfilePrompt(msg.content)),
-      );
-
       const missingAge = !agePresent;
       const missingFrequency = !frequencyPresent;
 
