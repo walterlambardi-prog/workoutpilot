@@ -3,6 +3,9 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   ActivityIndicator,
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
   Pressable,
   ScrollView,
   Text,
@@ -57,7 +60,7 @@ const AiCoachScreen = () => {
     "background",
   );
   const userSurface = useThemeColor(
-    { light: "#e6ffed", dark: "#c7f9cc" },
+    { light: "#e6ffed", dark: "rgba(34,211,238,0.16)" },
     "background",
   );
   const borderColor = useThemeColor(
@@ -85,6 +88,11 @@ const AiCoachScreen = () => {
   const [profileAge, setProfileAge] = useState("");
   const [profileFrequency, setProfileFrequency] = useState("");
 
+  const handleSendWithDismiss = () => {
+    handleSend();
+    Keyboard.dismiss();
+  };
+
   const formatTime = useMemo(
     () => (timestamp?: number) => {
       const date = timestamp ? new Date(timestamp) : new Date();
@@ -101,6 +109,26 @@ const AiCoachScreen = () => {
       scrollRef.current?.scrollToEnd({ animated: true });
     }, 40);
     return () => clearTimeout(timer);
+  }, [messages]);
+
+  const lastProfilePromptId = useMemo(() => {
+    let found: string | null = null;
+    messages.forEach((msg) => {
+      if (msg.role === "assistant" && parseProfilePrompt(msg.content)) {
+        found = msg.id;
+      }
+    });
+    return found;
+  }, [messages]);
+
+  const lastLevelPromptId = useMemo(() => {
+    let found: string | null = null;
+    messages.forEach((msg) => {
+      if (msg.role === "assistant" && parseLevelPrompt(msg.content)) {
+        found = msg.id;
+      }
+    });
+    return found;
   }, [messages]);
 
   const renderPlan = (parsed: ParsedRoutinePlan) => (
@@ -173,9 +201,9 @@ const AiCoachScreen = () => {
     </View>
   );
 
-  const renderLevelPrompt = (levelPrompt: LevelPrompt) => (
-    <View style={styles.levelPrompt}>
-      <Text style={styles.levelPromptTitle}>
+  const renderLevelPrompt = (levelPrompt: LevelPrompt, disabled: boolean) => (
+    <View style={styles.profilePrompt}>
+      <Text style={[styles.levelPromptTitle, { color: textPrimary }]}>
         {levelPrompt.prompt?.trim() || t("aiCoach.levelPromptFallback")}
       </Text>
       <View style={styles.levelOptions}>
@@ -184,22 +212,38 @@ const AiCoachScreen = () => {
             key={option}
             style={({ pressed }) => [
               styles.levelOptionButton,
+              {
+                backgroundColor: accent,
+                borderColor: accent,
+              },
               pressed ? { opacity: 0.92 } : null,
+              disabled ? styles.profileSubmitDisabled : null,
             ]}
             accessibilityRole="button"
             accessibilityLabel={option}
+            disabled={disabled}
             onPress={() => handleLevelSelect(option)}
           >
-            <Text style={styles.levelOptionText}>{option}</Text>
+            <Text style={[styles.levelOptionText, { color: "#0b122f" }]}>
+              {option}
+            </Text>
           </Pressable>
         ))}
       </View>
     </View>
   );
 
-  const renderProfilePrompt = (profilePrompt: ProfilePrompt) => {
+  const renderProfilePrompt = (
+    profilePrompt: ProfilePrompt,
+    disabled: boolean,
+    isActive: boolean,
+  ) => {
+    const activeAge = isActive ? profileAge : "";
+    const activeFrequency = isActive ? profileFrequency : "";
     const hasAnyValue =
-      profileAge.trim().length > 0 || profileFrequency.trim().length > 0;
+      activeAge.trim().length > 0 || activeFrequency.trim().length > 0;
+    const showAgeField = profilePrompt.needAge !== false;
+    const showFrequencyField = profilePrompt.needFrequency !== false;
     return (
       <View style={styles.profilePrompt}>
         <Text
@@ -209,61 +253,85 @@ const AiCoachScreen = () => {
           {profilePrompt.prompt?.trim() || t("aiCoach.profilePromptFallback")}
         </Text>
         <View style={styles.profileFields}>
-          <View style={styles.profileFieldBlock}>
-            <Text style={[styles.profileFieldLabel, { color: subtleText }]}>
-              {profilePrompt.ageLabel || t("aiCoach.profileAgeLabel")}
-            </Text>
-            <TextInput
-              value={profileAge}
-              onChangeText={setProfileAge}
-              placeholder={t("aiCoach.profileAgePlaceholder")}
-              placeholderTextColor={subtleText}
-              keyboardType="number-pad"
-              inputMode="numeric"
-              maxLength={3}
-              style={[styles.profileInput, { color: textPrimary, borderColor }]}
-              accessible
-              accessibilityLabel={t("aiCoach.profileAgeLabel")}
-            />
-          </View>
-          <View style={styles.profileFieldBlock}>
-            <Text style={[styles.profileFieldLabel, { color: subtleText }]}>
-              {profilePrompt.frequencyLabel ||
-                t("aiCoach.profileFrequencyLabel")}
-            </Text>
-            <TextInput
-              value={profileFrequency}
-              onChangeText={setProfileFrequency}
-              placeholder={t("aiCoach.profileFrequencyPlaceholder")}
-              placeholderTextColor={subtleText}
-              keyboardType="number-pad"
-              inputMode="numeric"
-              maxLength={2}
-              style={[styles.profileInput, { color: textPrimary, borderColor }]}
-              accessible
-              accessibilityLabel={t("aiCoach.profileFrequencyLabel")}
-            />
-          </View>
+          {showAgeField ? (
+            <View style={styles.profileFieldBlock}>
+              <Text
+                style={[styles.profileFieldLabel, { color: subtleText }]}
+                accessibilityLabel={t("aiCoach.profileAgeLabel")}
+              >
+                {profilePrompt.ageLabel || t("aiCoach.profileAgeLabel")}
+              </Text>
+              <TextInput
+                value={activeAge}
+                onChangeText={isActive ? setProfileAge : undefined}
+                placeholder={t("aiCoach.profileAgePlaceholder")}
+                placeholderTextColor={subtleText}
+                keyboardType="number-pad"
+                inputMode="numeric"
+                maxLength={3}
+                style={[
+                  styles.profileInput,
+                  { color: textPrimary, borderColor },
+                ]}
+                editable={!disabled}
+                accessible
+                accessibilityLabel={t("aiCoach.profileAgeLabel")}
+              />
+            </View>
+          ) : null}
+          {showFrequencyField ? (
+            <View style={styles.profileFieldBlock}>
+              <Text
+                style={[styles.profileFieldLabel, { color: subtleText }]}
+                accessibilityLabel={t("aiCoach.profileFrequencyLabel")}
+              >
+                {profilePrompt.frequencyLabel ||
+                  t("aiCoach.profileFrequencyLabel")}
+              </Text>
+              <TextInput
+                value={activeFrequency}
+                onChangeText={isActive ? setProfileFrequency : undefined}
+                placeholder={t("aiCoach.profileFrequencyPlaceholder")}
+                placeholderTextColor={subtleText}
+                keyboardType="number-pad"
+                inputMode="numeric"
+                maxLength={2}
+                style={[
+                  styles.profileInput,
+                  { color: textPrimary, borderColor },
+                ]}
+                editable={!disabled}
+                accessible
+                accessibilityLabel={t("aiCoach.profileFrequencyLabel")}
+              />
+            </View>
+          ) : null}
         </View>
         <Pressable
           style={({ pressed }) => [
             styles.profileSubmit,
             { backgroundColor: accent },
             pressed && hasAnyValue ? { opacity: 0.9 } : null,
-            !hasAnyValue ? styles.profileSubmitDisabled : null,
+            !hasAnyValue || disabled ? styles.profileSubmitDisabled : null,
           ]}
           accessibilityRole="button"
           accessibilityLabel={
             profilePrompt.submitLabel || t("aiCoach.profileSubmit")
           }
-          disabled={!hasAnyValue || loading}
+          disabled={!hasAnyValue || loading || disabled}
           onPress={() => {
             handleProfileSubmit(profileAge, profileFrequency);
+            Keyboard.dismiss();
             setProfileAge("");
             setProfileFrequency("");
           }}
         >
-          <Text style={[styles.profileSubmitText, { color: "#0b122f" }]}>
+          <Text
+            style={[styles.profileSubmitText, { color: "#0b122f" }]}
+            accessibilityLabel={
+              profilePrompt.submitLabel || t("aiCoach.profileSubmit")
+            }
+          >
             {profilePrompt.submitLabel || t("aiCoach.profileSubmit")}
           </Text>
         </Pressable>
@@ -272,190 +340,207 @@ const AiCoachScreen = () => {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor }]}>
-      <ScrollView
-        ref={scrollRef}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-        onContentSizeChange={() =>
-          scrollRef.current?.scrollToEnd({ animated: true })
-        }
-      >
-        <ThemedView style={styles.header}>
-          <ThemedText style={styles.title} type="title">
-            {t("aiCoach.title")}
-          </ThemedText>
-          <ThemedText style={styles.subtitle}>
-            {t("aiCoach.screenSubtitle")}
-          </ThemedText>
-        </ThemedView>
-
-        <View style={styles.suggestionsWrap}>
-          {suggestions.map((item) => (
-            <Pressable
-              key={item.id}
-              style={({ pressed }) => [
-                styles.suggestionChip,
-                {
-                  backgroundColor: chipBg,
-                  borderColor: chipBorder,
-                },
-                pressed ? { opacity: 0.9 } : null,
-              ]}
-              onPress={createSuggestionHandler(item.text)}
-              accessibilityRole="button"
-              accessibilityLabel={item.text}
-            >
-              <Text style={[styles.suggestionText, { color: textPrimary }]}>
-                {item.text}
-              </Text>
-            </Pressable>
-          ))}
-        </View>
-
-        <View
-          style={[
-            styles.messagesCard,
-            { backgroundColor: surfaceColor, borderColor },
-          ]}
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={insets.top + 12}
+    >
+      <View style={[styles.container, { backgroundColor }]}>
+        <ScrollView
+          ref={scrollRef}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="on-drag"
+          onContentSizeChange={() =>
+            scrollRef.current?.scrollToEnd({ animated: true })
+          }
         >
-          {messages.map((message) => {
-            const parsedLevelPrompt =
-              message.role === "assistant"
-                ? parseLevelPrompt(message.content)
-                : null;
-            const parsedProfilePrompt =
-              message.role === "assistant"
-                ? parseProfilePrompt(message.content)
-                : null;
-            const parsedMessagePlan =
-              message.role === "assistant"
-                ? parseJsonPlan(message.content)
-                : null;
+          <ThemedView style={styles.header}>
+            <ThemedText style={styles.title} type="title">
+              {t("aiCoach.title")}
+            </ThemedText>
+            <ThemedText style={styles.subtitle}>
+              {t("aiCoach.screenSubtitle")}
+            </ThemedText>
+          </ThemedView>
 
-            const justify = message.role === "user" ? "flex-end" : "flex-start";
-            const bubbleStyle =
-              message.role === "user"
-                ? [
-                    styles.bubbleUser,
-                    { backgroundColor: userSurface, borderColor: chipBorder },
-                  ]
-                : [
-                    styles.bubbleAssistant,
-                    {
-                      backgroundColor: secondarySurface,
-                      borderColor: accent,
-                      shadowColor: accent,
-                    },
-                  ];
-            const metaNameStyle =
-              message.role === "user"
-                ? [styles.metaNameUser, { color: textPrimary }]
-                : [styles.metaName, { color: subtleText }];
-            const metaTimeStyle =
-              message.role === "user"
-                ? [styles.metaTimeUser, { color: subtleText }]
-                : [styles.metaTime, { color: subtleText }];
-            const bodyStyle =
-              message.role === "user"
-                ? [styles.userText, { color: textPrimary }]
-                : [styles.assistantText, { color: textPrimary }];
-
-            return (
-              <View
-                key={message.id}
-                style={[styles.messageRow, { justifyContent: justify }]}
+          <View style={styles.suggestionsWrap}>
+            {suggestions.map((item) => (
+              <Pressable
+                key={item.id}
+                style={({ pressed }) => [
+                  styles.suggestionChip,
+                  {
+                    backgroundColor: chipBg,
+                    borderColor: chipBorder,
+                  },
+                  pressed ? { opacity: 0.9 } : null,
+                ]}
+                onPress={createSuggestionHandler(item.text)}
+                accessibilityRole="button"
+                accessibilityLabel={item.text}
               >
-                <View style={bubbleStyle}>
-                  <View style={[styles.metaRow, { justifyContent: justify }]}>
-                    <Text style={metaNameStyle}>
-                      {message.role === "user"
-                        ? t("aiCoach.meLabel")
-                        : t("aiCoach.coachLabel")}
-                    </Text>
-                    <Text style={metaTimeStyle}>
-                      {formatTime(message.createdAt)}
-                    </Text>
-                  </View>
+                <Text style={[styles.suggestionText, { color: textPrimary }]}>
+                  {item.text}
+                </Text>
+              </Pressable>
+            ))}
+          </View>
 
-                  {parsedProfilePrompt ? (
-                    renderProfilePrompt(parsedProfilePrompt)
-                  ) : parsedLevelPrompt ? (
-                    renderLevelPrompt(parsedLevelPrompt)
-                  ) : parsedMessagePlan ? (
-                    renderPlan(parsedMessagePlan)
-                  ) : (
-                    <Text style={bodyStyle}>{message.content}</Text>
-                  )}
-                </View>
-              </View>
-            );
-          })}
-
-          {loading ? (
-            <View style={styles.statusRow}>
-              <ActivityIndicator size="small" color={accent} />
-              <Text style={[styles.statusText, { color: subtleText }]}>
-                {t("aiCoach.thinking")}
-              </Text>
-            </View>
-          ) : null}
-        </View>
-      </ScrollView>
-
-      <View
-        style={[
-          styles.inputBar,
-          {
-            paddingBottom: insets.bottom + 12,
-            backgroundColor: inputBarColor,
-            borderColor,
-          },
-        ]}
-      >
-        <View
-          style={[
-            styles.inputInner,
-            { backgroundColor: surfaceColor, borderColor },
-          ]}
-        >
-          <TextInput
-            value={input}
-            onChangeText={setInput}
-            placeholder={t("aiCoach.inputPlaceholder")}
-            placeholderTextColor={subtleText}
-            style={[styles.textInput, { color: textPrimary }]}
-            returnKeyType="send"
-            onSubmitEditing={handleSend}
-            editable={!loading}
-            multiline
-          />
-          <Pressable
-            onPress={handleSend}
-            disabled={loading || !input.trim().length}
-            accessibilityRole="button"
-            accessibilityLabel={t("aiCoach.sendLabel")}
-            style={({ pressed }) => [
-              styles.sendButton,
-              { backgroundColor: accent },
-              loading || !input.trim().length
-                ? styles.sendButtonDisabled
-                : null,
-              pressed && !loading && input.trim().length
-                ? { opacity: 0.92 }
-                : null,
+          <View
+            style={[
+              styles.messagesCard,
+              { backgroundColor: surfaceColor, borderColor },
             ]}
           >
+            {messages.map((message) => {
+              const parsedLevelPrompt =
+                message.role === "assistant"
+                  ? parseLevelPrompt(message.content)
+                  : null;
+              const parsedProfilePrompt =
+                message.role === "assistant"
+                  ? parseProfilePrompt(message.content)
+                  : null;
+              const parsedMessagePlan =
+                message.role === "assistant"
+                  ? parseJsonPlan(message.content)
+                  : null;
+
+              const justify =
+                message.role === "user" ? "flex-end" : "flex-start";
+              const bubbleStyle =
+                message.role === "user"
+                  ? [
+                      styles.bubbleUser,
+                      { backgroundColor: userSurface, borderColor: accent },
+                    ]
+                  : [
+                      styles.bubbleAssistant,
+                      {
+                        backgroundColor: secondarySurface,
+                        borderColor: accent,
+                        shadowColor: accent,
+                      },
+                    ];
+              const metaNameStyle =
+                message.role === "user"
+                  ? [styles.metaNameUser, { color: textPrimary }]
+                  : [styles.metaName, { color: subtleText }];
+              const metaTimeStyle =
+                message.role === "user"
+                  ? [styles.metaTimeUser, { color: subtleText }]
+                  : [styles.metaTime, { color: subtleText }];
+              const bodyStyle =
+                message.role === "user"
+                  ? [styles.userText, { color: textPrimary }]
+                  : [styles.assistantText, { color: textPrimary }];
+
+              return (
+                <View
+                  key={message.id}
+                  style={[styles.messageRow, { justifyContent: justify }]}
+                >
+                  <View style={bubbleStyle}>
+                    <View style={[styles.metaRow, { justifyContent: justify }]}>
+                      <Text style={metaNameStyle}>
+                        {message.role === "user"
+                          ? t("aiCoach.meLabel")
+                          : t("aiCoach.coachLabel")}
+                      </Text>
+                      <Text style={metaTimeStyle}>
+                        {formatTime(message.createdAt)}
+                      </Text>
+                    </View>
+
+                    {parsedProfilePrompt ? (
+                      renderProfilePrompt(
+                        parsedProfilePrompt,
+                        message.id !== lastProfilePromptId,
+                        message.id === lastProfilePromptId,
+                      )
+                    ) : parsedLevelPrompt ? (
+                      renderLevelPrompt(
+                        parsedLevelPrompt,
+                        message.id !== lastLevelPromptId,
+                      )
+                    ) : parsedMessagePlan ? (
+                      renderPlan(parsedMessagePlan)
+                    ) : (
+                      <Text style={bodyStyle}>{message.content}</Text>
+                    )}
+                  </View>
+                </View>
+              );
+            })}
+
             {loading ? (
-              <ActivityIndicator size="small" color="#0b122f" />
-            ) : (
-              <Ionicons name="send" size={18} color="#0b122f" />
-            )}
-          </Pressable>
+              <View style={styles.statusRow}>
+                <ActivityIndicator size="small" color={accent} />
+                <Text style={[styles.statusText, { color: subtleText }]}>
+                  {t("aiCoach.thinking")}
+                </Text>
+              </View>
+            ) : null}
+          </View>
+        </ScrollView>
+
+        <View
+          style={[
+            styles.inputBar,
+            {
+              paddingBottom: insets.bottom + 12,
+              backgroundColor: inputBarColor,
+              borderColor,
+            },
+          ]}
+        >
+          <View
+            style={[
+              styles.inputInner,
+              { backgroundColor: surfaceColor, borderColor },
+            ]}
+          >
+            <TextInput
+              value={input}
+              onChangeText={setInput}
+              placeholder={t("aiCoach.inputPlaceholder")}
+              placeholderTextColor={subtleText}
+              style={[styles.textInput, { color: textPrimary }]}
+              returnKeyType="send"
+              onSubmitEditing={handleSendWithDismiss}
+              blurOnSubmit
+              editable={!loading}
+              multiline
+            />
+            <Pressable
+              onPress={handleSendWithDismiss}
+              disabled={loading || !input.trim().length}
+              accessibilityRole="button"
+              accessibilityLabel={t("aiCoach.sendLabel")}
+              style={({ pressed }) => [
+                styles.sendButton,
+                { backgroundColor: accent },
+                loading || !input.trim().length
+                  ? styles.sendButtonDisabled
+                  : null,
+                pressed && !loading && input.trim().length
+                  ? { opacity: 0.92 }
+                  : null,
+              ]}
+            >
+              {loading ? (
+                <ActivityIndicator size="small" color="#0b122f" />
+              ) : (
+                <Ionicons name="send" size={18} color="#0b122f" />
+              )}
+            </Pressable>
+          </View>
+          <View style={{ height: insets.bottom > 0 ? insets.bottom / 2 : 0 }} />
         </View>
-        <View style={{ height: insets.bottom > 0 ? insets.bottom / 2 : 0 }} />
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 

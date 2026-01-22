@@ -23,7 +23,7 @@ export const LEVEL_REGEX =
   /(principiante|intermedio|avanzado|beginner|intermediate|advanced)/i;
 
 export const AGE_REGEX =
-  /(\b\d{1,2}\s*(años|year|years|edad)\b|\bedad\s*\d{1,2}\b)/i;
+  /(\b\d{1,2}\s*(años?|year|years?)\b|\bedad\s*(?:es\s*)?\d{1,2}\b|\btengo\s+\d{1,2}(?:\s*(?:años?|year|years?)\b)?(?:\s+de\s+edad)?(?=\s*(?:$|[,.!?;]|y\b|con\b)))/i;
 export const FREQUENCY_REGEX =
   /(\b\d{1,2}\s*(veces|times)\s*(por\s+)?(semana|week|weeks)\b|\b(entreno|entrenas|train)\s*\d{1,2}\b)/i;
 

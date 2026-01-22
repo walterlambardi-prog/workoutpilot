@@ -34,4 +34,6 @@ export type ProfilePrompt = {
   readonly ageLabel: string;
   readonly frequencyLabel: string;
   readonly submitLabel: string;
+  readonly needAge?: boolean;
+  readonly needFrequency?: boolean;
 };

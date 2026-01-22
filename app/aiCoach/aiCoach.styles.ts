@@ -43,7 +43,8 @@ export const styles = StyleSheet.create({
   },
   messageRow: {
     flexDirection: "row",
-    maxWidth: "100%",
+    width: "100%",
+    alignItems: "flex-start",
   },
   bubbleAssistant: {
     alignSelf: "flex-start",
@@ -51,7 +52,8 @@ export const styles = StyleSheet.create({
     borderRadius: 14,
     paddingVertical: 10,
     paddingHorizontal: 12,
-    maxWidth: "88%",
+    maxWidth: "92%",
+    flexShrink: 1,
   },
   bubbleUser: {
     alignSelf: "flex-end",
@@ -59,7 +61,8 @@ export const styles = StyleSheet.create({
     borderRadius: 14,
     paddingVertical: 10,
     paddingHorizontal: 12,
-    maxWidth: "88%",
+    maxWidth: "92%",
+    flexShrink: 1,
   },
   metaRow: {
     flexDirection: "row",
@@ -129,6 +132,8 @@ export const styles = StyleSheet.create({
     flex: 1,
     minWidth: 140,
     gap: 6,
+    maxWidth: "100%",
+    flexShrink: 1,
   },
   profileFieldLabel: {
     fontSize: 12,

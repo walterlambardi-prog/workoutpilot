@@ -143,10 +143,17 @@ const buildSystemPrompt = (
 
   const profileJson = JSON.stringify({
     needsProfile: true,
-    prompt: profilePrompt,
+    prompt:
+      !hasAge && !hasFrequency
+        ? profilePrompt
+        : !hasAge
+          ? ageLabel
+          : frequencyLabel,
     ageLabel,
     frequencyLabel,
     submitLabel,
+    needAge: !hasAge,
+    needFrequency: !hasFrequency,
   });
 
   return `Eres un coach de entrenamiento. Responde SOLO en ${responseLanguage}.
@@ -291,11 +298,16 @@ export const parseProfilePrompt = (raw: string): ProfilePrompt | null => {
     const submitLabel =
       typeof parsed?.submitLabel === "string" ? parsed.submitLabel.trim() : "";
 
+    const needAge = parsed?.needAge !== false;
+    const needFrequency = parsed?.needFrequency !== false;
+
     return {
       prompt,
       ageLabel,
       frequencyLabel,
       submitLabel,
+      needAge,
+      needFrequency,
     };
   } catch {
     return null;
@@ -489,12 +501,22 @@ export function useAiCoach() {
           msg.role === "assistant" && Boolean(parseProfilePrompt(msg.content)),
       );
 
+      const missingAge = !agePresent;
+      const missingFrequency = !frequencyPresent;
+
       const profilePromptPayload = JSON.stringify({
         needsProfile: true,
-        prompt: t("aiCoach.profilePromptTitle"),
+        prompt:
+          missingAge && missingFrequency
+            ? t("aiCoach.profilePromptTitle")
+            : missingAge
+              ? t("aiCoach.profileAgeLabel")
+              : t("aiCoach.profileFrequencyLabel"),
         ageLabel: t("aiCoach.profileAgeLabel"),
         frequencyLabel: t("aiCoach.profileFrequencyLabel"),
         submitLabel: t("aiCoach.profileSubmit"),
+        needAge: missingAge,
+        needFrequency: missingFrequency,
       });
 
       if (addToHistory && isAffirmation(query)) {
@@ -515,11 +537,7 @@ export function useAiCoach() {
           return;
         }
 
-        if (
-          levelPresent &&
-          (!agePresent || !frequencyPresent) &&
-          !hasPendingProfilePrompt
-        ) {
+        if (levelPresent && (!agePresent || !frequencyPresent)) {
           setMessages((prev) => [
             ...prev,
             {
@@ -594,12 +612,7 @@ export function useAiCoach() {
         return;
       }
 
-      if (
-        !isAdviceOnly &&
-        levelPresent &&
-        (!agePresent || !frequencyPresent) &&
-        !hasPendingProfilePrompt
-      ) {
+      if (!isAdviceOnly && levelPresent && (!agePresent || !frequencyPresent)) {
         const profileMessage: ChatMessage = {
           id: `assistant-${Date.now()}`,
           role: "assistant",
