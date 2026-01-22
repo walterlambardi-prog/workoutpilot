@@ -357,16 +357,5 @@
     "editPlanCta": "Editar en rutina",
     "fetchError": "No pude generar la respuesta. Intenta de nuevo.",
     "retrySystemPrompt": "Repite la respuesta usando SOLO el JSON válido y nada más."
-  },
-  "routineRun": {
-    "chips": {
-      "target": "Objetivo",
-      "round": "Ronda",
-      "roundValue": "{{current}} de {{total}}",
-      "step": "Paso",
-      "stepValue": "{{current}} / {{total}}"
-    },
-    "progressLabel": "Reps {{current}} / {{target}}",
-    "nextExercise": "Siguiente: {{exercise}}"
   }
 }

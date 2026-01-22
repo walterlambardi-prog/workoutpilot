@@ -1,32 +1,60 @@
 import type { CSSProperties } from "react";
-import { StyleSheet } from "react-native";
+import { StyleSheet, type TextStyle, type ViewStyle } from "react-native";
+type ViewStyles = {
+  screen: ViewStyle;
+  content: ViewStyle;
+  hero: ViewStyle;
+  mediaLayer: ViewStyle;
+  mediaFrame: ViewStyle;
+  mediaTint: ViewStyle;
+  overlayLayer: ViewStyle;
+  overlayTop: ViewStyle;
+  headerBlock: ViewStyle;
+  chipRow: ViewStyle;
+  chip: ViewStyle;
+  overlayBottom: ViewStyle;
+  progressCard: ViewStyle;
+  progressTrack: ViewStyle;
+  progressFill: ViewStyle;
+};
 
-export const rnStyles = StyleSheet.create({
+type TextStyles = {
+  title: TextStyle;
+  subtitle: TextStyle;
+  chipLabel: TextStyle;
+  chipValue: TextStyle;
+  message: TextStyle;
+  nextExercise: TextStyle;
+};
+
+export const rnStyles = StyleSheet.create<ViewStyles & TextStyles>({
   screen: {
     flex: 1,
     width: "100%",
-    paddingHorizontal: 32,
-    paddingVertical: 48,
+    paddingHorizontal: 0,
+    minHeight: "100%",
     alignItems: "center",
   },
   content: {
     width: "100%",
-    maxWidth: 1280,
+    minHeight: "100%",
     alignSelf: "center",
   },
   hero: {
     position: "relative",
-    borderRadius: 32,
     overflow: "hidden",
-    borderWidth: 1,
-    minHeight: 560,
-    aspectRatio: 16 / 9,
+    borderWidth: 0,
+    height: "100%",
     width: "100%",
   },
   mediaLayer: {
     flex: 1,
     height: "100%",
     position: "relative",
+  },
+  mediaFrame: {
+    ...StyleSheet.absoluteFillObject,
+    padding: 0,
   },
   mediaTint: {
     ...StyleSheet.absoluteFillObject,
@@ -49,17 +77,6 @@ export const rnStyles = StyleSheet.create({
     gap: 12,
     maxWidth: 680,
   },
-  title: {
-    fontSize: 48,
-    fontWeight: "700",
-    lineHeight: 52,
-    marginBottom: 0,
-  },
-  subtitle: {
-    fontSize: 18,
-    lineHeight: 24,
-    marginBottom: 0,
-  },
   chipRow: {
     flexDirection: "row",
     flexWrap: "wrap",
@@ -72,6 +89,36 @@ export const rnStyles = StyleSheet.create({
     borderWidth: 1,
     borderStyle: "solid",
   },
+  overlayBottom: {
+    borderRadius: 24,
+    padding: 32,
+    borderWidth: 1,
+    borderStyle: "solid",
+    maxWidth: 480,
+    gap: 16,
+  },
+  progressCard: {
+    gap: 12,
+  },
+  progressTrack: {
+    height: 10,
+    borderRadius: 999,
+    overflow: "hidden",
+    backgroundColor: "rgba(255,255,255,0.08)",
+  },
+  progressFill: {
+    height: "100%",
+    borderRadius: 999,
+  },
+  title: {
+    fontSize: 48,
+    fontWeight: "700",
+    lineHeight: 52,
+  },
+  subtitle: {
+    fontSize: 18,
+    lineHeight: 24,
+  },
   chipLabel: {
     fontSize: 12,
     fontWeight: "600",
@@ -83,47 +130,9 @@ export const rnStyles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "700",
   },
-  overlayBottom: {
-    borderRadius: 24,
-    padding: 32,
-    borderWidth: 1,
-    borderStyle: "solid",
-    maxWidth: 480,
-    gap: 16,
-  },
   message: {
     fontSize: 16,
     lineHeight: 22,
-  },
-  progressCard: {
-    borderRadius: 20,
-    padding: 16,
-    borderWidth: 1,
-    borderStyle: "solid",
-    gap: 12,
-  },
-  progressHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  progressLabel: {
-    fontSize: 14,
-    fontWeight: "600",
-  },
-  progressValue: {
-    fontSize: 14,
-    fontWeight: "700",
-  },
-  progressTrack: {
-    height: 10,
-    borderRadius: 999,
-    overflow: "hidden",
-    backgroundColor: "rgba(255,255,255,0.08)",
-  },
-  progressFill: {
-    height: "100%",
-    borderRadius: 999,
   },
   nextExercise: {
     fontSize: 13,

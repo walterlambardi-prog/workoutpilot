@@ -229,17 +229,19 @@ export default function ExercisesWebScreen({
           darkColor="transparent"
         >
           <ThemedView style={rnStyles.mediaLayer} pointerEvents="none">
-            <video
-              ref={videoRef}
-              style={webMediaStyles.video}
-              playsInline
-              muted
-            />
-            <ThemedView
-              style={[rnStyles.mediaTint, { backgroundColor: scrimColor }]}
-              pointerEvents="none"
-            />
-            <canvas ref={canvasRef} style={webMediaStyles.canvas} />
+            <ThemedView style={rnStyles.mediaFrame} pointerEvents="none">
+              <video
+                ref={videoRef}
+                style={webMediaStyles.video}
+                playsInline
+                muted
+              />
+              <ThemedView
+                style={[rnStyles.mediaTint, { backgroundColor: scrimColor }]}
+                pointerEvents="none"
+              />
+              <canvas ref={canvasRef} style={webMediaStyles.canvas} />
+            </ThemedView>
           </ThemedView>
 
           <ThemedView
@@ -321,35 +323,10 @@ export default function ExercisesWebScreen({
             >
               {routineProgress ? (
                 <ThemedView
-                  style={[
-                    rnStyles.progressCard,
-                    { borderColor: overlayBorder },
-                  ]}
+                  style={rnStyles.progressCard}
                   lightColor="transparent"
                   darkColor="transparent"
                 >
-                  <ThemedView style={rnStyles.progressHeader}>
-                    <ThemedText
-                      style={[
-                        rnStyles.progressLabel,
-                        { color: overlayHeading },
-                      ]}
-                    >
-                      {t("routineRun.progressLabel", {
-                        current: routineProgress.completed,
-                        target: routineProgress.target,
-                      })}
-                    </ThemedText>
-                    <ThemedText
-                      style={[
-                        rnStyles.progressValue,
-                        { color: overlayHeading },
-                      ]}
-                    >
-                      {Math.round(routineProgress.ratio * 100)}%
-                    </ThemedText>
-                  </ThemedView>
-
                   <ThemedView style={rnStyles.progressTrack}>
                     <ThemedView
                       style={[

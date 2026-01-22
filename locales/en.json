@@ -357,16 +357,5 @@
     "editPlanCta": "Edit in builder",
     "fetchError": "I couldn't generate a response. Please try again.",
     "retrySystemPrompt": "Repeat the reply using ONLY the valid JSON schema and nothing else."
-  },
-  "routineRun": {
-    "chips": {
-      "target": "Target",
-      "round": "Round",
-      "roundValue": "{{current}} of {{total}}",
-      "step": "Step",
-      "stepValue": "{{current}} / {{total}}"
-    },
-    "progressLabel": "Reps {{current}} / {{target}}",
-    "nextExercise": "Next: {{exercise}}"
   }
 }

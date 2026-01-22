@@ -76,11 +76,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     gap: 10,
   },
-  progressHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
   progressLabel: {
     fontSize: 14,
     fontWeight: "600",
