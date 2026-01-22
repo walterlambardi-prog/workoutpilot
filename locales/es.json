@@ -335,7 +335,7 @@
     "profilePrompt": "Necesito tu edad, cuántas veces entrenas por semana y tu nivel (principiante/intermedio/avanzado). Elige tu nivel:",
     "suggestions": {
       "starter": "Crea una rutina para principiante",
-      "reps": "Tengo 20 minutos, define reps",
+      "reps": "Tengo 10 minutos, arma una rutina rápida",
       "form": "Consejos para mejorar mis flexiones"
     },
     "topicGuard": "Solo puedo ayudarte con planes de entrenamiento, ejercicios y técnica.",

@@ -335,7 +335,7 @@
     "profilePrompt": "I need your age, how many times you train per week, and your level (beginner/intermediate/advanced). Pick your level:",
     "suggestions": {
       "starter": "Create a beginner plan",
-      "reps": "I have 20 minutes, pick reps",
+      "reps": "I have 10 minutes—set reps for a quick routine",
       "form": "Tips to improve my push-up form"
     },
     "topicGuard": "I can only help with training plans, exercises, and form.",
