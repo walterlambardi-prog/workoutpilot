@@ -73,9 +73,17 @@ export const useWebPoseDetection = (
         return;
       }
 
-      if (canvas.width !== videoWidth || canvas.height !== videoHeight) {
-        canvas.width = videoWidth;
-        canvas.height = videoHeight;
+      const rect = canvas.getBoundingClientRect();
+      const displayWidth = Math.max(1, rect.width || videoWidth);
+      const displayHeight = Math.max(1, rect.height || videoHeight);
+      const dpr =
+        typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1;
+      const renderWidth = Math.round(displayWidth * dpr);
+      const renderHeight = Math.round(displayHeight * dpr);
+
+      if (canvas.width !== renderWidth || canvas.height !== renderHeight) {
+        canvas.width = renderWidth;
+        canvas.height = renderHeight;
       }
 
       const ctx = canvas.getContext("2d");
@@ -84,13 +92,21 @@ export const useWebPoseDetection = (
         return;
       }
 
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, displayWidth, displayHeight);
 
       const result: MediaPipeResult = poseLandmarker.detectForVideo(video, now);
       const landmarks = result?.landmarks?.[0];
 
       if (landmarks) {
-        drawPoseLandmarks({ canvas, landmarks });
+        drawPoseLandmarks({
+          canvas,
+          landmarks,
+          sourceWidth: videoWidth,
+          sourceHeight: videoHeight,
+          targetWidth: displayWidth,
+          targetHeight: displayHeight,
+        });
 
         if (exerciseId === ExerciseId.LATERAL_RAISES) {
           const next = lateralRaises.processLandmarks(landmarks);

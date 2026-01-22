@@ -8,6 +8,10 @@ interface DrawPoseOptions {
   fillColor?: string;
   lineWidth?: number;
   pointRadius?: number;
+  sourceWidth?: number;
+  sourceHeight?: number;
+  targetWidth?: number;
+  targetHeight?: number;
 }
 
 /**
@@ -21,13 +25,25 @@ export const drawPoseLandmarks = ({
   fillColor = "#f472b6",
   lineWidth = 3,
   pointRadius = 4,
+  sourceWidth,
+  sourceHeight,
+  targetWidth,
+  targetHeight,
 }: DrawPoseOptions): void => {
   const ctx = canvas.getContext("2d");
   if (!ctx) return;
 
+  const targetW = targetWidth ?? canvas.width;
+  const targetH = targetHeight ?? canvas.height;
+  const sourceW = sourceWidth ?? targetW;
+  const sourceH = sourceHeight ?? targetH;
+  const scale = Math.max(targetW / sourceW, targetH / sourceH);
+  const offsetX = (sourceW * scale - targetW) / 2;
+  const offsetY = (sourceH * scale - targetH) / 2;
+
   const project = (lm: PoseLandmark) => ({
-    x: lm.x * canvas.width,
-    y: lm.y * canvas.height,
+    x: lm.x * sourceW * scale - offsetX,
+    y: lm.y * sourceH * scale - offsetY,
   });
 
   // Draw connections

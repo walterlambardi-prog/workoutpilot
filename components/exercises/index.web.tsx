@@ -101,7 +101,8 @@ export default function ExercisesWebScreen({
     "background",
   );
   const scrimColor = useThemeColor(
-    { light: "rgba(7,12,22,0.55)", dark: "rgba(15,23,42,0.45)" },
+    { light: "rgba(0, 0, 0, 0.80)", dark: "rgba(15,23,42,0.45)" },
+    //{ light: "rgba(7,12,22,0.55)", dark: "rgba(15,23,42,0.45)" },
     "background",
   );
   const cardBackground = useThemeColor(

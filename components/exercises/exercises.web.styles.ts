@@ -149,6 +149,8 @@ export const webMediaStyles: { video: CSSProperties; canvas: CSSProperties } = {
     height: "100%",
     objectFit: "cover",
     zIndex: 1,
+    transform: "scaleX(-1)",
+    transformOrigin: "center",
   },
   canvas: {
     position: "absolute",
@@ -158,5 +160,7 @@ export const webMediaStyles: { video: CSSProperties; canvas: CSSProperties } = {
     height: "100%",
     pointerEvents: "none",
     zIndex: 3,
+    transform: "scaleX(-1)",
+    transformOrigin: "center",
   },
 };
