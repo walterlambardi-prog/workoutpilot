@@ -30,7 +30,7 @@
       },
       "exercises": {
         "title": "Ejercicios",
-        "description": "Prueba la demo de pose: nativa en móvil y web en navegador.",
+        "description": "Explora los ejercicios disponibles y elige tu siguiente movimiento.",
         "accessibilityHint": "Abre la pantalla de ejercicios con detección de pose"
       },
       "sessions": {

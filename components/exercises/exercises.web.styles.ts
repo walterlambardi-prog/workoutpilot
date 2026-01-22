@@ -67,7 +67,7 @@ export const rnStyles = StyleSheet.create<ViewStyles & TextStyles>({
   },
   overlayTop: {
     gap: 24,
-    maxWidth: "55%",
+    paddingEnd: "20%",
   },
   headerBlock: {
     borderRadius: 24,
