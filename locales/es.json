@@ -220,6 +220,14 @@
           "title": "Levantamiento lateral de brazos",
           "description": "Eleva ambos brazos para trabajar hombros con control."
         },
+        "calfRaises": {
+          "title": "Elevaciones de talones",
+          "description": "Sube sobre la punta de los pies para fortalecer pantorrillas y tobillos."
+        },
+        "lunges": {
+          "title": "Desplantes",
+          "description": "Da un paso al frente, baja con control y empuja con el talón delantero."
+        },
         "pushups": {
           "title": "Flexiones de brazo",
           "description": "Controla core y pecho en cada repetición."

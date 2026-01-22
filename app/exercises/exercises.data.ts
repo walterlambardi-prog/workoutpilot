@@ -15,6 +15,16 @@ export const EXERCISE_DEFINITIONS: ExerciseDefinition[] = [
     image: exerciseImages[ExerciseId.LATERAL_RAISES],
   },
   {
+    id: ExerciseId.CALF_RAISES,
+    copyKey: EXERCISE_COPY_KEYS[ExerciseId.CALF_RAISES],
+    image: exerciseImages[ExerciseId.CALF_RAISES],
+  },
+  {
+    id: ExerciseId.LUNGES,
+    copyKey: EXERCISE_COPY_KEYS[ExerciseId.LUNGES],
+    image: exerciseImages[ExerciseId.LUNGES],
+  },
+  {
     id: ExerciseId.PUSHUPS,
     copyKey: EXERCISE_COPY_KEYS[ExerciseId.PUSHUPS],
     image: exerciseImages[ExerciseId.PUSHUPS],

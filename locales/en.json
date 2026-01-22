@@ -220,6 +220,14 @@
           "title": "Lateral raises",
           "description": "Lift both arms to target shoulders with control."
         },
+        "calfRaises": {
+          "title": "Calf raises",
+          "description": "Rise onto your toes to strengthen calves and ankles."
+        },
+        "lunges": {
+          "title": "Lunges",
+          "description": "Step forward, lower with control, and drive through the front heel."
+        },
         "pushups": {
           "title": "Push-ups",
           "description": "Control your core and chest through each rep."
