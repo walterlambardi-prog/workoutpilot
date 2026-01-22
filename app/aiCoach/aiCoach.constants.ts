@@ -17,6 +17,8 @@ export const ALLOWED_EXERCISES: ExerciseId[] = [
   ExerciseId.PUSHUPS,
   ExerciseId.HAMMER_CURLS,
   ExerciseId.LATERAL_RAISES,
+  ExerciseId.LUNGES,
+  ExerciseId.CALF_RAISES,
 ];
 
 export const LEVEL_REGEX =
@@ -77,6 +79,16 @@ export const TOPIC_KEYWORDS = [
   "laterales",
   "lateral",
   "raises",
+  "lunges",
+  "zancadas",
+  "estocadas",
+  "desplantes",
+  "calf raises",
+  "elevaciones de talón",
+  "elevaciones de talones",
+  "pantorrillas",
+  "gemelos",
+  "calves",
   "pesas",
   "weights",
   "bandas",
