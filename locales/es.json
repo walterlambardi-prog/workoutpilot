@@ -225,7 +225,7 @@
           "description": "Sube sobre la punta de los pies para fortalecer pantorrillas y tobillos."
         },
         "lunges": {
-          "title": "Desplantes",
+          "title": "Zancadas",
           "description": "Da un paso al frente, baja con control y empuja con el talón delantero."
         },
         "pushups": {
@@ -317,6 +317,30 @@
         "Baja caderas hacia atrás y abajo, talones apoyados",
         "Llega a paralelo y empuja hacia arriba"
       ]
+    },
+    "lunges": {
+      "feedback": {
+        "showBody": "Muestra tus piernas a la cámara",
+        "noPose": "No se detectó ninguna pose",
+        "noBody": "Muestra todo tu cuerpo a la cámara",
+        "standTall": "Ponte erguido y fija la postura",
+        "findStance": "Da un paso al frente y mantén el torso erguido",
+        "improveLight": "Mejora la luz y mantén el torso en cuadro",
+        "lower": "Baja a la estocada con la {{leg}}",
+        "bottom": "Mantén la profundidad, rodilla delantera alineada",
+        "driveUp": "Impulsa hacia arriba con el talón de la {{leg}}",
+        "complete": "Buena estocada con la {{leg}}"
+      },
+      "legLabel": {
+        "left": "pierna izquierda",
+        "right": "pierna derecha",
+        "none": "estable"
+      },
+      "labels": {
+        "activeLeg": "Pierna activa",
+        "frontKnee": "Ángulo rodilla delantera",
+        "backKnee": "Ángulo rodilla trasera"
+      }
     },
     "lateralRaises": {
       "feedback": {

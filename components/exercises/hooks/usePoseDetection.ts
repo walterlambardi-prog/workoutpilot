@@ -9,6 +9,7 @@ import type { TFunction } from "i18next";
 import type { PoseLandmark, PoseMessageKey, Status } from "../exercises.types";
 import { useHammerCurlsCounter } from "./useHammerCurlsCounter";
 import { useLateralRaisesCounter } from "./useLateralRaisesCounter";
+import { useLungesCounter } from "./useLungesCounter";
 import { useSquatsCounter } from "./useSquatsCounter";
 
 /**
@@ -30,6 +31,7 @@ export const usePoseDetection = (params: {
 
   const hammerCurls = useHammerCurlsCounter(t);
   const lateralRaises = useLateralRaisesCounter(t);
+  const lunges = useLungesCounter(t);
   const squats = useSquatsCounter(t);
 
   useEffect(() => {
@@ -182,6 +184,24 @@ export const usePoseDetection = (params: {
             }
             setFeedback(next?.feedback);
           }
+
+          if (exerciseId === ExerciseId.LUNGES) {
+            const next = lunges.processLandmarks(landmarks);
+            const rep = next?.repCount ?? 0;
+            const stableRep = Math.max(lastRepCountRef.current, rep);
+            lastRepCountRef.current = stableRep;
+            setRepCount(stableRep);
+            if (exerciseId) {
+              const prev = reportedRepRef.current;
+              if (stableRep > prev) {
+                useExerciseSessionStore
+                  .getState()
+                  .addRep(exerciseId, stableRep - prev);
+                reportedRepRef.current = stableRep;
+              }
+            }
+            setFeedback(next?.feedback);
+          }
         } else {
           setPoseCount(0);
           setMessageKey("noPoseDetected");
@@ -238,6 +258,24 @@ export const usePoseDetection = (params: {
             }
             setFeedback(next?.feedback);
           }
+
+          if (exerciseId === ExerciseId.LUNGES) {
+            const next = lunges.processLandmarks(undefined);
+            const rep = next?.repCount ?? 0;
+            const stableRep = Math.max(lastRepCountRef.current, rep);
+            lastRepCountRef.current = stableRep;
+            setRepCount(stableRep);
+            if (exerciseId) {
+              const prev = reportedRepRef.current;
+              if (stableRep > prev) {
+                useExerciseSessionStore
+                  .getState()
+                  .addRep(exerciseId, stableRep - prev);
+                reportedRepRef.current = stableRep;
+              }
+            }
+            setFeedback(next?.feedback);
+          }
         }
       } catch (error) {
         setStatus("error");
@@ -245,7 +283,7 @@ export const usePoseDetection = (params: {
         console.error("Error processing landmarks:", error);
       }
     },
-    [exerciseId, extractLandmarks, hammerCurls, lateralRaises, squats],
+    [exerciseId, extractLandmarks, hammerCurls, lateralRaises, lunges, squats],
   );
 
   const handleSwitchCamera = useCallback(() => {

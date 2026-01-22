@@ -318,6 +318,30 @@
         "Reach parallel depth, then drive up"
       ]
     },
+    "lunges": {
+      "feedback": {
+        "showBody": "Show your legs to the camera",
+        "noPose": "No pose detected",
+        "noBody": "Show your full body to the camera",
+        "standTall": "Stand tall and set your stance",
+        "findStance": "Step forward and keep your torso tall",
+        "improveLight": "Improve lighting and keep your torso in frame",
+        "lower": "Lower into a lunge on your {{leg}}",
+        "bottom": "Hold depth, keep the front knee stacked",
+        "driveUp": "Drive up through your {{leg}} heel",
+        "complete": "Good lunge on your {{leg}}"
+      },
+      "legLabel": {
+        "left": "left leg",
+        "right": "right leg",
+        "none": "stable"
+      },
+      "labels": {
+        "activeLeg": "Active leg",
+        "frontKnee": "Front knee angle",
+        "backKnee": "Back knee angle"
+      }
+    },
     "lateralRaises": {
       "feedback": {
         "showShoulders": "Show your shoulders to the camera",
