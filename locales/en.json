@@ -342,6 +342,25 @@
         "backKnee": "Back knee angle"
       }
     },
+    "calfRaises": {
+      "feedback": {
+        "showBody": "Show your legs and feet to the camera",
+        "noPose": "No pose detected",
+        "heelsDown": "Heels down, ready to raise",
+        "raise": "Rise up on your toes",
+        "holdTop": "Hold at the top",
+        "lower": "Lower with control",
+        "complete": "Good rep, heels down",
+        "keepFeetFlat": "Keep your feet flat on the ground",
+        "kneesStable": "Keep your knees stable, don't let them collapse",
+        "shouldersLevel": "Keep your shoulders level",
+        "hipsLevel": "Keep your hips level"
+      },
+      "labels": {
+        "heelHeight": "Heel elevation",
+        "state": "State"
+      }
+    },
     "lateralRaises": {
       "feedback": {
         "showShoulders": "Show your shoulders to the camera",

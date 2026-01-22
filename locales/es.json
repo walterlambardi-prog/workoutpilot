@@ -342,6 +342,25 @@
         "backKnee": "Ángulo rodilla trasera"
       }
     },
+    "calfRaises": {
+      "feedback": {
+        "showBody": "Muestra tus piernas y pies a la cámara",
+        "noPose": "No se detectó pose",
+        "heelsDown": "Talones abajo, listo para elevar",
+        "raise": "Elévate en punta de pies",
+        "holdTop": "Mantén arriba",
+        "lower": "Baja con control",
+        "complete": "Buena repetición, talones abajo",
+        "keepFeetFlat": "Mantén los pies planos en el suelo",
+        "kneesStable": "Mantén las rodillas estables, no las dejes colapsar",
+        "shouldersLevel": "Mantén los hombros nivelados",
+        "hipsLevel": "Mantén las caderas niveladas"
+      },
+      "labels": {
+        "heelHeight": "Elevación talones",
+        "state": "Estado"
+      }
+    },
     "lateralRaises": {
       "feedback": {
         "showShoulders": "Muestra tus hombros a la cámara",
