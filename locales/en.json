@@ -35,7 +35,7 @@
       },
       "sessions": {
         "title": "Sessions",
-        "description": "View your tracked sessions, reps, and recent history.",
+        "description": "Review your sessions, repetitions, and routine history in one place.",
         "accessibilityHint": "Opens the session insights screen"
       },
       "settings": {
