@@ -120,9 +120,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255,255,255,0.04)",
     borderColor: "rgba(255,255,255,0.18)",
   },
-  exerciseCardDisabled: {
-    opacity: 0.55,
-  },
+  exerciseCardDisabled: {},
   exerciseBackground: {
     width: "100%",
     minHeight: 190,
@@ -139,6 +137,12 @@ const styles = StyleSheet.create({
   },
   exerciseOverlayDark: {
     backgroundColor: "rgba(2,6,23,0.45)",
+  },
+  exerciseOverlayDisabled: {
+    backgroundColor: "rgba(2,6,23,0.65)",
+  },
+  exerciseDimmed: {
+    opacity: 0.55,
   },
   exerciseContent: {
     padding: 20,

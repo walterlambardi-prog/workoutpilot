@@ -119,17 +119,21 @@ const RoutineBuilderScreen: React.FC<RoutineBuilderScreenProps> = () => {
         reps: ROUTINE_DEFAULT_REPS,
         isSelected: true,
       };
+      const isDisabled = !config.isSelected;
       const toggleIconColor = config.isSelected
         ? colorScheme === "dark"
           ? "#4ADE80"
           : "#15803D"
         : colorScheme === "dark"
-          ? "#CBD5F5"
-          : "#0F172A";
+          ? "#FFFFFF"
+          : "#FFFFFF";
       const overlayTone =
         colorScheme === "dark"
           ? styles.exerciseOverlayDark
           : styles.exerciseOverlayLight;
+      const overlayDisabled = !config.isSelected
+        ? styles.exerciseOverlayDisabled
+        : null;
 
       return (
         <ThemedView
@@ -148,10 +152,15 @@ const RoutineBuilderScreen: React.FC<RoutineBuilderScreenProps> = () => {
           >
             <View
               pointerEvents="none"
-              style={[styles.exerciseOverlay, overlayTone]}
+              style={[styles.exerciseOverlay, overlayTone, overlayDisabled]}
             />
             <View style={styles.exerciseContent} pointerEvents="box-none">
-              <View style={styles.exerciseTop}>
+              <View
+                style={[
+                  styles.exerciseTop,
+                  isDisabled ? styles.exerciseDimmed : null,
+                ]}
+              >
                 <View style={styles.exerciseHeader}>
                   <View style={styles.exerciseTitleBlock}>
                     <ThemedText
@@ -176,7 +185,12 @@ const RoutineBuilderScreen: React.FC<RoutineBuilderScreenProps> = () => {
               <View style={styles.exerciseFooter}>
                 <View style={styles.repsColumn}>
                   <View style={styles.repsRow}>
-                    <View style={styles.repsStepper}>
+                    <View
+                      style={[
+                        styles.repsStepper,
+                        isDisabled ? styles.exerciseDimmed : null,
+                      ]}
+                    >
                       <StepperButton
                         icon="remove-outline"
                         onPress={() => decrementReps(item.id)}
@@ -186,7 +200,7 @@ const RoutineBuilderScreen: React.FC<RoutineBuilderScreenProps> = () => {
                             exercise: item.title,
                           },
                         )}
-                        disabled={config.reps <= 1}
+                        disabled={isDisabled || config.reps <= 1}
                         colorScheme={"dark"}
                         variant="compact"
                       />
@@ -206,6 +220,7 @@ const RoutineBuilderScreen: React.FC<RoutineBuilderScreenProps> = () => {
                             exercise: item.title,
                           },
                         )}
+                        disabled={isDisabled}
                         colorScheme={"dark"}
                         variant="compact"
                       />
