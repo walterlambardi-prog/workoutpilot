@@ -28,3 +28,10 @@ export type LevelPrompt = {
   readonly prompt: string;
   readonly options: string[];
 };
+
+export type ProfilePrompt = {
+  readonly prompt: string;
+  readonly ageLabel: string;
+  readonly frequencyLabel: string;
+  readonly submitLabel: string;
+};

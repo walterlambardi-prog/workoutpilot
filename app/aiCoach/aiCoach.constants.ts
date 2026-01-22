@@ -22,6 +22,14 @@ export const ALLOWED_EXERCISES: ExerciseId[] = [
 export const LEVEL_REGEX =
   /(principiante|intermedio|avanzado|beginner|intermediate|advanced)/i;
 
+export const AGE_REGEX =
+  /(\b\d{1,2}\s*(años|year|years|edad)\b|\bedad\s*\d{1,2}\b)/i;
+export const FREQUENCY_REGEX =
+  /(\b\d{1,2}\s*(veces|times)\s*(por\s+)?(semana|week|weeks)\b|\b(entreno|entrenas|train)\s*\d{1,2}\b)/i;
+
+export const AFFIRMATIVE_REGEX =
+  /^(si|sí|sii|vale|ok|okay|dale|claro|listo|va|de una|yes|yep|sure|correcto|entendido)\b/i;
+
 export const TOPIC_KEYWORDS = [
   "coach",
   "entrenador",

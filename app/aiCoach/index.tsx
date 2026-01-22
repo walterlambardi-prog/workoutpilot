@@ -1,14 +1,14 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Stack } from "expo-router";
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
-    ActivityIndicator,
-    Pressable,
-    ScrollView,
-    Text,
-    TextInput,
-    View,
+  ActivityIndicator,
+  Pressable,
+  ScrollView,
+  Text,
+  TextInput,
+  View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -17,8 +17,17 @@ import { ThemedView } from "@/components/themedView";
 import { EXERCISE_COPY_KEYS } from "@/constants/exercises";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { styles } from "./aiCoach.styles";
-import type { LevelPrompt, ParsedRoutinePlan } from "./aiCoach.types";
-import { parseJsonPlan, parseLevelPrompt, useAiCoach } from "./useAiCoach";
+import type {
+  LevelPrompt,
+  ParsedRoutinePlan,
+  ProfilePrompt,
+} from "./aiCoach.types";
+import {
+  parseJsonPlan,
+  parseLevelPrompt,
+  parseProfilePrompt,
+  useAiCoach,
+} from "./useAiCoach";
 
 const AiCoachScreen = () => {
   const { t } = useTranslation();
@@ -35,6 +44,7 @@ const AiCoachScreen = () => {
     handleStartRoutineFromPlan,
     handleEditRoutineFromPlan,
     handleLevelSelect,
+    handleProfileSubmit,
   } = useAiCoach();
 
   const backgroundColor = useThemeColor({}, "background");
@@ -72,6 +82,9 @@ const AiCoachScreen = () => {
     { light: "rgba(255,255,255,0.95)", dark: "rgba(7,15,38,0.98)" },
     "background",
   );
+
+  const [profileAge, setProfileAge] = useState("");
+  const [profileFrequency, setProfileFrequency] = useState("");
 
   const formatTime = useMemo(
     () => (timestamp?: number) => {
@@ -185,6 +198,80 @@ const AiCoachScreen = () => {
     </View>
   );
 
+  const renderProfilePrompt = (profilePrompt: ProfilePrompt) => {
+    const hasAnyValue =
+      profileAge.trim().length > 0 || profileFrequency.trim().length > 0;
+    return (
+      <View style={styles.profilePrompt}>
+        <Text
+          style={[styles.profilePromptTitle, { color: textPrimary }]}
+          accessibilityRole="header"
+        >
+          {profilePrompt.prompt?.trim() || t("aiCoach.profilePromptFallback")}
+        </Text>
+        <View style={styles.profileFields}>
+          <View style={styles.profileFieldBlock}>
+            <Text style={[styles.profileFieldLabel, { color: subtleText }]}>
+              {profilePrompt.ageLabel || t("aiCoach.profileAgeLabel")}
+            </Text>
+            <TextInput
+              value={profileAge}
+              onChangeText={setProfileAge}
+              placeholder={t("aiCoach.profileAgePlaceholder")}
+              placeholderTextColor={subtleText}
+              keyboardType="number-pad"
+              inputMode="numeric"
+              maxLength={3}
+              style={[styles.profileInput, { color: textPrimary, borderColor }]}
+              accessible
+              accessibilityLabel={t("aiCoach.profileAgeLabel")}
+            />
+          </View>
+          <View style={styles.profileFieldBlock}>
+            <Text style={[styles.profileFieldLabel, { color: subtleText }]}>
+              {profilePrompt.frequencyLabel ||
+                t("aiCoach.profileFrequencyLabel")}
+            </Text>
+            <TextInput
+              value={profileFrequency}
+              onChangeText={setProfileFrequency}
+              placeholder={t("aiCoach.profileFrequencyPlaceholder")}
+              placeholderTextColor={subtleText}
+              keyboardType="number-pad"
+              inputMode="numeric"
+              maxLength={2}
+              style={[styles.profileInput, { color: textPrimary, borderColor }]}
+              accessible
+              accessibilityLabel={t("aiCoach.profileFrequencyLabel")}
+            />
+          </View>
+        </View>
+        <Pressable
+          style={({ pressed }) => [
+            styles.profileSubmit,
+            { backgroundColor: accent },
+            pressed && hasAnyValue ? { opacity: 0.9 } : null,
+            !hasAnyValue ? styles.profileSubmitDisabled : null,
+          ]}
+          accessibilityRole="button"
+          accessibilityLabel={
+            profilePrompt.submitLabel || t("aiCoach.profileSubmit")
+          }
+          disabled={!hasAnyValue || loading}
+          onPress={() => {
+            handleProfileSubmit(profileAge, profileFrequency);
+            setProfileAge("");
+            setProfileFrequency("");
+          }}
+        >
+          <Text style={[styles.profileSubmitText, { color: "#0b122f" }]}>
+            {profilePrompt.submitLabel || t("aiCoach.profileSubmit")}
+          </Text>
+        </Pressable>
+      </View>
+    );
+  };
+
   return (
     <View style={[styles.container, { backgroundColor }]}>
       <Stack.Screen
@@ -246,6 +333,10 @@ const AiCoachScreen = () => {
               message.role === "assistant"
                 ? parseLevelPrompt(message.content)
                 : null;
+            const parsedProfilePrompt =
+              message.role === "assistant"
+                ? parseProfilePrompt(message.content)
+                : null;
             const parsedMessagePlan =
               message.role === "assistant"
                 ? parseJsonPlan(message.content)
@@ -296,7 +387,9 @@ const AiCoachScreen = () => {
                     </Text>
                   </View>
 
-                  {parsedLevelPrompt ? (
+                  {parsedProfilePrompt ? (
+                    renderProfilePrompt(parsedProfilePrompt)
+                  ) : parsedLevelPrompt ? (
                     renderLevelPrompt(parsedLevelPrompt)
                   ) : parsedMessagePlan ? (
                     renderPlan(parsedMessagePlan)

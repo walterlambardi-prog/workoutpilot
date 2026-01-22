@@ -4,30 +4,34 @@ import { useTranslation } from "react-i18next";
 
 import { ExerciseId } from "@/constants/exercises";
 import {
-  useRoutineBuilderStore,
-  type RoutinePlanStepBase,
+    useRoutineBuilderStore,
+    type RoutinePlanStepBase,
 } from "@/stores/routineBuilderStore";
 import { useRoutineSessionStore } from "@/stores/routineSessionStore";
 import {
-  AI_COACH_API_URL,
-  AI_COACH_MODEL,
-  ALLOWED_EXERCISES,
-  HISTORY_WINDOW,
-  LEVEL_REGEX,
-  MAX_TOKENS,
-  REP_MAX,
-  REP_MIN,
-  ROUND_MAX,
-  ROUND_MIN,
-  TEMPERATURE,
-  TOPIC_KEYWORDS,
+    AFFIRMATIVE_REGEX,
+    AGE_REGEX,
+    AI_COACH_API_URL,
+    AI_COACH_MODEL,
+    ALLOWED_EXERCISES,
+    FREQUENCY_REGEX,
+    HISTORY_WINDOW,
+    LEVEL_REGEX,
+    MAX_TOKENS,
+    REP_MAX,
+    REP_MIN,
+    ROUND_MAX,
+    ROUND_MIN,
+    TEMPERATURE,
+    TOPIC_KEYWORDS,
 } from "./aiCoach.constants";
 import type {
-  ChatMessage,
-  LevelPrompt,
-  ParsedRoutinePlan,
-  RoutinePlanItem,
-  Suggestion,
+    ChatMessage,
+    LevelPrompt,
+    ParsedRoutinePlan,
+    ProfilePrompt,
+    RoutinePlanItem,
+    Suggestion,
 } from "./aiCoach.types";
 
 const normalizeText = (value?: string) => value?.trim() ?? "";
@@ -98,6 +102,20 @@ const hasLevelInfo = (history: ChatMessage[]) => {
   return LEVEL_REGEX.test(text);
 };
 
+const hasAgeInfo = (history: ChatMessage[]) => {
+  const text = history
+    .map((msg) => normalizeText(msg.content).toLowerCase())
+    .join(" ");
+  return AGE_REGEX.test(text);
+};
+
+const hasFrequencyInfo = (history: ChatMessage[]) => {
+  const text = history
+    .map((msg) => normalizeText(msg.content).toLowerCase())
+    .join(" ");
+  return FREQUENCY_REGEX.test(text);
+};
+
 const buildSystemPrompt = (
   topicGuard: string,
   lang: string,
@@ -106,6 +124,12 @@ const buildSystemPrompt = (
   hasLevel: boolean,
   levelPrompt: string,
   levelOptions: string[],
+  hasAge: boolean,
+  hasFrequency: boolean,
+  profilePrompt: string,
+  ageLabel: string,
+  frequencyLabel: string,
+  submitLabel: string,
 ) => {
   const responseLanguage = lang?.startsWith("es") ? "espanol" : "english";
   const contextualHistory =
@@ -117,8 +141,17 @@ const buildSystemPrompt = (
     options: levelOptions,
   });
 
+  const profileJson = JSON.stringify({
+    needsProfile: true,
+    prompt: profilePrompt,
+    ageLabel,
+    frequencyLabel,
+    submitLabel,
+  });
+
   return `Eres un coach de entrenamiento. Responde SOLO en ${responseLanguage}.
 Si el usuario solicita una rutina pero no tienes el nivel del usuario, responde únicamente con este JSON y nada más: ${levelJson}
+Si falta la edad o la frecuencia semanal (una o ambas), responde únicamente con este JSON y nada más: ${profileJson}. Usa esta salida cuando falte cualquiera de esos datos, no hagas preguntas abiertas.
 Si el usuario solo saluda ("hola", "hello", "buenas"), respóndele con un saludo breve y una invitación a armar una rutina; sugiere que comparta nivel y objetivo. No uses ${topicGuard} en ese caso.
 Si el usuario ya indicó su nivel en el mismo mensaje (ej. "principiante", "intermedio", "avanzado"), no pidas el nivel otra vez ni devuelvas el JSON de nivel pendiente; pide solo los datos faltantes (edad y frecuencia semanal) o entrega la rutina si ya los tienes.
 Cuando tengas edad, frecuencia semanal y nivel, devuelve SOLO un JSON válido con esta forma exacta y SIN envolverlo en otro JSON (nada de id/model/choices):
@@ -128,13 +161,16 @@ Cuando tengas edad, frecuencia semanal y nivel, devuelve SOLO un JSON válido co
 - "reps" y "rounds" deben ser enteros dentro de los rangos indicados.
 - No agregues texto antes o después del JSON ni metas el JSON dentro de otro objeto.
 El JSON de nivel anterior SOLO se usa cuando realmente falta el nivel.
+El JSON de perfil (edad/frecuencia) se usa cuando falte alguno de esos datos; si ya tienes edad y frecuencia, no lo envíes.
 Si el usuario ya dijo su nivel (ej. principiante/intermedio/avanzado), está prohibido devolver un JSON con needsLevel; no preguntes el nivel otra vez.
 Cuando el nivel ya está presente, pide únicamente los datos faltantes (edad y frecuencia semanal) y, si ya tienes esos datos, entrega la rutina en el formato indicado.
 Si el usuario pide técnica o consejos, responde con 2-4 frases breves sin JSON.
 Si el usuario habla de un tema fuera de ejercicio, responde exactamente "${topicGuard}".
 Contexto de la conversación:
 ${contextualHistory}
-Estado de nivel en la conversación: ${hasLevel ? "nivel presente" : "nivel faltante"}.`;
+Estado de nivel en la conversación: ${hasLevel ? "nivel presente" : "nivel faltante"}.
+Estado de edad: ${hasAge ? "edad presente" : "edad faltante"}.
+Estado de frecuencia: ${hasFrequency ? "frecuencia presente" : "frecuencia faltante"}.`;
 };
 
 export const parseJsonPlan = (raw: string): ParsedRoutinePlan | null => {
@@ -226,6 +262,36 @@ export const parseLevelPrompt = (raw: string): LevelPrompt | null => {
   }
 };
 
+export const parseProfilePrompt = (raw: string): ProfilePrompt | null => {
+  try {
+    const matcher = /\{[\s\S]*\}/.exec(raw);
+    if (!matcher) return null;
+    const parsed = JSON.parse(matcher[0]);
+    const needsProfile = Boolean(parsed?.needsProfile);
+    if (!needsProfile) return null;
+
+    const prompt =
+      typeof parsed?.prompt === "string" ? parsed.prompt.trim() : "";
+    const ageLabel =
+      typeof parsed?.ageLabel === "string" ? parsed.ageLabel.trim() : "";
+    const frequencyLabel =
+      typeof parsed?.frequencyLabel === "string"
+        ? parsed.frequencyLabel.trim()
+        : "";
+    const submitLabel =
+      typeof parsed?.submitLabel === "string" ? parsed.submitLabel.trim() : "";
+
+    return {
+      prompt,
+      ageLabel,
+      frequencyLabel,
+      submitLabel,
+    };
+  } catch {
+    return null;
+  }
+};
+
 export function useAiCoach() {
   const { t, i18n } = useTranslation();
   const router = useRouter();
@@ -272,16 +338,29 @@ export function useAiCoach() {
     );
   }, []);
 
-  const isOnTopic = useCallback((text: string) => {
+  const isAffirmation = useCallback((text: string) => {
     const normalized = text.toLowerCase().trim();
-    const isNumericResponse = /^\d{1,3}$/.test(normalized);
-    const mentionsLevel = LEVEL_REGEX.test(normalized);
-    return (
-      isNumericResponse ||
-      mentionsLevel ||
-      TOPIC_KEYWORDS.some((keyword) => normalized.includes(keyword))
-    );
+    return AFFIRMATIVE_REGEX.test(normalized);
   }, []);
+
+  const isOnTopic = useCallback(
+    (text: string) => {
+      const normalized = text.toLowerCase().trim();
+      const isNumericResponse = /^\d{1,3}$/.test(normalized);
+      const mentionsLevel = LEVEL_REGEX.test(normalized);
+      const mentionsAge = AGE_REGEX.test(normalized);
+      const mentionsFrequency = FREQUENCY_REGEX.test(normalized);
+      return (
+        isNumericResponse ||
+        mentionsLevel ||
+        mentionsAge ||
+        mentionsFrequency ||
+        isAffirmation(text) ||
+        TOPIC_KEYWORDS.some((keyword) => normalized.includes(keyword))
+      );
+    },
+    [isAffirmation],
+  );
 
   const handleStartRoutineFromPlan = useCallback(
     (planOverride?: RoutinePlanItem[], roundsOverride?: number | null) => {
@@ -375,6 +454,63 @@ export function useAiCoach() {
           msg.role === "assistant" && Boolean(parseLevelPrompt(msg.content)),
       );
 
+      const ageDetected = hasAgeInfo(historyForContext);
+      const ageDetectedInline = AGE_REGEX.test(query.toLowerCase());
+      const agePresent = ageDetected || ageDetectedInline;
+
+      const frequencyDetected = hasFrequencyInfo(historyForContext);
+      const frequencyDetectedInline = FREQUENCY_REGEX.test(query.toLowerCase());
+      const frequencyPresent = frequencyDetected || frequencyDetectedInline;
+
+      const hasPendingProfilePrompt = historyForContext.some(
+        (msg) =>
+          msg.role === "assistant" && Boolean(parseProfilePrompt(msg.content)),
+      );
+
+      const profilePromptPayload = JSON.stringify({
+        needsProfile: true,
+        prompt: t("aiCoach.profilePromptTitle"),
+        ageLabel: t("aiCoach.profileAgeLabel"),
+        frequencyLabel: t("aiCoach.profileFrequencyLabel"),
+        submitLabel: t("aiCoach.profileSubmit"),
+      });
+
+      if (addToHistory && isAffirmation(query)) {
+        if (!levelPresent && !hasPendingLevelPrompt) {
+          setMessages((prev) => [
+            ...prev,
+            {
+              id: `assistant-${Date.now()}`,
+              role: "assistant",
+              content: JSON.stringify({
+                needsLevel: true,
+                prompt: t("aiCoach.levelPromptTitle"),
+                options: levelOptions,
+              }),
+              createdAt: Date.now(),
+            },
+          ]);
+          return;
+        }
+
+        if (
+          levelPresent &&
+          (!agePresent || !frequencyPresent) &&
+          !hasPendingProfilePrompt
+        ) {
+          setMessages((prev) => [
+            ...prev,
+            {
+              id: `assistant-${Date.now()}`,
+              role: "assistant",
+              content: profilePromptPayload,
+              createdAt: Date.now(),
+            },
+          ]);
+          return;
+        }
+      }
+
       if (addToHistory && isGreeting(query)) {
         const greetingMessage: ChatMessage = {
           id: `assistant-${Date.now()}`,
@@ -398,6 +534,7 @@ export function useAiCoach() {
           };
           setMessages((prev) => [...prev, levelPromptMessage]);
         }
+
         return;
       }
 
@@ -429,6 +566,21 @@ export function useAiCoach() {
         return;
       }
 
+      if (
+        levelPresent &&
+        (!agePresent || !frequencyPresent) &&
+        !hasPendingProfilePrompt
+      ) {
+        const profileMessage: ChatMessage = {
+          id: `assistant-${Date.now()}`,
+          role: "assistant",
+          content: profilePromptPayload,
+          createdAt: Date.now(),
+        };
+        setMessages((prev) => [...prev, profileMessage]);
+        return;
+      }
+
       setLoading(true);
       try {
         const conversationContext = buildConversationContext(
@@ -455,6 +607,12 @@ export function useAiCoach() {
                 levelPresent,
                 t("aiCoach.levelPromptTitle"),
                 levelOptions,
+                agePresent,
+                frequencyPresent,
+                t("aiCoach.profilePromptTitle"),
+                t("aiCoach.profileAgeLabel"),
+                t("aiCoach.profileFrequencyLabel"),
+                t("aiCoach.profileSubmit"),
               ),
             },
             ...recentMessages,
@@ -477,6 +635,7 @@ export function useAiCoach() {
         const content = normalizeText(data?.choices?.[0]?.message?.content);
 
         const levelPrompt = content ? parseLevelPrompt(content) : null;
+        const profilePrompt = content ? parseProfilePrompt(content) : null;
         const assistantMessage: ChatMessage = {
           id: `assistant-${Date.now()}`,
           role: "assistant",
@@ -493,6 +652,8 @@ export function useAiCoach() {
           setParsedRounds(parsed.rounds);
         } else if (levelPrompt) {
           // waiting for user to pick a level
+        } else if (profilePrompt) {
+          // waiting for user to confirm age/frequency
         } else if (allowRetry && content) {
           setLoading(false);
           await sendMessage(t("aiCoach.retrySystemPrompt"), false, false);
@@ -515,6 +676,7 @@ export function useAiCoach() {
     [
       i18n.language,
       input,
+      isAffirmation,
       isGreeting,
       isOnTopic,
       levelOptions,
@@ -542,6 +704,28 @@ export function useAiCoach() {
     void sendMessage();
   }, [sendMessage]);
 
+  const handleProfileSubmit = useCallback(
+    (age?: string, frequency?: string) => {
+      const ageValue = normalizeText(age);
+      const frequencyValue = normalizeText(frequency);
+      if (!ageValue && !frequencyValue) return;
+
+      const parts: string[] = [];
+      if (ageValue) {
+        parts.push(t("aiCoach.profileAgeValue", { age: ageValue }));
+      }
+      if (frequencyValue) {
+        parts.push(
+          t("aiCoach.profileFrequencyValue", { frequency: frequencyValue }),
+        );
+      }
+
+      const message = parts.join(". ");
+      void sendMessage(message || undefined);
+    },
+    [sendMessage, t],
+  );
+
   const handleLevelSelect = useCallback(
     (level: string) => {
       void sendMessage(level);
@@ -562,5 +746,6 @@ export function useAiCoach() {
     handleStartRoutineFromPlan,
     handleEditRoutineFromPlan,
     handleLevelSelect,
+    handleProfileSubmit,
   } as const;
 }

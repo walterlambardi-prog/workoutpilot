@@ -112,6 +112,49 @@ export const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "700",
   },
+  profilePrompt: {
+    gap: 12,
+  },
+  profilePromptTitle: {
+    fontSize: 14,
+    lineHeight: 20,
+    fontWeight: "700",
+  },
+  profileFields: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 10,
+  },
+  profileFieldBlock: {
+    flex: 1,
+    minWidth: 140,
+    gap: 6,
+  },
+  profileFieldLabel: {
+    fontSize: 12,
+    fontWeight: "600",
+    opacity: 0.8,
+  },
+  profileInput: {
+    borderWidth: 1,
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    fontSize: 14,
+  },
+  profileSubmit: {
+    alignSelf: "flex-start",
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: 12,
+  },
+  profileSubmitDisabled: {
+    opacity: 0.6,
+  },
+  profileSubmitText: {
+    fontSize: 14,
+    fontWeight: "700",
+  },
   planPreview: {
     gap: 10,
   },
