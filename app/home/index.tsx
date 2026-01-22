@@ -1,6 +1,7 @@
 import { useRouter } from "expo-router";
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
+import { ScrollView } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import ActionCard from "@/components/ActionCard";
@@ -60,32 +61,40 @@ const HomeScreen: React.FC = () => {
   );
 
   return (
-    <ThemedView style={[styles.page, { paddingTop: 30 + insets.top }]}>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">{t("home.title")}</ThemedText>
-        <HelloWave />
-      </ThemedView>
+    <ThemedView style={styles.page}>
+      <ScrollView
+        contentContainerStyle={[
+          styles.scrollContent,
+          { paddingTop: 30 + insets.top },
+        ]}
+        showsVerticalScrollIndicator={false}
+      >
+        <ThemedView style={styles.titleContainer}>
+          <ThemedText type="title">{t("home.title")}</ThemedText>
+          <HelloWave />
+        </ThemedView>
 
-      <ThemedView style={styles.heroContainer}>
-        <ThemedText type="subtitle">{t("home.subtitle")}</ThemedText>
-        <ThemedText>{t("home.description")}</ThemedText>
-      </ThemedView>
+        <ThemedView style={styles.heroContainer}>
+          <ThemedText type="subtitle">{t("home.subtitle")}</ThemedText>
+          <ThemedText>{t("home.description")}</ThemedText>
+        </ThemedView>
 
-      <ThemedView style={styles.actionsContainer}>
-        {actions.map((action) => (
-          <ActionCard
-            key={action.key}
-            title={t(`home.actions.${action.key}.title`)}
-            subtitle={t(`home.actions.${action.key}.description`)}
-            icon={action.icon}
-            iconColor={action.color}
-            accessibilityHint={t(
-              `home.actions.${action.key}.accessibilityHint`,
-            )}
-            onPress={() => handleActionPress(action.href)}
-          />
-        ))}
-      </ThemedView>
+        <ThemedView style={styles.actionsContainer}>
+          {actions.map((action) => (
+            <ActionCard
+              key={action.key}
+              title={t(`home.actions.${action.key}.title`)}
+              subtitle={t(`home.actions.${action.key}.description`)}
+              icon={action.icon}
+              iconColor={action.color}
+              accessibilityHint={t(
+                `home.actions.${action.key}.accessibilityHint`,
+              )}
+              onPress={() => handleActionPress(action.href)}
+            />
+          ))}
+        </ThemedView>
+      </ScrollView>
     </ThemedView>
   );
 };

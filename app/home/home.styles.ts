@@ -9,8 +9,10 @@ const styles = StyleSheet.create({
   },
   page: {
     flex: 1,
-    paddingTop: 49,
-    padding: 24,
+  },
+  scrollContent: {
+    paddingHorizontal: 24,
+    paddingBottom: 32,
     gap: 16,
   },
   heroContainer: {
