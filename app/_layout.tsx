@@ -63,6 +63,10 @@ export default function RootLayout() {
           name="settings/index"
           options={{ title: t("navigation.settings") }}
         />
+        <Stack.Screen
+          name="aiCoach/index"
+          options={{ title: t("navigation.aiCoach") }}
+        />
       </Stack>
       <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
     </ThemeProvider>

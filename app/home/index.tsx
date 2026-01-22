@@ -12,6 +12,12 @@ import type { HomeNavAction } from "./home.types";
 
 const actions: HomeNavAction[] = [
   {
+    href: "/aiCoach",
+    key: "aiCoach",
+    icon: "chatbubble-ellipses-outline" as const,
+    color: "#22D3EE",
+  },
+  {
     href: "/routine",
     key: "routine",
     icon: "repeat-outline" as const,

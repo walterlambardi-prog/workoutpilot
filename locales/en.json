@@ -4,7 +4,8 @@
     "exercises": "Exercises",
     "sessions": "Sessions",
     "settings": "Settings",
-    "routine": "Routine"
+    "routine": "Routine",
+    "aiCoach": "AI Coach"
   },
   "home": {
     "title": "WorkoutPilot",
@@ -17,6 +18,11 @@
       "spanish": "Spanish"
     },
     "actions": {
+      "aiCoach": {
+        "title": "AI coach",
+        "description": "Chat to build a JSON routine that matches your level.",
+        "accessibilityHint": "Opens the AI coach chat"
+      },
       "routine": {
         "title": "Create routine",
         "description": "Pick rounds and reps to prep a guided workout flow.",
@@ -319,6 +325,38 @@
         "right": "Right arm"
       }
     }
+  },
+  "aiCoach": {
+    "title": "AI Coach",
+    "screenTitle": "AI coach",
+    "screenSubtitle": "Share your age, weekly sessions, and level for a focused plan and quick guidance.",
+    "welcome": "I'm your workout coach. Tell me your age, weekly sessions, and level to craft a routine.",
+    "profilePrompt": "I need your age, how many times you train per week, and your level (beginner/intermediate/advanced). Pick your level:",
+    "suggestions": {
+      "starter": "Create a beginner plan",
+      "reps": "I have 20 minutes, pick reps",
+      "form": "Tips to improve my push-up form"
+    },
+    "topicGuard": "I can only help with training plans, exercises, and form.",
+    "inputPlaceholder": "Ask for a routine or coaching tips",
+    "sendLabel": "Send message",
+    "thinking": "Generating your plan...",
+    "meLabel": "You",
+    "coachLabel": "Coach",
+    "levelOptions": {
+      "beginner": "Beginner",
+      "intermediate": "Intermediate",
+      "advanced": "Advanced"
+    },
+    "levelPromptTitle": "What's your level?",
+    "levelPromptFallback": "Choose your level",
+    "planExercisesTitle": "Proposed routine",
+    "planRoundsLabel": "Rounds: {{rounds}}",
+    "planExerciseLine": "{{exercise}} · {{reps}} reps",
+    "usePlanCta": "Start routine",
+    "editPlanCta": "Edit in builder",
+    "fetchError": "I couldn't generate a response. Please try again.",
+    "retrySystemPrompt": "Repeat the reply using ONLY the valid JSON schema and nothing else."
   },
   "routineRun": {
     "chips": {

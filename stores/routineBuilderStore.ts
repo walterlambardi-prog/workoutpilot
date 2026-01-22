@@ -27,7 +27,13 @@ interface RoutineBuilderState {
   decrementReps: (exerciseId: ExerciseId) => void;
   toggleExercise: (exerciseId: ExerciseId) => void;
   resetRoutine: () => void;
+  applyPlan: (plan: RoutinePlanStepBase[], rounds: number) => void;
 }
+
+export type RoutinePlanStepBase = {
+  exerciseId: ExerciseId;
+  targetReps: number;
+};
 
 const storage = createCrossPlatformStorage();
 
@@ -106,6 +112,34 @@ export const useRoutineBuilderStore = createTyped<RoutineBuilderState>(
               ...state.exercises,
               [exerciseId]: { ...current, isSelected: !current.isSelected },
             },
+          };
+        }),
+      applyPlan: (plan, rounds) =>
+        set(() => {
+          const nextExercises = createDefaultExercisesState();
+
+          (Object.keys(nextExercises) as ExerciseId[]).forEach((exerciseId) => {
+            nextExercises[exerciseId] = {
+              ...nextExercises[exerciseId],
+              isSelected: false,
+            };
+          });
+
+          plan.forEach((step) => {
+            const reps = Math.max(1, Math.floor(step.targetReps));
+            if (!nextExercises[step.exerciseId]) {
+              return;
+            }
+
+            nextExercises[step.exerciseId] = {
+              isSelected: true,
+              reps,
+            };
+          });
+
+          return {
+            rounds: Math.max(1, Math.floor(rounds)),
+            exercises: nextExercises,
           };
         }),
       resetRoutine: () => set(() => createDefaultState()),

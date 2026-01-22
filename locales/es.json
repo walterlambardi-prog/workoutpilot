@@ -4,7 +4,8 @@
     "exercises": "Ejercicios",
     "sessions": "Sesiones",
     "settings": "Configuración",
-    "routine": "Rutina"
+    "routine": "Rutina",
+    "aiCoach": "Coach IA"
   },
   "home": {
     "title": "WorkoutPilot",
@@ -17,6 +18,11 @@
       "spanish": "Español"
     },
     "actions": {
+      "aiCoach": {
+        "title": "Coach IA",
+        "description": "Chatea para generar una rutina en JSON según tu nivel.",
+        "accessibilityHint": "Abre el chat con el coach IA"
+      },
       "routine": {
         "title": "Crear rutina",
         "description": "Configura rondas y repeticiones antes de iniciar el flujo guiado.",
@@ -319,6 +325,38 @@
         "right": "Brazo derecho"
       }
     }
+  },
+  "aiCoach": {
+    "title": "Coach IA",
+    "screenTitle": "Coach IA",
+    "screenSubtitle": "Comparte tu edad, frecuencia semanal y nivel para un plan enfocado y consejos rápidos.",
+    "welcome": "Soy tu coach. Cuéntame tu edad, frecuencia semanal y nivel para armar una rutina.",
+    "profilePrompt": "Necesito tu edad, cuántas veces entrenas por semana y tu nivel (principiante/intermedio/avanzado). Elige tu nivel:",
+    "suggestions": {
+      "starter": "Crea una rutina para principiante",
+      "reps": "Tengo 20 minutos, define reps",
+      "form": "Consejos para mejorar mis flexiones"
+    },
+    "topicGuard": "Solo puedo ayudarte con planes de entrenamiento, ejercicios y técnica.",
+    "inputPlaceholder": "Pide una rutina o tips de técnica",
+    "sendLabel": "Enviar mensaje",
+    "thinking": "Generando tu plan...",
+    "meLabel": "Tú",
+    "coachLabel": "Coach",
+    "levelOptions": {
+      "beginner": "Principiante",
+      "intermediate": "Intermedio",
+      "advanced": "Avanzado"
+    },
+    "levelPromptTitle": "¿Cuál es tu nivel?",
+    "levelPromptFallback": "Selecciona tu nivel",
+    "planExercisesTitle": "Rutina propuesta",
+    "planRoundsLabel": "Rondas: {{rounds}}",
+    "planExerciseLine": "{{exercise}} · {{reps}} reps",
+    "usePlanCta": "Iniciar rutina",
+    "editPlanCta": "Editar en rutina",
+    "fetchError": "No pude generar la respuesta. Intenta de nuevo.",
+    "retrySystemPrompt": "Repite la respuesta usando SOLO el JSON válido y nada más."
   },
   "routineRun": {
     "chips": {
