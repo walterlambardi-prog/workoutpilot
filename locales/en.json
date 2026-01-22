@@ -331,6 +331,7 @@
     "screenTitle": "AI coach",
     "screenSubtitle": "Share your age, weekly sessions, and level for a focused plan and quick guidance.",
     "welcome": "I'm your workout coach. Tell me your age, weekly sessions, and level to craft a routine.",
+    "greetingInvite": "Hey! I'm your workout co-pilot. I can craft routines, tweak reps, and give form tips. Tell me your goal and level (beginner/intermediate/advanced) so we can start strong — if you haven't picked a level yet, choose one below and I'll suggest a routine.",
     "profilePrompt": "I need your age, how many times you train per week, and your level (beginner/intermediate/advanced). Pick your level:",
     "suggestions": {
       "starter": "Create a beginner plan",

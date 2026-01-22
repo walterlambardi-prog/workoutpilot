@@ -4,30 +4,30 @@ import { useTranslation } from "react-i18next";
 
 import { ExerciseId } from "@/constants/exercises";
 import {
-    useRoutineBuilderStore,
-    type RoutinePlanStepBase,
+  useRoutineBuilderStore,
+  type RoutinePlanStepBase,
 } from "@/stores/routineBuilderStore";
 import { useRoutineSessionStore } from "@/stores/routineSessionStore";
 import {
-    AI_COACH_API_URL,
-    AI_COACH_MODEL,
-    ALLOWED_EXERCISES,
-    HISTORY_WINDOW,
-    LEVEL_REGEX,
-    MAX_TOKENS,
-    REP_MAX,
-    REP_MIN,
-    ROUND_MAX,
-    ROUND_MIN,
-    TEMPERATURE,
-    TOPIC_KEYWORDS,
+  AI_COACH_API_URL,
+  AI_COACH_MODEL,
+  ALLOWED_EXERCISES,
+  HISTORY_WINDOW,
+  LEVEL_REGEX,
+  MAX_TOKENS,
+  REP_MAX,
+  REP_MIN,
+  ROUND_MAX,
+  ROUND_MIN,
+  TEMPERATURE,
+  TOPIC_KEYWORDS,
 } from "./aiCoach.constants";
 import type {
-    ChatMessage,
-    LevelPrompt,
-    ParsedRoutinePlan,
-    RoutinePlanItem,
-    Suggestion,
+  ChatMessage,
+  LevelPrompt,
+  ParsedRoutinePlan,
+  RoutinePlanItem,
+  Suggestion,
 } from "./aiCoach.types";
 
 const normalizeText = (value?: string) => value?.trim() ?? "";
@@ -97,6 +97,7 @@ const hasLevelInfo = (history: ChatMessage[]) => {
     .join(" ");
   return LEVEL_REGEX.test(text);
 };
+
 const buildSystemPrompt = (
   topicGuard: string,
   lang: string,
@@ -118,6 +119,8 @@ const buildSystemPrompt = (
 
   return `Eres un coach de entrenamiento. Responde SOLO en ${responseLanguage}.
 Si el usuario solicita una rutina pero no tienes el nivel del usuario, responde únicamente con este JSON y nada más: ${levelJson}
+Si el usuario solo saluda ("hola", "hello", "buenas"), respóndele con un saludo breve y una invitación a armar una rutina; sugiere que comparta nivel y objetivo. No uses ${topicGuard} en ese caso.
+Si el usuario ya indicó su nivel en el mismo mensaje (ej. "principiante", "intermedio", "avanzado"), no pidas el nivel otra vez ni devuelvas el JSON de nivel pendiente; pide solo los datos faltantes (edad y frecuencia semanal) o entrega la rutina si ya los tienes.
 Cuando tengas edad, frecuencia semanal y nivel, devuelve SOLO un JSON válido con esta forma exacta y SIN envolverlo en otro JSON (nada de id/model/choices):
 {"rounds":entero_${ROUND_MIN}_a_${ROUND_MAX},"exercises":[{"key":"${exerciseList}","reps":entero_${REP_MIN}_a_${REP_MAX}}]}
 - Usa entre 2 y 4 ejercicios.
@@ -184,11 +187,9 @@ export const parseJsonPlan = (raw: string): ParsedRoutinePlan | null => {
     }
   };
 
-  // Try direct routine JSON first
   const direct = parseFromString(raw);
   if (direct) return direct;
 
-  // Handle completion envelope shapes (e.g., OpenAI-like response)
   try {
     const envelope = JSON.parse(raw);
     const content =
@@ -197,7 +198,6 @@ export const parseJsonPlan = (raw: string): ParsedRoutinePlan | null => {
       const inner = parseFromString(content);
       if (inner) return inner;
     }
-    // If envelope itself is already the routine shape
     const asRoutine = parseRoutineObject(envelope);
     if (asRoutine) return asRoutine;
   } catch {
@@ -264,6 +264,13 @@ export function useAiCoach() {
     ],
     [t],
   );
+
+  const isGreeting = useCallback((text: string) => {
+    const normalized = text.toLowerCase().trim();
+    return /^(hola|holaa|holi|hello|hi|hey|buenas|buenos dias|buenas tardes|buenas noches)\b/.test(
+      normalized,
+    );
+  }, []);
 
   const isOnTopic = useCallback((text: string) => {
     const normalized = text.toLowerCase().trim();
@@ -348,19 +355,6 @@ export function useAiCoach() {
         return;
       }
 
-      if (addToHistory && !isOnTopic(query)) {
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: `guard-${Date.now()}`,
-            role: "assistant",
-            content: t("aiCoach.topicGuard"),
-            createdAt: Date.now(),
-          },
-        ]);
-        return;
-      }
-
       const historyForContext: ChatMessage[] = addToHistory
         ? workingHistory
         : [
@@ -374,12 +368,53 @@ export function useAiCoach() {
           ];
 
       const levelDetected = hasLevelInfo(historyForContext);
+      const levelDetectedInline = LEVEL_REGEX.test(query.toLowerCase());
+      const levelPresent = levelDetected || levelDetectedInline;
       const hasPendingLevelPrompt = historyForContext.some(
         (msg) =>
           msg.role === "assistant" && Boolean(parseLevelPrompt(msg.content)),
       );
 
-      if (!levelDetected && !hasPendingLevelPrompt) {
+      if (addToHistory && isGreeting(query)) {
+        const greetingMessage: ChatMessage = {
+          id: `assistant-${Date.now()}`,
+          role: "assistant",
+          content: t("aiCoach.greetingInvite"),
+          createdAt: Date.now(),
+        };
+        const nextMessages = [...historyForContext, greetingMessage];
+        setMessages(nextMessages);
+
+        if (!levelPresent && !hasPendingLevelPrompt) {
+          const levelPromptMessage: ChatMessage = {
+            id: `assistant-${Date.now() + 1}`,
+            role: "assistant",
+            content: JSON.stringify({
+              needsLevel: true,
+              prompt: t("aiCoach.levelPromptTitle"),
+              options: levelOptions,
+            }),
+            createdAt: Date.now() + 1,
+          };
+          setMessages((prev) => [...prev, levelPromptMessage]);
+        }
+        return;
+      }
+
+      if (addToHistory && !isOnTopic(query)) {
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: `guard-${Date.now()}`,
+            role: "assistant",
+            content: t("aiCoach.topicGuard"),
+            createdAt: Date.now(),
+          },
+        ]);
+        return;
+      }
+
+      if (!levelPresent && !hasPendingLevelPrompt) {
         const assistantMessage: ChatMessage = {
           id: `assistant-${Date.now()}`,
           role: "assistant",
@@ -417,7 +452,7 @@ export function useAiCoach() {
                 i18n.language,
                 conversationContext,
                 exerciseList,
-                levelDetected,
+                levelPresent,
                 t("aiCoach.levelPromptTitle"),
                 levelOptions,
               ),
@@ -452,7 +487,7 @@ export function useAiCoach() {
           setMessages((prev) => [...prev, assistantMessage]);
         }
 
-        const parsed = levelDetected && content ? parseJsonPlan(content) : null;
+        const parsed = levelPresent && content ? parseJsonPlan(content) : null;
         if (parsed) {
           setParsedPlan(parsed.plan);
           setParsedRounds(parsed.rounds);
@@ -477,7 +512,16 @@ export function useAiCoach() {
         setLoading(false);
       }
     },
-    [i18n.language, input, isOnTopic, levelOptions, loading, messages, t],
+    [
+      i18n.language,
+      input,
+      isGreeting,
+      isOnTopic,
+      levelOptions,
+      loading,
+      messages,
+      t,
+    ],
   );
 
   const handleSuggestion = useCallback(

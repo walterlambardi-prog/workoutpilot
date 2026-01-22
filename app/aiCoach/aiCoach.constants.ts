@@ -183,4 +183,12 @@ export const TOPIC_KEYWORDS = [
   "shoulders",
   "abdominales",
   "abs",
+  "hola",
+  "hello",
+  "adiós",
+  "goodbye",
+  "gracias",
+  "thanks",
+  "por favor",
+  "please",
 ] as const;
