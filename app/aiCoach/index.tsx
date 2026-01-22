@@ -1,5 +1,4 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Stack } from "expo-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -274,14 +273,6 @@ const AiCoachScreen = () => {
 
   return (
     <View style={[styles.container, { backgroundColor }]}>
-      <Stack.Screen
-        options={{
-          headerTitle: t("aiCoach.title"),
-          headerStyle: { backgroundColor: "#070f26" },
-          headerTintColor: "#e2e8f0",
-        }}
-      />
-
       <ScrollView
         ref={scrollRef}
         contentContainerStyle={styles.scrollContent}
