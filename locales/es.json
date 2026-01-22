@@ -330,7 +330,7 @@
     "title": "Coach IA",
     "screenTitle": "Coach IA",
     "screenSubtitle": "Comparte tu edad, frecuencia semanal y nivel para un plan enfocado y consejos rápidos.",
-    "welcome": "Soy tu coach. Cuéntame tu edad, frecuencia semanal y nivel para armar una rutina.",
+    "welcome": "¿Listo para entrenar? Soy tu coach. Cuéntame tu edad, cuántas veces entrenas por semana y tu nivel (principiante/intermedio/avanzado) y te armo una rutina al toque.",
     "greetingInvite": "¡Hola! Soy tu copiloto de entrenamiento: armo rutinas, ajusto reps y doy tips de técnica. Cuéntame tu objetivo y tu nivel (principiante/intermedio/avanzado) para arrancar con todo; si aún no elegiste nivel, selecciónalo abajo y te propongo una rutina.",
     "profilePrompt": "Necesito tu edad, cuántas veces entrenas por semana y tu nivel (principiante/intermedio/avanzado). Elige tu nivel:",
     "suggestions": {

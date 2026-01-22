@@ -14,9 +14,28 @@ const styles = StyleSheet.create({
   },
   roundsCard: {
     borderRadius: 24,
-    padding: 20,
     borderWidth: 1,
     marginTop: 16,
+    overflow: "hidden",
+  },
+  roundsBackground: {
+    borderRadius: 24,
+    overflow: "hidden",
+    width: "100%",
+    alignSelf: "stretch",
+    minHeight: 180,
+  },
+  roundsBackgroundImage: {
+    borderRadius: 24,
+    width: "100%",
+    height: "100%",
+  },
+  roundsOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0,0,0,0.18)",
+  },
+  roundsContent: {
+    padding: 20,
   },
   roundsCardLight: {
     backgroundColor: "#F9FAFB",
@@ -54,8 +73,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 1,
-    backgroundColor: "rgba(99,102,241,0.12)",
-    borderColor: "rgba(99,102,241,0.3)",
+    backgroundColor: "rgba(15,23,42,0.35)",
+    borderColor: "rgba(248,250,252,0.6)",
   },
   stepperButtonCompact: {
     width: 32,

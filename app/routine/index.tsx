@@ -18,6 +18,7 @@ import type {
 } from "@/app/routine/routine.types";
 import { ThemedText } from "@/components/themedText";
 import { ThemedView } from "@/components/themedView";
+import { BACKGROUND_IMAGES } from "@/constants/images";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import {
   ROUTINE_DEFAULT_REPS,
@@ -274,28 +275,52 @@ const RoutineBuilderScreen: React.FC<RoutineBuilderScreenProps> = () => {
         </ThemedText>
       </ThemedView>
       <ThemedView style={[styles.roundsCard, roundsCardTone]}>
-        <ThemedText type="subtitle">
-          {t("routineBuilder.rounds.label")}
-        </ThemedText>
-        <ThemedText style={styles.roundsDescription}>
-          {t("routineBuilder.rounds.description")}
-        </ThemedText>
-        <View style={styles.roundsValueRow}>
-          <StepperButton
-            icon="remove-outline"
-            onPress={decrementRounds}
-            accessibilityLabel={t("routineBuilder.rounds.decrement")}
-            disabled={rounds <= 1}
-            colorScheme={colorScheme}
-          />
-          <ThemedText style={styles.roundsValue}>{rounds}</ThemedText>
-          <StepperButton
-            icon="add-outline"
-            onPress={incrementRounds}
-            accessibilityLabel={t("routineBuilder.rounds.increment")}
-            colorScheme={colorScheme}
-          />
-        </View>
+        <ImageBackground
+          source={BACKGROUND_IMAGES.duration}
+          style={styles.roundsBackground}
+          imageStyle={styles.roundsBackgroundImage}
+          resizeMode="cover"
+        >
+          <View style={styles.roundsOverlay} pointerEvents="none" />
+          <View style={styles.roundsContent} pointerEvents="box-none">
+            <ThemedText
+              type="subtitle"
+              lightColor="#F8FAFC"
+              darkColor="#F8FAFC"
+            >
+              {t("routineBuilder.rounds.label")}
+            </ThemedText>
+            <ThemedText
+              style={styles.roundsDescription}
+              lightColor="#E2E8F0"
+              darkColor="#E2E8F0"
+            >
+              {t("routineBuilder.rounds.description")}
+            </ThemedText>
+            <View style={styles.roundsValueRow}>
+              <StepperButton
+                icon="remove-outline"
+                onPress={decrementRounds}
+                accessibilityLabel={t("routineBuilder.rounds.decrement")}
+                disabled={rounds <= 1}
+                colorScheme={"dark"}
+              />
+              <ThemedText
+                style={styles.roundsValue}
+                lightColor="#F8FAFC"
+                darkColor="#F8FAFC"
+              >
+                {rounds}
+              </ThemedText>
+              <StepperButton
+                icon="add-outline"
+                onPress={incrementRounds}
+                accessibilityLabel={t("routineBuilder.rounds.increment")}
+                colorScheme={"dark"}
+              />
+            </View>
+          </View>
+        </ImageBackground>
       </ThemedView>
       <ThemedView style={styles.sectionHeading}>
         <ThemedText type="subtitle">
