@@ -30,17 +30,15 @@ export default function RootLayout() {
 
   // Timeout fallback: if hydration doesn't complete in 2 seconds, show the app anyway
   useEffect(() => {
-    const timeout = setTimeout(() => {
-      if (!hasHydrated) {
-        console.warn("[RootLayout] Hydration timeout, proceeding anyway");
-        setIsReady(true);
-      }
-    }, 2000);
-
     if (hasHydrated) {
       setIsReady(true);
-      clearTimeout(timeout);
+      return;
     }
+
+    const timeout = setTimeout(() => {
+      console.warn("[RootLayout] Hydration timeout, proceeding anyway");
+      setIsReady(true);
+    }, 2000);
 
     return () => clearTimeout(timeout);
   }, [hasHydrated]);
