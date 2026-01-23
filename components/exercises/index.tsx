@@ -143,7 +143,7 @@ export default function ExercisesNativeScreen({
   const cameraHeight = Math.max(height, CAMERA_HEIGHT);
 
   const scrimColor = useThemeColor(
-    { light: "rgba(7,12,22,0.55)", dark: "rgba(15,23,42,0.45)" },
+    { light: "rgba(7,12,22,0)", dark: "rgba(15,23,42,0.45)" },
     "background",
   );
 
@@ -173,6 +173,30 @@ export default function ExercisesNativeScreen({
     "text",
   );
 
+  const primaryChip = useMemo(() => {
+    if (routineContext?.isActive && routineContext.targetReps > 0) {
+      const safeProgress = Math.max(
+        0,
+        Math.min(routineContext.targetReps, repCount ?? 0),
+      );
+      return {
+        key: "target",
+        label: t("routineRun.chips.target"),
+        value: `${safeProgress}/${routineContext.targetReps}`,
+      };
+    }
+
+    if (typeof repCount === "number") {
+      return {
+        key: "reps",
+        label: t("exercises.native.stats.reps"),
+        value: String(repCount),
+      };
+    }
+
+    return null;
+  }, [routineContext, repCount, t]);
+
   const heroChips = useMemo(() => {
     const chips = [
       {
@@ -187,26 +211,7 @@ export default function ExercisesNativeScreen({
       },
     ];
 
-    if (typeof repCount === "number") {
-      chips.push({
-        key: "reps",
-        label: t("exercises.native.stats.reps"),
-        value: String(repCount),
-      });
-    }
-
     if (routineContext?.isActive && routineContext.targetReps > 0) {
-      const safeProgress = Math.max(
-        0,
-        Math.min(routineContext.targetReps, repCount ?? 0),
-      );
-
-      chips.push({
-        key: "target",
-        label: t("routineRun.chips.target"),
-        value: `${safeProgress}/${routineContext.targetReps}`,
-      });
-
       chips.push({
         key: "round",
         label: t("routineRun.chips.round"),
@@ -227,7 +232,7 @@ export default function ExercisesNativeScreen({
     }
 
     return chips;
-  }, [poseCount, repCount, routineContext, status, t]);
+  }, [poseCount, routineContext, status, t]);
 
   const routineProgress = useMemo(() => {
     if (!routineContext?.isActive || routineContext.targetReps <= 0) {
@@ -317,6 +322,38 @@ export default function ExercisesNativeScreen({
                 {headerSubtitle}
               </ThemedText>
             </ThemedView>
+
+            {primaryChip ? (
+              <ThemedView
+                style={styles.primaryChipRow}
+                pointerEvents="none"
+                lightColor="transparent"
+                darkColor="transparent"
+              >
+                <ThemedView
+                  style={[
+                    styles.primaryChip,
+                    {
+                      borderColor: overlayHeading,
+                      backgroundColor: cardBackground,
+                    },
+                  ]}
+                  lightColor="transparent"
+                  darkColor="transparent"
+                >
+                  <ThemedText
+                    style={[styles.primaryChipLabel, { color: overlayMuted }]}
+                  >
+                    {primaryChip.label}
+                  </ThemedText>
+                  <ThemedText
+                    style={[styles.primaryChipValue, { color: overlayHeading }]}
+                  >
+                    {primaryChip.value}
+                  </ThemedText>
+                </ThemedView>
+              </ThemedView>
+            ) : null}
 
             <ThemedView
               style={styles.chipRow}

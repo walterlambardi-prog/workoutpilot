@@ -60,6 +60,30 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "700",
   },
+  primaryChipRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 16,
+  },
+  primaryChip: {
+    borderRadius: 24,
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    borderWidth: 2,
+    borderStyle: "solid",
+  },
+  primaryChipLabel: {
+    fontSize: 14,
+    fontWeight: "700",
+    letterSpacing: 1,
+    textTransform: "uppercase",
+    marginBottom: 4,
+  },
+  primaryChipValue: {
+    fontSize: 42,
+    fontWeight: "800",
+    lineHeight: 46,
+  },
   bottomCard: {
     borderRadius: 24,
     padding: 20,
