@@ -147,7 +147,6 @@
     "chips": {
       "target": "Target",
       "round": "Round",
-      "roundValue": "Round {{current}}/{{total}}",
       "step": "Step",
       "stepValue": "Step {{current}}/{{total}}"
     },
@@ -254,8 +253,6 @@
         "accessibilityHint": "Switch between front and back camera"
       },
       "stats": {
-        "status": "Status",
-        "poses": "Poses",
         "reps": "Reps"
       }
     },

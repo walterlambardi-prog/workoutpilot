@@ -147,7 +147,6 @@
     "chips": {
       "target": "Meta",
       "round": "Ronda",
-      "roundValue": "Ronda {{current}}/{{total}}",
       "step": "Paso",
       "stepValue": "Paso {{current}}/{{total}}"
     },
@@ -254,8 +253,6 @@
         "accessibilityHint": "Cambia entre cámara frontal y trasera"
       },
       "stats": {
-        "status": "Estado",
-        "poses": "Poses",
         "reps": "Repeticiones"
       }
     },

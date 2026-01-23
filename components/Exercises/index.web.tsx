@@ -150,44 +150,24 @@ export default function ExercisesWebScreen({
   }, [routineContext, stats?.repCount, t]);
 
   const heroChips = useMemo(() => {
-    const chips = [
-      {
-        key: "status",
-        label: t("exercises.web.status"),
-        value: t(`exercises.statuses.${status}`),
-      },
-    ];
-
-    if (typeof stats?.poseCount === "number") {
-      chips.push({
-        key: "poses",
-        label: t("exercises.web.poseCount"),
-        value: String(stats.poseCount),
-      });
-    }
+    const chips = [];
 
     if (routineContext?.isActive && routineContext.targetReps > 0) {
       chips.push({
         key: "round",
         label: t("routineRun.chips.round"),
-        value: t("routineRun.chips.roundValue", {
-          current: routineContext.currentRound,
-          total: routineContext.totalRounds,
-        }),
+        value: `${routineContext.currentRound}/${routineContext.totalRounds}`,
       });
 
       chips.push({
         key: "step",
         label: t("routineRun.chips.step"),
-        value: t("routineRun.chips.stepValue", {
-          current: routineContext.stepIndex + 1,
-          total: routineContext.totalSteps,
-        }),
+        value: `${routineContext.stepIndex + 1}/${routineContext.totalSteps}`,
       });
     }
 
     return chips;
-  }, [routineContext, stats?.poseCount, status, t]);
+  }, [routineContext, t]);
 
   const copyKey = exerciseId ? EXERCISE_COPY_KEYS[exerciseId] : undefined;
   const headerTitle = copyKey
@@ -370,6 +350,32 @@ export default function ExercisesWebScreen({
                   lightColor="transparent"
                   darkColor="transparent"
                 >
+                  <ThemedView
+                    style={rnStyles.progressHeader}
+                    lightColor="transparent"
+                    darkColor="transparent"
+                  >
+                    <ThemedText
+                      style={[
+                        rnStyles.progressLabel,
+                        { color: overlayHeading },
+                      ]}
+                    >
+                      {t("routineRun.progressLabel", {
+                        current: routineProgress.completed,
+                        target: routineProgress.target,
+                      })}
+                    </ThemedText>
+                    <ThemedText
+                      style={[
+                        rnStyles.progressValue,
+                        { color: overlayHeading },
+                      ]}
+                    >
+                      {Math.round(routineProgress.ratio * 100)}%
+                    </ThemedText>
+                  </ThemedView>
+
                   <ThemedView style={rnStyles.progressTrack}>
                     <ThemedView
                       style={[

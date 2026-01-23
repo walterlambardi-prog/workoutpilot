@@ -160,7 +160,7 @@ export default function ExercisesNativeScreen({
     "text",
   );
   const cardBackground = useThemeColor(
-    { light: "rgba(255,255,255,0.25)", dark: "rgba(15,23,42,0.45)" },
+    { light: "#0b122066", dark: "rgba(15,23,42,0.45)" },
     "background",
   );
   const messageColor = useThemeColor(
@@ -198,41 +198,24 @@ export default function ExercisesNativeScreen({
   }, [routineContext, repCount, t]);
 
   const heroChips = useMemo(() => {
-    const chips = [
-      {
-        key: "status",
-        label: t("exercises.native.stats.status"),
-        value: t(`exercises.statuses.${status}`),
-      },
-      {
-        key: "poses",
-        label: t("exercises.native.stats.poses"),
-        value: String(poseCount ?? 0),
-      },
-    ];
+    const chips = [];
 
     if (routineContext?.isActive && routineContext.targetReps > 0) {
       chips.push({
         key: "round",
         label: t("routineRun.chips.round"),
-        value: t("routineRun.chips.roundValue", {
-          current: routineContext.currentRound,
-          total: routineContext.totalRounds,
-        }),
+        value: `${routineContext.currentRound}/${routineContext.totalRounds}`,
       });
 
       chips.push({
         key: "step",
         label: t("routineRun.chips.step"),
-        value: t("routineRun.chips.stepValue", {
-          current: routineContext.stepIndex + 1,
-          total: routineContext.totalSteps,
-        }),
+        value: `${routineContext.stepIndex + 1}/${routineContext.totalSteps}`,
       });
     }
 
     return chips;
-  }, [poseCount, routineContext, status, t]);
+  }, [routineContext, t]);
 
   const routineProgress = useMemo(() => {
     if (!routineContext?.isActive || routineContext.targetReps <= 0) {
@@ -377,79 +360,74 @@ export default function ExercisesNativeScreen({
                     style={[styles.chipValue, { color: overlayHeading }]}
                   >
                     {chip.value}
-
-                    {routineProgress ? (
-                      <ThemedView
-                        style={[
-                          styles.progressCard,
-                          { borderColor: overlayBorder },
-                        ]}
-                        lightColor="transparent"
-                        darkColor="transparent"
-                      >
-                        <ThemedView
-                          style={styles.progressHeader}
-                          lightColor="transparent"
-                          darkColor="transparent"
-                        >
-                          <ThemedText
-                            style={[
-                              styles.progressLabel,
-                              { color: overlayHeading },
-                            ]}
-                          >
-                            {t("routineRun.progressLabel", {
-                              current: routineProgress.completed,
-                              target: routineProgress.target,
-                            })}
-                          </ThemedText>
-                          <ThemedText
-                            style={[
-                              styles.progressValue,
-                              { color: overlayHeading },
-                            ]}
-                          >
-                            {Math.round(routineProgress.ratio * 100)}%
-                          </ThemedText>
-                        </ThemedView>
-
-                        <ThemedView
-                          style={styles.progressTrack}
-                          lightColor="transparent"
-                          darkColor="transparent"
-                        >
-                          <ThemedView
-                            style={[
-                              styles.progressFill,
-                              {
-                                width: `${Math.min(100, Math.max(0, routineProgress.ratio * 100))}%`,
-                                backgroundColor: accentColor,
-                              },
-                            ]}
-                            lightColor="transparent"
-                            darkColor="transparent"
-                          />
-                        </ThemedView>
-
-                        {nextExerciseTitle ? (
-                          <ThemedText
-                            style={[
-                              styles.nextExercise,
-                              { color: overlayMuted },
-                            ]}
-                            numberOfLines={1}
-                          >
-                            {t("routineRun.nextExercise", {
-                              exercise: nextExerciseTitle,
-                            })}
-                          </ThemedText>
-                        ) : null}
-                      </ThemedView>
-                    ) : null}
                   </ThemedText>
                 </ThemedView>
               ))}
             </ThemedView>
+
+            {routineProgress ? (
+              <ThemedView
+                style={[
+                  styles.progressCard,
+                  {
+                    borderColor: overlayBorder,
+                    backgroundColor: cardBackground,
+                  },
+                ]}
+                lightColor="transparent"
+                darkColor="transparent"
+                pointerEvents="none"
+              >
+                <ThemedView
+                  style={styles.progressHeader}
+                  lightColor="transparent"
+                  darkColor="transparent"
+                >
+                  <ThemedText
+                    style={[styles.progressLabel, { color: overlayHeading }]}
+                  >
+                    {t("routineRun.progressLabel", {
+                      current: routineProgress.completed,
+                      target: routineProgress.target,
+                    })}
+                  </ThemedText>
+                  <ThemedText
+                    style={[styles.progressValue, { color: overlayHeading }]}
+                  >
+                    {Math.round(routineProgress.ratio * 100)}%
+                  </ThemedText>
+                </ThemedView>
+
+                <ThemedView
+                  style={styles.progressTrack}
+                  lightColor="transparent"
+                  darkColor="transparent"
+                >
+                  <ThemedView
+                    style={[
+                      styles.progressFill,
+                      {
+                        width: `${Math.min(100, Math.max(0, routineProgress.ratio * 100))}%`,
+                        backgroundColor: accentColor,
+                      },
+                    ]}
+                    lightColor="transparent"
+                    darkColor="transparent"
+                  />
+                </ThemedView>
+
+                {nextExerciseTitle ? (
+                  <ThemedText
+                    style={[styles.nextExercise, { color: overlayMuted }]}
+                    numberOfLines={1}
+                  >
+                    {t("routineRun.nextExercise", {
+                      exercise: nextExerciseTitle,
+                    })}
+                  </ThemedText>
+                ) : null}
+              </ThemedView>
+            ) : null}
           </ThemedView>
 
           <ThemedView

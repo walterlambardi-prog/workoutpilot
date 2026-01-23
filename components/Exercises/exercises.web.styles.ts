@@ -16,6 +16,7 @@ type ViewStyles = {
   primaryChip: ViewStyle;
   overlayBottom: ViewStyle;
   progressCard: ViewStyle;
+  progressHeader: ViewStyle;
   progressTrack: ViewStyle;
   progressFill: ViewStyle;
 };
@@ -28,6 +29,8 @@ type TextStyles = {
   primaryChipLabel: TextStyle;
   primaryChipValue: TextStyle;
   message: TextStyle;
+  progressLabel: TextStyle;
+  progressValue: TextStyle;
   nextExercise: TextStyle;
 };
 
@@ -87,7 +90,7 @@ export const rnStyles = StyleSheet.create<ViewStyles & TextStyles>({
     gap: 12,
   },
   chip: {
-    borderRadius: 24,
+    borderRadius: 12,
     paddingVertical: 10,
     paddingHorizontal: 16,
     borderWidth: 1,
@@ -115,6 +118,11 @@ export const rnStyles = StyleSheet.create<ViewStyles & TextStyles>({
   },
   progressCard: {
     gap: 12,
+  },
+  progressHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   progressTrack: {
     height: 10,
@@ -161,6 +169,14 @@ export const rnStyles = StyleSheet.create<ViewStyles & TextStyles>({
   message: {
     fontSize: 16,
     lineHeight: 22,
+  },
+  progressLabel: {
+    fontSize: 15,
+    fontWeight: "600",
+  },
+  progressValue: {
+    fontSize: 15,
+    fontWeight: "700",
   },
   nextExercise: {
     fontSize: 13,

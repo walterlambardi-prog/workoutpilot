@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   chip: {
-    borderRadius: 999,
+    borderRadius: 12,
     paddingVertical: 10,
     paddingHorizontal: 16,
     flexDirection: "row",
