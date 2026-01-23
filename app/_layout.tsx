@@ -5,7 +5,6 @@ import {
 } from "@react-navigation/native";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Platform } from "react-native";
 import "react-native-reanimated";
@@ -20,7 +19,6 @@ import { usePreferencesStore } from "@/stores/preferencesStore";
 export default function RootLayout() {
   const { t } = useTranslation();
   const colorScheme = useColorScheme();
-  const [isReady, setIsReady] = useState(false);
   const hasHydrated = usePreferencesStore(
     (state: { _hasHydrated: boolean }) => state._hasHydrated,
   );
@@ -28,25 +26,8 @@ export default function RootLayout() {
   // Initialize language preference on app startup
   useAppLanguage();
 
-  // Timeout fallback: if hydration doesn't complete in 2 seconds, show the app anyway
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      if (!hasHydrated) {
-        console.warn("[RootLayout] Hydration timeout, proceeding anyway");
-        setIsReady(true);
-      }
-    }, 2000);
-
-    if (hasHydrated) {
-      setIsReady(true);
-      clearTimeout(timeout);
-    }
-
-    return () => clearTimeout(timeout);
-  }, [hasHydrated]);
-
   // Show loader while preferences are being loaded
-  if (!isReady) {
+  if (!hasHydrated) {
     return <AppLoader colorScheme={colorScheme} />;
   }
 
