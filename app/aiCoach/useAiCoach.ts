@@ -65,6 +65,26 @@ const EXERCISE_KEY_MAP: Record<string, ExerciseId> = {
   pantorrilla: ExerciseId.CALF_RAISES,
   gemelos: ExerciseId.CALF_RAISES,
   gemelo: ExerciseId.CALF_RAISES,
+  standinglegraises: ExerciseId.STANDING_LEG_RAISES,
+  standinglegraise: ExerciseId.STANDING_LEG_RAISES,
+  "standing-leg-raises": ExerciseId.STANDING_LEG_RAISES,
+  "standing-leg-raise": ExerciseId.STANDING_LEG_RAISES,
+  legraises: ExerciseId.STANDING_LEG_RAISES,
+  legraise: ExerciseId.STANDING_LEG_RAISES,
+  "leg-raises": ExerciseId.STANDING_LEG_RAISES,
+  sidelegraise: ExerciseId.STANDING_LEG_RAISES,
+  sidelegraises: ExerciseId.STANDING_LEG_RAISES,
+  laterallegraises: ExerciseId.STANDING_LEG_RAISES,
+  laterallegraise: ExerciseId.STANDING_LEG_RAISES,
+  hipabduction: ExerciseId.STANDING_LEG_RAISES,
+  elevacionesdepierna: ExerciseId.STANDING_LEG_RAISES,
+  elevacionpierna: ExerciseId.STANDING_LEG_RAISES,
+  elevacioneslateralespierna: ExerciseId.STANDING_LEG_RAISES,
+  elevacionlateralpierna: ExerciseId.STANDING_LEG_RAISES,
+  "elevaciones-laterales-pierna": ExerciseId.STANDING_LEG_RAISES,
+  "elevaciones-de-pierna": ExerciseId.STANDING_LEG_RAISES,
+  abduccionescadera: ExerciseId.STANDING_LEG_RAISES,
+  abduccioncadera: ExerciseId.STANDING_LEG_RAISES,
 };
 
 const toExerciseId = (value?: string): ExerciseId | null => {
@@ -189,13 +209,22 @@ Cuando tengas edad, frecuencia semanal y nivel, devuelve SOLO un JSON válido co
 {"rounds":NUMERO_ENTERO,"exercises":[{"key":"NOMBRE_EJERCICIO","reps":NUMERO_ENTERO}]}
 - Usa entre 1 y 6 ejercicios según el nivel del usuario y sus objetivos. Si el usuario pide específicamente UN solo ejercicio, respeta su solicitud y genera una rutina con ese único ejercicio. Principiantes: 2-3 ejercicios (o 1 si lo solicita). Intermedios: 3-4 ejercicios (o 1 si lo solicita). Avanzados: 4-6 ejercicios (o 1 si lo solicita).
 - La clave "key" de cada ejercicio debe ser EXACTAMENTE una de estas opciones (copia tal cual): ${exerciseList}
-- Ejemplos válidos de "key": "squats", "pushups", "lunges", "calf-raises", "hammer-curls", "lateral-raises"
+- Ejemplos válidos de "key": "squats", "pushups", "lunges", "calf-raises", "hammer-curls", "lateral-raises", "standing-leg-raises"
 - Puedes usar todos los ejercicios disponibles si la rutina lo requiere. Si el usuario pide solo un ejercicio específico, usa únicamente ese ejercicio.
 - "reps" debe ser un entero entre ${REP_MIN} y ${REP_MAX}.
 - "rounds" debe ser un entero entre ${ROUND_MIN} y ${ROUND_MAX}.
 - No agregues texto antes o después del JSON ni metas el JSON dentro de otro objeto.
 Ejemplo de respuesta válida: {"rounds":3,"exercises":[{"key":"squats","reps":12},{"key":"lunges","reps":10},{"key":"calf-raises","reps":15}]}
-Ejemplo avanzado: {"rounds":4,"exercises":[{"key":"squats","reps":15},{"key":"lunges","reps":12},{"key":"calf-raises","reps":20},{"key":"pushups","reps":12},{"key":"hammer-curls","reps":10},{"key":"lateral-raises","reps":12}]}
+Ejemplo avanzado: {"rounds":4,"exercises":[{"key":"squats","reps":15},{"key":"lunges","reps":12},{"key":"calf-raises","reps":20},{"key":"pushups","reps":12},{"key":"hammer-curls","reps":10},{"key":"lateral-raises","reps":12},{"key":"standing-leg-raises","reps":15}]}
+Ejercicios disponibles:
+- squats: sentadillas para piernas y glúteos (cuádriceps, glúteos, isquiotibiales)
+- pushups: flexiones para pecho, tríceps y core
+- hammer-curls: curl martillo para bíceps y antebrazos
+- lateral-raises: elevaciones laterales para hombros (deltoides lateral)
+- lunges: zancadas para piernas, glúteos y equilibrio (unilateral)
+- calf-raises: elevaciones de talón para pantorrillas (gemelos y sóleo)
+- standing-leg-raises: elevaciones laterales de pierna para abductores de cadera, glúteo medio y equilibrio (unilateral)
+Usa standing-leg-raises en rutinas de: piernas, glúteos, equilibrio, estabilidad de cadera, rehabilitación, movilidad.
 El JSON de nivel anterior SOLO se usa cuando realmente falta el nivel.
 El JSON de perfil (edad/frecuencia) se usa cuando falte alguno de esos datos; si ya tienes edad y frecuencia, no lo envíes.
 Si el usuario ya dijo su nivel (ej. principiante/intermedio/avanzado), está prohibido devolver un JSON con needsLevel; no preguntes el nivel otra vez.
