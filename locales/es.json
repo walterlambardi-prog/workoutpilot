@@ -392,7 +392,9 @@
         "lower": "Baja con control",
         "complete": "Buena repetición con tu {{leg}}",
         "keepBalance": "Mantén el equilibrio y el core activo",
-        "hipsLevel": "Mantén las caderas niveladas"
+        "hipsLevel": "Mantén las caderas niveladas",
+        "keepLegStraight": "Mantén la pierna recta — no dobles la rodilla",
+        "keepStandingLegStraight": "Mantén la pierna de apoyo recta y bloqueada"
       },
       "legLabel": {
         "left": "pierna izquierda",

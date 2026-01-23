@@ -392,7 +392,9 @@
         "lower": "Lower with control",
         "complete": "Good rep on your {{leg}}",
         "keepBalance": "Keep your balance and core engaged",
-        "hipsLevel": "Keep your hips level"
+        "hipsLevel": "Keep your hips level",
+        "keepLegStraight": "Keep your leg straight — don't bend the knee",
+        "keepStandingLegStraight": "Keep your standing leg straight and locked"
       },
       "legLabel": {
         "left": "left leg",

@@ -24,11 +24,14 @@ const REP_DEBOUNCE_MS = 300;
 
 // Angle thresholds for leg raise detection
 const ANGLE_DOWN = 175; // Hip angle when leg is down (nearly straight)
-const ANGLE_UP = 135; // Hip angle when leg is raised to the side
-const ANGLE_TRANSITION = 155; // Threshold to detect state changes
+const ANGLE_UP = 140; // Hip angle when leg is raised to the side (more permissive)
+const ANGLE_TRANSITION = 160; // Threshold to detect state changes
+
+// Leg straightness validation - legs should be relatively straight
+const MIN_LEG_STRAIGHT_ANGLE = 150; // Knee angle must be > 150° (more permissive)
 
 // Minimum angle difference to detect which leg is active
-const ANGLE_DIFF_THRESHOLD = 12;
+const ANGLE_DIFF_THRESHOLD = 15;
 
 /**
  * Calculate angle between three points
@@ -69,6 +72,19 @@ const extractLegRaisePose = (landmarks: PoseLandmark[]) => {
   );
 
   return allVisible ? pose : null;
+};
+
+/**
+ * Check if a leg is straight (knee angle close to 180°)
+ */
+const isLegStraight = (
+  hip: PoseLandmark,
+  knee: PoseLandmark,
+  ankle: PoseLandmark,
+  minAngle: number,
+): boolean => {
+  const kneeAngle = calculateAngle(hip, knee, ankle);
+  return kneeAngle >= minAngle;
 };
 
 /**
@@ -172,7 +188,6 @@ export const useStandingLegRaisesCounter = (t: TFunction) => {
       }
 
       // Calculate hip angles for both legs
-      // Hip angle = angle between shoulder, hip, and knee
       const leftHipAngle = calculateAngle(
         pose.leftShoulder,
         pose.leftHip,
@@ -184,6 +199,32 @@ export const useStandingLegRaisesCounter = (t: TFunction) => {
         pose.rightKnee,
       );
 
+      // Calculate knee angles for both legs
+      const leftKneeAngle = calculateAngle(
+        pose.leftHip,
+        pose.leftKnee,
+        pose.leftAnkle,
+      );
+      const rightKneeAngle = calculateAngle(
+        pose.rightHip,
+        pose.rightKnee,
+        pose.rightAnkle,
+      );
+
+      // Check if both legs are straight (knee angle validation)
+      const leftLegStraight = isLegStraight(
+        pose.leftHip,
+        pose.leftKnee,
+        pose.leftAnkle,
+        MIN_LEG_STRAIGHT_ANGLE,
+      );
+      const rightLegStraight = isLegStraight(
+        pose.rightHip,
+        pose.rightKnee,
+        pose.rightAnkle,
+        MIN_LEG_STRAIGHT_ANGLE,
+      );
+
       // Detect which leg is active
       const currentActiveLeg = activeLegRef.current;
       const newActiveLeg = detectActiveLeg(
@@ -192,6 +233,12 @@ export const useStandingLegRaisesCounter = (t: TFunction) => {
         currentActiveLeg,
       );
       activeLegRef.current = newActiveLeg;
+
+      // Check leg straightness for active leg
+      const activeLegStraight =
+        newActiveLeg === "left" ? leftLegStraight : rightLegStraight;
+      const activeLegKneeAngle =
+        newActiveLeg === "left" ? leftKneeAngle : rightKneeAngle;
 
       // Get the active leg's hip angle
       const activeHipAngle =
@@ -202,18 +249,32 @@ export const useStandingLegRaisesCounter = (t: TFunction) => {
       let nextState = currentState;
       let feedback = metrics.feedback;
 
-      // State machine for leg raise detection
+      // State machine for leg raise detection with permissive validation
       if (currentState === "down") {
+        // Start raising when leg begins to lift
         if (activeHipAngle < ANGLE_TRANSITION && newActiveLeg) {
-          nextState = "raising";
-          feedback = t(
-            `exercises.standingLegRaises.feedback.raise${newActiveLeg === "left" ? "Left" : "Right"}`,
-          );
+          // Only validate active leg straightness at start (be permissive with standing leg)
+          if (!activeLegStraight) {
+            feedback = t(
+              "exercises.standingLegRaises.feedback.keepLegStraight",
+            );
+            nextState = "down";
+          } else {
+            nextState = "raising";
+            feedback = t(
+              `exercises.standingLegRaises.feedback.raise${newActiveLeg === "left" ? "Left" : "Right"}`,
+            );
+          }
         } else {
           feedback = t("exercises.standingLegRaises.feedback.standStraight");
         }
       } else if (currentState === "raising") {
-        if (activeHipAngle < ANGLE_UP) {
+        // During raising, only reset if active leg is VERY bent (not standing leg)
+        if (!activeLegStraight && activeLegKneeAngle < 140) {
+          // Only reset if active leg is significantly bent
+          nextState = "down";
+          feedback = t("exercises.standingLegRaises.feedback.keepLegStraight");
+        } else if (activeHipAngle < ANGLE_UP) {
           nextState = "up";
           feedback = t("exercises.standingLegRaises.feedback.holdUp");
         } else {
@@ -222,13 +283,15 @@ export const useStandingLegRaisesCounter = (t: TFunction) => {
           );
         }
       } else if (currentState === "up") {
+        // At top position, be permissive - only check if ready to lower
         if (activeHipAngle > ANGLE_TRANSITION) {
           nextState = "lowering";
           feedback = t("exercises.standingLegRaises.feedback.lower");
         }
       } else if (currentState === "lowering") {
+        // During lowering, allow some form degradation to complete the rep
         if (activeHipAngle > ANGLE_DOWN - 5) {
-          // Rep completed
+          // Rep completed - count it even if form degraded slightly
           if (now - lastRepTimeRef.current > REP_DEBOUNCE_MS && newActiveLeg) {
             if (newActiveLeg === "left") {
               leftRepsRef.current += 1;
