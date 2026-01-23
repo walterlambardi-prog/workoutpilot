@@ -20,11 +20,11 @@
     "actions": {
       "aiCoach": {
         "title": "Coach IA",
-        "description": "Chatea para generar una rutina en JSON según tu nivel.",
+        "description": "Chatea para generar una rutina según tu nivel.",
         "accessibilityHint": "Abre el chat con el coach IA"
       },
       "routine": {
-        "title": "Crear rutina",
+        "title": "Crea tu rutina",
         "description": "Configura rondas y repeticiones antes de iniciar el flujo guiado.",
         "accessibilityHint": "Abre la pantalla para crear una rutina"
       },
@@ -381,7 +381,7 @@
     "title": "Coach IA",
     "screenTitle": "Coach IA",
     "screenSubtitle": "Comparte tu edad, frecuencia semanal y nivel para un plan enfocado y consejos rápidos.",
-    "welcome": "¿Listo para entrenar? Soy tu coach. Cuéntame tu edad, cuántas veces entrenas por semana y tu nivel (principiante/intermedio/avanzado) y te armo una rutina al toque.",
+    "welcome": "¡Hola! 👋 Soy tu coach IA y estoy aquí para crear rutinas de entrenamiento personalizadas que se adapten perfectamente a tus necesidades. Solo cuéntame tu edad, cuántas veces entrenas por semana y tu nivel de fitness, y diseñaré el plan perfecto para ti. ¡Empecemos!",
     "greetingInvite": "¡Hola! Soy tu copiloto de entrenamiento: armo rutinas, ajusto reps y doy tips de técnica. Cuéntame tu objetivo y tu nivel (principiante/intermedio/avanzado) para arrancar con todo; si aún no elegiste nivel, selecciónalo abajo y te propongo una rutina.",
     "profilePrompt": "Necesito tu edad, cuántas veces entrenas por semana y tu nivel (principiante/intermedio/avanzado). Elige tu nivel:",
     "suggestions": {

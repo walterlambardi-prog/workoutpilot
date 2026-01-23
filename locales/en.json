@@ -20,11 +20,11 @@
     "actions": {
       "aiCoach": {
         "title": "AI coach",
-        "description": "Chat to build a JSON routine that matches your level.",
+        "description": "Chat to build routine that matches your level.",
         "accessibilityHint": "Opens the AI coach chat"
       },
       "routine": {
-        "title": "Create routine",
+        "title": "Routine builder",
         "description": "Pick rounds and reps to prep a guided workout flow.",
         "accessibilityHint": "Opens the routine builder screen"
       },
@@ -381,7 +381,7 @@
     "title": "AI Coach",
     "screenTitle": "AI coach",
     "screenSubtitle": "Share your age, weekly sessions, and level for a focused plan and quick guidance.",
-    "welcome": "Ready to train? I'm your coach. Share your age, how many times you train per week, and your level (beginner/intermediate/advanced) and I'll build a routine for you.",
+    "welcome": "Hey there! 👋 I'm your AI coach, and I'm here to create personalized workout routines that fit your needs perfectly. Just share your age, how many times you train per week, and your fitness level, and I'll design the perfect plan for you. Let's get started!",
     "greetingInvite": "Hey! I'm your workout co-pilot. I can craft routines, tweak reps, and give form tips. Tell me your goal and level (beginner/intermediate/advanced) so we can start strong — if you haven't picked a level yet, choose one below and I'll suggest a routine.",
     "profilePrompt": "I need your age, how many times you train per week, and your level (beginner/intermediate/advanced). Pick your level:",
     "suggestions": {
