@@ -1,7 +1,7 @@
 import React from "react";
 import { Image, Pressable, View } from "react-native";
 
-import { ThemedText } from "@/components/themedText";
+import { ThemedText } from "@/components/ThemedText";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import styles from "./ExerciseCard.styles";
 import type { ExerciseCardProps } from "./ExerciseCard.types";

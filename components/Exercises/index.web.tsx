@@ -1,8 +1,8 @@
 import React, { useEffect, useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
 
-import { ThemedText } from "@/components/themedText";
-import { ThemedView } from "@/components/themedView";
+import { ThemedText } from "@/components/ThemedText";
+import { ThemedView } from "@/components/ThemedView";
 import { EXERCISE_COPY_KEYS } from "@/constants/exercises";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import type { ExercisesProps } from "./exercises.types";

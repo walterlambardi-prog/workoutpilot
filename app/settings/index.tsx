@@ -2,7 +2,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { Pressable, ScrollView, View } from "react-native";
 
-import { ThemedText } from "@/components/themedText";
+import { ThemedText } from "@/components/ThemedText";
 import { useAppLanguage } from "@/hooks/useAppLanguage";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { useExerciseSessionStore } from "@/stores/exerciseSessionStore";

@@ -5,9 +5,9 @@ import { ScrollView } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import ActionCard from "@/components/ActionCard";
-import { HelloWave } from "@/components/helloWave";
-import { ThemedText } from "@/components/themedText";
-import { ThemedView } from "@/components/themedView";
+import { HelloWave } from "@/components/HelloWave";
+import { ThemedText } from "@/components/ThemedText";
+import { ThemedView } from "@/components/ThemedView";
 import styles from "./home.styles";
 import type { HomeNavAction } from "./home.types";
 

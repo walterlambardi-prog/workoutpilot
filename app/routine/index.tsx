@@ -3,26 +3,26 @@ import { useRouter } from "expo-router";
 import React, { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import {
-  FlatList,
-  ImageBackground,
-  Pressable,
-  View,
-  type ListRenderItemInfo,
+    FlatList,
+    ImageBackground,
+    Pressable,
+    View,
+    type ListRenderItemInfo,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { EXERCISE_DEFINITIONS } from "@/app/exercises/exercises.data";
 import type {
-  RoutineBuilderScreenProps,
-  RoutineExerciseListItem,
+    RoutineBuilderScreenProps,
+    RoutineExerciseListItem,
 } from "@/app/routine/routine.types";
-import { ThemedText } from "@/components/themedText";
-import { ThemedView } from "@/components/themedView";
+import { ThemedText } from "@/components/ThemedText";
+import { ThemedView } from "@/components/ThemedView";
 import { BACKGROUND_IMAGES } from "@/constants/images";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import {
-  ROUTINE_DEFAULT_REPS,
-  useRoutineBuilderStore,
+    ROUTINE_DEFAULT_REPS,
+    useRoutineBuilderStore,
 } from "@/stores/routineBuilderStore";
 import { useRoutineSessionStore } from "@/stores/routineSessionStore";
 import styles from "./routine.styles";

@@ -3,8 +3,8 @@ import { useTranslation } from "react-i18next";
 import { Image, ScrollView, View } from "react-native";
 
 import { EXERCISE_DEFINITION_MAP } from "@/app/exercises/exercises.data";
-import { ThemedText } from "@/components/themedText";
-import { ThemedView } from "@/components/themedView";
+import { ThemedText } from "@/components/ThemedText";
+import { ThemedView } from "@/components/ThemedView";
 import { ExerciseId } from "@/constants/exercises";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { useExerciseSessionStore } from "@/stores/exerciseSessionStore";

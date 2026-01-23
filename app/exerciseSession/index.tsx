@@ -4,8 +4,8 @@ import { useTranslation } from "react-i18next";
 
 import { EXERCISE_DEFINITION_MAP } from "@/app/exercises/exercises.data";
 import { useRoutineStep } from "@/app/routine/useRoutineStep";
-import Exercises from "@/components/exercises";
-import { ThemedView } from "@/components/themedView";
+import Exercises from "@/components/Exercises";
+import { ThemedView } from "@/components/ThemedView";
 import { ExerciseId } from "@/constants/exercises";
 import { useExerciseSessionStore } from "@/stores/exerciseSessionStore";
 import styles from "./exerciseSession.styles";

@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { Pressable, View } from "react-native";
 
-import { ThemedText } from "@/components/themedText";
+import { ThemedText } from "@/components/ThemedText";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import styles from "./ActionCard.styles";
 import type { ActionCardProps } from "./ActionCard.types";

@@ -2,33 +2,33 @@ import { Ionicons } from "@expo/vector-icons";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
-  ActivityIndicator,
-  Keyboard,
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  ScrollView,
-  Text,
-  TextInput,
-  View,
+    ActivityIndicator,
+    Keyboard,
+    KeyboardAvoidingView,
+    Platform,
+    Pressable,
+    ScrollView,
+    Text,
+    TextInput,
+    View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { ThemedText } from "@/components/themedText";
-import { ThemedView } from "@/components/themedView";
+import { ThemedText } from "@/components/ThemedText";
+import { ThemedView } from "@/components/ThemedView";
 import { EXERCISE_COPY_KEYS } from "@/constants/exercises";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { styles } from "./aiCoach.styles";
 import type {
-  LevelPrompt,
-  ParsedRoutinePlan,
-  ProfilePrompt,
+    LevelPrompt,
+    ParsedRoutinePlan,
+    ProfilePrompt,
 } from "./aiCoach.types";
 import {
-  parseJsonPlan,
-  parseLevelPrompt,
-  parseProfilePrompt,
-  useAiCoach,
+    parseJsonPlan,
+    parseLevelPrompt,
+    parseProfilePrompt,
+    useAiCoach,
 } from "./useAiCoach";
 
 const AiCoachScreen = () => {

@@ -5,8 +5,8 @@ import { FlatList, type ListRenderItemInfo } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import ExerciseCard from "@/components/ExerciseCard";
-import { ThemedText } from "@/components/themedText";
-import { ThemedView } from "@/components/themedView";
+import { ThemedText } from "@/components/ThemedText";
+import { ThemedView } from "@/components/ThemedView";
 import { ALLOWED_EXERCISES, ExerciseId } from "@/constants/exercises";
 import { EXERCISE_DEFINITIONS } from "./exercises.data";
 import styles from "./exercises.styles";
