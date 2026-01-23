@@ -37,6 +37,13 @@ jobs:
       - name: Export web
         run: npx expo export --platform web
 
+      - name: Debug dist
+        run: |
+          echo "Commit: $GITHUB_SHA"
+          ls -la
+          ls -la dist || true
+          head -n 30 dist/index.html || true
+
       - name: Disable Jekyll
         run: touch dist/.nojekyll
 
