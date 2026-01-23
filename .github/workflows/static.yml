@@ -29,20 +29,15 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
 
-      - name: Install deps
-        run: npm install
+      - name: Enable Corepack (Yarn)
+        run: corepack enable
+
+      - name: Install deps (Yarn)
+        run: yarn install --immutable
 
       - name: Export web
         run: npx expo export --platform web
-
-      - name: Debug dist
-        run: |
-          echo "Commit: $GITHUB_SHA"
-          ls -la
-          ls -la dist || true
-          head -n 30 dist/index.html || true
 
       - name: Disable Jekyll
         run: touch dist/.nojekyll
