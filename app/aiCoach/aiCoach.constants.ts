@@ -1,4 +1,3 @@
-
 export const AI_COACH_API_URL =
   "https://unfull-hyperflexibly-marylynn.ngrok-free.dev/v1/chat/completions";
 export const AI_COACH_MODEL = "local-llama";
@@ -131,7 +130,6 @@ export const TOPIC_KEYWORDS = [
   "flexibility",
   "movilidad",
   "mobility",
-  //lista ampliada con más sinónimos y términos relacionados a la medicina deportiva
   "salud",
   "health",
   "lesión",
@@ -180,7 +178,6 @@ export const TOPIC_KEYWORDS = [
   "rounds",
   "ronda",
   "round",
-  //dame terminos de una palabra relacionados con ejercicio fisico y entrenamiento en español e ingles
   "salud",
   "health",
   "fuerza",
