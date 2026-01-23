@@ -46,7 +46,7 @@ jobs:
         env:
           EXPO_PUBLIC_PATH: "${{ env.EXPO_PUBLIC_PATH }}"
           EXPO_PUBLIC_BASE_PATH: "${{ env.EXPO_PUBLIC_BASE_PATH }}"
-        run: npx expo export --platform web --public-url "${{ env.PUBLIC_URL }}"
+        run: npx expo export --platform web
 
       - name: Disable Jekyll
         run: touch dist/.nojekyll
