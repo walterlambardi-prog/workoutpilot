@@ -125,6 +125,30 @@ export default function ExercisesWebScreen({
     "text",
   );
 
+  const primaryChip = useMemo(() => {
+    if (routineContext?.isActive && routineContext.targetReps > 0) {
+      const safeProgress = Math.max(
+        0,
+        Math.min(routineContext.targetReps, stats?.repCount ?? 0),
+      );
+      return {
+        key: "target",
+        label: t("routineRun.chips.target"),
+        value: `${safeProgress}/${routineContext.targetReps}`,
+      };
+    }
+
+    if (typeof stats?.repCount === "number") {
+      return {
+        key: "reps",
+        label: t("exercises.web.reps"),
+        value: String(stats.repCount),
+      };
+    }
+
+    return null;
+  }, [routineContext, stats?.repCount, t]);
+
   const heroChips = useMemo(() => {
     const chips = [
       {
@@ -142,26 +166,7 @@ export default function ExercisesWebScreen({
       });
     }
 
-    if (typeof stats?.repCount === "number") {
-      chips.push({
-        key: "reps",
-        label: t("exercises.web.reps"),
-        value: String(stats.repCount),
-      });
-    }
-
     if (routineContext?.isActive && routineContext.targetReps > 0) {
-      const safeProgress = Math.max(
-        0,
-        Math.min(routineContext.targetReps, stats?.repCount ?? 0),
-      );
-
-      chips.push({
-        key: "target",
-        label: t("routineRun.chips.target"),
-        value: `${safeProgress}/${routineContext.targetReps}`,
-      });
-
       chips.push({
         key: "round",
         label: t("routineRun.chips.round"),
@@ -182,7 +187,7 @@ export default function ExercisesWebScreen({
     }
 
     return chips;
-  }, [routineContext, stats?.poseCount, stats?.repCount, status, t]);
+  }, [routineContext, stats?.poseCount, status, t]);
 
   const copyKey = exerciseId ? EXERCISE_COPY_KEYS[exerciseId] : undefined;
   const headerTitle = copyKey
@@ -275,6 +280,44 @@ export default function ExercisesWebScreen({
                   {headerSubtitle}
                 </ThemedText>
               </ThemedView>
+
+              {primaryChip ? (
+                <ThemedView
+                  style={rnStyles.primaryChipRow}
+                  pointerEvents="none"
+                  lightColor="transparent"
+                  darkColor="transparent"
+                >
+                  <ThemedView
+                    style={[
+                      rnStyles.primaryChip,
+                      {
+                        borderColor: overlayHeading,
+                        backgroundColor: cardBackground,
+                      },
+                    ]}
+                    lightColor="transparent"
+                    darkColor="transparent"
+                  >
+                    <ThemedText
+                      style={[
+                        rnStyles.primaryChipLabel,
+                        { color: overlayMuted },
+                      ]}
+                    >
+                      {primaryChip.label}
+                    </ThemedText>
+                    <ThemedText
+                      style={[
+                        rnStyles.primaryChipValue,
+                        { color: overlayHeading },
+                      ]}
+                    >
+                      {primaryChip.value}
+                    </ThemedText>
+                  </ThemedView>
+                </ThemedView>
+              ) : null}
 
               <ThemedView
                 style={rnStyles.chipRow}

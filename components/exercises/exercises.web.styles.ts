@@ -12,6 +12,8 @@ type ViewStyles = {
   headerBlock: ViewStyle;
   chipRow: ViewStyle;
   chip: ViewStyle;
+  primaryChipRow: ViewStyle;
+  primaryChip: ViewStyle;
   overlayBottom: ViewStyle;
   progressCard: ViewStyle;
   progressTrack: ViewStyle;
@@ -23,6 +25,8 @@ type TextStyles = {
   subtitle: TextStyle;
   chipLabel: TextStyle;
   chipValue: TextStyle;
+  primaryChipLabel: TextStyle;
+  primaryChipValue: TextStyle;
   message: TextStyle;
   nextExercise: TextStyle;
 };
@@ -83,10 +87,22 @@ export const rnStyles = StyleSheet.create<ViewStyles & TextStyles>({
     gap: 12,
   },
   chip: {
-    borderRadius: 999,
+    borderRadius: 24,
     paddingVertical: 10,
     paddingHorizontal: 16,
     borderWidth: 1,
+    borderStyle: "solid",
+  },
+  primaryChipRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 16,
+  },
+  primaryChip: {
+    borderRadius: 24,
+    paddingVertical: 20,
+    paddingHorizontal: 32,
+    borderWidth: 2,
     borderStyle: "solid",
   },
   overlayBottom: {
@@ -102,13 +118,13 @@ export const rnStyles = StyleSheet.create<ViewStyles & TextStyles>({
   },
   progressTrack: {
     height: 10,
-    borderRadius: 999,
+    borderRadius: 24,
     overflow: "hidden",
     backgroundColor: "rgba(255,255,255,0.08)",
   },
   progressFill: {
     height: "100%",
-    borderRadius: 999,
+    borderRadius: 24,
   },
   title: {
     fontSize: 48,
@@ -129,6 +145,18 @@ export const rnStyles = StyleSheet.create<ViewStyles & TextStyles>({
   chipValue: {
     fontSize: 18,
     fontWeight: "700",
+  },
+  primaryChipLabel: {
+    fontSize: 16,
+    fontWeight: "700",
+    letterSpacing: 1,
+    textTransform: "uppercase",
+    marginBottom: 6,
+  },
+  primaryChipValue: {
+    fontSize: 56,
+    fontWeight: "800",
+    lineHeight: 60,
   },
   message: {
     fontSize: 16,
