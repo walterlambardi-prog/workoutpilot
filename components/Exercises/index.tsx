@@ -29,19 +29,12 @@ export default function ExercisesNativeScreen({
   const isFirstRenderRef = useRef(true);
   const remountTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { t } = useTranslation();
-  const {
-    status,
-    messageKey,
-    poseCount,
-    repCount,
-    feedback,
-    handleLandmark,
-    handleSwitchCamera,
-  } = usePoseDetection({
-    exerciseId,
-    t,
-    resetKey: routineContext?.stepIndex,
-  });
+  const { messageKey, repCount, feedback, handleLandmark, handleSwitchCamera } =
+    usePoseDetection({
+      exerciseId,
+      t,
+      resetKey: routineContext?.stepIndex,
+    });
 
   const advanceRef = useRef(false);
   const lastStepIndexRef = useRef<number | null>(null);
