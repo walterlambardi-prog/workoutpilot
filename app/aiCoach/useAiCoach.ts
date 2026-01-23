@@ -2,7 +2,7 @@ import { useRouter } from "expo-router";
 import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import { ExerciseId } from "@/constants/exercises";
+import { ALLOWED_EXERCISES, ExerciseId } from "@/constants/exercises";
 import {
   useRoutineBuilderStore,
   type RoutinePlanStepBase,
@@ -13,7 +13,6 @@ import {
   AGE_REGEX,
   AI_COACH_API_URL,
   AI_COACH_MODEL,
-  ALLOWED_EXERCISES,
   FREQUENCY_REGEX,
   HISTORY_WINDOW,
   LEVEL_REGEX,

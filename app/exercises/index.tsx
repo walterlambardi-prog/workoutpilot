@@ -7,7 +7,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import ExerciseCard from "@/components/ExerciseCard";
 import { ThemedText } from "@/components/themedText";
 import { ThemedView } from "@/components/themedView";
-import { ExerciseId } from "@/constants/exercises";
+import { ALLOWED_EXERCISES, ExerciseId } from "@/constants/exercises";
 import { EXERCISE_DEFINITIONS } from "./exercises.data";
 import styles from "./exercises.styles";
 
@@ -23,7 +23,9 @@ const ExercisesScreen: React.FC<ExercisesScreenProps> = () => {
 
   const exercises = useMemo<ExerciseListItem[]>(
     () =>
-      EXERCISE_DEFINITIONS.map(({ id, copyKey, image }) => ({
+      EXERCISE_DEFINITIONS.filter(({ id }) =>
+        ALLOWED_EXERCISES.includes(id),
+      ).map(({ id, copyKey, image }) => ({
         id,
         copyKey,
         image,

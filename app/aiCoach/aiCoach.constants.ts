@@ -1,4 +1,3 @@
-import { ExerciseId } from "@/constants/exercises";
 
 export const AI_COACH_API_URL =
   "https://unfull-hyperflexibly-marylynn.ngrok-free.dev/v1/chat/completions";
@@ -11,16 +10,6 @@ export const ROUND_MAX = 10;
 export const HISTORY_WINDOW = 8;
 export const MAX_TOKENS = 200;
 export const TEMPERATURE = 0.1;
-
-export const ALLOWED_EXERCISES: ExerciseId[] = [
-  ExerciseId.SQUATS,
-  ExerciseId.PUSHUPS,
-  ExerciseId.HAMMER_CURLS,
-  ExerciseId.LATERAL_RAISES,
-  ExerciseId.LUNGES,
-  ExerciseId.CALF_RAISES,
-  ExerciseId.STANDING_LEG_RAISES,
-];
 
 export const LEVEL_REGEX =
   /(principiante|intermedio|avanzado|beginner|intermediate|advanced)/i;

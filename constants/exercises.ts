@@ -17,3 +17,13 @@ export const EXERCISE_COPY_KEYS: Record<ExerciseId, string> = {
   [ExerciseId.SQUATS]: "exercises.list.items.squats",
   [ExerciseId.STANDING_LEG_RAISES]: "exercises.list.items.standingLegRaises",
 };
+
+export const ALLOWED_EXERCISES: ExerciseId[] = [
+  ExerciseId.SQUATS,
+  //ExerciseId.PUSHUPS,
+  ExerciseId.HAMMER_CURLS,
+  ExerciseId.LATERAL_RAISES,
+  //ExerciseId.LUNGES,
+  ExerciseId.CALF_RAISES,
+  ExerciseId.STANDING_LEG_RAISES,
+];
