@@ -33,11 +33,20 @@ jobs:
       - name: Enable Corepack (Yarn)
         run: corepack enable
 
+      - name: Configure Expo base path for Pages
+        run: |
+          echo "EXPO_PUBLIC_PATH=/${GITHUB_REPOSITORY#*/}/" >> $GITHUB_ENV
+          echo "EXPO_PUBLIC_BASE_PATH=/${GITHUB_REPOSITORY#*/}" >> $GITHUB_ENV
+          echo "PUBLIC_URL=https://${GITHUB_REPOSITORY_OWNER}.github.io/${GITHUB_REPOSITORY#*/}" >> $GITHUB_ENV
+
       - name: Install deps (Yarn)
         run: yarn install --immutable
 
       - name: Export web
-        run: npx expo export --platform web
+        env:
+          EXPO_PUBLIC_PATH: "${{ env.EXPO_PUBLIC_PATH }}"
+          EXPO_PUBLIC_BASE_PATH: "${{ env.EXPO_PUBLIC_BASE_PATH }}"
+        run: npx expo export --platform web --public-url "${{ env.PUBLIC_URL }}"
 
       - name: Disable Jekyll
         run: touch dist/.nojekyll
