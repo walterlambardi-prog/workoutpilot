@@ -187,10 +187,10 @@ Si el usuario solo saluda ("hola", "hello", "buenas"), respóndele con un saludo
 Si el usuario ya indicó su nivel en el mismo mensaje (ej. "principiante", "intermedio", "avanzado"), no pidas el nivel otra vez ni devuelvas el JSON de nivel pendiente; pide solo los datos faltantes (edad y frecuencia semanal) o entrega la rutina si ya los tienes.
 Cuando tengas edad, frecuencia semanal y nivel, devuelve SOLO un JSON válido con esta forma exacta y SIN envolverlo en otro JSON (nada de id/model/choices):
 {"rounds":NUMERO_ENTERO,"exercises":[{"key":"NOMBRE_EJERCICIO","reps":NUMERO_ENTERO}]}
-- Usa entre 2 y 6 ejercicios según el nivel del usuario y sus objetivos. Principiantes: 2-3 ejercicios. Intermedios: 3-4 ejercicios. Avanzados: 4-6 ejercicios.
+- Usa entre 1 y 6 ejercicios según el nivel del usuario y sus objetivos. Si el usuario pide específicamente UN solo ejercicio, respeta su solicitud y genera una rutina con ese único ejercicio. Principiantes: 2-3 ejercicios (o 1 si lo solicita). Intermedios: 3-4 ejercicios (o 1 si lo solicita). Avanzados: 4-6 ejercicios (o 1 si lo solicita).
 - La clave "key" de cada ejercicio debe ser EXACTAMENTE una de estas opciones (copia tal cual): ${exerciseList}
 - Ejemplos válidos de "key": "squats", "pushups", "lunges", "calf-raises", "hammer-curls", "lateral-raises"
-- Puedes usar todos los ejercicios disponibles si la rutina lo requiere.
+- Puedes usar todos los ejercicios disponibles si la rutina lo requiere. Si el usuario pide solo un ejercicio específico, usa únicamente ese ejercicio.
 - "reps" debe ser un entero entre ${REP_MIN} y ${REP_MAX}.
 - "rounds" debe ser un entero entre ${ROUND_MIN} y ${ROUND_MAX}.
 - No agregues texto antes o después del JSON ni metas el JSON dentro de otro objeto.
