@@ -50,6 +50,21 @@ const EXERCISE_KEY_MAP: Record<string, ExerciseId> = {
   lateralraises: ExerciseId.LATERAL_RAISES,
   "lateral-raises": ExerciseId.LATERAL_RAISES,
   lateralraise: ExerciseId.LATERAL_RAISES,
+  lunges: ExerciseId.LUNGES,
+  lunge: ExerciseId.LUNGES,
+  zancadas: ExerciseId.LUNGES,
+  zancada: ExerciseId.LUNGES,
+  estocadas: ExerciseId.LUNGES,
+  estocada: ExerciseId.LUNGES,
+  calfraises: ExerciseId.CALF_RAISES,
+  calfraise: ExerciseId.CALF_RAISES,
+  "calf-raises": ExerciseId.CALF_RAISES,
+  "calf-raise": ExerciseId.CALF_RAISES,
+  calfraising: ExerciseId.CALF_RAISES,
+  pantorrillas: ExerciseId.CALF_RAISES,
+  pantorrilla: ExerciseId.CALF_RAISES,
+  gemelos: ExerciseId.CALF_RAISES,
+  gemelo: ExerciseId.CALF_RAISES,
 };
 
 const toExerciseId = (value?: string): ExerciseId | null => {
@@ -171,11 +186,16 @@ Si el usuario pide consejos o técnica (consejo, consejos, tip, tips, ayuda, mej
 Si el usuario solo saluda ("hola", "hello", "buenas"), respóndele con un saludo breve y una invitación a armar una rutina; sugiere que comparta nivel y objetivo. No uses ${topicGuard} en ese caso.
 Si el usuario ya indicó su nivel en el mismo mensaje (ej. "principiante", "intermedio", "avanzado"), no pidas el nivel otra vez ni devuelvas el JSON de nivel pendiente; pide solo los datos faltantes (edad y frecuencia semanal) o entrega la rutina si ya los tienes.
 Cuando tengas edad, frecuencia semanal y nivel, devuelve SOLO un JSON válido con esta forma exacta y SIN envolverlo en otro JSON (nada de id/model/choices):
-{"rounds":entero_${ROUND_MIN}_a_${ROUND_MAX},"exercises":[{"key":"${exerciseList}","reps":entero_${REP_MIN}_a_${REP_MAX}}]}
-- Usa entre 2 y 4 ejercicios.
-- La clave "key" de cada ejercicio debe ser UNA sola de estas: ${exerciseList}. No combines con "|", "," o "y"; elige una sola.
-- "reps" y "rounds" deben ser enteros dentro de los rangos indicados.
+{"rounds":NUMERO_ENTERO,"exercises":[{"key":"NOMBRE_EJERCICIO","reps":NUMERO_ENTERO}]}
+- Usa entre 2 y 6 ejercicios según el nivel del usuario y sus objetivos. Principiantes: 2-3 ejercicios. Intermedios: 3-4 ejercicios. Avanzados: 4-6 ejercicios.
+- La clave "key" de cada ejercicio debe ser EXACTAMENTE una de estas opciones (copia tal cual): ${exerciseList}
+- Ejemplos válidos de "key": "squats", "pushups", "lunges", "calf-raises", "hammer-curls", "lateral-raises"
+- Puedes usar todos los ejercicios disponibles si la rutina lo requiere.
+- "reps" debe ser un entero entre ${REP_MIN} y ${REP_MAX}.
+- "rounds" debe ser un entero entre ${ROUND_MIN} y ${ROUND_MAX}.
 - No agregues texto antes o después del JSON ni metas el JSON dentro de otro objeto.
+Ejemplo de respuesta válida: {"rounds":3,"exercises":[{"key":"squats","reps":12},{"key":"lunges","reps":10},{"key":"calf-raises","reps":15}]}
+Ejemplo avanzado: {"rounds":4,"exercises":[{"key":"squats","reps":15},{"key":"lunges","reps":12},{"key":"calf-raises","reps":20},{"key":"pushups","reps":12},{"key":"hammer-curls","reps":10},{"key":"lateral-raises","reps":12}]}
 El JSON de nivel anterior SOLO se usa cuando realmente falta el nivel.
 El JSON de perfil (edad/frecuencia) se usa cuando falte alguno de esos datos; si ya tienes edad y frecuencia, no lo envíes.
 Si el usuario ya dijo su nivel (ej. principiante/intermedio/avanzado), está prohibido devolver un JSON con needsLevel; no preguntes el nivel otra vez.

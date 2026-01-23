@@ -211,4 +211,12 @@ export const TOPIC_KEYWORDS = [
   "thanks",
   "por favor",
   "please",
+  "ejercicios",
+  "exercises",
+  "entrenamiento",
+  "training",
+  "rutina",
+  "routine",
+  "ejercicio",
+  "exercise",
 ] as const;

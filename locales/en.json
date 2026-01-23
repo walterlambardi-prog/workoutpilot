@@ -417,7 +417,7 @@
     "planRoundsLabel": "Rounds: {{rounds}}",
     "planExerciseLine": "{{exercise}} · {{reps}} reps",
     "usePlanCta": "Start routine",
-    "editPlanCta": "Edit in builder",
+    "editPlanCta": "Edit routine",
     "fetchError": "I couldn't generate a response. Please try again.",
     "retrySystemPrompt": "Repeat the reply using ONLY the valid JSON schema and nothing else."
   }
