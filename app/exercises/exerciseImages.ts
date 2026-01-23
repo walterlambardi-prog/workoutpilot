@@ -9,4 +9,5 @@ export const exerciseImages: Record<ExerciseId, ImageSourcePropType> = {
   [ExerciseId.LUNGES]: require("@/assets/images/exercises/lunges.png"),
   [ExerciseId.PUSHUPS]: require("@/assets/images/exercises/pushups.png"),
   [ExerciseId.SQUATS]: require("@/assets/images/exercises/squats.png"),
+  [ExerciseId.STANDING_LEG_RAISES]: require("@/assets/images/exercises/standingLegRaises.png"),
 };

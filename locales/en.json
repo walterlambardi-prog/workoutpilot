@@ -235,6 +235,10 @@
         "squats": {
           "title": "Squats",
           "description": "Drive through your heels to stabilize hips and knees."
+        },
+        "standingLegRaises": {
+          "title": "Standing leg raises",
+          "description": "Lift one leg laterally to strengthen hip abductors and improve balance."
         }
       }
     },
@@ -374,6 +378,32 @@
       "armLabel": {
         "left": "Left arm",
         "right": "Right arm"
+      }
+    },
+    "standingLegRaises": {
+      "feedback": {
+        "showBody": "Show your full body to the camera",
+        "noPose": "No pose detected",
+        "improveLight": "Improve lighting and stand straight",
+        "standStraight": "Stand straight, ready to raise your leg",
+        "raiseLeft": "Raise your left leg to the side",
+        "raiseRight": "Raise your right leg to the side",
+        "holdUp": "Hold at the top",
+        "lower": "Lower with control",
+        "complete": "Good rep on your {{leg}}",
+        "keepBalance": "Keep your balance and core engaged",
+        "hipsLevel": "Keep your hips level"
+      },
+      "legLabel": {
+        "left": "left leg",
+        "right": "right leg",
+        "none": "stable"
+      },
+      "labels": {
+        "activeLeg": "Active leg",
+        "hipAngle": "Hip angle",
+        "leftReps": "Left leg reps",
+        "rightReps": "Right leg reps"
       }
     }
   },

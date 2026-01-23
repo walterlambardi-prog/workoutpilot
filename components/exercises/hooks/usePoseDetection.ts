@@ -12,6 +12,7 @@ import { useHammerCurlsCounter } from "./useHammerCurlsCounter";
 import { useLateralRaisesCounter } from "./useLateralRaisesCounter";
 import { useLungesCounter } from "./useLungesCounter";
 import { useSquatsCounter } from "./useSquatsCounter";
+import { useStandingLegRaisesCounter } from "./useStandingLegRaisesCounter";
 
 /**
  * Hook for managing MediaPipe pose detection state and callbacks (native)
@@ -35,6 +36,7 @@ export const usePoseDetection = (params: {
   const lateralRaises = useLateralRaisesCounter(t);
   const lunges = useLungesCounter(t);
   const squats = useSquatsCounter(t);
+  const standingLegRaises = useStandingLegRaisesCounter(t);
 
   useEffect(() => {
     lastRepCountRef.current = 0;
@@ -222,6 +224,24 @@ export const usePoseDetection = (params: {
             }
             setFeedback(next?.feedback);
           }
+
+          if (exerciseId === ExerciseId.STANDING_LEG_RAISES) {
+            const next = standingLegRaises.processLandmarks(landmarks);
+            const rep = next?.repCount ?? 0;
+            const stableRep = Math.max(lastRepCountRef.current, rep);
+            lastRepCountRef.current = stableRep;
+            setRepCount(stableRep);
+            if (exerciseId) {
+              const prev = reportedRepRef.current;
+              if (stableRep > prev) {
+                useExerciseSessionStore
+                  .getState()
+                  .addRep(exerciseId, stableRep - prev);
+                reportedRepRef.current = stableRep;
+              }
+            }
+            setFeedback(next?.feedback);
+          }
         } else {
           setPoseCount(0);
           setMessageKey("noPoseDetected");
@@ -314,6 +334,24 @@ export const usePoseDetection = (params: {
             }
             setFeedback(next?.feedback);
           }
+
+          if (exerciseId === ExerciseId.STANDING_LEG_RAISES) {
+            const next = standingLegRaises.processLandmarks(undefined);
+            const rep = next?.repCount ?? 0;
+            const stableRep = Math.max(lastRepCountRef.current, rep);
+            lastRepCountRef.current = stableRep;
+            setRepCount(stableRep);
+            if (exerciseId) {
+              const prev = reportedRepRef.current;
+              if (stableRep > prev) {
+                useExerciseSessionStore
+                  .getState()
+                  .addRep(exerciseId, stableRep - prev);
+                reportedRepRef.current = stableRep;
+              }
+            }
+            setFeedback(next?.feedback);
+          }
         }
       } catch (error) {
         setStatus("error");
@@ -329,6 +367,7 @@ export const usePoseDetection = (params: {
       lateralRaises,
       lunges,
       squats,
+      standingLegRaises,
     ],
   );
 

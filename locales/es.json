@@ -235,6 +235,10 @@
         "squats": {
           "title": "Sentadillas",
           "description": "Impulsa con talones para estabilizar caderas y rodillas."
+        },
+        "standingLegRaises": {
+          "title": "Elevaciones laterales de pierna",
+          "description": "Eleva una pierna lateralmente para fortalecer abductores y mejorar equilibrio."
         }
       }
     },
@@ -374,6 +378,32 @@
       "armLabel": {
         "left": "Brazo izquierdo",
         "right": "Brazo derecho"
+      }
+    },
+    "standingLegRaises": {
+      "feedback": {
+        "showBody": "Muestra tu cuerpo completo a la cámara",
+        "noPose": "Sin pose detectada",
+        "improveLight": "Mejora la luz y mantente derecho",
+        "standStraight": "Párate derecho, listo para elevar la pierna",
+        "raiseLeft": "Eleva tu pierna izquierda al costado",
+        "raiseRight": "Eleva tu pierna derecha al costado",
+        "holdUp": "Sostén arriba",
+        "lower": "Baja con control",
+        "complete": "Buena repetición con tu {{leg}}",
+        "keepBalance": "Mantén el equilibrio y el core activo",
+        "hipsLevel": "Mantén las caderas niveladas"
+      },
+      "legLabel": {
+        "left": "pierna izquierda",
+        "right": "pierna derecha",
+        "none": "estable"
+      },
+      "labels": {
+        "activeLeg": "Pierna activa",
+        "hipAngle": "Ángulo de cadera",
+        "leftReps": "Reps pierna izquierda",
+        "rightReps": "Reps pierna derecha"
       }
     }
   },
