@@ -27,6 +27,11 @@
       "output": "static",
       "favicon": "./assets/images/favicon.png"
     },
+    "extra": {
+      "router": {
+        "basename": "/workoutpilot"
+      }
+    },
     "plugins": [
       "expo-router",
       [
