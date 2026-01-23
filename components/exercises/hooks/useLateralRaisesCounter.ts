@@ -4,11 +4,11 @@ import { useCallback, useMemo, useRef, useState } from "react";
 import type { PoseLandmark } from "../exercises.types";
 
 const MIN_VISIBILITY = 0.55;
-// Softer thresholds so reaching ~shoulder height counts as "up"
-const ANGLE_UP = 62; // was 72
-const ANGLE_UP_RELEASE = 54; // was 64
-const ANGLE_DOWN = 38; // was 32
-const ANGLE_DOWN_RESET = 44; // was 38
+// More permissive thresholds - easier to detect arm raises
+const ANGLE_UP = 55; // Reduced from 62 - arms at ~shoulder height counts as "up"
+const ANGLE_UP_RELEASE = 48; // Reduced from 54 - easier to leave "up" state
+const ANGLE_DOWN = 40; // Increased from 38 - more forgiving for "down" position
+const ANGLE_DOWN_RESET = 46; // Increased from 44 - easier to reset to "down"
 const UI_UPDATE_THROTTLE_MS = 120;
 const REP_DEBOUNCE_MS = 300;
 
@@ -153,7 +153,8 @@ export const useLateralRaisesCounter = (t: TFunction) => {
         leftAngleVal < ANGLE_DOWN_RESET && rightAngleVal < ANGLE_DOWN_RESET;
       const avgAngle = (leftAngleVal + rightAngleVal) / 2;
       const minAngle = Math.min(leftAngleVal, rightAngleVal);
-      const bothUp = avgAngle > ANGLE_UP && minAngle > ANGLE_UP - 6;
+      // More permissive: avg needs to be above threshold, min can be 10° lower
+      const bothUp = avgAngle > ANGLE_UP && minAngle > ANGLE_UP - 10;
       const leavingUp =
         avgAngle < ANGLE_UP_RELEASE || minAngle < ANGLE_UP_RELEASE;
 
