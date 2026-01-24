@@ -43,12 +43,33 @@ jobs:
       - name: Install deps (Yarn)
         run: yarn install
 
+      - name: Fetch MediaPipe assets
+        run: yarn fetch:mediapipe-assets
+
       - name: Export web
         env:
           EXPO_PUBLIC_PATH: "${{ env.EXPO_PUBLIC_PATH }}"
           EXPO_PUBLIC_BASE_PATH: "${{ env.EXPO_PUBLIC_BASE_PATH }}"
           EXPO_PUBLIC_URL: "${{ env.EXPO_PUBLIC_URL }}"
         run: npx expo export --platform web
+
+      - name: Prefix asset URLs with subpath
+        env:
+          PREFIX: "${{ env.EXPO_PUBLIC_PATH }}"
+        run: |
+          FILES=$(find dist -type f \( -name "*.html" -o -name "*.js" -o -name "*.json" -o -name "*.css" -o -name "*.txt" \))
+          for f in $FILES; do
+            perl -0777 -pi -e "s|\"/_expo/|\"${PREFIX}_expo/|g" "$f"
+            perl -0777 -pi -e "s|'/_expo/|'${PREFIX}_expo/|g" "$f"
+            perl -0777 -pi -e "s|\"/assets/|\"${PREFIX}assets/|g" "$f"
+            perl -0777 -pi -e "s|'assets/|'${PREFIX}assets/|g" "$f"
+            perl -0777 -pi -e "s|\"/mediapipe/|\"${PREFIX}mediapipe/|g" "$f"
+            perl -0777 -pi -e "s|'/mediapipe/|'${PREFIX}mediapipe/|g" "$f"
+            perl -0777 -pi -e "s|\"/models/|\"${PREFIX}models/|g" "$f"
+            perl -0777 -pi -e "s|'/models/|'${PREFIX}models/|g" "$f"
+            perl -0777 -pi -e "s|\"/node_modules/|\"${PREFIX}node_modules/|g" "$f"
+            perl -0777 -pi -e "s|'/node_modules/|'${PREFIX}node_modules/|g" "$f"
+          done
 
       - name: Add SPA fallback (404.html)
         run: cp dist/index.html dist/404.html
