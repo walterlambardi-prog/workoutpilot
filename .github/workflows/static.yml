@@ -61,6 +61,8 @@ jobs:
           if [ -f dist/service-worker.js ]; then perl -0777 -pi -e "s|([\"'])/_expo/|$1${EXPO_PUBLIC_PATH}_expo/|g" dist/service-worker.js; fi
           # Rewrite plain href/src without quotes (rare, but seen in SW)
           if [ -f dist/service-worker.js ]; then perl -0777 -pi -e "s|/_expo/|${EXPO_PUBLIC_PATH}_expo/|g" dist/service-worker.js; fi
+          # Remove stray encoded quotes that could leak into URLs
+          perl -0777 -pi -e "s|%22||g" dist/index.html
 
       - name: Add SPA fallback (404.html)
         run: cp dist/index.html dist/404.html
