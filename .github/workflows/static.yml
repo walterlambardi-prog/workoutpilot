@@ -35,7 +35,7 @@ jobs:
 
       - name: Configure Expo base path for Pages
         run: |
-          echo "EXPO_PUBLIC_PATH=./" >> $GITHUB_ENV
+          echo "EXPO_PUBLIC_PATH=/${GITHUB_REPOSITORY#*/}/" >> $GITHUB_ENV
           echo "EXPO_PUBLIC_BASE_PATH=/${GITHUB_REPOSITORY#*/}" >> $GITHUB_ENV
           echo "EXPO_PUBLIC_URL=https://${GITHUB_REPOSITORY_OWNER}.github.io/${GITHUB_REPOSITORY#*/}/" >> $GITHUB_ENV
           echo "PUBLIC_URL=https://${GITHUB_REPOSITORY_OWNER}.github.io/${GITHUB_REPOSITORY#*/}/" >> $GITHUB_ENV
@@ -55,21 +55,10 @@ jobs:
 
       - name: Prefix asset URLs with subpath
         env:
-          PREFIX: "./"
+          PREFIX: "${{ env.EXPO_PUBLIC_PATH }}"
         run: |
-          FILES=$(find dist -type f \( -name "*.html" -o -name "*.js" -o -name "*.json" -o -name "*.css" -o -name "*.txt" \))
-          for f in $FILES; do
-            perl -0777 -pi -e "s|\"/_expo/|\"${PREFIX}_expo/|g" "$f"
-            perl -0777 -pi -e "s|'/_expo/|'${PREFIX}_expo/|g" "$f"
-            perl -0777 -pi -e "s|\"/assets/|\"${PREFIX}assets/|g" "$f"
-            perl -0777 -pi -e "s|'assets/|'${PREFIX}assets/|g" "$f"
-            perl -0777 -pi -e "s|\"/mediapipe/|\"${PREFIX}mediapipe/|g" "$f"
-            perl -0777 -pi -e "s|'/mediapipe/|'${PREFIX}mediapipe/|g" "$f"
-            perl -0777 -pi -e "s|\"/models/|\"${PREFIX}models/|g" "$f"
-            perl -0777 -pi -e "s|'/models/|'${PREFIX}models/|g" "$f"
-            perl -0777 -pi -e "s|\"/node_modules/|\"${PREFIX}node_modules/|g" "$f"
-            perl -0777 -pi -e "s|'/node_modules/|'${PREFIX}node_modules/|g" "$f"
-          done
+          find dist -type f \( -name "*.html" -o -name "*.js" -o -name "*.json" -o -name "*.css" -o -name "*.txt" \) -print0 \
+            | xargs -0 perl -0777 -pi -e "s|\"/_expo/|\"${PREFIX}_expo/|g; s|'/_expo/|'${PREFIX}_expo/|g; s|\"/assets/|\"${PREFIX}assets/|g; s|'assets/|'${PREFIX}assets/|g; s|\"/mediapipe/|\"${PREFIX}mediapipe/|g; s|'/mediapipe/|'${PREFIX}mediapipe/|g; s|\"/models/|\"${PREFIX}models/|g; s|'/models/|'${PREFIX}models/|g; s|\"/node_modules/|\"${PREFIX}node_modules/|g; s|'/node_modules/|'${PREFIX}node_modules/|g; s|\"/favicon.ico\"|\"${PREFIX}favicon.ico\"|g; s|'\/favicon.ico'|'${PREFIX}favicon.ico'|g;"
 
       - name: Add SPA fallback (404.html)
         run: cp dist/index.html dist/404.html
