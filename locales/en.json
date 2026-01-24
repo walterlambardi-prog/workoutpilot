@@ -7,6 +7,37 @@
     "routine": "Routine",
     "aiCoach": "AI Coach"
   },
+  "login": {
+    "title": "Welcome to WorkoutPilot",
+    "subtitle": "Let's get started",
+    "description": "Enter your name or nickname to personalize your experience.",
+    "inputLabel": "Your name",
+    "inputPlaceholder": "e.g. John",
+    "continueButton": "Continue",
+    "errorEmpty": "Please enter a name",
+    "errorTooShort": "Name must be at least 2 characters",
+    "errorTooLong": "Name must be less than 30 characters"
+  },
+  "onboarding": {
+    "skip": "Skip",
+    "next": "Next",
+    "getStarted": "Get started",
+    "step1": {
+      "title": "Track your form",
+      "subtitle": "Real-time feedback",
+      "description": "Use your camera to monitor exercise form with AI-powered pose detection. Get instant feedback on your technique."
+    },
+    "step2": {
+      "title": "Build your routine",
+      "subtitle": "Personalized workouts",
+      "description": "Create custom routines with exercises, rounds, and reps. Or let our AI coach design the perfect routine for your level."
+    },
+    "step3": {
+      "title": "Track your progress",
+      "subtitle": "See your improvement",
+      "description": "Review detailed session history, track your reps, and monitor your workout consistency over time."
+    }
+  },
   "home": {
     "title": "WorkoutPilot",
     "subtitle": "Your launch hub",
@@ -72,7 +103,13 @@
       "clearRoutineHistoryConfirmMessage": "This will permanently delete all your routine sessions. This action cannot be undone.",
       "clearRoutineHistoryConfirm": "Clear routines",
       "clearedRoutineTitle": "Routine history cleared",
-      "clearedRoutineMessage": "All routine session data has been deleted."
+      "clearedRoutineMessage": "All routine session data has been deleted.",
+      "deleteAccount": "Delete account data",
+      "deleteAccountConfirmTitle": "Delete all data?",
+      "deleteAccountConfirmMessage": "This will delete your username, all session history, routine data, and reset the app. This action cannot be undone.",
+      "deleteAccountConfirm": "Delete everything",
+      "accountDeletedTitle": "Data deleted",
+      "accountDeletedMessage": "All your data has been deleted. The app will now restart."
     }
   },
   "sessions": {

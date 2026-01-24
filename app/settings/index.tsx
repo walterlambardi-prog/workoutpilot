@@ -5,10 +5,12 @@ import { Pressable, ScrollView, View } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
 import { useAppLanguage } from "@/hooks/useAppLanguage";
 import { useThemeColor } from "@/hooks/useThemeColor";
+import { useAuthStore } from "@/stores/authStore";
 import { useExerciseSessionStore } from "@/stores/exerciseSessionStore";
 import { usePreferencesStore, type ThemeMode } from "@/stores/preferencesStore";
 import { useRoutineSessionStore } from "@/stores/routineSessionStore";
 import { showAlert } from "@/utils/alert";
+import { useRouter } from "expo-router";
 import styles from "./settings.styles";
 
 type LanguageCode = ReturnType<
@@ -105,10 +107,14 @@ const ThemeSwitcher: React.FC<ThemeSwitcherProps> = ({ value, onChange }) => {
  */
 const SettingsScreen: React.FC = () => {
   const { t } = useTranslation();
+  const router = useRouter();
   const { language, changeLanguage, supportedLanguages } = useAppLanguage();
   const resetHistory = useExerciseSessionStore((state) => state.resetHistory);
   const resetRoutineHistory = useRoutineSessionStore(
     (state) => state.resetHistory,
+  );
+  const resetAuth = useAuthStore(
+    (state: { resetAuth: () => void }) => state.resetAuth,
   );
   const backgroundColor = useThemeColor({}, "background");
   const themeMode = usePreferencesStore(
@@ -170,6 +176,37 @@ const SettingsScreen: React.FC = () => {
               t("settings.data.clearedRoutineTitle"),
               t("settings.data.clearedRoutineMessage"),
             );
+          },
+        },
+      ],
+    );
+  };
+
+  const handleDeleteAccount = () => {
+    showAlert(
+      t("settings.data.deleteAccountConfirmTitle"),
+      t("settings.data.deleteAccountConfirmMessage"),
+      [
+        {
+          text: t("settings.data.cancel"),
+          style: "cancel",
+        },
+        {
+          text: t("settings.data.deleteAccountConfirm"),
+          style: "destructive",
+          onPress: () => {
+            // Reset all stores
+            resetAuth();
+            resetHistory();
+            resetRoutineHistory();
+
+            showAlert(
+              t("settings.data.accountDeletedTitle"),
+              t("settings.data.accountDeletedMessage"),
+            );
+
+            // Navigate to login screen
+            router.replace("/login");
           },
         },
       ],
@@ -254,6 +291,25 @@ const SettingsScreen: React.FC = () => {
             ]}
           >
             {t("settings.data.clearRoutineHistory")}
+          </ThemedText>
+        </Pressable>
+        <Pressable
+          onPress={handleDeleteAccount}
+          style={({ pressed }) => [
+            styles.actionButton,
+            styles.actionButtonDestructive,
+            pressed ? styles.actionButtonPressed : null,
+          ]}
+          accessibilityRole="button"
+          accessibilityLabel={t("settings.data.deleteAccount")}
+        >
+          <ThemedText
+            style={[
+              styles.actionButtonText,
+              styles.actionButtonTextDestructive,
+            ]}
+          >
+            {t("settings.data.deleteAccount")}
           </ThemedText>
         </Pressable>
       </View>

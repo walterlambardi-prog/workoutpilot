@@ -7,6 +7,37 @@
     "routine": "Rutina",
     "aiCoach": "Coach IA"
   },
+  "login": {
+    "title": "Bienvenido a WorkoutPilot",
+    "subtitle": "Comencemos",
+    "description": "Ingresa tu nombre o apodo para personalizar tu experiencia.",
+    "inputLabel": "Tu nombre",
+    "inputPlaceholder": "ej. Juan",
+    "continueButton": "Continuar",
+    "errorEmpty": "Por favor ingresa un nombre",
+    "errorTooShort": "El nombre debe tener al menos 2 caracteres",
+    "errorTooLong": "El nombre debe tener menos de 30 caracteres"
+  },
+  "onboarding": {
+    "skip": "Omitir",
+    "next": "Siguiente",
+    "getStarted": "Comenzar",
+    "step1": {
+      "title": "Monitorea tu forma",
+      "subtitle": "Feedback en tiempo real",
+      "description": "Usa tu cámara para monitorear la forma de tus ejercicios con detección de pose por IA. Obtén feedback instantáneo de tu técnica."
+    },
+    "step2": {
+      "title": "Crea tu rutina",
+      "subtitle": "Entrenamientos personalizados",
+      "description": "Crea rutinas personalizadas con ejercicios, rondas y repeticiones. O deja que nuestro coach IA diseñe la rutina perfecta para tu nivel."
+    },
+    "step3": {
+      "title": "Rastrea tu progreso",
+      "subtitle": "Observa tu mejora",
+      "description": "Revisa el historial detallado de sesiones, rastrea tus repeticiones y monitorea la consistencia de tus entrenamientos a lo largo del tiempo."
+    }
+  },
   "home": {
     "title": "WorkoutPilot",
     "subtitle": "Tu hub inicial",
@@ -72,7 +103,13 @@
       "clearRoutineHistoryConfirmMessage": "Esto eliminará permanentemente todas tus sesiones de rutina. Esta acción no se puede deshacer.",
       "clearRoutineHistoryConfirm": "Borrar rutinas",
       "clearedRoutineTitle": "Historial de rutinas borrado",
-      "clearedRoutineMessage": "Todos los datos de rutinas han sido eliminados."
+      "clearedRoutineMessage": "Todos los datos de rutinas han sido eliminados.",
+      "deleteAccount": "Borrar datos de la cuenta",
+      "deleteAccountConfirmTitle": "¿Borrar todos los datos?",
+      "deleteAccountConfirmMessage": "Esto eliminará tu nombre de usuario, historial de sesiones, datos de rutinas y reiniciará la app. Esta acción no se puede deshacer.",
+      "deleteAccountConfirm": "Borrar todo",
+      "accountDeletedTitle": "Datos eliminados",
+      "accountDeletedMessage": "Todos tus datos han sido eliminados. La app se reiniciará ahora."
     }
   },
   "sessions": {
