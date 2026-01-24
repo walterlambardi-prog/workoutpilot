@@ -52,15 +52,15 @@ jobs:
 
       - name: Prefix asset URLs for subpath
         env:
-          EXPO_PUBLIC_PATH: "${{ env.EXPO_PUBLIC_PATH }}"
+          EXPO_PUBLIC_BASE_PATH: "${{ env.EXPO_PUBLIC_BASE_PATH }}"
         run: |
-          # Rewrite absolute asset URLs (double or single quotes)
-          perl -0777 -pi -e "s|([\"'])/_expo/|$1${EXPO_PUBLIC_PATH}_expo/|g" dist/index.html
-          perl -0777 -pi -e "s|([\"'])/assets/|$1${EXPO_PUBLIC_PATH}assets/|g" dist/index.html
-          if [ -f dist/manifest.json ]; then perl -0777 -pi -e "s|([\"'])/_expo/|$1${EXPO_PUBLIC_PATH}_expo/|g" dist/manifest.json; fi
-          if [ -f dist/service-worker.js ]; then perl -0777 -pi -e "s|([\"'])/_expo/|$1${EXPO_PUBLIC_PATH}_expo/|g" dist/service-worker.js; fi
-          # Rewrite plain href/src without quotes (rare, but seen in SW)
-          if [ -f dist/service-worker.js ]; then perl -0777 -pi -e "s|/_expo/|${EXPO_PUBLIC_PATH}_expo/|g" dist/service-worker.js; fi
+          BASE_PATH="${EXPO_PUBLIC_BASE_PATH}"
+          FILES=$(find dist -type f \( -name "*.html" -o -name "*.js" -o -name "*.json" -o -name "*.css" -o -name "*.txt" \))
+          for f in $FILES; do
+            perl -0777 -pi -e "s#(?<!${BASE_PATH})/_expo/#${BASE_PATH}/_expo/#g" "$f"
+            perl -0777 -pi -e "s#(?<!${BASE_PATH})/assets/#${BASE_PATH}/assets/#g" "$f"
+            perl -0777 -pi -e "s#(?<!${BASE_PATH})/node_modules/#${BASE_PATH}/node_modules/#g" "$f"
+          done
           # Remove stray encoded quotes that could leak into URLs
           perl -0777 -pi -e "s|%22||g" dist/index.html
 
