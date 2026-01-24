@@ -12,6 +12,9 @@ const safeAccess = <T>(fn: () => T, fallback: T) => {
 };
 
 const getAsyncStorage = async () => {
+  if (isServer) {
+    throw new Error("AsyncStorage not available on server");
+  }
   const mod = await import("@react-native-async-storage/async-storage");
   return mod.default;
 };
