@@ -40,9 +40,13 @@ export const usePreferencesStore = createFn(
   persist(storeCreator, {
     name: "workoutpilot-preferences",
     storage,
-    onRehydrateStorage: () => (state: PreferencesState | undefined) => {
-      state?.setHasHydrated(true);
-    },
+    onRehydrateStorage:
+      () => (state: PreferencesState | undefined, error?: unknown) => {
+        if (error) {
+          console.error("[PreferencesStore] Rehydrate failed", error);
+        }
+        state?.setHasHydrated(true);
+      },
   }),
 );
 

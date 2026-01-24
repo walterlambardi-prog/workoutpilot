@@ -37,6 +37,7 @@ jobs:
         run: |
           echo "EXPO_PUBLIC_PATH=/${GITHUB_REPOSITORY#*/}/" >> $GITHUB_ENV
           echo "EXPO_PUBLIC_BASE_PATH=/${GITHUB_REPOSITORY#*/}" >> $GITHUB_ENV
+          echo "EXPO_PUBLIC_URL=https://${GITHUB_REPOSITORY_OWNER}.github.io/${GITHUB_REPOSITORY#*/}" >> $GITHUB_ENV
           echo "PUBLIC_URL=https://${GITHUB_REPOSITORY_OWNER}.github.io/${GITHUB_REPOSITORY#*/}" >> $GITHUB_ENV
 
       - name: Install deps (Yarn)
@@ -46,6 +47,7 @@ jobs:
         env:
           EXPO_PUBLIC_PATH: "${{ env.EXPO_PUBLIC_PATH }}"
           EXPO_PUBLIC_BASE_PATH: "${{ env.EXPO_PUBLIC_BASE_PATH }}"
+          EXPO_PUBLIC_URL: "${{ env.EXPO_PUBLIC_URL }}"
         run: npx expo export --platform web
 
       - name: Disable Jekyll

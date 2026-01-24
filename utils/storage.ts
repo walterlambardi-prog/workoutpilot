@@ -2,6 +2,15 @@ const { createJSONStorage } = require("zustand/middleware");
 
 const hasLocalStorage = typeof window !== "undefined" && !!window.localStorage;
 
+const safeAccess = <T>(fn: () => T, fallback: T) => {
+  try {
+    return fn();
+  } catch (error) {
+    console.warn("[storage] Local storage access failed", error);
+    return fallback;
+  }
+};
+
 const getAsyncStorage = async () => {
   const mod = await import("@react-native-async-storage/async-storage");
   return mod.default;
@@ -15,14 +24,14 @@ export const createCrossPlatformStorage = () => {
   return createJSONStorage(() => ({
     getItem: async (name: string) => {
       if (hasLocalStorage) {
-        return window.localStorage.getItem(name);
+        return safeAccess(() => window.localStorage.getItem(name), null);
       }
       const AsyncStorage = await getAsyncStorage();
       return AsyncStorage.getItem(name);
     },
     setItem: async (name: string, value: string) => {
       if (hasLocalStorage) {
-        window.localStorage.setItem(name, value);
+        safeAccess(() => window.localStorage.setItem(name, value), undefined);
         return;
       }
       const AsyncStorage = await getAsyncStorage();
@@ -30,7 +39,7 @@ export const createCrossPlatformStorage = () => {
     },
     removeItem: async (name: string) => {
       if (hasLocalStorage) {
-        window.localStorage.removeItem(name);
+        safeAccess(() => window.localStorage.removeItem(name), undefined);
         return;
       }
       const AsyncStorage = await getAsyncStorage();
