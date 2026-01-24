@@ -50,6 +50,15 @@ jobs:
           EXPO_PUBLIC_URL: "${{ env.EXPO_PUBLIC_URL }}"
         run: npx expo export --platform web
 
+      - name: Prefix asset URLs for subpath
+        env:
+          EXPO_PUBLIC_PATH: "${{ env.EXPO_PUBLIC_PATH }}"
+        run: |
+          perl -0777 -pi -e "s|\"/_expo/|\"${EXPO_PUBLIC_PATH}_expo/|g" dist/index.html
+          perl -0777 -pi -e "s|\"/assets/|\"${EXPO_PUBLIC_PATH}assets/|g" dist/index.html
+          if [ -f dist/manifest.json ]; then perl -0777 -pi -e "s|\"/_expo/|\"${EXPO_PUBLIC_PATH}_expo/|g" dist/manifest.json; fi
+          if [ -f dist/service-worker.js ]; then perl -0777 -pi -e "s|\"/_expo/|\"${EXPO_PUBLIC_PATH}_expo/|g" dist/service-worker.js; fi
+
       - name: Add SPA fallback (404.html)
         run: cp dist/index.html dist/404.html
 
