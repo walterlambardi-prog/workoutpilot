@@ -2,6 +2,7 @@ import type { StateCreator } from "zustand";
 
 import type { SupportedLanguage } from "@/locales/i18n";
 import { createCrossPlatformStorage } from "@/utils/storage";
+import { Platform } from "react-native";
 
 const { create: createFn } = require("zustand");
 const { persist } = require("zustand/middleware");
@@ -23,7 +24,8 @@ const storage = createCrossPlatformStorage();
 const storeCreator: StateCreator<PreferencesState> = (set) => ({
   language: null,
   themeMode: null,
-  _hasHydrated: false,
+  // Avoid blocking web if storage access is restricted; native waits for hydration.
+  _hasHydrated: Platform.OS === "web",
   setLanguage: (language) => {
     console.log("[PreferencesStore] Setting language to:", language);
     set({ language });
