@@ -2,7 +2,7 @@ name: Deploy Expo Web to GitHub Pages
 
 on:
   push:
-    branches: ["main", "develop"]
+    branches: ["main", "develop", "dist"]
   workflow_dispatch:
 
 permissions:
@@ -37,8 +37,8 @@ jobs:
         run: |
           echo "EXPO_PUBLIC_PATH=/${GITHUB_REPOSITORY#*/}/" >> $GITHUB_ENV
           echo "EXPO_PUBLIC_BASE_PATH=/${GITHUB_REPOSITORY#*/}" >> $GITHUB_ENV
-          echo "EXPO_PUBLIC_URL=https://${GITHUB_REPOSITORY_OWNER}.github.io/${GITHUB_REPOSITORY#*/}" >> $GITHUB_ENV
-          echo "PUBLIC_URL=https://${GITHUB_REPOSITORY_OWNER}.github.io/${GITHUB_REPOSITORY#*/}" >> $GITHUB_ENV
+          echo "EXPO_PUBLIC_URL=https://${GITHUB_REPOSITORY_OWNER}.github.io/${GITHUB_REPOSITORY#*/}/" >> $GITHUB_ENV
+          echo "PUBLIC_URL=https://${GITHUB_REPOSITORY_OWNER}.github.io/${GITHUB_REPOSITORY#*/}/" >> $GITHUB_ENV
 
       - name: Install deps (Yarn)
         run: yarn install --immutable
@@ -49,6 +49,9 @@ jobs:
           EXPO_PUBLIC_BASE_PATH: "${{ env.EXPO_PUBLIC_BASE_PATH }}"
           EXPO_PUBLIC_URL: "${{ env.EXPO_PUBLIC_URL }}"
         run: npx expo export --platform web
+
+      - name: Add SPA fallback (404.html)
+        run: cp dist/index.html dist/404.html
 
       - name: Disable Jekyll
         run: touch dist/.nojekyll
