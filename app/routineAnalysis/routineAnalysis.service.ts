@@ -97,7 +97,7 @@ export const analyzeRoutine = async (
 
     try {
       return JSON.parse(content) as RoutineAnalysisResponse;
-    } catch (error) {
+    } catch {
       console.error("Failed to parse AI response:", content);
       throw new Error("Invalid response format from AI");
     }
