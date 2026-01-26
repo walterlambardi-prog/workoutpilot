@@ -1,11 +1,11 @@
 import {
-	AI_COACH_API_URL,
-	AI_COACH_MODEL,
-	TEMPERATURE,
+  AI_COACH_API_URL,
+  AI_COACH_MODEL,
+  TEMPERATURE,
 } from "@/app/aiCoach/aiCoach.constants";
 import type {
-	RoutineAnalysisRequest,
-	RoutineAnalysisResponse,
+  RoutineAnalysisRequest,
+  RoutineAnalysisResponse,
 } from "@/app/routineAnalysis/routineAnalysis.types";
 
 const buildSystemPrompt = (language: string) => {
@@ -75,7 +75,7 @@ export const analyzeRoutine = async (
 
   // Create abort controller for timeout
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 second timeout
+  const timeoutId = setTimeout(() => controller.abort(), 120000); // 120 second timeout
 
   try {
     const response = await fetch(AI_COACH_API_URL, {
