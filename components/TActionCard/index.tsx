@@ -1,7 +1,7 @@
 import { THeading, TText } from "@/components/TText";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
-import { Card, XStack, YStack } from "tamagui";
+import { Card, XStack, YStack, useMedia } from "tamagui";
 
 export interface TActionCardProps {
   title: string;
@@ -35,9 +35,15 @@ export const TActionCard: React.FC<TActionCardProps> = ({
   onPress,
   accessibilityHint,
 }) => {
+  const media = useMedia();
+  const iconContainerSize = media.gtSm ? 80 : 64;
+  const iconSize = media.gtSm ? 32 : 28;
+  const headingSize = media.gtSm ? "$6" : "$5";
+  const paddingSize = media.gtSm ? "$5" : "$4";
+  const bodySize = media.gtSm ? "$4" : "$4";
+
   return (
     <Card
-      elevate
       size="$4"
       bordered
       animation="bouncy"
@@ -51,14 +57,14 @@ export const TActionCard: React.FC<TActionCardProps> = ({
       accessibilityHint={accessibilityHint}
       backgroundColor="$background"
       borderColor="$borderColor"
-      padding="$4"
+      padding={paddingSize}
       cursor="pointer"
     >
       <XStack space="$3" alignItems="center">
         {/* Icon Container */}
         <YStack
-          width={80}
-          height={80}
+          width={iconContainerSize}
+          height={iconContainerSize}
           borderRadius="$3"
           borderWidth={1}
           borderColor="$borderColor"
@@ -66,15 +72,20 @@ export const TActionCard: React.FC<TActionCardProps> = ({
           alignItems="center"
           justifyContent="center"
         >
-          <Ionicons name={icon as any} size={32} color={iconColor} />
+          <Ionicons name={icon as any} size={iconSize} color={iconColor} />
         </YStack>
 
         {/* Content */}
         <YStack flex={1} space="$1">
-          <THeading level={3} fontSize="$5">
+          <THeading
+            level={3}
+            fontSize={headingSize}
+            fontWeight="800"
+            numberOfLines={1}
+          >
             {title}
           </THeading>
-          <TText variant="caption" opacity={0.8}>
+          <TText variant="body" fontSize={bodySize} opacity={0.8}>
             {description}
           </TText>
         </YStack>

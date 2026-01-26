@@ -1,8 +1,7 @@
 import React from "react";
-import { Image, Pressable, View } from "react-native";
+import { Card, Image, XStack, YStack, useMedia } from "tamagui";
 
-import { ThemedText } from "@/components/ThemedText";
-import { useColorScheme } from "@/hooks/useColorScheme";
+import { TText } from "@/components/TText";
 import styles from "./ExerciseCard.styles";
 import type { ExerciseCardProps } from "./ExerciseCard.types";
 
@@ -13,27 +12,46 @@ const ExerciseCard: React.FC<ExerciseCardProps> = ({
   accessibilityHint,
   onPress,
 }) => {
-  const colorScheme = useColorScheme() ?? "light";
-  const toneStyle = colorScheme === "dark" ? styles.cardDark : styles.cardLight;
+  const media = useMedia();
+  const thumbnailStyle = media.gtSm
+    ? [styles.thumbnail, styles.thumbnailLarge]
+    : styles.thumbnail;
+  const paddingSize = media.gtSm ? "$5" : "$4";
+  const headingSize = media.gtSm ? "$5" : "$6";
+  const bodySize = media.gtSm ? "$4" : "$5";
 
   return (
-    <Pressable
+    <Card
+      size="$4"
+      bordered
+      animation="bouncy"
+      scale={0.98}
+      hoverStyle={{ scale: 1 }}
+      pressStyle={{ scale: 0.96 }}
       onPress={onPress}
-      style={({ pressed }) => [
-        styles.card,
-        toneStyle,
-        pressed ? styles.cardPressed : null,
-      ]}
-      accessibilityRole="button"
-      accessibilityLabel={title}
-      accessibilityHint={accessibilityHint}
+      backgroundColor="$background"
+      borderColor="$borderColor"
+      padding={paddingSize}
+      cursor="pointer"
     >
-      <Image source={image} style={styles.thumbnail} resizeMode="cover" />
-      <View style={styles.content}>
-        <ThemedText type="subtitle">{title}</ThemedText>
-        <ThemedText style={styles.description}>{description}</ThemedText>
-      </View>
-    </Pressable>
+      <XStack space="$3" alignItems="center">
+        <Image source={image} style={thumbnailStyle} resizeMode="cover" />
+
+        <YStack flex={1} minWidth={0} space="$1">
+          <TText fontSize={headingSize} fontWeight="800" numberOfLines={1}>
+            {title}
+          </TText>
+          <TText
+            variant="body"
+            fontSize={bodySize}
+            opacity={0.85}
+            numberOfLines={2}
+          >
+            {description}
+          </TText>
+        </YStack>
+      </XStack>
+    </Card>
   );
 };
 

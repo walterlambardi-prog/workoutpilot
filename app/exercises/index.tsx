@@ -1,26 +1,22 @@
 import { useRouter } from "expo-router";
 import React, { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { FlatList, type ListRenderItemInfo } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import ExerciseCard from "@/components/ExerciseCard";
 import ScreenHeader from "@/components/ScreenHeader";
-import { ThemedView } from "@/components/ThemedView";
+import { TGrid } from "@/components/TGrid";
+import { TPage } from "@/components/TPage";
 import { ALLOWED_EXERCISES, ExerciseId } from "@/constants/exercises";
-import { ScreenPadding } from "@/constants/theme";
 import { EXERCISE_DEFINITIONS } from "./exercises.data";
-import styles from "./exercises.styles";
 
 import {
-    type ExerciseListItem,
-    type ExercisesScreenProps,
+  type ExerciseListItem,
+  type ExercisesScreenProps,
 } from "./exercises.types";
 
 const ExercisesScreen: React.FC<ExercisesScreenProps> = () => {
   const { t } = useTranslation();
   const router = useRouter();
-  const insets = useSafeAreaInsets();
 
   const exercises = useMemo<ExerciseListItem[]>(
     () =>
@@ -46,44 +42,28 @@ const ExercisesScreen: React.FC<ExercisesScreenProps> = () => {
     [router],
   );
 
-  const renderItem = useCallback(
-    ({ item }: ListRenderItemInfo<ExerciseListItem>) => (
-      <ExerciseCard
-        title={item.title}
-        description={item.description}
-        image={item.image}
-        accessibilityHint={t("exercises.list.card.accessibilityHint", {
-          exercise: item.title,
-        })}
-        onPress={() => handlePress(item.id)}
-      />
-    ),
-    [handlePress, t],
-  );
-
   return (
-    <ThemedView style={styles.container}>
-      <FlatList
-        data={exercises}
-        keyExtractor={(item) => item.id}
-        renderItem={renderItem}
-        contentContainerStyle={[
-          styles.listContent,
-          {
-            paddingTop: ScreenPadding.vertical,
-            paddingBottom: insets.bottom + ScreenPadding.vertical,
-          },
-        ]}
-        ItemSeparatorComponent={() => <ThemedView style={styles.separator} />}
-        ListHeaderComponent={
-          <ScreenHeader
-            title={t("exercises.list.title")}
-            subtitle={t("exercises.list.subtitle")}
-          />
-        }
-        showsVerticalScrollIndicator={false}
+    <TPage scrollable hasHeader>
+      <ScreenHeader
+        title={t("exercises.list.title")}
+        subtitle={t("exercises.list.subtitle")}
       />
-    </ThemedView>
+
+      <TGrid columns={2} space="$3">
+        {exercises.map((item) => (
+          <ExerciseCard
+            key={item.id}
+            title={item.title}
+            description={item.description}
+            image={item.image}
+            accessibilityHint={t("exercises.list.card.accessibilityHint", {
+              exercise: item.title,
+            })}
+            onPress={() => handlePress(item.id)}
+          />
+        ))}
+      </TGrid>
+    </TPage>
   );
 };
 

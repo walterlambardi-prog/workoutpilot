@@ -1,9 +1,9 @@
 import { useRouter } from "expo-router";
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { YStack } from "tamagui";
 
 import { TActionCard } from "@/components/TActionCard";
+import { TGrid } from "@/components/TGrid";
 import { TPage } from "@/components/TPage";
 import { TWelcomeHeader } from "@/components/TWelcomeHeader";
 import type { HomeNavAction } from "./home.types";
@@ -68,7 +68,7 @@ const HomeScreen: React.FC = () => {
       />
 
       {/* Action Cards Grid */}
-      <YStack space="$4">
+      <TGrid columns={2} space="$4">
         {actions.map((action) => (
           <TActionCard
             key={action.key}
@@ -82,7 +82,7 @@ const HomeScreen: React.FC = () => {
             onPress={() => handleActionPress(action.href)}
           />
         ))}
-      </YStack>
+      </TGrid>
     </TPage>
   );
 };

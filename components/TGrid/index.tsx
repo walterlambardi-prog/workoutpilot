@@ -34,7 +34,7 @@ export const TGrid: React.FC<TGridProps> = ({
   if (!shouldUseColumns) {
     // Single column layout
     return (
-      <YStack space={space} width="100%">
+      <YStack space={space} width="100%" minWidth={0} paddingBottom={space}>
         {children}
       </YStack>
     );
@@ -49,16 +49,18 @@ export const TGrid: React.FC<TGridProps> = ({
   }
 
   return (
-    <YStack space={space} width="100%">
+    <YStack space={space} width="100%" minWidth={0} paddingBottom={space}>
       {rows.map((row, rowIndex) => (
-        <XStack key={rowIndex} space={space} width="100%">
+        <XStack key={rowIndex} space={space} width="100%" minWidth={0}>
           {row.map((item, itemIndex) => (
-            <YStack key={itemIndex} flex={1} width="100%">
+            <YStack key={itemIndex} flex={1} width="100%" minWidth={0}>
               {item}
             </YStack>
           ))}
-          {/* Add empty spacer if odd number of items in last row */}
-          {row.length === 1 && columns === 2 && <YStack flex={1} />}
+          {/* Keep grid gutter when the last row has an odd item */}
+          {row.length === 1 && (
+            <YStack flex={1} width="100%" minWidth={0} aria-hidden />
+          )}
         </XStack>
       ))}
     </YStack>

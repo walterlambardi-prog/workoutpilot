@@ -10,4 +10,4 @@ export interface OnboardingStep {
   color: string;
 }
 
-export interface OnboardingScreenProps {}
+export type OnboardingScreenProps = Record<string, never>;
