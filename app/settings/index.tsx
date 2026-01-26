@@ -9,6 +9,7 @@ import { useThemeColor } from "@/hooks/useThemeColor";
 import { useAuthStore } from "@/stores/authStore";
 import { useExerciseSessionStore } from "@/stores/exerciseSessionStore";
 import { usePreferencesStore, type ThemeMode } from "@/stores/preferencesStore";
+import { useRoutineBuilderStore } from "@/stores/routineBuilderStore";
 import { useRoutineSessionStore } from "@/stores/routineSessionStore";
 import { showAlert } from "@/utils/alert";
 import { useRouter } from "expo-router";
@@ -114,6 +115,7 @@ const SettingsScreen: React.FC = () => {
   const resetRoutineHistory = useRoutineSessionStore(
     (state) => state.resetHistory,
   );
+  const resetRoutine = useRoutineBuilderStore((state) => state.resetRoutine);
   const resetAuth = useAuthStore(
     (state: { resetAuth: () => void }) => state.resetAuth,
   );
@@ -200,6 +202,7 @@ const SettingsScreen: React.FC = () => {
             resetAuth();
             resetHistory();
             resetRoutineHistory();
+            resetRoutine();
 
             showAlert(
               t("settings.data.accountDeletedTitle"),
