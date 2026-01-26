@@ -1,33 +1,35 @@
 import {
-    AI_COACH_API_URL,
-    AI_COACH_MODEL,
-    TEMPERATURE,
+	AI_COACH_API_URL,
+	AI_COACH_MODEL,
+	TEMPERATURE,
 } from "@/app/aiCoach/aiCoach.constants";
 import type {
-    RoutineAnalysisRequest,
-    RoutineAnalysisResponse,
+	RoutineAnalysisRequest,
+	RoutineAnalysisResponse,
 } from "@/app/routineAnalysis/routineAnalysis.types";
 
 const buildSystemPrompt = (language: string) => {
   const lang = language?.startsWith("es") ? "español" : "english";
 
-  return `You are a professional fitness coach analyzing workout performance. Respond in ${lang} with ONLY valid JSON (no additional text).
+  return `You are a professional fitness coach analyzing workout performance.
 
-JSON structure:
+CRITICAL: Respond ENTIRELY in ${lang.toUpperCase()}. ALL text content (feedback, strengths, improvements, suggestions, nextSteps) MUST be written in ${lang}.
+
+Return ONLY valid JSON with this structure (no additional text):
 {
   "overallScore": number (0-100),
-  "overallFeedback": "2-3 sentence summary of overall performance",
-  "strengths": ["strength 1", "strength 2"],
-  "improvements": ["improvement 1", "improvement 2"],
+  "overallFeedback": "2-3 sentence summary in ${lang}",
+  "strengths": ["strength 1 in ${lang}", "strength 2 in ${lang}"],
+  "improvements": ["improvement 1 in ${lang}", "improvement 2 in ${lang}"],
   "exercises": [
     {
       "exerciseId": "exercise-id",
       "performanceScore": number (0-100),
-      "feedback": "1-2 sentences about this exercise",
-      "suggestions": ["actionable tip 1", "actionable tip 2"]
+      "feedback": "1-2 sentences in ${lang}",
+      "suggestions": ["tip 1 in ${lang}", "tip 2 in ${lang}"]
     }
   ],
-  "nextSteps": ["next goal 1", "next goal 2", "next goal 3"]
+  "nextSteps": ["goal 1 in ${lang}", "goal 2 in ${lang}", "goal 3 in ${lang}"]
 }
 
 CRITICAL - Scoring criteria (performanceScore):

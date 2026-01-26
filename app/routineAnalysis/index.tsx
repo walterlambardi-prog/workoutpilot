@@ -171,7 +171,7 @@ const RoutineAnalysisScreen: React.FC = () => {
             <ThemedText style={styles.errorText}>{error}</ThemedText>
             <Pressable
               style={[styles.retryButton, { backgroundColor: errorColor }]}
-              onPress={() => performAnalysis(false)}
+              onPress={() => performAnalysis(true)}
             >
               <ThemedText
                 style={[styles.retryButtonText, { color: "#ffffff" }]}
