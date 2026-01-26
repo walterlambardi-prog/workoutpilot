@@ -159,7 +159,7 @@
       "actions": {
         "start": "Start",
         "edit": "Edit",
-        "analyze": "Analyze"
+        "analyze": "AI Analysis"
       }
     },
     "breakdown": {
@@ -177,6 +177,23 @@
       "bestSession": "No sessions yet",
       "lastSession": "No recent sessions",
       "topExercise": "No exercise data"
+    }
+  },
+  "routineAnalysis": {
+    "title": "AI Routine Analysis",
+    "subtitle": "Professional feedback powered by artificial intelligence.",
+    "analyzing": "Analyzing your workout...",
+    "retry": "Retry Analysis",
+    "overallScore": "Overall Score",
+    "feedback": "Overall Feedback",
+    "strengths": "What You Did Well",
+    "improvements": "Areas to Improve",
+    "exerciseBreakdown": "Exercise Performance",
+    "nextSteps": "Recommendations for Next Workout",
+    "errors": {
+      "noRoutineId": "No routine selected for analysis.",
+      "routineNotFound": "Routine not found or incomplete.",
+      "generic": "Failed to analyze routine. Please try again."
     }
   },
   "routineBuilder": {

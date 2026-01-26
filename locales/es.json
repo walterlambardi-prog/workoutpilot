@@ -159,7 +159,7 @@
       "actions": {
         "start": "Iniciar",
         "edit": "Editar",
-        "analyze": "Analizar"
+        "analyze": "Análisis IA"
       }
     },
     "breakdown": {
@@ -177,6 +177,23 @@
       "bestSession": "Sin sesiones",
       "lastSession": "Sin sesiones recientes",
       "topExercise": "Sin datos de ejercicios"
+    }
+  },
+  "routineAnalysis": {
+    "title": "Análisis IA de Rutina",
+    "subtitle": "Retroalimentación profesional impulsada por inteligencia artificial.",
+    "analyzing": "Analizando tu entrenamiento...",
+    "retry": "Reintentar Análisis",
+    "overallScore": "Puntuación General",
+    "feedback": "Retroalimentación General",
+    "strengths": "Lo Que Hiciste Bien",
+    "improvements": "Áreas a Mejorar",
+    "exerciseBreakdown": "Rendimiento por Ejercicio",
+    "nextSteps": "Recomendaciones para Próximo Entrenamiento",
+    "errors": {
+      "noRoutineId": "No se seleccionó ninguna rutina para analizar.",
+      "routineNotFound": "Rutina no encontrada o incompleta.",
+      "generic": "Error al analizar la rutina. Inténtalo de nuevo."
     }
   },
   "routineBuilder": {

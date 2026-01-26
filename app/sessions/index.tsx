@@ -543,7 +543,11 @@ const SessionsScreen: React.FC = () => {
                       pressed ? { opacity: 0.6 } : null,
                     ]}
                     onPress={() => {
-                      // TODO: Implement analyze functionality
+                      // Navigate to AI analysis
+                      router.push({
+                        pathname: "/routineAnalysis",
+                        params: { routineId: routine.id },
+                      });
                     }}
                     accessibilityRole="button"
                     accessibilityLabel={t(
