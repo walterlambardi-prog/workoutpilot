@@ -38,37 +38,54 @@ interface StepperButtonProps {
   variant?: "default" | "compact";
 }
 
-const StepperButton: React.FC<StepperButtonProps> = ({
-  icon,
-  onPress,
-  accessibilityLabel,
-  disabled,
-  colorScheme,
-  variant = "default",
-}) => (
-  <Pressable
-    onPress={onPress}
-    disabled={disabled}
-    accessibilityRole="button"
-    accessibilityLabel={accessibilityLabel}
-    style={({ pressed }) => [
-      styles.stepperButton,
-      variant === "compact" ? styles.stepperButtonCompact : null,
-      disabled ? styles.stepperButtonDisabled : null,
-      pressed && !disabled ? styles.stepperButtonPressed : null,
-    ]}
-  >
-    <Ionicons
-      name={icon}
-      size={20}
-      color={
-        disabled ? "#94A3B8" : colorScheme === "dark" ? "#F8FAFC" : "#111827"
-      }
-    />
-  </Pressable>
+const StepperButton: React.FC<StepperButtonProps> = React.memo(
+  ({
+    icon,
+    onPress,
+    accessibilityLabel,
+    disabled,
+    colorScheme,
+    variant = "default",
+  }) => {
+    const buttonStyle = useCallback(
+      (state: { pressed: boolean }) => [
+        styles.stepperButton,
+        variant === "compact" ? styles.stepperButtonCompact : null,
+        disabled ? styles.stepperButtonDisabled : null,
+        state.pressed && !disabled ? styles.stepperButtonPressed : null,
+      ],
+      [variant, disabled],
+    );
+
+    return (
+      <Pressable
+        onPress={onPress}
+        disabled={disabled}
+        accessibilityRole="button"
+        accessibilityLabel={accessibilityLabel}
+        style={buttonStyle}
+      >
+        <Ionicons
+          name={icon}
+          size={20}
+          color={
+            disabled
+              ? "#94A3B8"
+              : colorScheme === "dark"
+                ? "#F8FAFC"
+                : "#111827"
+          }
+        />
+      </Pressable>
+    );
+  },
 );
 
+StepperButton.displayName = "StepperButton";
+
 const TOGGLE_HIT_SLOP = { top: 8, right: 8, bottom: 8, left: 8 } as const;
+
+const ItemSeparator = () => <View style={styles.separator} />;
 
 const RoutineBuilderScreen: React.FC<RoutineBuilderScreenProps> = () => {
   const { t } = useTranslation();
@@ -117,6 +134,80 @@ const RoutineBuilderScreen: React.FC<RoutineBuilderScreenProps> = () => {
     [exercises],
   );
 
+  const keyExtractor = useCallback(
+    (item: RoutineExerciseListItem) => item.id,
+    [],
+  );
+
+  const createDecrementHandler = useCallback(
+    (exerciseId: string) => () => decrementReps(exerciseId as any),
+    [decrementReps],
+  );
+
+  const createIncrementHandler = useCallback(
+    (exerciseId: string) => () => incrementReps(exerciseId as any),
+    [incrementReps],
+  );
+
+  const createToggleHandler = useCallback(
+    (exerciseId: string) => () => toggleExercise(exerciseId as any),
+    [toggleExercise],
+  );
+
+  const getSelectionButtonStyle = useCallback(
+    (isSelected: boolean) => (state: { pressed: boolean }) => [
+      styles.selectionButton,
+      isSelected
+        ? styles.selectionButtonSelected
+        : styles.selectionButtonUnselected,
+      state.pressed ? styles.selectionButtonPressed : null,
+    ],
+    [],
+  );
+
+  const getCtaButtonStyle = useCallback(
+    (state: { pressed: boolean }) => [
+      styles.ctaButton,
+      selectedCount === 0 ? styles.ctaButtonDisabled : null,
+      state.pressed ? styles.ctaButtonPressed : null,
+    ],
+    [selectedCount],
+  );
+
+  const handleStartRoutine = useCallback(() => {
+    const selectedExercises = EXERCISE_DEFINITIONS.filter(
+      ({ id }) => ALLOWED_EXERCISES.includes(id) && exercises[id]?.isSelected,
+    );
+
+    if (selectedExercises.length === 0) {
+      return;
+    }
+
+    const plan = Array.from({ length: rounds }).flatMap((_, roundIndex) =>
+      selectedExercises.map(({ id }) => ({
+        exerciseId: id,
+        targetReps: exercises[id]?.reps ?? ROUTINE_DEFAULT_REPS,
+        round: roundIndex + 1,
+      })),
+    );
+
+    const sessionId = startRoutineSession(plan, rounds);
+    const firstStep = plan[0];
+
+    if (!sessionId || !firstStep) {
+      return;
+    }
+
+    router.push({
+      pathname: "/exercises/[exerciseId]",
+      params: {
+        exerciseId: firstStep.exerciseId,
+        routineId: sessionId,
+        stepIndex: "0",
+      },
+    });
+  }, [exercises, rounds, startRoutineSession, router]);
+
   const renderExercise = useCallback(
     ({ item }: ListRenderItemInfo<RoutineExerciseListItem>) => {
       const config = exercises[item.id] ?? {
@@ -128,23 +219,26 @@ const RoutineBuilderScreen: React.FC<RoutineBuilderScreenProps> = () => {
         ? colorScheme === "dark"
           ? "#4ADE80"
           : "#15803D"
-        : colorScheme === "dark"
-          ? "#FFFFFF"
-          : "#FFFFFF";
+        : "#FFFFFF";
       const overlayTone =
         colorScheme === "dark"
           ? styles.exerciseOverlayDark
           : styles.exerciseOverlayLight;
-      const overlayDisabled = !config.isSelected
-        ? styles.exerciseOverlayDisabled
-        : null;
+      const overlayDisabled = config.isSelected
+        ? null
+        : styles.exerciseOverlayDisabled;
+
+      const handleDecrement = createDecrementHandler(item.id);
+      const handleIncrement = createIncrementHandler(item.id);
+      const handleToggle = createToggleHandler(item.id);
+      const selectionButtonStyle = getSelectionButtonStyle(config.isSelected);
 
       return (
         <ThemedView
           style={[
             styles.exerciseCard,
             exerciseCardTone,
-            !config.isSelected ? styles.exerciseCardDisabled : null,
+            config.isSelected ? null : styles.exerciseCardDisabled,
           ]}
         >
           <ImageBackground
@@ -197,7 +291,7 @@ const RoutineBuilderScreen: React.FC<RoutineBuilderScreenProps> = () => {
                     >
                       <StepperButton
                         icon="remove-outline"
-                        onPress={() => decrementReps(item.id)}
+                        onPress={handleDecrement}
                         accessibilityLabel={t(
                           "routineBuilder.exercises.decrement",
                           {
@@ -217,7 +311,7 @@ const RoutineBuilderScreen: React.FC<RoutineBuilderScreenProps> = () => {
                       </ThemedText>
                       <StepperButton
                         icon="add-outline"
-                        onPress={() => incrementReps(item.id)}
+                        onPress={handleIncrement}
                         accessibilityLabel={t(
                           "routineBuilder.exercises.increment",
                           {
@@ -230,7 +324,7 @@ const RoutineBuilderScreen: React.FC<RoutineBuilderScreenProps> = () => {
                       />
                     </View>
                     <Pressable
-                      onPress={() => toggleExercise(item.id)}
+                      onPress={handleToggle}
                       accessibilityRole="switch"
                       accessibilityState={{ checked: config.isSelected }}
                       accessibilityLabel={t(
@@ -240,13 +334,7 @@ const RoutineBuilderScreen: React.FC<RoutineBuilderScreenProps> = () => {
                         },
                       )}
                       hitSlop={TOGGLE_HIT_SLOP}
-                      style={({ pressed }) => [
-                        styles.selectionButton,
-                        config.isSelected
-                          ? styles.selectionButtonSelected
-                          : styles.selectionButtonUnselected,
-                        pressed ? styles.selectionButtonPressed : null,
-                      ]}
+                      style={selectionButtonStyle}
                     >
                       <Ionicons
                         name={
@@ -276,12 +364,13 @@ const RoutineBuilderScreen: React.FC<RoutineBuilderScreenProps> = () => {
     },
     [
       colorScheme,
-      decrementReps,
+      createDecrementHandler,
       exerciseCardTone,
       exercises,
-      incrementReps,
+      createIncrementHandler,
       t,
-      toggleExercise,
+      createToggleHandler,
+      getSelectionButtonStyle,
     ],
   );
 
@@ -369,45 +458,8 @@ const RoutineBuilderScreen: React.FC<RoutineBuilderScreenProps> = () => {
         accessibilityLabel={t("routineBuilder.cta")}
         accessibilityHint={t("routineBuilder.cta")}
         disabled={selectedCount === 0}
-        style={({ pressed }) => [
-          styles.ctaButton,
-          selectedCount === 0 ? styles.ctaButtonDisabled : null,
-          pressed ? styles.ctaButtonPressed : null,
-        ]}
-        onPress={() => {
-          const selectedExercises = EXERCISE_DEFINITIONS.filter(
-            ({ id }) =>
-              ALLOWED_EXERCISES.includes(id) && exercises[id]?.isSelected,
-          );
-
-          if (selectedExercises.length === 0) {
-            return;
-          }
-
-          const plan = Array.from({ length: rounds }).flatMap((_, roundIndex) =>
-            selectedExercises.map(({ id }) => ({
-              exerciseId: id,
-              targetReps: exercises[id]?.reps ?? ROUTINE_DEFAULT_REPS,
-              round: roundIndex + 1,
-            })),
-          );
-
-          const sessionId = startRoutineSession(plan, rounds);
-          const firstStep = plan[0];
-
-          if (!sessionId || !firstStep) {
-            return;
-          }
-
-          router.push({
-            pathname: "/exercises/[exerciseId]",
-            params: {
-              exerciseId: firstStep.exerciseId,
-              routineId: sessionId,
-              stepIndex: "0",
-            },
-          });
-        }}
+        style={getCtaButtonStyle}
+        onPress={handleStartRoutine}
       >
         <ThemedText
           style={styles.ctaLabel}
@@ -424,11 +476,11 @@ const RoutineBuilderScreen: React.FC<RoutineBuilderScreenProps> = () => {
     <ThemedView style={styles.container}>
       <FlatList
         data={exerciseList}
-        keyExtractor={(item) => item.id}
+        keyExtractor={keyExtractor}
         renderItem={renderExercise}
         ListHeaderComponent={headerComponent}
         ListFooterComponent={footerComponent}
-        ItemSeparatorComponent={() => <View style={styles.separator} />}
+        ItemSeparatorComponent={ItemSeparator}
         contentContainerStyle={[
           styles.listContent,
           { paddingBottom: insets.bottom + ScreenPadding.vertical * 2 },

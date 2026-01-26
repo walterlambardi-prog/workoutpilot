@@ -9,9 +9,10 @@ import { ThemedView } from "@/components/ThemedView";
 import { ExerciseId } from "@/constants/exercises";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { useExerciseSessionStore } from "@/stores/exerciseSessionStore";
+import { useRoutineBuilderStore } from "@/stores/routineBuilderStore";
 import {
-    type RoutineSession,
-    useRoutineSessionStore,
+  type RoutineSession,
+  useRoutineSessionStore,
 } from "@/stores/routineSessionStore";
 import { useRouter } from "expo-router";
 import styles from "./sessions.styles";
@@ -38,6 +39,7 @@ const SessionsScreen: React.FC = () => {
   const { t } = useTranslation();
   const router = useRouter();
   const { currentSession, history } = useExerciseSessionStore();
+  const applyPlan = useRoutineBuilderStore((state) => state.applyPlan);
   const { history: routineHistory, lastCompletedSession } =
     useRoutineSessionStore();
   const backgroundColor = useThemeColor({}, "background");
@@ -459,8 +461,8 @@ const SessionsScreen: React.FC = () => {
                     style={[styles.routineSubtitle, { color: mutedText }]}
                   >
                     {formatDuration(routine.durationMs)} ·{" "}
-                    {formatDate(routine.completedAt)} ·{" "}
-                    {routine.totalReps} {t("sessions.labels.reps")}
+                    {formatDate(routine.completedAt)} · {routine.totalReps}{" "}
+                    {t("sessions.labels.reps")}
                   </ThemedText>
                 </View>
                 <View style={styles.routineActions}>
@@ -472,10 +474,9 @@ const SessionsScreen: React.FC = () => {
                     ]}
                     onPress={() => {
                       // Restart the routine from history
-                      const sessionId =
-                        useRoutineSessionStore
-                          .getState()
-                          .restartFromSession(routine.id);
+                      const sessionId = useRoutineSessionStore
+                        .getState()
+                        .restartFromSession(routine.id);
                       if (sessionId) {
                         const activeSession =
                           useRoutineSessionStore.getState().activeSession;
@@ -512,6 +513,18 @@ const SessionsScreen: React.FC = () => {
                       pressed ? { opacity: 0.6 } : null,
                     ]}
                     onPress={() => {
+                      // Find the full session from history
+                      const fullSession = routineHistory.find(
+                        (s) => s.id === routine.id,
+                      );
+                      if (fullSession) {
+                        // Apply the routine plan to the builder
+                        const planBase = fullSession.plan.map((step) => ({
+                          exerciseId: step.exerciseId,
+                          targetReps: step.targetReps,
+                        }));
+                        applyPlan(planBase, fullSession.rounds);
+                      }
                       // Navigate to routine builder
                       router.push("/routine");
                     }}
