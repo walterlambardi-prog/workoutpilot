@@ -32,6 +32,8 @@
     }
   },
   "onboarding": {
+    "title": "Meet your AI coach",
+    "subtitle": "How WorkoutPilot guides your sessions",
     "skip": "Skip",
     "next": "Next",
     "getStarted": "Get started",

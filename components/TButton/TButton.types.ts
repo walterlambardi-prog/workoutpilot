@@ -14,6 +14,8 @@ export interface TButtonProps extends Omit<
   iconAfterName?: keyof typeof Ionicons.glyphMap;
   /** Custom icon color override */
   iconColor?: string;
+  /** Custom text color override */
+  textColor?: string;
   /** When true, shows a loader and disables the button */
   isLoading?: boolean;
   /** Apply a full width layout */

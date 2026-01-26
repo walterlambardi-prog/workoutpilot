@@ -2,7 +2,7 @@ import { useRouter } from "expo-router";
 import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { KeyboardAvoidingView, Platform } from "react-native";
-import { Card, Separator, XStack, YStack, useMedia, useTheme } from "tamagui";
+import { Card, XStack, YStack, useMedia, useTheme } from "tamagui";
 
 import ScreenHeader from "@/components/ScreenHeader";
 import { TButton } from "@/components/TButton";
@@ -114,6 +114,11 @@ const LoginScreen: React.FC = () => {
               <ScreenHeader
                 title={t("login.title")}
                 subtitle={t("login.description")}
+                titleShadow={{
+                  color: theme.primary?.val,
+                  radius: 4,
+                  offset: { width: 0, height: 0 },
+                }}
               />
             </YStack>
           </YStack>
@@ -121,10 +126,10 @@ const LoginScreen: React.FC = () => {
           <Card
             padded
             bordered
-            backgroundColor="$background"
+            backgroundColor="$backgroundHover"
             padding={cardPadding}
           >
-            <YStack gap="$4">
+            <YStack gap="$6">
               <TInput
                 label={t("login.inputLabel")}
                 placeholder={t("login.inputPlaceholder")}
@@ -139,35 +144,22 @@ const LoginScreen: React.FC = () => {
                 error={error || undefined}
               />
 
-              <Separator />
-
-              <YStack
-                gap="$3"
-                padding="$3"
-                borderRadius="$5"
-                borderWidth={1}
-                borderColor="$borderColor"
-                backgroundColor="$background"
-              >
-                <XStack gap="$2" flexWrap="wrap">
-                  {highlights.map((item) => (
-                    <TTag
-                      key={item.icon}
-                      iconName={item.icon}
-                      iconSize={16}
-                      label={item.text}
-                      tone="neutral"
-                    />
-                  ))}
-                </XStack>
-              </YStack>
+              <XStack gap="$2" flexWrap="wrap">
+                {highlights.map((item) => (
+                  <TTag
+                    key={item.icon}
+                    iconName={item.icon}
+                    iconSize={16}
+                    label={item.text}
+                    tone="neutral"
+                  />
+                ))}
+              </XStack>
 
               <TButton
                 fullWidth
                 onPress={handleContinue}
                 disabled={!isValid}
-                iconAfterName="arrow-forward"
-                iconColor={theme.color1?.val}
                 accessibilityLabel={t("login.continueButton")}
                 accessibilityState={{ disabled: !isValid }}
               >

@@ -18,8 +18,7 @@ export const BUTTON_ICON_SIZE = 20;
 export const VARIANT_STYLES: VariantStyles = {
   primary: {
     backgroundColor: "$primary",
-    // Use theme text color for better contrast across themes
-    color: "$color",
+    color: "$onPrimary" as ButtonProps["color"],
     hoverStyle: { backgroundColor: "$primary", opacity: 0.9 },
     pressStyle: { backgroundColor: "$primary", opacity: 0.8 },
   },

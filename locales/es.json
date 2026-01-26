@@ -32,6 +32,8 @@
     }
   },
   "onboarding": {
+    "title": "Conoce tu coach IA",
+    "subtitle": "Cómo WorkoutPilot guía tus sesiones",
     "skip": "Omitir",
     "next": "Siguiente",
     "getStarted": "Comenzar",

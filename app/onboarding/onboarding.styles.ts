@@ -6,6 +6,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  header: {
+    paddingHorizontal: ScreenPadding.vertical,
+    paddingTop: ScreenPadding.vertical,
+    paddingBottom: Spacing.lg,
+  },
   stepContainer: {
     flex: 1,
     padding: ScreenPadding.vertical,

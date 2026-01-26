@@ -2,19 +2,22 @@ import { useRouter } from "expo-router";
 import React, { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
-    FlatList,
-    type ListRenderItem,
-    Pressable,
-    Text,
-    useWindowDimensions,
-    View,
-    type ViewToken,
+  FlatList,
+  type ListRenderItem,
+  Pressable,
+  Text,
+  useWindowDimensions,
+  View,
+  type ViewToken,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import ScreenHeader from "@/components/ScreenHeader";
 import { ThemedText } from "@/components/ThemedText";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { useAuthStore } from "@/stores/authStore";
 
+import { useTheme } from "tamagui";
 import { getOnboardingSteps } from "./onboarding.data";
 import styles from "./onboarding.styles";
 import type { OnboardingStep } from "./onboarding.types";
@@ -30,6 +33,8 @@ const OnboardingScreen: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const flatListRef = useRef<FlatList<OnboardingStep>>(null);
   const { width } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
+  const theme = useTheme();
 
   const setHasCompletedOnboarding = useAuthStore(
     (state: { setHasCompletedOnboarding: (completed: boolean) => void }) =>
@@ -89,7 +94,17 @@ const OnboardingScreen: React.FC = () => {
   const isLastStep = currentIndex === steps.length - 1;
 
   return (
-    <View style={[styles.container, { backgroundColor }]}>
+    <View
+      style={[styles.container, { backgroundColor, paddingTop: insets.top }]}
+    >
+      <View style={styles.header}>
+        <ScreenHeader
+          title={t("onboarding.title")}
+          subtitle={t("onboarding.subtitle")}
+          align="center"
+        />
+      </View>
+
       <FlatList
         ref={flatListRef}
         data={steps}

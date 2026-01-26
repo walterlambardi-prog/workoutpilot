@@ -104,6 +104,7 @@ const lightTheme = {
 
   // Semantic colors
   primary: tokens.color.primary,
+  onPrimary: "#ffffff",
   success: tokens.color.success,
   error: tokens.color.error,
   warning: tokens.color.warning,
@@ -134,6 +135,7 @@ const darkTheme = {
 
   // Semantic colors
   primary: tokens.color.primaryDark,
+  onPrimary: "#0f172a",
   success: tokens.color.success,
   error: tokens.color.error,
   warning: tokens.color.warning,

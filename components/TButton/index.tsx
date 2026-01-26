@@ -6,6 +6,7 @@ import {
     Button as TamaguiButton,
     XStack,
     useTheme,
+    type ButtonProps,
 } from "tamagui";
 
 import { BUTTON_ICON_SIZE, VARIANT_STYLES } from "./TButton.styles";
@@ -20,6 +21,7 @@ export const TButton: React.FC<TButtonProps> = ({
   iconName,
   iconAfterName,
   iconColor,
+  textColor,
   isLoading = false,
   children,
   disabled,
@@ -41,8 +43,10 @@ export const TButton: React.FC<TButtonProps> = ({
     return token;
   };
 
-  const resolvedIconColor = iconColor ?? resolveTokenColor(palette.color);
-  const resolvedTextColor = palette.color;
+  const resolvedTextColor = (textColor ??
+    palette.color) as ButtonProps["color"];
+  const resolvedIconColor = (iconColor ??
+    resolveTokenColor(resolvedTextColor)) as string | undefined;
 
   const leadingIcon = iconName ? (
     <Ionicons

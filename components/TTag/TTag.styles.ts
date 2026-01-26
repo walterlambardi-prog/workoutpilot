@@ -18,13 +18,13 @@ export const TAG_BASE_STYLES = {
 
 export const TAG_VARIANTS: Record<TagTone, TagStyle> = {
   primary: {
-    backgroundColor: "$color5",
-    borderColor: "$color6",
-    color: "$color12",
+    backgroundColor: "$primary",
+    borderColor: "$primary",
+    color: "$onPrimary",
   },
   neutral: {
-    backgroundColor: "$color3",
-    borderColor: "$color4",
-    color: "$color11",
+    backgroundColor: "$backgroundHover",
+    borderColor: "$borderColor",
+    color: "$color",
   },
 };
