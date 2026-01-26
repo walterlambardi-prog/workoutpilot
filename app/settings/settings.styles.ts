@@ -1,27 +1,19 @@
 import { StyleSheet } from "react-native";
 
+import { ScreenPadding, Spacing } from "@/constants/theme";
+
 const styles = StyleSheet.create({
   page: {
     flex: 1,
-    paddingTop: 24,
-    paddingHorizontal: 16,
-  },
-  headerContainer: {
-    marginBottom: 12,
-  },
-  title: {
-    lineHeight: 36,
-  },
-  subtitle: {
-    opacity: 0.8,
-    marginTop: 6,
+    paddingTop: ScreenPadding.vertical,
+    paddingHorizontal: ScreenPadding.horizontal,
   },
   section: {
-    marginTop: 24,
-    gap: 12,
+    marginTop: Spacing.xxl,
+    gap: Spacing.md,
   },
   sectionTitle: {
-    marginBottom: 8,
+    marginBottom: Spacing.sm,
   },
   sectionDescription: {
     opacity: 0.7,

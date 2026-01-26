@@ -1,28 +1,20 @@
 import { StyleSheet } from "react-native";
 
+import { ScreenPadding, Spacing } from "@/constants/theme";
+
 const styles = StyleSheet.create({
   page: {
     flex: 1,
-    paddingHorizontal: 16,
-    paddingTop: 24,
-    paddingBottom: 32,
-  },
-  header: {
-    marginBottom: 12,
-  },
-  title: {
-    lineHeight: 36,
-  },
-  subtitle: {
-    opacity: 0.8,
-    marginTop: 6,
+    paddingHorizontal: ScreenPadding.horizontal,
+    paddingTop: ScreenPadding.vertical,
+    paddingBottom: ScreenPadding.bottom,
   },
   cards: {
-    gap: 12,
+    gap: Spacing.md,
   },
   card: {
-    borderRadius: 12,
-    padding: 16,
+    borderRadius: Spacing.md,
+    padding: Spacing.lg,
     borderWidth: 1,
   },
   cardTitle: {

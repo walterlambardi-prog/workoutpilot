@@ -1,24 +1,16 @@
 import { StyleSheet } from "react-native";
 
+import { ScreenPadding, Spacing } from "@/constants/theme";
+
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
   scrollContent: {
-    paddingHorizontal: 20,
-    paddingTop: 32,
+    paddingHorizontal: ScreenPadding.horizontal,
+    paddingTop: ScreenPadding.bottom,
     paddingBottom: 160,
-    gap: 12,
-  },
-  header: {
-    marginBottom: 12,
-  },
-  title: {
-    lineHeight: 32,
-  },
-  subtitle: {
-    opacity: 0.82,
-    marginTop: 6,
+    gap: Spacing.md,
   },
   suggestionsWrap: {
     flexDirection: "row",

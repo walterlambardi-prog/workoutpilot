@@ -3,27 +3,28 @@ import { useRouter } from "expo-router";
 import React, { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import {
-  FlatList,
-  ImageBackground,
-  Pressable,
-  View,
-  type ListRenderItemInfo,
+    FlatList,
+    ImageBackground,
+    Pressable,
+    View,
+    type ListRenderItemInfo,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { EXERCISE_DEFINITIONS } from "@/app/exercises/exercises.data";
 import type {
-  RoutineBuilderScreenProps,
-  RoutineExerciseListItem,
+    RoutineBuilderScreenProps,
+    RoutineExerciseListItem,
 } from "@/app/routine/routine.types";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { ALLOWED_EXERCISES } from "@/constants/exercises";
 import { BACKGROUND_IMAGES } from "@/constants/images";
+import { ScreenPadding } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import {
-  ROUTINE_DEFAULT_REPS,
-  useRoutineBuilderStore,
+    ROUTINE_DEFAULT_REPS,
+    useRoutineBuilderStore,
 } from "@/stores/routineBuilderStore";
 import { useRoutineSessionStore } from "@/stores/routineSessionStore";
 import styles from "./routine.styles";
@@ -357,7 +358,12 @@ const RoutineBuilderScreen: React.FC<RoutineBuilderScreenProps> = () => {
   );
 
   const footerComponent = (
-    <View style={[styles.footer, { paddingBottom: insets.bottom + 24 }]}>
+    <View
+      style={[
+        styles.footer,
+        { paddingBottom: insets.bottom + ScreenPadding.vertical },
+      ]}
+    >
       <Pressable
         accessibilityRole="button"
         accessibilityLabel={t("routineBuilder.cta")}
@@ -424,7 +430,7 @@ const RoutineBuilderScreen: React.FC<RoutineBuilderScreenProps> = () => {
         ItemSeparatorComponent={() => <View style={styles.separator} />}
         contentContainerStyle={[
           styles.listContent,
-          { paddingBottom: insets.bottom + 48 },
+          { paddingBottom: insets.bottom + ScreenPadding.vertical * 2 },
         ]}
         showsVerticalScrollIndicator={false}
       />

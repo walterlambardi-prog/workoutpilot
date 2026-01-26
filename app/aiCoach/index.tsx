@@ -14,8 +14,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
+import ScreenHeader from "@/components/ScreenHeader";
 import { EXERCISE_COPY_KEYS } from "@/constants/exercises";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { styles } from "./aiCoach.styles";
@@ -356,14 +355,10 @@ const AiCoachScreen = () => {
             scrollRef.current?.scrollToEnd({ animated: true })
           }
         >
-          <ThemedView style={styles.header}>
-            <ThemedText style={styles.title} type="title">
-              {t("aiCoach.title")}
-            </ThemedText>
-            <ThemedText style={styles.subtitle}>
-              {t("aiCoach.screenSubtitle")}
-            </ThemedText>
-          </ThemedView>
+          <ScreenHeader
+            title={t("aiCoach.title")}
+            subtitle={t("aiCoach.screenSubtitle")}
+          />
 
           <View style={styles.suggestionsWrap}>
             {suggestions.map((item) => (

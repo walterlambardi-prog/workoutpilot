@@ -1,21 +1,12 @@
 # Copilot Instructions for WorkoutPilot
 
-## ⚠️ Important: app-example Directory
-
-**DO NOT MODIFY FILES IN `app-example/`**
-
-- The `app-example/` directory is a reference implementation only
-- Ignore TypeScript and linting errors from `app-example/` files
-- Only fix errors in the main `app/`, `stores/`, `components/`, etc. directories
-- Use `app-example/` as inspiration but don't edit it
-
 ## 🔍 Quality Assurance
 
 **MANDATORY**: After EVERY code change in `.tsx`, `.ts`, or `.js` files:
 
 1. Run `yarn tsc` to check TypeScript errors
 2. Run `yarn lint` to check linting errors
-3. Fix ALL errors and warnings before proceeding (except those in `app-example/`)
+3. Fix ALL errors and warnings before proceeding
 4. Never skip these checks - they prevent production bugs
 
 ## 🗣 Copy & Localization
@@ -32,8 +23,51 @@
 Each screen/component folder MUST include:
 
 - `index.tsx` - Main component logic
-- `*.styles.ts` - StyleSheet definitions (StyleSheet.create)
+- `*.styles.ts` - StyleSheet definitions (StyleSheet.create with theme constants)
 - `*.types.ts` - TypeScript interfaces and types
+
+### Screen Header Pattern
+
+**CRITICAL**: All screens MUST use the `ScreenHeader` component for consistent title/subtitle display.
+
+```typescript
+// ✅ GOOD - Using ScreenHeader component
+import ScreenHeader from '@/components/ScreenHeader';
+
+const MyScreen = () => {
+  const { t } = useTranslation();
+
+  return (
+    <ScrollView>
+      <ScreenHeader
+        title={t('myScreen.title')}
+        subtitle={t('myScreen.subtitle')}
+      />
+      {/* Rest of content */}
+    </ScrollView>
+  );
+};
+
+// ❌ BAD - Manual header implementation
+const MyScreen = () => {
+  return (
+    <ScrollView>
+      <View style={styles.header}>
+        <ThemedText type="title">{t('myScreen.title')}</ThemedText>
+        <ThemedText>{t('myScreen.subtitle')}</ThemedText>
+      </View>
+      {/* Rest of content */}
+    </ScrollView>
+  );
+};
+```
+
+**ScreenHeader Props**:
+
+- `title: string` - Main title (required)
+- `subtitle?: string` - Optional subtitle text
+
+The component handles all styling, spacing, and theming automatically.
 
 ### Platform-Specific Files
 
@@ -177,30 +211,107 @@ const sortedData = data.sort((a, b) => a.name.localeCompare(b.name));
 ### Use StyleSheet.create
 
 ```typescript
-// ✅ GOOD - StyleSheet with typed styles
+// ✅ GOOD - StyleSheet with typed styles and theme constants
 import { StyleSheet } from 'react-native';
+import { Spacing, ScreenPadding } from '@/constants/theme';
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
+    paddingHorizontal: ScreenPadding.horizontal,
+    paddingTop: ScreenPadding.vertical,
   },
   title: {
     fontSize: 24,
     fontWeight: '700',
+    marginBottom: Spacing.md,
   },
 });
 
-// ❌ BAD - Inline styles
+// ❌ BAD - Inline styles and hardcoded values
 <View style={{ flex: 1, padding: 16 }}>
 ```
 
 ### Theme System
 
+**CRITICAL**: Always use theme constants - never hardcode values.
+
+#### Spacing Constants
+
+Use `Spacing` from `@/constants/theme` for all margins, paddings, and gaps:
+
+```typescript
+import { Spacing } from "@/constants/theme";
+
+// Available spacing values:
+Spacing.xxs; // 4px  - Minimal spacing
+Spacing.xs; // 6px  - Extra small spacing
+Spacing.sm; // 8px  - Small spacing
+Spacing.md; // 12px - Medium spacing (default for most UI)
+Spacing.lg; // 16px - Standard spacing
+Spacing.xl; // 20px - Large spacing
+Spacing.xxl; // 24px - Extra large spacing
+Spacing.xxxl; // 32px - Double extra large spacing
+```
+
+#### Screen Padding Constants
+
+Use `ScreenPadding` for consistent screen layout:
+
+```typescript
+import { ScreenPadding } from "@/constants/theme";
+
+// Available screen padding values:
+ScreenPadding.horizontal; // 16px - Standard horizontal padding for screens
+ScreenPadding.vertical; // 24px - Standard top padding for screens
+ScreenPadding.bottom; // 32px - Standard bottom padding for scrollable content
+```
+
+#### Example Usage
+
+```typescript
+// ✅ GOOD - Using theme constants
+import { StyleSheet } from "react-native";
+import { Spacing, ScreenPadding } from "@/constants/theme";
+
+const styles = StyleSheet.create({
+  page: {
+    flex: 1,
+    paddingHorizontal: ScreenPadding.horizontal,
+    paddingTop: ScreenPadding.vertical,
+    paddingBottom: ScreenPadding.bottom,
+  },
+  section: {
+    gap: Spacing.md,
+    marginBottom: Spacing.xxl,
+  },
+  card: {
+    padding: Spacing.lg,
+    borderRadius: Spacing.md,
+    gap: Spacing.sm,
+  },
+});
+
+// ❌ BAD - Hardcoded values
+const styles = StyleSheet.create({
+  page: {
+    flex: 1,
+    paddingHorizontal: 16,
+    paddingTop: 24,
+  },
+  section: {
+    gap: 12,
+    marginBottom: 24,
+  },
+});
+```
+
+#### Color System
+
 - Use constants from `constants/theme.ts`
-- Never hardcode colors or spacing
-- Support light/dark mode
-- Use semantic color names (`primary`, `textPrimary`)
+- Never hardcode color values
+- Support light/dark mode with `useThemeColor` hook
+- Use semantic color names (`primary`, `textPrimary`, `background`)
 
 ### Responsive Design
 
@@ -434,6 +545,10 @@ Before submitting code:
 - [ ] No console.logs in production code
 - [ ] Comments explain "why" not "what"
 - [ ] Tests written (when applicable)
+- [ ] **Using `Spacing` and `ScreenPadding` constants (no hardcoded values)**
+- [ ] **Screens use `ScreenHeader` component for titles**
+- [ ] **All user-visible text comes from translation files**
+- [ ] **Removed orphaned styles from StyleSheet**
 
 ## 🎯 Project-Specific
 

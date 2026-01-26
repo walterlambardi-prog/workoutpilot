@@ -3,14 +3,15 @@ import { useTranslation } from "react-i18next";
 import { Image, ScrollView, View } from "react-native";
 
 import { EXERCISE_DEFINITION_MAP } from "@/app/exercises/exercises.data";
+import ScreenHeader from "@/components/ScreenHeader";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { ExerciseId } from "@/constants/exercises";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { useExerciseSessionStore } from "@/stores/exerciseSessionStore";
 import {
-  type RoutineSession,
-  useRoutineSessionStore,
+    type RoutineSession,
+    useRoutineSessionStore,
 } from "@/stores/routineSessionStore";
 import styles from "./sessions.styles";
 import type { SessionListItem, SessionStatItem } from "./sessions.types";
@@ -359,14 +360,10 @@ const SessionsScreen: React.FC = () => {
       style={[styles.page, { backgroundColor }]}
       showsVerticalScrollIndicator={false}
     >
-      <ThemedView style={styles.header}>
-        <ThemedText style={styles.title} type="title">
-          {t("sessions.title")}
-        </ThemedText>
-        <ThemedText style={styles.subtitle}>
-          {t("sessions.subtitle")}
-        </ThemedText>
-      </ThemedView>
+      <ScreenHeader
+        title={t("sessions.title")}
+        subtitle={t("sessions.subtitle")}
+      />
 
       <View style={styles.cards}>
         <ThemedView

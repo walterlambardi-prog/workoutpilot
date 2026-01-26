@@ -2,6 +2,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { Pressable, ScrollView, View } from "react-native";
 
+import ScreenHeader from "@/components/ScreenHeader";
 import { ThemedText } from "@/components/ThemedText";
 import { useAppLanguage } from "@/hooks/useAppLanguage";
 import { useThemeColor } from "@/hooks/useThemeColor";
@@ -218,14 +219,10 @@ const SettingsScreen: React.FC = () => {
       style={[styles.page, { backgroundColor }]}
       showsVerticalScrollIndicator={false}
     >
-      <View style={styles.headerContainer}>
-        <ThemedText style={styles.title} type="title">
-          {t("settings.title")}
-        </ThemedText>
-        <ThemedText style={styles.subtitle}>
-          {t("settings.subtitle")}
-        </ThemedText>
-      </View>
+      <ScreenHeader
+        title={t("settings.title")}
+        subtitle={t("settings.subtitle")}
+      />
 
       <View style={styles.section}>
         <ThemedText type="subtitle" style={styles.sectionTitle}>

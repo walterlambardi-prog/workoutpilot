@@ -5,15 +5,16 @@ import { FlatList, type ListRenderItemInfo } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import ExerciseCard from "@/components/ExerciseCard";
-import { ThemedText } from "@/components/ThemedText";
+import ScreenHeader from "@/components/ScreenHeader";
 import { ThemedView } from "@/components/ThemedView";
 import { ALLOWED_EXERCISES, ExerciseId } from "@/constants/exercises";
+import { ScreenPadding } from "@/constants/theme";
 import { EXERCISE_DEFINITIONS } from "./exercises.data";
 import styles from "./exercises.styles";
 
 import {
-  type ExerciseListItem,
-  type ExercisesScreenProps,
+    type ExerciseListItem,
+    type ExercisesScreenProps,
 } from "./exercises.types";
 
 const ExercisesScreen: React.FC<ExercisesScreenProps> = () => {
@@ -69,20 +70,16 @@ const ExercisesScreen: React.FC<ExercisesScreenProps> = () => {
         contentContainerStyle={[
           styles.listContent,
           {
-            paddingTop: 24,
-            paddingBottom: insets.bottom + 24,
+            paddingTop: ScreenPadding.vertical,
+            paddingBottom: insets.bottom + ScreenPadding.vertical,
           },
         ]}
         ItemSeparatorComponent={() => <ThemedView style={styles.separator} />}
         ListHeaderComponent={
-          <ThemedView style={styles.header}>
-            <ThemedText style={styles.title} type="title">
-              {t("exercises.list.title")}
-            </ThemedText>
-            <ThemedText style={styles.subtitle}>
-              {t("exercises.list.subtitle")}
-            </ThemedText>
-          </ThemedView>
+          <ScreenHeader
+            title={t("exercises.list.title")}
+            subtitle={t("exercises.list.subtitle")}
+          />
         }
         showsVerticalScrollIndicator={false}
       />

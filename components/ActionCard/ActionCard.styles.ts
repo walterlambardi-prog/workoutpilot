@@ -1,13 +1,15 @@
 import { StyleSheet } from "react-native";
 
+import { Spacing } from "@/constants/theme";
+
 const styles = StyleSheet.create({
   card: {
     flexDirection: "row",
-    padding: 16,
-    borderRadius: 16,
+    padding: Spacing.lg,
+    borderRadius: Spacing.lg,
     borderWidth: 1,
     alignItems: "center",
-    gap: 12,
+    gap: Spacing.md,
   },
   cardLight: {
     backgroundColor: "#f8fafc",
@@ -36,7 +38,7 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    gap: 6,
+    gap: Spacing.xs,
   },
   subtitle: {
     opacity: 0.8,
