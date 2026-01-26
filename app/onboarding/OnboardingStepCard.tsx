@@ -1,3 +1,4 @@
+import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { View, useWindowDimensions } from "react-native";
 
@@ -22,11 +23,14 @@ export const OnboardingStepCard: React.FC<OnboardingStepCardProps> = ({
   return (
     <View style={[styles.stepContainer, { width }]}>
       <View style={styles.content}>
-        <View style={styles.imageContainer}>
+        <View
+          style={[
+            styles.imageContainer,
+            { backgroundColor: `${step.color}15` },
+          ]}
+        >
           <View style={styles.imagePlaceholder}>
-            <ThemedText style={styles.placeholderIcon}>
-              {step.id === 1 ? "📸" : step.id === 2 ? "💪" : "📊"}
-            </ThemedText>
+            <Ionicons name={step.iconName} size={80} color={step.color} />
           </View>
         </View>
 

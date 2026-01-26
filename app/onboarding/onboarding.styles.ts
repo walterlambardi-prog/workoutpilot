@@ -1,19 +1,21 @@
 import { StyleSheet } from "react-native";
 
+import { ScreenPadding, Spacing } from "@/constants/theme";
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
   stepContainer: {
     flex: 1,
-    padding: 24,
+    padding: ScreenPadding.vertical,
     justifyContent: "center",
   },
   content: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    gap: 40,
+    gap: Spacing.xxxl + Spacing.sm,
     maxWidth: 600,
     width: "100%",
     alignSelf: "center",
@@ -22,9 +24,8 @@ const styles = StyleSheet.create({
     width: "100%",
     maxWidth: 300,
     aspectRatio: 1,
-    borderRadius: 24,
+    borderRadius: Spacing.xxl,
     overflow: "hidden",
-    backgroundColor: "#f3f4f6",
   },
   image: {
     width: "100%",
@@ -40,8 +41,8 @@ const styles = StyleSheet.create({
     fontSize: 100,
   },
   textContent: {
-    gap: 16,
-    paddingHorizontal: 16,
+    gap: Spacing.lg,
+    paddingHorizontal: Spacing.lg,
     width: "100%",
   },
   title: {
@@ -62,37 +63,37 @@ const styles = StyleSheet.create({
     lineHeight: 24,
   },
   bottomControls: {
-    gap: 20,
-    paddingHorizontal: 24,
-    paddingBottom: 40,
-    paddingTop: 20,
+    gap: Spacing.xl,
+    paddingHorizontal: ScreenPadding.vertical,
+    paddingBottom: Spacing.xxxl + Spacing.sm,
+    paddingTop: Spacing.xl,
   },
   pagination: {
     flexDirection: "row",
     justifyContent: "center",
-    gap: 8,
-    paddingVertical: 8,
+    gap: Spacing.sm,
+    paddingVertical: Spacing.sm,
   },
   dot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
+    width: Spacing.sm,
+    height: Spacing.sm,
+    borderRadius: Spacing.xxs,
     backgroundColor: "#d1d5db",
   },
   dotActive: {
-    width: 24,
+    width: Spacing.xxl,
     backgroundColor: "#3b82f6",
   },
   buttonsRow: {
     flexDirection: "row",
-    gap: 12,
+    gap: Spacing.md,
     maxWidth: 600,
     width: "100%",
     alignSelf: "center",
   },
   button: {
     flex: 1,
-    borderRadius: 12,
+    borderRadius: Spacing.md,
     padding: 18,
     alignItems: "center",
     justifyContent: "center",

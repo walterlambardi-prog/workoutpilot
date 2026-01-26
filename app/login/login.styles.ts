@@ -1,9 +1,11 @@
 import { StyleSheet } from "react-native";
 
+import { Spacing } from "@/constants/theme";
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 24,
+    padding: Spacing.xxl,
     justifyContent: "center",
   },
   content: {
@@ -12,19 +14,19 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   header: {
-    marginBottom: 48,
+    marginBottom: Spacing.xxxl + Spacing.lg,
     alignItems: "center",
   },
   title: {
     fontSize: 32,
     fontWeight: "700",
-    marginBottom: 8,
+    marginBottom: Spacing.sm,
     textAlign: "center",
   },
   subtitle: {
     fontSize: 20,
     fontWeight: "600",
-    marginBottom: 12,
+    marginBottom: Spacing.md,
     textAlign: "center",
   },
   description: {
@@ -33,10 +35,10 @@ const styles = StyleSheet.create({
     opacity: 0.7,
   },
   form: {
-    gap: 24,
+    gap: Spacing.xxl,
   },
   inputContainer: {
-    gap: 8,
+    gap: Spacing.sm,
   },
   label: {
     fontSize: 16,
@@ -44,8 +46,8 @@ const styles = StyleSheet.create({
   },
   input: {
     borderWidth: 2,
-    borderRadius: 12,
-    padding: 16,
+    borderRadius: Spacing.md,
+    padding: Spacing.lg,
     fontSize: 18,
     fontWeight: "500",
   },
@@ -55,15 +57,15 @@ const styles = StyleSheet.create({
   errorText: {
     fontSize: 14,
     color: "#ef4444",
-    marginTop: 4,
+    marginTop: Spacing.xxs,
   },
   button: {
     backgroundColor: "#3b82f6",
-    borderRadius: 12,
+    borderRadius: Spacing.md,
     padding: 18,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 8,
+    marginTop: Spacing.sm,
   },
   buttonDisabled: {
     opacity: 0.5,

@@ -30,12 +30,22 @@
     "step2": {
       "title": "Crea tu rutina",
       "subtitle": "Entrenamientos personalizados",
-      "description": "Crea rutinas personalizadas con ejercicios, rondas y repeticiones. O deja que nuestro coach IA diseñe la rutina perfecta para tu nivel."
+      "description": "Crea rutinas personalizadas con ejercicios, rondas y repeticiones adaptadas a tus objetivos."
     },
     "step3": {
       "title": "Rastrea tu progreso",
       "subtitle": "Observa tu mejora",
-      "description": "Revisa el historial detallado de sesiones, rastrea tus repeticiones y monitorea la consistencia de tus entrenamientos a lo largo del tiempo."
+      "description": "Revisa el historial detallado de sesiones, rastrea tus repeticiones y monitorea la consistencia de tus entrenamientos."
+    },
+    "step4": {
+      "title": "Domina ejercicios",
+      "subtitle": "Entrenamientos guiados",
+      "description": "Accede a una biblioteca de ejercicios con guía de forma correcta e instrucciones paso a paso."
+    },
+    "step5": {
+      "title": "Soporte Coach IA",
+      "subtitle": "Recomendaciones inteligentes",
+      "description": "Obtén planes de entrenamiento personalizados y consejos de coaching de nuestro asistente IA, diseñados para tu nivel."
     }
   },
   "home": {

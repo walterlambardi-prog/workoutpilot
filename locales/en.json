@@ -30,12 +30,22 @@
     "step2": {
       "title": "Build your routine",
       "subtitle": "Personalized workouts",
-      "description": "Create custom routines with exercises, rounds, and reps. Or let our AI coach design the perfect routine for your level."
+      "description": "Create custom routines with exercises, rounds, and reps tailored to your fitness goals."
     },
     "step3": {
       "title": "Track your progress",
       "subtitle": "See your improvement",
       "description": "Review detailed session history, track your reps, and monitor your workout consistency over time."
+    },
+    "step4": {
+      "title": "Master exercises",
+      "subtitle": "Guided workouts",
+      "description": "Access a library of exercises with proper form guidance and step-by-step instructions."
+    },
+    "step5": {
+      "title": "AI Coach support",
+      "subtitle": "Smart recommendations",
+      "description": "Get personalized workout plans and coaching tips from our AI assistant, designed for your level."
     }
   },
   "home": {
