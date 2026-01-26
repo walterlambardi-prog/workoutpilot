@@ -1,14 +1,11 @@
 import { useRouter } from "expo-router";
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { ScrollView } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { YStack } from "tamagui";
 
-import ActionCard from "@/components/ActionCard";
-import { HelloWave } from "@/components/HelloWave";
-import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
-import styles from "./home.styles";
+import { TActionCard } from "@/components/TActionCard";
+import { TPage } from "@/components/TPage";
+import { TWelcomeHeader } from "@/components/TWelcomeHeader";
 import type { HomeNavAction } from "./home.types";
 
 const actions: HomeNavAction[] = [
@@ -46,11 +43,11 @@ const actions: HomeNavAction[] = [
 
 /**
  * Home screen for WorkoutPilot
- * Acts as an entry point to Exercises
+ * Acts as an entry point to all main features
+ * Built with Tamagui for modern, responsive UI
  */
 const HomeScreen: React.FC = () => {
   const { t } = useTranslation();
-  const insets = useSafeAreaInsets();
   const router = useRouter();
 
   const handleActionPress = useCallback(
@@ -61,41 +58,32 @@ const HomeScreen: React.FC = () => {
   );
 
   return (
-    <ThemedView style={styles.page}>
-      <ScrollView
-        contentContainerStyle={[
-          styles.scrollContent,
-          { paddingTop: 30 + insets.top },
-        ]}
-        showsVerticalScrollIndicator={false}
-      >
-        <ThemedView style={styles.titleContainer}>
-          <ThemedText type="title">{t("home.title")}</ThemedText>
-          <HelloWave />
-        </ThemedView>
+    <TPage backgroundColor="$background" hasHeader>
+      {/* Welcome Header */}
+      <TWelcomeHeader
+        title={t("home.title")}
+        subtitle={t("home.subtitle")}
+        description={t("home.description")}
+        showWave
+      />
 
-        <ThemedView style={styles.heroContainer}>
-          <ThemedText type="subtitle">{t("home.subtitle")}</ThemedText>
-          <ThemedText>{t("home.description")}</ThemedText>
-        </ThemedView>
-
-        <ThemedView style={styles.actionsContainer}>
-          {actions.map((action) => (
-            <ActionCard
-              key={action.key}
-              title={t(`home.actions.${action.key}.title`)}
-              subtitle={t(`home.actions.${action.key}.description`)}
-              icon={action.icon}
-              iconColor={action.color}
-              accessibilityHint={t(
-                `home.actions.${action.key}.accessibilityHint`,
-              )}
-              onPress={() => handleActionPress(action.href)}
-            />
-          ))}
-        </ThemedView>
-      </ScrollView>
-    </ThemedView>
+      {/* Action Cards Grid */}
+      <YStack space="$4">
+        {actions.map((action) => (
+          <TActionCard
+            key={action.key}
+            title={t(`home.actions.${action.key}.title`)}
+            description={t(`home.actions.${action.key}.description`)}
+            icon={action.icon}
+            iconColor={action.color}
+            accessibilityHint={t(
+              `home.actions.${action.key}.accessibilityHint`,
+            )}
+            onPress={() => handleActionPress(action.href)}
+          />
+        ))}
+      </YStack>
+    </TPage>
   );
 };
 

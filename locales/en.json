@@ -7,6 +7,14 @@
     "routine": "Routine",
     "aiCoach": "AI Coach"
   },
+  "drawer": {
+    "title": "Menu"
+  },
+  "header": {
+    "welcome": "Let’s crush today",
+    "greeting": "Hi {{name}}, ready?",
+    "defaultUser": "Athlete"
+  },
   "login": {
     "title": "Welcome to WorkoutPilot",
     "subtitle": "Let's get started",
@@ -59,6 +67,11 @@
       "spanish": "Spanish"
     },
     "actions": {
+      "home": {
+        "title": "Home",
+        "description": "Return to the main dashboard",
+        "accessibilityHint": "Opens the home screen"
+      },
       "aiCoach": {
         "title": "AI coach",
         "description": "Chat to build routine that matches your level.",

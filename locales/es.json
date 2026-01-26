@@ -7,6 +7,14 @@
     "routine": "Rutina",
     "aiCoach": "Coach IA"
   },
+  "drawer": {
+    "title": "Menú"
+  },
+  "header": {
+    "welcome": "Vamos a romperla hoy",
+    "greeting": "Hola {{name}}, ¿listo?",
+    "defaultUser": "Atleta"
+  },
   "login": {
     "title": "Bienvenido a WorkoutPilot",
     "subtitle": "Comencemos",
@@ -59,6 +67,11 @@
       "spanish": "Español"
     },
     "actions": {
+      "home": {
+        "title": "Inicio",
+        "description": "Volver al panel principal",
+        "accessibilityHint": "Abre la pantalla de inicio"
+      },
       "aiCoach": {
         "title": "Coach IA",
         "description": "Chatea para generar una rutina según tu nivel.",

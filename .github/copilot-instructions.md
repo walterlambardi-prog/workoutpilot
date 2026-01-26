@@ -9,6 +9,14 @@
 3. Fix ALL errors and warnings before proceeding
 4. Never skip these checks - they prevent production bugs
 
+**Additional guardrails (Tamagui refactor):**
+
+- No inline styles in components; move to `*.styles.ts` using StyleSheet/Tamagui tokens.
+- Use Tamagui tokens (`$color`, `$background`, `$primary`, `$space`) instead of hardcoded values.
+- Ensure text containers in headers use `flex: 1` and `minWidth: 0` to avoid clipping on mobile.
+- Header/Drawer: use `TAppHeader` and `TDrawer` with copy from locales (no hardcoded strings); keep active-route highlight.
+- Fix the onboarding.types.ts warning if touched; lint must be clean when you modify that area.
+
 ## 🗣 Copy & Localization
 
 - Every user-visible string must come from a copy source (e.g., locales/en.json and locales/es.json). Do not hardcode UI text in components, hooks, or utilities.
@@ -214,6 +222,8 @@ const sortedData = data.sort((a, b) => a.name.localeCompare(b.name));
 // ✅ GOOD - StyleSheet with typed styles and theme constants
 import { StyleSheet } from 'react-native';
 import { Spacing, ScreenPadding } from '@/constants/theme';
+
+// Tamagui components must still keep layout values in styles files; avoid inline padding/margin.
 
 const styles = StyleSheet.create({
   container: {
@@ -581,3 +591,155 @@ Before submitting code:
 - Include AI (chatbot-style) to generate user-appropriate routines and coaching suggestions.
 - UI/UX must feel current and fitness-focused: clean, high-contrast, motion-aware; surfaces should clearly differentiate active vs. resting states.
 - Prioritize form verification flows: stable camera permissions, session start/stop, switch camera, and feedback to the user when detection is active or paused.
+
+## 🎨 UI Library: Tamagui
+
+**IMPORTANT**: This project is in the process of migrating to Tamagui for UI components.
+
+### Why Tamagui?
+
+- **Cross-platform**: Works seamlessly on web and native
+- **Performance**: Optimized compilation and tree-shaking
+- **Theming**: First-class dark/light mode support
+- **Type-safe**: Full TypeScript support with autocomplete
+- **Modern**: Professional, polished components out of the box
+
+### Migration Status
+
+**Track progress in**: `ui-refactor-tracking.txt` (root directory)
+
+This file contains:
+
+- Phase-by-phase migration plan
+- Component refactoring checklist
+- Theme configuration status
+- Performance metrics before/after
+- Blockers and decisions log
+
+**Always check this file before making UI changes** to understand:
+
+- Which components have been migrated to Tamagui
+- Which screens are pending refactoring
+- Current naming conventions for new components
+- Design tokens and theme configuration
+
+### Component Naming Convention
+
+New Tamagui components use the `T` prefix to differentiate from legacy components:
+
+```typescript
+// ✅ NEW - Tamagui components
+import { TButton } from "@/components/TButton";
+import { TCard } from "@/components/TCard";
+import { TInput } from "@/components/TInput";
+
+// 🔄 LEGACY - React Native StyleSheet components (being migrated)
+import { Button } from "@/components/Button";
+import ActionCard from "@/components/ActionCard";
+```
+
+### When to Use Tamagui vs Legacy
+
+**Use Tamagui components** for:
+
+- All new features and screens
+- When refactoring existing components
+- When you need dark/light mode support
+- When you need cross-platform consistency
+
+**Legacy components** are acceptable for:
+
+- Quick fixes to existing screens (until refactor)
+- Components not yet migrated (check tracking file)
+
+### Tamagui Best Practices
+
+```typescript
+// ✅ GOOD - Using Tamagui with typed theme tokens
+import { YStack, XStack, Text, Button } from 'tamagui';
+
+const MyComponent = () => (
+  <YStack space="$4" padding="$4" backgroundColor="$background">
+    <Text fontSize="$6" fontWeight="700" color="$color">
+      Title
+    </Text>
+    <Button size="$4" theme="blue">
+      Action
+    </Button>
+  </YStack>
+);
+
+// ❌ BAD - Mixing Tamagui with hardcoded React Native styles
+import { View, StyleSheet } from 'react-native';
+import { Text } from 'tamagui';
+
+const MyComponent = () => (
+  <View style={{ padding: 16 }}> {/* Don't mix! */}
+    <Text>Title</Text>
+  </View>
+);
+```
+
+### Theme Tokens
+
+Tamagui uses `$` prefix for design tokens:
+
+```typescript
+// Spacing
+space = "$2"; // 8px
+space = "$4"; // 16px
+space = "$6"; // 24px
+
+// Colors
+color = "$color"; // Primary text color
+backgroundColor = "$background";
+borderColor = "$borderColor";
+
+// Sizes
+size = "$4"; // Standard button/input size
+fontSize = "$6"; // Heading size
+```
+
+**Always use theme tokens** instead of hardcoded values to ensure:
+
+- Dark/light mode works correctly
+- Consistent spacing across the app
+- Easy theme customization
+
+### Integration with Existing Code
+
+During migration, you may need to integrate Tamagui with existing hooks:
+
+```typescript
+// ✅ GOOD - Connecting Tamagui theme with existing color scheme
+import { useColorScheme } from '@/hooks/useColorScheme';
+import { TamaguiProvider } from 'tamagui';
+import config from './tamagui.config';
+
+const App = () => {
+  const colorScheme = useColorScheme();
+
+  return (
+    <TamaguiProvider config={config} defaultTheme={colorScheme}>
+      {/* App content */}
+    </TamaguiProvider>
+  );
+};
+```
+
+### Migration Workflow
+
+1. **Before starting any UI work**: Read `ui-refactor-tracking.txt`
+2. **For new components**: Use Tamagui from the start
+3. **For existing components**:
+   - Check if migration is planned in tracking file
+   - If yes, refactor to Tamagui
+   - If no, add to tracking file for future work
+4. **After changes**: Update tracking file with progress
+5. **Always run**: `yarn tsc` and `yarn lint` after Tamagui changes
+
+### Resources
+
+- Official docs: https://tamagui.dev
+- Theme configuration: `tamagui.config.ts` (root directory)
+- Component examples: Check refactored screens in tracking file

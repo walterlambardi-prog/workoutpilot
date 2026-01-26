@@ -16,6 +16,7 @@ import type {
   RoutineBuilderScreenProps,
   RoutineExerciseListItem,
 } from "@/app/routine/routine.types";
+import ScreenHeader from "@/components/ScreenHeader";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { ALLOWED_EXERCISES } from "@/constants/exercises";
@@ -375,13 +376,11 @@ const RoutineBuilderScreen: React.FC<RoutineBuilderScreenProps> = () => {
   );
 
   const headerComponent = (
-    <View>
-      <ThemedView style={styles.header}>
-        <ThemedText type="title">{t("routineBuilder.title")}</ThemedText>
-        <ThemedText style={styles.sectionSubtitle}>
-          {t("routineBuilder.subtitle")}
-        </ThemedText>
-      </ThemedView>
+    <View style={styles.page}>
+      <ScreenHeader
+        title={t("routineBuilder.title")}
+        subtitle={t("routineBuilder.subtitle")}
+      />
       <ThemedView style={[styles.roundsCard, roundsCardTone]}>
         <ImageBackground
           source={BACKGROUND_IMAGES.duration}

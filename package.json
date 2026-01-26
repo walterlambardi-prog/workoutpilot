@@ -18,6 +18,9 @@
     "@react-navigation/bottom-tabs": "^7.4.0",
     "@react-navigation/elements": "^2.6.3",
     "@react-navigation/native": "^7.1.8",
+    "@tamagui/babel-plugin": "^1.144.3",
+    "@tamagui/config": "^1.144.3",
+    "@tamagui/metro-plugin": "^1.144.3",
     "@thinksys/react-native-mediapipe": "patch:@thinksys/react-native-mediapipe@npm:^0.0.19#./.yarn/patches/@thinksys-react-native-mediapipe-npm-0.0.19-e32c41af0e.patch",
     "expo": "~54.0.31",
     "expo-constants": "~18.0.13",
@@ -41,8 +44,10 @@
     "react-native-reanimated": "~4.1.1",
     "react-native-safe-area-context": "~5.6.0",
     "react-native-screens": "~4.16.0",
+    "react-native-svg": "^15.15.1",
     "react-native-web": "~0.21.0",
     "react-native-worklets": "0.5.1",
+    "tamagui": "^1.144.3",
     "zustand": "^5.0.0"
   },
   "devDependencies": {

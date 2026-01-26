@@ -9,14 +9,17 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Platform } from "react-native";
 import "react-native-reanimated";
+import { TamaguiProvider } from "tamagui";
 
 import AppLoader from "@/components/AppLoader";
+import { TAppHeader } from "@/components/TAppHeader";
 import "@/config/initReactotron";
 import { useAppLanguage } from "@/hooks/useAppLanguage";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import "@/locales/i18n";
 import { useAuthStore } from "@/stores/authStore";
 import { usePreferencesStore } from "@/stores/preferencesStore";
+import config from "../tamagui.config";
 
 export default function RootLayout() {
   const { t } = useTranslation();
@@ -83,56 +86,83 @@ export default function RootLayout() {
 
   // Show loader while stores are being loaded
   if (!preferencesHasHydrated || !authHasHydrated || !isNavigationReady) {
-    return <AppLoader colorScheme={colorScheme} />;
+    return (
+      <TamaguiProvider config={config} defaultTheme={colorScheme}>
+        <AppLoader colorScheme={colorScheme} />
+      </TamaguiProvider>
+    );
   }
 
   return (
-    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <Stack
-        screenOptions={{
-          headerShown: Platform.OS === "web" ? false : undefined,
-        }}
-      >
-        <Stack.Screen name="login/index" options={{ headerShown: false }} />
-        <Stack.Screen
-          name="onboarding/index"
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen
-          name="routine/index"
-          options={{ title: t("navigation.routine") }}
-        />
-        <Stack.Screen
-          name="routine/complete/index"
-          options={{ title: t("routineComplete.navTitle") }}
-        />
-        <Stack.Screen
-          name="exercises/index"
-          options={{ title: t("navigation.exercises") }}
-        />
-        <Stack.Screen
-          name="exercises/[exerciseId]"
-          options={{ title: t("navigation.exercises") }}
-        />
-        <Stack.Screen
-          name="sessions/index"
-          options={{ title: t("navigation.sessions") }}
-        />
-        <Stack.Screen
-          name="settings/index"
-          options={{ title: t("navigation.settings") }}
-        />
-        <Stack.Screen
-          name="aiCoach/index"
-          options={{ title: t("navigation.aiCoach") }}
-        />
-        <Stack.Screen
-          name="routineAnalysis/index"
-          options={{ title: t("routineAnalysis.title") }}
-        />
-      </Stack>
-      <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
-    </ThemeProvider>
+    <TamaguiProvider config={config} defaultTheme={colorScheme}>
+      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+        <Stack
+          screenOptions={{
+            headerShown: Platform.OS === "web" ? false : undefined,
+          }}
+        >
+          <Stack.Screen name="login/index" options={{ headerShown: false }} />
+          <Stack.Screen
+            name="onboarding/index"
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="index"
+            options={{
+              headerShown: true,
+              header: () => <TAppHeader />,
+            }}
+          />
+          <Stack.Screen
+            name="routine/index"
+            options={{
+              headerShown: true,
+              header: () => <TAppHeader />,
+            }}
+          />
+          <Stack.Screen
+            name="routine/complete/index"
+            options={{ title: t("routineComplete.navTitle") }}
+          />
+          <Stack.Screen
+            name="exercises/index"
+            options={{
+              headerShown: true,
+              header: () => <TAppHeader />,
+            }}
+          />
+          <Stack.Screen
+            name="exercises/[exerciseId]"
+            options={{ title: t("navigation.exercises") }}
+          />
+          <Stack.Screen
+            name="sessions/index"
+            options={{
+              headerShown: true,
+              header: () => <TAppHeader />,
+            }}
+          />
+          <Stack.Screen
+            name="settings/index"
+            options={{
+              headerShown: true,
+              header: () => <TAppHeader />,
+            }}
+          />
+          <Stack.Screen
+            name="aiCoach/index"
+            options={{
+              headerShown: true,
+              header: () => <TAppHeader />,
+            }}
+          />
+          <Stack.Screen
+            name="routineAnalysis/index"
+            options={{ title: t("routineAnalysis.title") }}
+          />
+        </Stack>
+        <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
+      </ThemeProvider>
+    </TamaguiProvider>
   );
 }

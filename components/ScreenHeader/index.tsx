@@ -1,9 +1,8 @@
 import React from "react";
-import { View } from "react-native";
+import { YStack } from "tamagui";
 
-import { ThemedText } from "@/components/ThemedText";
+import { THeading, TText } from "@/components/TText";
 
-import styles from "./ScreenHeader.styles";
 import type { ScreenHeaderProps } from "./ScreenHeader.types";
 
 /**
@@ -12,12 +11,12 @@ import type { ScreenHeaderProps } from "./ScreenHeader.types";
  */
 const ScreenHeader: React.FC<ScreenHeaderProps> = ({ title, subtitle }) => {
   return (
-    <View style={styles.container}>
-      <ThemedText style={styles.title} type="title">
+    <YStack space="$2" marginBottom="$3">
+      <THeading level={1} lineHeight={36}>
         {title}
-      </ThemedText>
-      {subtitle && <ThemedText style={styles.subtitle}>{subtitle}</ThemedText>}
-    </View>
+      </THeading>
+      {subtitle && <TText opacity={0.8}>{subtitle}</TText>}
+    </YStack>
   );
 };
 

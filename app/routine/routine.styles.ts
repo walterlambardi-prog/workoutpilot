@@ -3,16 +3,16 @@ import { StyleSheet } from "react-native";
 import { ScreenPadding, Spacing } from "@/constants/theme";
 
 const styles = StyleSheet.create({
+  page: {
+    paddingTop: ScreenPadding.vertical,
+    paddingBottom: ScreenPadding.bottom,
+  },
   container: {
     flex: 1,
+    paddingHorizontal: ScreenPadding.horizontal,
   },
   listContent: {
-    paddingHorizontal: ScreenPadding.horizontal,
     paddingBottom: Spacing.xxxl,
-  },
-  header: {
-    paddingTop: ScreenPadding.vertical,
-    paddingBottom: Spacing.md,
   },
   roundsCard: {
     borderRadius: 24,
