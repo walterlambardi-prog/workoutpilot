@@ -68,7 +68,7 @@ export const TAppHeader: React.FC<TAppHeaderProps> = ({
       >
         {/* Left side: User info */}
         <Pressable onPress={handleAvatarPress} style={getAvatarPressableStyle}>
-          <XStack space="$3" alignItems="center" flex={1} minWidth={0}>
+          <XStack gap="$3" alignItems="center" flex={1} minWidth={0}>
             {/* User avatar/icon */}
             <YStack
               width={44}

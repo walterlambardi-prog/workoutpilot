@@ -31,16 +31,16 @@ export const TWelcomeHeader: React.FC<TWelcomeHeaderProps> = ({
   showWave = false,
 }) => {
   return (
-    <YStack space="$3">
+    <YStack gap="$3">
       {/* Title with wave */}
-      <XStack space="$2" alignItems="center">
+      <XStack gap="$2" alignItems="center">
         <THeading level={1}>{title}</THeading>
         {showWave && <HelloWave />}
       </XStack>
 
       {/* Subtitle and description */}
       {(subtitle || description) && (
-        <YStack space="$2">
+        <YStack gap="$2">
           {subtitle && (
             <THeading level={3} fontWeight="600">
               {subtitle}

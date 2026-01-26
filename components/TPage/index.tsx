@@ -35,7 +35,7 @@ export const TPage: React.FC<TPageProps> = ({
       paddingHorizontal="$4"
       paddingTop={hasHeader ? "$4" : 30 + insets.top}
       paddingBottom="$7"
-      space="$4"
+      gap="$4"
       {...props}
     >
       {children}

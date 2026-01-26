@@ -11,7 +11,7 @@ import type { ScreenHeaderProps } from "./ScreenHeader.types";
  */
 const ScreenHeader: React.FC<ScreenHeaderProps> = ({ title, subtitle }) => {
   return (
-    <YStack space="$2" marginBottom="$3">
+    <YStack gap="$2" marginBottom="$3">
       <THeading level={1} lineHeight={36}>
         {title}
       </THeading>

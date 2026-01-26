@@ -146,7 +146,7 @@ export const TDrawer: React.FC<TDrawerProps> = ({ isOpen, onClose }) => {
                         <XStack
                           paddingHorizontal="$4"
                           paddingVertical="$3"
-                          space="$3"
+                          gap="$3"
                           alignItems="center"
                           backgroundColor={
                             isActive ? "$backgroundHover" : undefined

@@ -49,7 +49,7 @@ const ExercisesScreen: React.FC<ExercisesScreenProps> = () => {
         subtitle={t("exercises.list.subtitle")}
       />
 
-      <TGrid columns={2} space="$3">
+      <TGrid columns={2} gap="$3">
         {exercises.map((item) => (
           <ExerciseCard
             key={item.id}

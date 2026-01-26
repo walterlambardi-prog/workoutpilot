@@ -33,7 +33,7 @@ export const TInput: React.FC<TInputProps> = ({
   ...props
 }) => {
   return (
-    <YStack space="$2">
+    <YStack gap="$2">
       {label && (
         <Label htmlFor={props.id} fontSize="$3" fontWeight="600" color="$color">
           {label}

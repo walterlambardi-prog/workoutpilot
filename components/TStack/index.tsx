@@ -6,7 +6,7 @@ import { XStack, XStackProps, YStack, YStackProps } from "tamagui";
  *
  * @example
  * ```tsx
- * <TStack space="$4" padding="$4">
+ * <TStack gap="$4" padding="$4">
  *   <Text>Item 1</Text>
  *   <Text>Item 2</Text>
  * </TStack>
@@ -21,7 +21,7 @@ export const TStack: React.FC<YStackProps> = ({ children, ...props }) => {
  *
  * @example
  * ```tsx
- * <TRow space="$2" alignItems="center">
+ * <TRow gap="$2" alignItems="center">
  *   <Icon />
  *   <Text>Label</Text>
  * </TRow>

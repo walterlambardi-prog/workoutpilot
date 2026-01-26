@@ -1,4 +1,4 @@
-import { THeading, TText } from "@/components/TText";
+import { TText } from "@/components/TText";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { Card, XStack, YStack, useMedia } from "tamagui";
@@ -38,9 +38,9 @@ export const TActionCard: React.FC<TActionCardProps> = ({
   const media = useMedia();
   const iconContainerSize = media.gtSm ? 80 : 64;
   const iconSize = media.gtSm ? 32 : 28;
-  const headingSize = media.gtSm ? "$6" : "$5";
+  const headingSize = "$6";
   const paddingSize = media.gtSm ? "$5" : "$4";
-  const bodySize = media.gtSm ? "$4" : "$4";
+  const bodySize = media.gtSm ? "$4" : "$3";
 
   return (
     <Card
@@ -51,16 +51,12 @@ export const TActionCard: React.FC<TActionCardProps> = ({
       hoverStyle={{ scale: 1 }}
       pressStyle={{ scale: 0.96 }}
       onPress={onPress}
-      accessible={true}
-      accessibilityRole="button"
-      accessibilityLabel={title}
-      accessibilityHint={accessibilityHint}
       backgroundColor="$background"
       borderColor="$borderColor"
       padding={paddingSize}
       cursor="pointer"
     >
-      <XStack space="$3" alignItems="center">
+      <XStack gap="$3" alignItems="center">
         {/* Icon Container */}
         <YStack
           width={iconContainerSize}
@@ -76,15 +72,10 @@ export const TActionCard: React.FC<TActionCardProps> = ({
         </YStack>
 
         {/* Content */}
-        <YStack flex={1} space="$1">
-          <THeading
-            level={3}
-            fontSize={headingSize}
-            fontWeight="800"
-            numberOfLines={1}
-          >
+        <YStack flex={1} gap="$1">
+          <TText fontSize={headingSize} fontWeight="800" numberOfLines={1}>
             {title}
-          </THeading>
+          </TText>
           <TText variant="body" fontSize={bodySize} opacity={0.8}>
             {description}
           </TText>

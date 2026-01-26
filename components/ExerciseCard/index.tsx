@@ -17,8 +17,8 @@ const ExerciseCard: React.FC<ExerciseCardProps> = ({
     ? [styles.thumbnail, styles.thumbnailLarge]
     : styles.thumbnail;
   const paddingSize = media.gtSm ? "$5" : "$4";
-  const headingSize = media.gtSm ? "$5" : "$6";
-  const bodySize = media.gtSm ? "$4" : "$5";
+  const headingSize = "$6";
+  const bodySize = media.gtSm ? "$4" : "$3";
 
   return (
     <Card
@@ -34,10 +34,10 @@ const ExerciseCard: React.FC<ExerciseCardProps> = ({
       padding={paddingSize}
       cursor="pointer"
     >
-      <XStack space="$3" alignItems="center">
+      <XStack gap="$3" alignItems="center">
         <Image source={image} style={thumbnailStyle} resizeMode="cover" />
 
-        <YStack flex={1} minWidth={0} space="$1">
+        <YStack flex={1} minWidth={0} gap="$1">
           <TText fontSize={headingSize} fontWeight="800" numberOfLines={1}>
             {title}
           </TText>
