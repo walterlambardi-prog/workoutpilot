@@ -87,15 +87,23 @@ const RoutineAnalysisScreen: React.FC = () => {
       setLoading(true);
       setError(null);
 
-      // Aggregate exercise performance
+      // Aggregate exercise performance with round details
       const exerciseMap = new Map<ExerciseId, ExercisePerformance>();
 
       routine.stepResults.forEach((step) => {
         const existing = exerciseMap.get(step.exerciseId);
+        const timePerRep = step.reps > 0 ? step.durationMs / step.reps : 0;
+
         if (existing) {
           existing.actualReps += step.reps;
           existing.durationMs += step.durationMs;
           existing.rounds += 1;
+          existing.roundDetails.push({
+            roundNumber: existing.rounds,
+            reps: step.reps,
+            durationMs: step.durationMs,
+            timePerRep,
+          });
         } else {
           exerciseMap.set(step.exerciseId, {
             exerciseId: step.exerciseId,
@@ -103,6 +111,14 @@ const RoutineAnalysisScreen: React.FC = () => {
             actualReps: step.reps,
             durationMs: step.durationMs,
             rounds: 1,
+            roundDetails: [
+              {
+                roundNumber: 1,
+                reps: step.reps,
+                durationMs: step.durationMs,
+                timePerRep,
+              },
+            ],
           });
         }
       });

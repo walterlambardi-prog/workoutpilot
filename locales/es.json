@@ -154,6 +154,7 @@
     "routineList": {
       "title": "Rutinas",
       "empty": "Aún no hay rutinas completadas",
+      "viewDetails": "Ver detalles de la rutina",
       "roundsLabel": "{{count}} rondas",
       "exercisesLabel": "{{count}} ejercicios",
       "actions": {
@@ -242,6 +243,7 @@
     },
     "actions": {
       "repeat": "Repetir rutina",
+      "analyze": "Análisis IA",
       "backToRoutine": "Volver a rutina",
       "home": "Ir al inicio"
     },

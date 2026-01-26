@@ -447,7 +447,20 @@ const SessionsScreen: React.FC = () => {
                 key={routine.id}
                 style={[styles.routineItem, { borderBottomColor: borderColor }]}
               >
-                <View style={styles.routineHeader}>
+                <Pressable
+                  onPress={() => {
+                    router.push({
+                      pathname: "/routine/complete",
+                      params: { sessionId: routine.id },
+                    });
+                  }}
+                  style={({ pressed }) => [
+                    styles.routineHeader,
+                    pressed ? { opacity: 0.7 } : null,
+                  ]}
+                  accessibilityRole="button"
+                  accessibilityLabel={t("sessions.routineList.viewDetails")}
+                >
                   <ThemedText style={styles.routineTitle}>
                     {t("sessions.routineList.roundsLabel", {
                       count: routine.rounds,
@@ -464,7 +477,7 @@ const SessionsScreen: React.FC = () => {
                     {formatDate(routine.completedAt)} · {routine.totalReps}{" "}
                     {t("sessions.labels.reps")}
                   </ThemedText>
-                </View>
+                </Pressable>
                 <View style={styles.routineActions}>
                   <Pressable
                     style={({ pressed }) => [

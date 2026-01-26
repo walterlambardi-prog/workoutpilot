@@ -59,12 +59,10 @@ const styles = StyleSheet.create({
     backgroundColor: "#16A34A",
     borderColor: "#15803D",
   },
-  buttonSecondary: {
-    backgroundColor: "transparent",
-  },
   buttonText: {
     fontSize: 15,
     fontWeight: "700",
+    textAlign: "center",
   },
   summaryCard: {
     borderRadius: 18,

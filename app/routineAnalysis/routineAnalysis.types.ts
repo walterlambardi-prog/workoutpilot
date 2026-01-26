@@ -4,12 +4,20 @@ export interface RoutineAnalysisScreenProps {
   routineId?: string;
 }
 
+export interface RoundPerformance {
+  roundNumber: number;
+  reps: number;
+  durationMs: number;
+  timePerRep: number; // durationMs / reps
+}
+
 export interface ExercisePerformance {
   exerciseId: ExerciseId;
   targetReps: number;
   actualReps: number;
   durationMs: number;
   rounds: number;
+  roundDetails: RoundPerformance[]; // Individual round data for consistency analysis
 }
 
 export interface RoutineAnalysisRequest {

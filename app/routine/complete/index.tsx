@@ -143,6 +143,13 @@ const RoutineCompleteScreen: React.FC<RoutineCompleteScreenProps> = () => {
     router.replace("/");
   };
 
+  const handleAnalyzeRoutine = () => {
+    router.push({
+      pathname: "/routineAnalysis",
+      params: { routineId: session.id },
+    });
+  };
+
   return (
     <ThemedView
       style={[
@@ -230,7 +237,6 @@ const RoutineCompleteScreen: React.FC<RoutineCompleteScreenProps> = () => {
             onPress={handleRepeat}
             style={({ pressed }) => [
               styles.button,
-              styles.buttonPrimary,
               pressed ? { opacity: 0.9 } : null,
             ]}
             accessibilityRole="button"
@@ -241,10 +247,22 @@ const RoutineCompleteScreen: React.FC<RoutineCompleteScreenProps> = () => {
             </ThemedText>
           </Pressable>
           <Pressable
+            onPress={handleAnalyzeRoutine}
+            style={({ pressed }) => [
+              styles.button,
+              pressed ? { opacity: 0.9 } : null,
+            ]}
+            accessibilityRole="button"
+            accessibilityLabel={t("routineComplete.actions.analyze")}
+          >
+            <ThemedText style={styles.buttonText}>
+              {t("routineComplete.actions.analyze")}
+            </ThemedText>
+          </Pressable>
+          <Pressable
             onPress={handleBackToRoutine}
             style={({ pressed }) => [
               styles.button,
-              styles.buttonSecondary,
               pressed ? { opacity: 0.8 } : null,
             ]}
             accessibilityRole="button"
@@ -258,7 +276,6 @@ const RoutineCompleteScreen: React.FC<RoutineCompleteScreenProps> = () => {
             onPress={handleGoHome}
             style={({ pressed }) => [
               styles.button,
-              styles.buttonSecondary,
               pressed ? { opacity: 0.8 } : null,
             ]}
             accessibilityRole="button"
