@@ -24,7 +24,12 @@
     "continueButton": "Continue",
     "errorEmpty": "Please enter a name",
     "errorTooShort": "Name must be at least 2 characters",
-    "errorTooLong": "Name must be less than 30 characters"
+    "errorTooLong": "Name must be less than 30 characters",
+    "highlights": {
+      "secure": "Your data stays on device",
+      "fast": "Start in seconds with one field",
+      "personalized": "Get personalized coaching after login"
+    }
   },
   "onboarding": {
     "skip": "Skip",

@@ -1,19 +1,15 @@
+import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  TextInput,
-  View,
-} from "react-native";
+import { KeyboardAvoidingView, Platform } from "react-native";
+import { Card, Separator, XStack, YStack, useMedia, useTheme } from "tamagui";
 
-import { ThemedText } from "@/components/ThemedText";
-import { useThemeColor } from "@/hooks/useThemeColor";
+import { TButton } from "@/components/TButton";
+import { TInput } from "@/components/TInput";
+import { TTag } from "@/components/TTag";
+import { THeading, TText } from "@/components/TText";
 import { useAuthStore } from "@/stores/authStore";
-
-import styles from "./login.styles";
 
 /**
  * Login screen - first entry point to the app
@@ -22,20 +18,16 @@ import styles from "./login.styles";
 const LoginScreen: React.FC = () => {
   const { t } = useTranslation();
   const router = useRouter();
+  const theme = useTheme();
+  const media = useMedia();
   const [username, setUsername] = useState("");
   const [error, setError] = useState("");
-  const [isFocused, setIsFocused] = useState(false);
 
   const setStoredUsername = useAuthStore(
     (state: { setUsername: (username: string) => void }) => state.setUsername,
   );
-  const backgroundColor = useThemeColor({}, "background");
-  const textColor = useThemeColor({}, "text");
-  const borderColor = useThemeColor({}, "tint");
-  const inputBackgroundColor = useThemeColor(
-    { light: "#f3f4f6", dark: "#1f2937" },
-    "background",
-  );
+  const accentColor =
+    theme.primary?.val ?? theme.color10?.val ?? theme.color?.val;
 
   const validateUsername = (value: string): string => {
     if (!value.trim()) {
@@ -70,81 +62,109 @@ const LoginScreen: React.FC = () => {
   };
 
   const isValid = username.trim().length >= 2 && username.trim().length <= 30;
+  const badgeIconSize = media.gtSm ? 20 : 18;
+  const headingSize = media.gtSm ? "$8" : "$7";
+  const cardPadding = media.gtSm ? "$6" : "$5";
+  const gapSize = media.gtSm ? "$5" : "$4";
+
+  const highlights = useMemo(
+    () => [
+      {
+        icon: "shield-checkmark-outline" as const,
+        text: t("login.highlights.secure"),
+      },
+      {
+        icon: "flash-outline" as const,
+        text: t("login.highlights.fast"),
+      },
+      {
+        icon: "sparkles-outline" as const,
+        text: t("login.highlights.personalized"),
+      },
+    ],
+    [t],
+  );
 
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={[styles.container, { backgroundColor }]}
+      style={{ flex: 1 }}
     >
-      <View style={styles.content}>
-        <View style={styles.header}>
-          <ThemedText style={styles.title} type="title">
-            {t("login.title")}
-          </ThemedText>
-          <ThemedText style={styles.subtitle} type="subtitle">
-            {t("login.subtitle")}
-          </ThemedText>
-          <ThemedText style={styles.description}>
-            {t("login.description")}
-          </ThemedText>
-        </View>
-
-        <View style={styles.form}>
-          <View style={styles.inputContainer}>
-            <ThemedText style={styles.label}>
-              {t("login.inputLabel")}
-            </ThemedText>
-            <TextInput
-              style={[
-                styles.input,
-                {
-                  backgroundColor: inputBackgroundColor,
-                  borderColor: error
-                    ? "#ef4444"
-                    : isFocused
-                      ? borderColor
-                      : "transparent",
-                  color: textColor,
-                },
-                isFocused && styles.inputFocused,
-              ]}
-              value={username}
-              onChangeText={handleChangeText}
-              onFocus={() => setIsFocused(true)}
-              onBlur={() => setIsFocused(false)}
-              placeholder={t("login.inputPlaceholder")}
-              placeholderTextColor={textColor + "80"}
-              autoCapitalize="words"
-              autoCorrect={false}
-              maxLength={30}
-              returnKeyType="done"
-              onSubmitEditing={handleContinue}
-              accessibilityLabel={t("login.inputLabel")}
-              accessibilityHint={t("login.description")}
+      <YStack
+        flex={1}
+        backgroundColor="$background"
+        paddingHorizontal="$4"
+        paddingVertical="$6"
+        justifyContent="center"
+      >
+        <YStack width="100%" maxWidth={540} alignSelf="center" gap={gapSize}>
+          <YStack gap="$3" alignItems="flex-start">
+            <TTag
+              iconName="flash-outline"
+              iconSize={badgeIconSize}
+              label={t("login.subtitle")}
+              tone="primary"
             />
-            {error ? (
-              <ThemedText style={styles.errorText}>{error}</ThemedText>
-            ) : null}
-          </View>
+            <THeading level={1} fontSize={headingSize} fontWeight="800">
+              {t("login.title")}
+            </THeading>
+            <TText opacity={0.8}>{t("login.description")}</TText>
+          </YStack>
 
-          <Pressable
-            onPress={handleContinue}
-            disabled={!isValid}
-            style={({ pressed }) => [
-              styles.button,
-              !isValid && styles.buttonDisabled,
-              pressed && styles.buttonPressed,
-            ]}
-            accessibilityRole="button"
-            accessibilityLabel={t("login.continueButton")}
-            accessibilityState={{ disabled: !isValid }}
+          <Card
+            padded
+            bordered
+            backgroundColor="$background"
+            padding={cardPadding}
           >
-            <ThemedText style={styles.buttonText}>
-              {t("login.continueButton")}
-            </ThemedText>
-          </Pressable>
-        </View>
-      </View>
+            <YStack gap="$4">
+              <TInput
+                label={t("login.inputLabel")}
+                placeholder={t("login.inputPlaceholder")}
+                value={username}
+                onChangeText={handleChangeText}
+                autoCapitalize="words"
+                autoCorrect={false}
+                maxLength={30}
+                returnKeyType="done"
+                onSubmitEditing={handleContinue}
+                accessibilityHint={t("login.description")}
+                error={error || undefined}
+              />
+
+              <Separator />
+
+              <YStack gap="$3">
+                {highlights.map((item) => (
+                  <XStack key={item.icon} gap="$2" alignItems="center">
+                    <Ionicons
+                      name={item.icon}
+                      size={18}
+                      color={accentColor}
+                      accessibilityElementsHidden
+                    />
+                    <TText variant="label" opacity={0.85}>
+                      {item.text}
+                    </TText>
+                  </XStack>
+                ))}
+              </YStack>
+
+              <TButton
+                fullWidth
+                onPress={handleContinue}
+                disabled={!isValid}
+                iconAfterName="arrow-forward"
+                iconColor={theme.color1?.val}
+                accessibilityLabel={t("login.continueButton")}
+                accessibilityState={{ disabled: !isValid }}
+              >
+                {t("login.continueButton")}
+              </TButton>
+            </YStack>
+          </Card>
+        </YStack>
+      </YStack>
     </KeyboardAvoidingView>
   );
 };

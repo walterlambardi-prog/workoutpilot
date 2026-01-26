@@ -13,9 +13,11 @@
 
 - No inline styles in components; move to `*.styles.ts` using StyleSheet/Tamagui tokens.
 - Use Tamagui tokens (`$color`, `$background`, `$primary`, `$space`) instead of hardcoded values.
+- Prefer shared Tamagui primitives (e.g., `TButton`) for buttons; if a reusable primitive is missing, create it under `components/` with `index.tsx` + `*.types.ts` (+ `*.styles.ts` when needed) before using raw Tamagui components.
 - Ensure text containers in headers use `flex: 1` and `minWidth: 0` to avoid clipping on mobile.
 - Header/Drawer: use `TAppHeader` and `TDrawer` with copy from locales (no hardcoded strings); keep active-route highlight.
 - Fix the onboarding.types.ts warning if touched; lint must be clean when you modify that area.
+- When modifying UI, audit and delete unused style files/entries and copies left from prior implementations (especially during Tamagui migrations).
 
 ## 🗣 Copy & Localization
 

@@ -1,1 +1,1 @@
-// Reserved for future login screen type definitions
+export type LoginScreenProps = Record<string, never>;

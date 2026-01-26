@@ -1,9 +1,9 @@
 import { ButtonProps } from "tamagui";
 
-type VariantKey = "primary" | "secondary" | "outline" | "ghost";
+import type { TButtonVariant } from "./TButton.types";
 
 type VariantStyles = Record<
-  VariantKey,
+  TButtonVariant,
   {
     backgroundColor: ButtonProps["backgroundColor"];
     color: ButtonProps["color"];
@@ -13,9 +13,12 @@ type VariantStyles = Record<
   }
 >;
 
+export const BUTTON_ICON_SIZE = 20;
+
 export const VARIANT_STYLES: VariantStyles = {
   primary: {
     backgroundColor: "$primary",
+    // Use theme text color for better contrast across themes
     color: "$color",
     hoverStyle: { backgroundColor: "$primary", opacity: 0.9 },
     pressStyle: { backgroundColor: "$primary", opacity: 0.8 },
