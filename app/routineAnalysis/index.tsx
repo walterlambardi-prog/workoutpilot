@@ -56,7 +56,11 @@ const RoutineAnalysisScreen: React.FC = () => {
     return errorColor;
   };
 
-  const performAnalysis = async () => {
+  const handleReanalyze = () => {
+    performAnalysis(true);
+  };
+
+  const performAnalysis = async (forceRefresh = false) => {
     if (!routineId) {
       setError(t("routineAnalysis.errors.noRoutineId"));
       setLoading(false);
@@ -65,7 +69,7 @@ const RoutineAnalysisScreen: React.FC = () => {
 
     // Check if analysis is already cached
     const cachedAnalysis = getAnalysis(routineId);
-    if (cachedAnalysis) {
+    if (cachedAnalysis && !forceRefresh) {
       setAnalysis(cachedAnalysis);
       setLoading(false);
       return;
@@ -167,7 +171,7 @@ const RoutineAnalysisScreen: React.FC = () => {
             <ThemedText style={styles.errorText}>{error}</ThemedText>
             <Pressable
               style={[styles.retryButton, { backgroundColor: errorColor }]}
-              onPress={performAnalysis}
+              onPress={() => performAnalysis(false)}
             >
               <ThemedText
                 style={[styles.retryButtonText, { color: "#ffffff" }]}
@@ -188,6 +192,7 @@ const RoutineAnalysisScreen: React.FC = () => {
   return (
     <ScrollView
       style={[styles.page, { backgroundColor }]}
+      contentContainerStyle={styles.scrollContent}
       showsVerticalScrollIndicator={false}
     >
       <ScreenHeader
@@ -351,6 +356,15 @@ const RoutineAnalysisScreen: React.FC = () => {
             </View>
           ))}
         </ThemedView>
+
+        <Pressable
+          style={[styles.reanalyzeButton, { backgroundColor: successColor }]}
+          onPress={handleReanalyze}
+        >
+          <ThemedText style={styles.reanalyzeButtonText}>
+            {t("routineAnalysis.reanalyze")}
+          </ThemedText>
+        </Pressable>
       </View>
     </ScrollView>
   );

@@ -8,7 +8,7 @@ const styles = StyleSheet.create({
   },
   listContent: {
     paddingHorizontal: ScreenPadding.horizontal,
-    paddingBottom: ScreenPadding.bottom,
+    paddingBottom: Spacing.xxxl,
   },
   header: {
     paddingTop: ScreenPadding.vertical,

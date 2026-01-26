@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { Platform, StyleSheet } from "react-native";
 
 import { ScreenPadding, Spacing } from "@/constants/theme";
 
@@ -6,8 +6,10 @@ const styles = StyleSheet.create({
   page: {
     flex: 1,
     paddingHorizontal: ScreenPadding.horizontal,
-    paddingTop: ScreenPadding.vertical,
-    paddingBottom: ScreenPadding.bottom,
+    paddingVertical: ScreenPadding.vertical,
+  },
+  scrollContent: {
+    paddingBottom: Platform.OS === "web" ? 0 : Spacing.xxxl + Spacing.xxxl,
   },
   content: {
     gap: Spacing.md,
@@ -41,6 +43,19 @@ const styles = StyleSheet.create({
   retryButtonText: {
     fontSize: 15,
     fontWeight: "600",
+  },
+  reanalyzeButton: {
+    paddingVertical: Spacing.lg,
+    paddingHorizontal: Spacing.xl,
+    borderRadius: Spacing.md,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: Spacing.md,
+  },
+  reanalyzeButtonText: {
+    fontSize: 15,
+    fontWeight: "700",
+    color: "#ffffff",
   },
   scoreCard: {
     padding: Spacing.xl,
