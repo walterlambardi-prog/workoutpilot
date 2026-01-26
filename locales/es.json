@@ -151,6 +151,17 @@
       "topExercise": "Ejercicio destacado en rutina",
       "empty": "Sin historial de rutinas"
     },
+    "routineList": {
+      "title": "Rutinas",
+      "empty": "Aún no hay rutinas completadas",
+      "roundsLabel": "{{count}} rondas",
+      "exercisesLabel": "{{count}} ejercicios",
+      "actions": {
+        "start": "Iniciar",
+        "edit": "Editar",
+        "analyze": "Analizar"
+      }
+    },
     "breakdown": {
       "title": "Detalle por ejercicio",
       "sessionsLabel": "{{count}} sesiones",

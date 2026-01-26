@@ -151,6 +151,17 @@
       "topExercise": "Top routine exercise",
       "empty": "No routine history"
     },
+    "routineList": {
+      "title": "Routines",
+      "empty": "No routines completed yet",
+      "roundsLabel": "{{count}} rounds",
+      "exercisesLabel": "{{count}} exercises",
+      "actions": {
+        "start": "Start",
+        "edit": "Edit",
+        "analyze": "Analyze"
+      }
+    },
     "breakdown": {
       "title": "Exercise breakdown",
       "sessionsLabel": "{{count}} sessions",

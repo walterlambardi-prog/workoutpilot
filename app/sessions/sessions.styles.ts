@@ -90,6 +90,50 @@ const styles = StyleSheet.create({
   breakdownBadge: {
     alignItems: "flex-end",
   },
+  routineItem: {
+    paddingVertical: Spacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: "transparent",
+  },
+  routineHeader: {
+    marginBottom: Spacing.sm,
+  },
+  routineTitle: {
+    fontSize: 15,
+    fontWeight: "600",
+  },
+  routineSubtitle: {
+    fontSize: 13,
+    marginTop: 2,
+  },
+  routineActions: {
+    flexDirection: "row",
+    gap: Spacing.sm,
+    marginTop: Spacing.sm,
+  },
+  actionButton: {
+    flex: 1,
+    paddingVertical: Spacing.sm,
+    paddingHorizontal: Spacing.md,
+    borderRadius: Spacing.sm,
+    borderWidth: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  actionButtonPrimary: {
+    backgroundColor: "#3b82f6",
+    borderColor: "#3b82f6",
+  },
+  actionButtonSecondary: {
+    backgroundColor: "transparent",
+  },
+  actionButtonText: {
+    fontSize: 13,
+    fontWeight: "600",
+  },
+  actionButtonTextPrimary: {
+    color: "#ffffff",
+  },
 });
 
 export default styles;

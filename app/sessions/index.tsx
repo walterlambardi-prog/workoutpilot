@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Image, ScrollView, View } from "react-native";
+import { Image, Pressable, ScrollView, View } from "react-native";
 
 import { EXERCISE_DEFINITION_MAP } from "@/app/exercises/exercises.data";
 import ScreenHeader from "@/components/ScreenHeader";
@@ -13,8 +13,13 @@ import {
     type RoutineSession,
     useRoutineSessionStore,
 } from "@/stores/routineSessionStore";
+import { useRouter } from "expo-router";
 import styles from "./sessions.styles";
-import type { SessionListItem, SessionStatItem } from "./sessions.types";
+import type {
+  RoutineListItem,
+  SessionListItem,
+  SessionStatItem,
+} from "./sessions.types";
 
 const formatDuration = (ms?: number) => {
   if (!ms || ms < 0) return "--";
@@ -31,6 +36,7 @@ const formatDate = (timestamp?: number) => {
 
 const SessionsScreen: React.FC = () => {
   const { t } = useTranslation();
+  const router = useRouter();
   const { currentSession, history } = useExerciseSessionStore();
   const { history: routineHistory, lastCompletedSession } =
     useRoutineSessionStore();
@@ -355,6 +361,27 @@ const SessionsScreen: React.FC = () => {
       };
     });
 
+  const routineList: RoutineListItem[] = routineHistory
+    .slice(0, 8)
+    .filter((session) => session.completedAt)
+    .map((session): RoutineListItem => {
+      const uniqueExercises = new Set(
+        session.plan.map((step) => step.exerciseId),
+      ).size;
+      const durationMs = session.completedAt
+        ? session.completedAt - session.startedAt
+        : 0;
+
+      return {
+        id: session.id,
+        rounds: session.rounds,
+        totalReps: session.totalReps,
+        exerciseCount: uniqueExercises,
+        durationMs,
+        completedAt: session.completedAt ?? session.startedAt,
+      };
+    });
+
   return (
     <ScrollView
       style={[styles.page, { backgroundColor }]}
@@ -399,6 +426,125 @@ const SessionsScreen: React.FC = () => {
               <ThemedText style={styles.statValue}>{item.value}</ThemedText>
             </View>
           ))}
+        </ThemedView>
+        <ThemedView
+          style={[styles.card, { backgroundColor: surfaceColor, borderColor }]}
+          lightColor="transparent"
+          darkColor="transparent"
+        >
+          <ThemedText style={styles.cardTitle}>
+            {t("sessions.routineList.title")}
+          </ThemedText>
+          {routineList.length === 0 ? (
+            <ThemedText style={[styles.empty, { color: subtleText }]}>
+              {t("sessions.routineList.empty")}
+            </ThemedText>
+          ) : (
+            routineList.map((routine) => (
+              <View
+                key={routine.id}
+                style={[styles.routineItem, { borderBottomColor: borderColor }]}
+              >
+                <View style={styles.routineHeader}>
+                  <ThemedText style={styles.routineTitle}>
+                    {t("sessions.routineList.roundsLabel", {
+                      count: routine.rounds,
+                    })}{" "}
+                    ·{" "}
+                    {t("sessions.routineList.exercisesLabel", {
+                      count: routine.exerciseCount,
+                    })}
+                  </ThemedText>
+                  <ThemedText
+                    style={[styles.routineSubtitle, { color: mutedText }]}
+                  >
+                    {formatDuration(routine.durationMs)} ·{" "}
+                    {formatDate(routine.completedAt)} ·{" "}
+                    {routine.totalReps} {t("sessions.labels.reps")}
+                  </ThemedText>
+                </View>
+                <View style={styles.routineActions}>
+                  <Pressable
+                    style={({ pressed }) => [
+                      styles.actionButton,
+                      styles.actionButtonPrimary,
+                      pressed ? { opacity: 0.8 } : null,
+                    ]}
+                    onPress={() => {
+                      // Restart the routine from history
+                      const sessionId =
+                        useRoutineSessionStore
+                          .getState()
+                          .restartFromSession(routine.id);
+                      if (sessionId) {
+                        const activeSession =
+                          useRoutineSessionStore.getState().activeSession;
+                        const firstStep = activeSession?.plan[0];
+                        if (firstStep) {
+                          router.push({
+                            pathname: "/exercises/[exerciseId]",
+                            params: {
+                              exerciseId: firstStep.exerciseId,
+                              routineId: sessionId,
+                              stepIndex: "0",
+                            },
+                          });
+                        }
+                      }
+                    }}
+                    accessibilityRole="button"
+                    accessibilityLabel={t("sessions.routineList.actions.start")}
+                  >
+                    <ThemedText
+                      style={[
+                        styles.actionButtonText,
+                        styles.actionButtonTextPrimary,
+                      ]}
+                    >
+                      {t("sessions.routineList.actions.start")}
+                    </ThemedText>
+                  </Pressable>
+                  <Pressable
+                    style={({ pressed }) => [
+                      styles.actionButton,
+                      styles.actionButtonSecondary,
+                      { borderColor },
+                      pressed ? { opacity: 0.6 } : null,
+                    ]}
+                    onPress={() => {
+                      // Navigate to routine builder
+                      router.push("/routine");
+                    }}
+                    accessibilityRole="button"
+                    accessibilityLabel={t("sessions.routineList.actions.edit")}
+                  >
+                    <ThemedText style={styles.actionButtonText}>
+                      {t("sessions.routineList.actions.edit")}
+                    </ThemedText>
+                  </Pressable>
+                  <Pressable
+                    style={({ pressed }) => [
+                      styles.actionButton,
+                      styles.actionButtonSecondary,
+                      { borderColor },
+                      pressed ? { opacity: 0.6 } : null,
+                    ]}
+                    onPress={() => {
+                      // TODO: Implement analyze functionality
+                    }}
+                    accessibilityRole="button"
+                    accessibilityLabel={t(
+                      "sessions.routineList.actions.analyze",
+                    )}
+                  >
+                    <ThemedText style={styles.actionButtonText}>
+                      {t("sessions.routineList.actions.analyze")}
+                    </ThemedText>
+                  </Pressable>
+                </View>
+              </View>
+            ))
+          )}
         </ThemedView>
         <ThemedView
           style={[styles.card, { backgroundColor: surfaceColor, borderColor }]}
