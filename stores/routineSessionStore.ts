@@ -1,6 +1,7 @@
 import type { StateCreator, StoreApi, UseBoundStore } from "zustand";
 import type { PersistOptions } from "zustand/middleware";
 
+import type { RoutineAnalysisResponse } from "@/app/routineAnalysis/routineAnalysis.types";
 import { ExerciseId } from "@/constants/exercises";
 import { createCrossPlatformStorage } from "@/utils/storage";
 
@@ -47,6 +48,7 @@ interface RoutineSessionState {
   activeSession: RoutineSession | null;
   lastCompletedSession: RoutineSession | null;
   history: RoutineSession[];
+  analysisCache: Record<string, RoutineAnalysisResponse>;
   startSession: (plan: RoutinePlanStepBase[], rounds: number) => string;
   recordProgress: (reps: number) => void;
   completeCurrentStep: (params?: { repsOverride?: number }) => {
@@ -56,6 +58,8 @@ interface RoutineSessionState {
   };
   jumpToStep: (stepIndex: number) => void;
   restartFromSession: (sessionId: string) => string | null;
+  saveAnalysis: (routineId: string, analysis: RoutineAnalysisResponse) => void;
+  getAnalysis: (routineId: string) => RoutineAnalysisResponse | null;
   resetActive: () => void;
   resetHistory: () => void;
 }
@@ -99,6 +103,7 @@ export const useRoutineSessionStore = createTyped<RoutineSessionState>(
       activeSession: null,
       lastCompletedSession: null,
       history: [],
+      analysisCache: {},
       startSession: (plan, rounds) => {
         const normalizedPlan = mapPlanWithIndex(plan);
         if (normalizedPlan.length === 0) {
@@ -263,12 +268,26 @@ export const useRoutineSessionStore = createTyped<RoutineSessionState>(
           source.rounds,
         );
       },
+      saveAnalysis: (routineId, analysis) => {
+        set((state) => ({
+          ...state,
+          analysisCache: {
+            ...state.analysisCache,
+            [routineId]: analysis,
+          },
+        }));
+      },
+      getAnalysis: (routineId) => {
+        const { analysisCache } = get();
+        return analysisCache[routineId] ?? null;
+      },
       resetActive: () => set((state) => ({ ...state, activeSession: null })),
       resetHistory: () =>
         set({
           activeSession: null,
           lastCompletedSession: null,
           history: [],
+          analysisCache: {},
         }),
     }),
     {
@@ -279,6 +298,7 @@ export const useRoutineSessionStore = createTyped<RoutineSessionState>(
         history: state.history,
         lastCompletedSession: state.lastCompletedSession,
         activeSession: state.activeSession,
+        analysisCache: state.analysisCache,
       }),
       merge: (persisted, current) => {
         const data = persisted as PersistedState;

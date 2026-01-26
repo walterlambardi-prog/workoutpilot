@@ -21,7 +21,7 @@ import type {
 const RoutineAnalysisScreen: React.FC = () => {
   const { t, i18n } = useTranslation();
   const { routineId } = useLocalSearchParams<{ routineId: string }>();
-  const { history } = useRoutineSessionStore();
+  const { history, getAnalysis, saveAnalysis } = useRoutineSessionStore();
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -59,6 +59,14 @@ const RoutineAnalysisScreen: React.FC = () => {
   const performAnalysis = async () => {
     if (!routineId) {
       setError(t("routineAnalysis.errors.noRoutineId"));
+      setLoading(false);
+      return;
+    }
+
+    // Check if analysis is already cached
+    const cachedAnalysis = getAnalysis(routineId);
+    if (cachedAnalysis) {
+      setAnalysis(cachedAnalysis);
       setLoading(false);
       return;
     }
@@ -107,6 +115,7 @@ const RoutineAnalysisScreen: React.FC = () => {
 
       const result = await analyzeRoutine(requestData, i18n.language);
       setAnalysis(result);
+      saveAnalysis(routineId, result);
     } catch (err) {
       console.error("Analysis error:", err);
       setError(
