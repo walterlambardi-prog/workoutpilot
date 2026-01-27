@@ -62,7 +62,8 @@ const AiCoachScreen: React.FC = () => {
   const bodySize = media.md ? "$4" : "$3";
   const labelSize = media.md ? "$4" : "$3";
   const metaSize = media.md ? "$3" : "$2";
-  const sendIconColor = (theme as { onPrimary?: { val?: string } }).onPrimary?.val || "#0f172a";
+  const sendIconColor =
+    (theme as { onPrimary?: { val?: string } }).onPrimary?.val || "#0f172a";
 
   const handleSendWithDismiss = () => {
     handleSend();
@@ -400,9 +401,13 @@ const AiCoachScreen: React.FC = () => {
                 );
               }
 
-              const bubbleColor = isUser ? "$backgroundPress" : "$backgroundHover";
+              const bubbleColor = isUser
+                ? "$backgroundPress"
+                : "$backgroundHover";
               const bubbleText = "$color";
-              const bubbleBorder = isUser ? "$borderColorHover" : "$borderColor";
+              const bubbleBorder = isUser
+                ? "$borderColorHover"
+                : "$borderColor";
 
               return (
                 <YStack
