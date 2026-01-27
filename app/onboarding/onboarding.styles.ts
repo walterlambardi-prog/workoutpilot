@@ -26,11 +26,14 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   imageContainer: {
-    width: "100%",
-    maxWidth: 300,
-    aspectRatio: 1,
-    borderRadius: Spacing.xxl,
+    width: 220,
+    height: 220,
+    borderRadius: 24,
     overflow: "hidden",
+    alignSelf: "center",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: Spacing.lg,
   },
   image: {
     width: "100%",
