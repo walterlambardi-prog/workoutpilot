@@ -13,6 +13,7 @@ import {
   XStack,
   YStack,
   useMedia,
+  useTheme,
 } from "tamagui";
 
 import ScreenHeader from "@/components/ScreenHeader";
@@ -38,6 +39,7 @@ const AiCoachScreen: React.FC = () => {
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const media = useMedia();
+  const theme = useTheme();
   const scrollRef = useRef<ScrollView>(null);
   const {
     input,
@@ -60,6 +62,7 @@ const AiCoachScreen: React.FC = () => {
   const bodySize = media.md ? "$4" : "$3";
   const labelSize = media.md ? "$4" : "$3";
   const metaSize = media.md ? "$3" : "$2";
+  const sendIconColor = (theme as { onPrimary?: { val?: string } }).onPrimary?.val || "#0f172a";
 
   const handleSendWithDismiss = () => {
     handleSend();
@@ -118,7 +121,7 @@ const AiCoachScreen: React.FC = () => {
         <TTag
           iconName="barbell-outline"
           label={t("aiCoach.planRoundsLabel", { rounds: parsed.rounds ?? 1 })}
-          tone="primary"
+          tone="neutral"
         />
       </XStack>
 
@@ -397,9 +400,9 @@ const AiCoachScreen: React.FC = () => {
                 );
               }
 
-              const bubbleColor = isUser ? "$primary" : "$backgroundHover";
-              const bubbleText = isUser ? "$onPrimary" : "$color";
-              const bubbleBorder = isUser ? "$primary" : "$borderColor";
+              const bubbleColor = isUser ? "$backgroundPress" : "$backgroundHover";
+              const bubbleText = "$color";
+              const bubbleBorder = isUser ? "$borderColorHover" : "$borderColor";
 
               return (
                 <YStack
@@ -480,7 +483,7 @@ const AiCoachScreen: React.FC = () => {
                 <Ionicons
                   name="arrow-up"
                   size={18}
-                  color="white"
+                  color={sendIconColor}
                   accessibilityElementsHidden
                 />
               }
