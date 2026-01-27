@@ -3,13 +3,17 @@ import { useRouter } from "expo-router";
 import React, { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import {
-  FlatList,
-  ImageBackground,
-  Pressable,
-  View,
-  type ListRenderItemInfo,
-} from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+  Button,
+  Card,
+  Image,
+  ScrollView,
+  Separator,
+  Text,
+  XStack,
+  YStack,
+  useMedia,
+  useTheme,
+} from "tamagui";
 
 import { EXERCISE_DEFINITIONS } from "@/app/exercises/exercises.data";
 import type {
@@ -17,87 +21,45 @@ import type {
   RoutineExerciseListItem,
 } from "@/app/routine/routine.types";
 import ScreenHeader from "@/components/ScreenHeader";
-import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
+import { TButton } from "@/components/TButton";
+import { TGrid } from "@/components/TGrid";
 import { ALLOWED_EXERCISES } from "@/constants/exercises";
-import { BACKGROUND_IMAGES } from "@/constants/images";
-import { ScreenPadding } from "@/constants/theme";
-import { useColorScheme } from "@/hooks/useColorScheme";
+import { Spacing } from "@/constants/theme";
 import {
   ROUTINE_DEFAULT_REPS,
   useRoutineBuilderStore,
 } from "@/stores/routineBuilderStore";
 import { useRoutineSessionStore } from "@/stores/routineSessionStore";
-import styles from "./routine.styles";
+import { styles } from "./routine.styles";
 
-interface StepperButtonProps {
+const StepperButton: React.FC<{
   icon: keyof typeof Ionicons.glyphMap;
   onPress: () => void;
   accessibilityLabel: string;
   disabled?: boolean;
-  colorScheme: "light" | "dark";
-  variant?: "default" | "compact";
-}
-
-const StepperButton: React.FC<StepperButtonProps> = React.memo(
-  ({
-    icon,
-    onPress,
-    accessibilityLabel,
-    disabled,
-    colorScheme,
-    variant = "default",
-  }) => {
-    const buttonStyle = useCallback(
-      (state: { pressed: boolean }) => [
-        styles.stepperButton,
-        variant === "compact" ? styles.stepperButtonCompact : null,
-        disabled ? styles.stepperButtonDisabled : null,
-        state.pressed && !disabled ? styles.stepperButtonPressed : null,
-      ],
-      [variant, disabled],
-    );
-
-    return (
-      <Pressable
-        onPress={onPress}
-        disabled={disabled}
-        accessibilityRole="button"
-        accessibilityLabel={accessibilityLabel}
-        style={buttonStyle}
-      >
-        <Ionicons
-          name={icon}
-          size={20}
-          color={
-            disabled
-              ? "#94A3B8"
-              : colorScheme === "dark"
-                ? "#F8FAFC"
-                : "#111827"
-          }
-        />
-      </Pressable>
-    );
-  },
+  iconColor?: string;
+}> = ({ icon, onPress, accessibilityLabel, disabled, iconColor }) => (
+  <Button
+    size="$3"
+    circular
+    chromeless
+    backgroundColor="$backgroundHover"
+    borderColor="$borderColor"
+    borderWidth={1}
+    onPress={onPress}
+    disabled={disabled}
+    aria-label={accessibilityLabel}
+    icon={
+      <Ionicons name={icon} size={18} color={iconColor ?? "currentColor"} />
+    }
+  />
 );
-
-StepperButton.displayName = "StepperButton";
-
-const TOGGLE_HIT_SLOP = { top: 8, right: 8, bottom: 8, left: 8 } as const;
-
-const ItemSeparator = () => <View style={styles.separator} />;
 
 const RoutineBuilderScreen: React.FC<RoutineBuilderScreenProps> = () => {
   const { t } = useTranslation();
-  const insets = useSafeAreaInsets();
-  const colorScheme = (useColorScheme() ?? "light") as "light" | "dark";
+  const media = useMedia();
+  const theme = useTheme();
   const router = useRouter();
-
-  const roundsCardTone =
-    colorScheme === "dark" ? styles.roundsCardDark : styles.roundsCardLight;
-  const exerciseCardTone =
-    colorScheme === "dark" ? styles.exerciseCardDark : styles.exerciseCardLight;
 
   const rounds = useRoutineBuilderStore((state) => state.rounds);
   const exercises = useRoutineBuilderStore((state) => state.exercises);
@@ -129,16 +91,44 @@ const RoutineBuilderScreen: React.FC<RoutineBuilderScreenProps> = () => {
       })),
     [t],
   );
-
   const selectedCount = useMemo(
-    () => Object.values(exercises).filter((config) => config.isSelected).length,
-    [exercises],
+    () =>
+      exerciseList.reduce((count, item) => {
+        const config = exercises[item.id];
+        return config?.isSelected === false ? count : count + 1;
+      }, 0),
+    [exerciseList, exercises],
   );
 
-  const keyExtractor = useCallback(
-    (item: RoutineExerciseListItem) => item.id,
-    [],
+  const titleSize = media.md ? "$6" : "$5";
+  const bodySize = media.md ? "$4" : "$3";
+  const metaSize = media.md ? "$3" : "$2";
+
+  const resolveToken = useCallback(
+    (token?: string) => {
+      if (!token) return undefined;
+      const key = token.startsWith("$") ? token.slice(1) : token;
+      const value = (theme as Record<string, unknown>)[key];
+      if (value && typeof value === "object" && "val" in (value as object)) {
+        return (value as { val?: string }).val;
+      }
+      if (typeof value === "string") return value;
+      return undefined;
+    },
+    [theme],
   );
+
+  const withAlpha = useCallback((color?: string, alpha = "55") => {
+    if (!color) return undefined;
+    if (/^#([0-9a-fA-F]{6})$/.test(color)) {
+      return `${color}${alpha}`;
+    }
+    return color;
+  }, []);
+
+  const iconPrimary = resolveToken("$color") ?? "#0F172A";
+  const iconOnPrimary = resolveToken("$background") ?? "#F8FAFC";
+  const selectedBorderColor = withAlpha(resolveToken("$color"));
 
   const createDecrementHandler = useCallback(
     (exerciseId: string) => () => decrementReps(exerciseId as any),
@@ -153,26 +143,6 @@ const RoutineBuilderScreen: React.FC<RoutineBuilderScreenProps> = () => {
   const createToggleHandler = useCallback(
     (exerciseId: string) => () => toggleExercise(exerciseId as any),
     [toggleExercise],
-  );
-
-  const getSelectionButtonStyle = useCallback(
-    (isSelected: boolean) => (state: { pressed: boolean }) => [
-      styles.selectionButton,
-      isSelected
-        ? styles.selectionButtonSelected
-        : styles.selectionButtonUnselected,
-      state.pressed ? styles.selectionButtonPressed : null,
-    ],
-    [],
-  );
-
-  const getCtaButtonStyle = useCallback(
-    (state: { pressed: boolean }) => [
-      styles.ctaButton,
-      selectedCount === 0 ? styles.ctaButtonDisabled : null,
-      state.pressed ? styles.ctaButtonPressed : null,
-    ],
-    [selectedCount],
   );
 
   const handleStartRoutine = useCallback(() => {
@@ -209,284 +179,243 @@ const RoutineBuilderScreen: React.FC<RoutineBuilderScreenProps> = () => {
     });
   }, [exercises, rounds, startRoutineSession, router]);
 
-  const renderExercise = useCallback(
-    ({ item }: ListRenderItemInfo<RoutineExerciseListItem>) => {
-      const config = exercises[item.id] ?? {
-        reps: ROUTINE_DEFAULT_REPS,
-        isSelected: true,
-      };
-      const isDisabled = !config.isSelected;
-      const toggleIconColor = config.isSelected
-        ? colorScheme === "dark"
-          ? "#4ADE80"
-          : "#15803D"
-        : "#FFFFFF";
-      const overlayTone =
-        colorScheme === "dark"
-          ? styles.exerciseOverlayDark
-          : styles.exerciseOverlayLight;
-      const overlayDisabled = config.isSelected
-        ? null
-        : styles.exerciseOverlayDisabled;
+  return (
+    <ScrollView
+      bounces
+      showsVerticalScrollIndicator={false}
+      contentContainerStyle={styles.scrollContent}
+    >
+      <YStack gap={Spacing.xxl}>
+        <ScreenHeader
+          title={t("routineBuilder.title")}
+          subtitle={t("routineBuilder.subtitle")}
+        />
 
-      const handleDecrement = createDecrementHandler(item.id);
-      const handleIncrement = createIncrementHandler(item.id);
-      const handleToggle = createToggleHandler(item.id);
-      const selectionButtonStyle = getSelectionButtonStyle(config.isSelected);
-
-      return (
-        <ThemedView
-          style={[
-            styles.exerciseCard,
-            exerciseCardTone,
-            config.isSelected ? null : styles.exerciseCardDisabled,
-          ]}
+        <Card
+          bordered
+          size={media.md ? "$5" : "$4"}
+          padding={media.md ? "$5" : "$4"}
+          backgroundColor="$backgroundHover"
+          overflow="hidden"
+          elevate={false}
         >
-          <ImageBackground
-            source={item.image}
-            style={styles.exerciseBackground}
-            imageStyle={styles.exerciseBackgroundImage}
-            accessibilityElementsHidden
-            accessibilityIgnoresInvertColors
-          >
-            <View
-              pointerEvents="none"
-              style={[styles.exerciseOverlay, overlayTone, overlayDisabled]}
-            />
-            <View style={styles.exerciseContent} pointerEvents="box-none">
-              <View
-                style={[
-                  styles.exerciseTop,
-                  isDisabled ? styles.exerciseDimmed : null,
-                ]}
-              >
-                <View style={styles.exerciseHeader}>
-                  <View style={styles.exerciseTitleBlock}>
-                    <ThemedText
-                      type="subtitle"
-                      style={styles.exerciseTitle}
-                      numberOfLines={2}
-                      lightColor="#F8FAFC"
-                      darkColor="#F8FAFC"
-                    >
-                      {item.title}
-                    </ThemedText>
-                  </View>
-                </View>
-                <ThemedText
-                  style={styles.exerciseDescription}
-                  lightColor="#E2E8F0"
-                  darkColor="#E2E8F0"
+          <YStack gap="$3">
+            <YStack gap="$2">
+              <Text fontSize={titleSize} fontWeight="700" color="$color">
+                {t("routineBuilder.rounds.label")}
+              </Text>
+              <Text fontSize={bodySize} color="$color" opacity={0.7}>
+                {t("routineBuilder.rounds.description")}
+              </Text>
+            </YStack>
+            <XStack alignItems="center" justifyContent="space-between">
+              <XStack alignItems="center" gap="$3">
+                <StepperButton
+                  icon="remove-outline"
+                  onPress={decrementRounds}
+                  accessibilityLabel={t("routineBuilder.rounds.decrement")}
+                  disabled={rounds <= 1}
+                  iconColor={iconPrimary}
+                />
+                <Text fontSize={titleSize} fontWeight="700" color="$color">
+                  {rounds}
+                </Text>
+                <StepperButton
+                  icon="add-outline"
+                  onPress={incrementRounds}
+                  accessibilityLabel={t("routineBuilder.rounds.increment")}
+                  iconColor={iconPrimary}
+                />
+              </XStack>
+              <Separator alignSelf="stretch" vertical />
+              <YStack gap="$1" maxWidth="50%">
+                <Text fontSize={metaSize} color="$color" opacity={0.7}>
+                  {t("routineBuilder.exercises.selectedCount", {
+                    count: selectedCount,
+                  })}
+                </Text>
+              </YStack>
+            </XStack>
+          </YStack>
+        </Card>
+
+        <YStack gap={Spacing.md}>
+          <YStack gap="$1">
+            <Text fontSize={titleSize} fontWeight="700" color="$color">
+              {t("routineBuilder.exercises.title")}
+            </Text>
+            <Text fontSize={bodySize} color="$color" opacity={0.7}>
+              {t("routineBuilder.exercises.subtitle")}
+            </Text>
+            <Text fontSize={metaSize} color="$color" opacity={0.7}>
+              {t("routineBuilder.exercises.selectedCount", {
+                count: selectedCount,
+              })}
+            </Text>
+          </YStack>
+
+          <TGrid columns={3} gap="$3">
+            {exerciseList.map((item) => {
+              const config = exercises[item.id] ?? {
+                reps: ROUTINE_DEFAULT_REPS,
+                isSelected: true,
+              };
+              const isDisabled = !config.isSelected;
+              const cardBackground = config.isSelected
+                ? "$background"
+                : "$backgroundHover";
+              const cardBorderColorToken = config.isSelected
+                ? "$color"
+                : "$borderColor";
+              const overlayOpacity = config.isSelected ? 0.08 : 0.2;
+              const toggleBg = config.isSelected
+                ? "$color"
+                : "$backgroundHover";
+              const toggleText = config.isSelected ? "$background" : "$color";
+
+              const handleDecrement = createDecrementHandler(item.id);
+              const handleIncrement = createIncrementHandler(item.id);
+              const handleToggle = createToggleHandler(item.id);
+
+              return (
+                <Card
+                  key={item.id}
+                  bordered
+                  elevate={false}
+                  opacity={isDisabled ? 0.65 : 1}
+                  backgroundColor={cardBackground}
+                  padding={media.md ? "$4" : "$3"}
+                  borderColor={cardBorderColorToken}
+                  borderWidth={1}
+                  style={
+                    config.isSelected && selectedBorderColor
+                      ? { borderColor: selectedBorderColor }
+                      : undefined
+                  }
                 >
-                  {item.description}
-                </ThemedText>
-              </View>
-              <View style={styles.exerciseFooter}>
-                <View style={styles.repsColumn}>
-                  <View style={styles.repsRow}>
-                    <View
-                      style={[
-                        styles.repsStepper,
-                        isDisabled ? styles.exerciseDimmed : null,
-                      ]}
-                    >
-                      <StepperButton
-                        icon="remove-outline"
-                        onPress={handleDecrement}
-                        accessibilityLabel={t(
-                          "routineBuilder.exercises.decrement",
-                          {
-                            exercise: item.title,
-                          },
-                        )}
-                        disabled={isDisabled || config.reps <= 1}
-                        colorScheme={"dark"}
-                        variant="compact"
+                  <YStack gap="$3">
+                    <YStack position="relative">
+                      <Image
+                        source={item.image}
+                        resizeMode="cover"
+                        style={styles.coverImage}
+                        accessibilityElementsHidden
+                        accessibilityIgnoresInvertColors
                       />
-                      <ThemedText
-                        style={styles.stepperValue}
-                        lightColor="#F8FAFC"
-                        darkColor="#F8FAFC"
+                      <YStack
+                        position="absolute"
+                        top={0}
+                        right={0}
+                        bottom={0}
+                        left={0}
+                        backgroundColor="$background"
+                        opacity={overlayOpacity}
+                        borderRadius={Spacing.lg}
+                        pointerEvents="none"
+                      />
+                    </YStack>
+                    <YStack gap="$2">
+                      <Text
+                        fontSize={titleSize}
+                        fontWeight="700"
+                        color="$color"
                       >
-                        {config.reps}
-                      </ThemedText>
-                      <StepperButton
-                        icon="add-outline"
-                        onPress={handleIncrement}
-                        accessibilityLabel={t(
-                          "routineBuilder.exercises.increment",
-                          {
-                            exercise: item.title,
-                          },
-                        )}
-                        disabled={isDisabled}
-                        colorScheme={"dark"}
-                        variant="compact"
-                      />
-                    </View>
-                    <Pressable
-                      onPress={handleToggle}
-                      accessibilityRole="switch"
-                      accessibilityState={{ checked: config.isSelected }}
-                      accessibilityLabel={t(
-                        "routineBuilder.exercises.toggleA11y",
-                        {
-                          exercise: item.title,
-                        },
-                      )}
-                      hitSlop={TOGGLE_HIT_SLOP}
-                      style={selectionButtonStyle}
+                        {item.title}
+                      </Text>
+                      <Text fontSize={bodySize} color="$color" opacity={0.9}>
+                        {item.description}
+                      </Text>
+                    </YStack>
+
+                    <XStack
+                      alignItems="center"
+                      justifyContent="space-between"
+                      gap="$3"
                     >
-                      <Ionicons
-                        name={
-                          config.isSelected ? "checkmark-circle" : "add-circle"
+                      <XStack alignItems="center" gap="$2">
+                        <StepperButton
+                          icon="remove-outline"
+                          onPress={handleDecrement}
+                          accessibilityLabel={t(
+                            "routineBuilder.exercises.decrement",
+                            { exercise: item.title },
+                          )}
+                          disabled={isDisabled || config.reps <= 1}
+                          iconColor={iconPrimary}
+                        />
+                        <Text
+                          fontSize={bodySize}
+                          fontWeight="700"
+                          color="$color"
+                        >
+                          {config.reps}
+                        </Text>
+                        <StepperButton
+                          icon="add-outline"
+                          onPress={handleIncrement}
+                          accessibilityLabel={t(
+                            "routineBuilder.exercises.increment",
+                            { exercise: item.title },
+                          )}
+                          disabled={isDisabled}
+                          iconColor={iconPrimary}
+                        />
+                      </XStack>
+
+                      <Button
+                        onPress={handleToggle}
+                        size="$3"
+                        backgroundColor={toggleBg}
+                        borderColor={cardBorderColorToken}
+                        style={
+                          config.isSelected && selectedBorderColor
+                            ? { borderColor: selectedBorderColor }
+                            : undefined
                         }
-                        size={16}
-                        color={toggleIconColor}
-                        style={styles.selectionIcon}
-                      />
-                      <ThemedText
-                        style={styles.selectionLabel}
-                        lightColor={config.isSelected ? "#DCFCE7" : "#F8FAFC"}
-                        darkColor={config.isSelected ? "#DCFCE7" : "#F8FAFC"}
+                        borderWidth={1}
+                        color={toggleText}
+                        accessibilityRole="switch"
+                        aria-checked={config.isSelected}
+                        aria-label={t("routineBuilder.exercises.toggleA11y", {
+                          exercise: item.title,
+                        })}
+                        icon={
+                          <Ionicons
+                            name={
+                              config.isSelected
+                                ? "checkmark-circle"
+                                : "add-circle"
+                            }
+                            size={18}
+                            color={
+                              config.isSelected ? iconOnPrimary : iconPrimary
+                            }
+                          />
+                        }
                       >
                         {config.isSelected
                           ? t("routineBuilder.exercises.buttonSelected")
                           : t("routineBuilder.exercises.buttonAdd")}
-                      </ThemedText>
-                    </Pressable>
-                  </View>
-                </View>
-              </View>
-            </View>
-          </ImageBackground>
-        </ThemedView>
-      );
-    },
-    [
-      colorScheme,
-      createDecrementHandler,
-      exerciseCardTone,
-      exercises,
-      createIncrementHandler,
-      t,
-      createToggleHandler,
-      getSelectionButtonStyle,
-    ],
-  );
+                      </Button>
+                    </XStack>
+                  </YStack>
+                </Card>
+              );
+            })}
+          </TGrid>
+        </YStack>
 
-  const headerComponent = (
-    <View style={styles.page}>
-      <ScreenHeader
-        title={t("routineBuilder.title")}
-        subtitle={t("routineBuilder.subtitle")}
-      />
-      <ThemedView style={[styles.roundsCard, roundsCardTone]}>
-        <ImageBackground
-          source={BACKGROUND_IMAGES.duration}
-          style={styles.roundsBackground}
-          imageStyle={styles.roundsBackgroundImage}
-          resizeMode="cover"
-        >
-          <View style={styles.roundsOverlay} pointerEvents="none" />
-          <View style={styles.roundsContent} pointerEvents="box-none">
-            <ThemedText
-              type="subtitle"
-              lightColor="#F8FAFC"
-              darkColor="#F8FAFC"
-            >
-              {t("routineBuilder.rounds.label")}
-            </ThemedText>
-            <ThemedText
-              style={styles.roundsDescription}
-              lightColor="#E2E8F0"
-              darkColor="#E2E8F0"
-            >
-              {t("routineBuilder.rounds.description")}
-            </ThemedText>
-            <View style={styles.roundsValueRow}>
-              <StepperButton
-                icon="remove-outline"
-                onPress={decrementRounds}
-                accessibilityLabel={t("routineBuilder.rounds.decrement")}
-                disabled={rounds <= 1}
-                colorScheme={"dark"}
-              />
-              <ThemedText
-                style={styles.roundsValue}
-                lightColor="#F8FAFC"
-                darkColor="#F8FAFC"
-              >
-                {rounds}
-              </ThemedText>
-              <StepperButton
-                icon="add-outline"
-                onPress={incrementRounds}
-                accessibilityLabel={t("routineBuilder.rounds.increment")}
-                colorScheme={"dark"}
-              />
-            </View>
-          </View>
-        </ImageBackground>
-      </ThemedView>
-      <ThemedView style={styles.sectionHeading}>
-        <ThemedText type="subtitle">
-          {t("routineBuilder.exercises.title")}
-        </ThemedText>
-        <ThemedText style={styles.sectionSubtitle}>
-          {t("routineBuilder.exercises.subtitle")}
-        </ThemedText>
-        <ThemedText style={styles.sectionCaption}>
-          {t("routineBuilder.exercises.selectedCount", {
-            count: selectedCount,
-          })}
-        </ThemedText>
-      </ThemedView>
-    </View>
-  );
+        <Separator />
 
-  const footerComponent = (
-    <View
-      style={[
-        styles.footer,
-        { paddingBottom: insets.bottom + ScreenPadding.vertical },
-      ]}
-    >
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel={t("routineBuilder.cta")}
-        accessibilityHint={t("routineBuilder.cta")}
-        disabled={selectedCount === 0}
-        style={getCtaButtonStyle}
-        onPress={handleStartRoutine}
-      >
-        <ThemedText
-          style={styles.ctaLabel}
-          lightColor="#FFFFFF"
-          darkColor="#F8FAFC"
+        <TButton
+          onPress={handleStartRoutine}
+          disabled={selectedCount === 0}
+          accessibilityLabel={t("routineBuilder.cta")}
         >
           {t("routineBuilder.cta")}
-        </ThemedText>
-      </Pressable>
-    </View>
-  );
-
-  return (
-    <ThemedView style={styles.container}>
-      <FlatList
-        data={exerciseList}
-        keyExtractor={keyExtractor}
-        renderItem={renderExercise}
-        ListHeaderComponent={headerComponent}
-        ListFooterComponent={footerComponent}
-        ItemSeparatorComponent={ItemSeparator}
-        contentContainerStyle={[
-          styles.listContent,
-          { paddingBottom: insets.bottom + ScreenPadding.vertical * 2 },
-        ]}
-        showsVerticalScrollIndicator={false}
-      />
-    </ThemedView>
+        </TButton>
+      </YStack>
+    </ScrollView>
   );
 };
 

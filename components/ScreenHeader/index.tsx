@@ -35,7 +35,6 @@ const ScreenHeader: React.FC<ScreenHeaderProps> = ({
     <YStack gap="$2" marginBottom="$3" alignItems={containerAlignment}>
       <THeading
         level={1}
-        lineHeight={36}
         textShadowColor={shadowColor}
         textShadowRadius={titleShadow?.radius}
         textShadowOffset={shadowOffset}

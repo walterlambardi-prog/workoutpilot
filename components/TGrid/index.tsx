@@ -1,22 +1,16 @@
 import React from "react";
 import { XStack, YStack, useMedia } from "tamagui";
 
-export interface TGridProps {
-  children: React.ReactNode;
-  columns?: 1 | 2;
-  gap?: "$1" | "$2" | "$3" | "$4" | "$5" | "$6";
-  /** @deprecated Use `gap` instead. */
-  space?: "$1" | "$2" | "$3" | "$4" | "$5" | "$6";
-}
+import type { TGridProps } from "./TGrid.types";
+export type { TGridProps } from "./TGrid.types";
 
 /**
- * Responsive grid component that adapts to screen size
- * On web with enough space, shows 2 columns
- * On mobile or narrow screens, shows 1 column
+ * Responsive grid component that adapts to screen size.
+ * Requests up to 3 columns and gracefully falls back to 2 then 1 based on space.
  *
  * @example
  * ```tsx
- * <TGrid columns={2} gap="$3">
+ * <TGrid columns={3} gap="$3">
  *   <Card>Item 1</Card>
  *   <Card>Item 2</Card>
  *   <Card>Item 3</Card>
@@ -32,11 +26,19 @@ export const TGrid: React.FC<TGridProps> = ({
   const media = useMedia();
   const resolvedGap = gap ?? space ?? "$3";
 
-  // Use 2 columns on medium+ screens if requested, otherwise single column
-  const shouldUseColumns = columns === 2 && (media.gtSm || media.gtMd);
+  const requestedColumns = columns ?? 1;
+  const isLarge = media.gtMd || media.gtLg;
+  const isMedium = media.gtSm || isLarge;
 
-  if (!shouldUseColumns) {
-    // Single column layout
+  let resolvedColumns: 1 | 2 | 3 = 1;
+
+  if (requestedColumns >= 3 && isLarge) {
+    resolvedColumns = 3;
+  } else if (requestedColumns >= 2 && isMedium) {
+    resolvedColumns = 2;
+  }
+
+  if (resolvedColumns === 1) {
     return (
       <YStack
         gap={resolvedGap}
@@ -49,12 +51,11 @@ export const TGrid: React.FC<TGridProps> = ({
     );
   }
 
-  // Two column layout - split children into pairs
   const items = React.Children.toArray(children);
   const rows: React.ReactNode[][] = [];
 
-  for (let i = 0; i < items.length; i += 2) {
-    rows.push([items[i], items[i + 1]].filter(Boolean));
+  for (let i = 0; i < items.length; i += resolvedColumns) {
+    rows.push(items.slice(i, i + resolvedColumns));
   }
 
   return (
@@ -71,10 +72,18 @@ export const TGrid: React.FC<TGridProps> = ({
               {item}
             </YStack>
           ))}
-          {/* Keep grid gutter when the last row has an odd item */}
-          {row.length === 1 && columns === 2 && (
-            <YStack flex={1} width="100%" minWidth={0} aria-hidden />
-          )}
+          {row.length < resolvedColumns &&
+            Array.from({ length: resolvedColumns - row.length }).map(
+              (_, fillerIndex) => (
+                <YStack
+                  key={`filler-${rowIndex}-${fillerIndex}`}
+                  flex={1}
+                  width="100%"
+                  minWidth={0}
+                  aria-hidden
+                />
+              ),
+            )}
         </XStack>
       ))}
     </YStack>
