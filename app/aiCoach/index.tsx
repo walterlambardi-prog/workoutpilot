@@ -58,10 +58,10 @@ const AiCoachScreen: React.FC = () => {
   const [profileAge, setProfileAge] = useState("");
   const [profileFrequency, setProfileFrequency] = useState("");
 
-  const titleSize = media.md ? "$5" : "$4";
-  const bodySize = media.md ? "$4" : "$3";
-  const labelSize = media.md ? "$4" : "$3";
-  const metaSize = media.md ? "$3" : "$2";
+  const titleSize = media.md ? "$4" : "$5";
+  const bodySize = media.md ? "$3" : "$4";
+  const labelSize = media.md ? "$3" : "$4";
+  const metaSize = media.md ? "$3" : "$4";
   const sendIconColor =
     (theme as { onPrimary?: { val?: string } }).onPrimary?.val || "#0f172a";
 
@@ -474,7 +474,7 @@ const AiCoachScreen: React.FC = () => {
               value={input}
               onChangeText={setInput}
               placeholder={t("aiCoach.inputPlaceholder")}
-              placeholderTextColor="$color10"
+              placeholderTextColor={theme.color12?.val || "#A0A0A0"}
               autoCapitalize="sentences"
               autoCorrect
               accessibilityLabel={t("aiCoach.inputPlaceholder")}
