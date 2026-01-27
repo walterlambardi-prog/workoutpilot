@@ -65,8 +65,8 @@
   },
   "home": {
     "title": "WorkoutPilot",
-    "subtitle": "Your launch hub",
-    "description": "Start here and jump into the app's key views. Use the quick link to try the pose demo.",
+    "subtitle": "Your fitness starting point",
+    "description": "Start here for quick access to core features: build routines, track your progress, and try the interactive AI-powered pose analysis.",
     "language": {
       "title": "Language",
       "hint": "Follows the system language automatically. Switch to override while the app is open.",
