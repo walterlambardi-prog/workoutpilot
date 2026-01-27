@@ -9,6 +9,7 @@ import {
   Input,
   ScrollView,
   Separator,
+  Spinner,
   Text,
   XStack,
   YStack,
@@ -336,6 +337,7 @@ const AiCoachScreen: React.FC = () => {
                         fontSize={labelSize}
                         fontWeight="700"
                         color="$color"
+                        fontVariant={"small-caps"}
                       >
                         {t("aiCoach.coachLabel")}
                       </Text>
@@ -447,12 +449,7 @@ const AiCoachScreen: React.FC = () => {
 
           {loading ? (
             <XStack gap="$2" alignItems="center" paddingVertical="$2">
-              <Ionicons
-                name="sparkles-outline"
-                size={16}
-                color="gray"
-                accessibilityElementsHidden
-              />
+              <Spinner size="small" color="$color" />
               <Text fontSize={metaSize} color="$color" opacity={0.7}>
                 {t("aiCoach.thinking")}
               </Text>
