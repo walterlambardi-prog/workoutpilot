@@ -1,3 +1,4 @@
+import { EXERCISE_DEFINITIONS } from "@/app/exercises/exercises.data";
 import { useRouter } from "expo-router";
 import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -154,7 +155,6 @@ const buildSystemPrompt = (
   topicGuard: string,
   lang: string,
   conversationContext: string,
-  exerciseList: string,
   hasLevel: boolean,
   levelPrompt: string,
   levelOptions: string[],
@@ -166,6 +166,7 @@ const buildSystemPrompt = (
   ageLabel: string,
   frequencyLabel: string,
   submitLabel: string,
+  allowedExerciseDefinitions: { id: string; copyKey: string }[],
 ) => {
   const responseLanguage = lang?.startsWith("es") ? "espanol" : "english";
   const contextualHistory =
@@ -192,6 +193,12 @@ const buildSystemPrompt = (
     needFrequency: !hasFrequency,
   });
 
+  // Build allowed exercise keys and descriptions from allowedExerciseDefinitions
+  const allowedKeys = allowedExerciseDefinitions.map((ex) => ex.id).join(", ");
+  const allowedDescriptions = allowedExerciseDefinitions
+    .map((ex) => `- ${ex.id}: ${ex.copyKey}`)
+    .join("\n");
+
   return `Eres un coach de entrenamiento. Responde SOLO en ${responseLanguage}.
 Checklist de respuesta (en orden):
 1) Si falta el NIVEL -> responde SOLO ${levelJson}. No pidas edad/frecuencia ni generes rutina.
@@ -207,23 +214,13 @@ Si el usuario ya indicó su nivel en el mismo mensaje (ej. "principiante", "inte
 Cuando tengas edad, frecuencia semanal y nivel, devuelve SOLO un JSON válido con esta forma exacta y SIN envolverlo en otro JSON (nada de id/model/choices):
 {"rounds":NUMERO_ENTERO,"exercises":[{"key":"NOMBRE_EJERCICIO","reps":NUMERO_ENTERO}]}
 - Usa entre 1 y 6 ejercicios según el nivel del usuario y sus objetivos. Si el usuario pide específicamente UN solo ejercicio, respeta su solicitud y genera una rutina con ese único ejercicio. Principiantes: 2-3 ejercicios (o 1 si lo solicita). Intermedios: 3-4 ejercicios (o 1 si lo solicita). Avanzados: 4-6 ejercicios (o 1 si lo solicita).
-- La clave "key" de cada ejercicio debe ser EXACTAMENTE una de estas opciones (copia tal cual): ${exerciseList}
-- Ejemplos válidos de "key": "squats", "pushups", "lunges", "calf-raises", "hammer-curls", "lateral-raises", "standing-leg-raises"
+- La clave "key" de cada ejercicio debe ser EXACTAMENTE una de estas opciones (copia tal cual): ${allowedKeys}
 - Puedes usar todos los ejercicios disponibles si la rutina lo requiere. Si el usuario pide solo un ejercicio específico, usa únicamente ese ejercicio.
 - "reps" debe ser un entero entre ${REP_MIN} y ${REP_MAX}.
 - "rounds" debe ser un entero entre ${ROUND_MIN} y ${ROUND_MAX}.
 - No agregues texto antes o después del JSON ni metas el JSON dentro de otro objeto.
-Ejemplo de respuesta válida: {"rounds":3,"exercises":[{"key":"squats","reps":12},{"key":"lunges","reps":10},{"key":"calf-raises","reps":15}]}
-Ejemplo avanzado: {"rounds":4,"exercises":[{"key":"squats","reps":15},{"key":"lunges","reps":12},{"key":"calf-raises","reps":20},{"key":"pushups","reps":12},{"key":"hammer-curls","reps":10},{"key":"lateral-raises","reps":12},{"key":"standing-leg-raises","reps":15}]}
-Ejercicios disponibles:
-- squats: sentadillas para piernas y glúteos (cuádriceps, glúteos, isquiotibiales)
-- pushups: flexiones para pecho, tríceps y core
-- hammer-curls: curl martillo para bíceps y antebrazos
-- lateral-raises: elevaciones laterales para hombros (deltoides lateral)
-- lunges: zancadas para piernas, glúteos y equilibrio (unilateral)
-- calf-raises: elevaciones de talón para pantorrillas (gemelos y sóleo)
-- standing-leg-raises: elevaciones laterales de pierna para abductores de cadera, glúteo medio y equilibrio (unilateral)
-Usa standing-leg-raises en rutinas de: piernas, glúteos, equilibrio, estabilidad de cadera, rehabilitación, movilidad.
+Ejemplo de respuesta válida: {"rounds":3,"exercises":[{"key":"${allowedExerciseDefinitions[0]?.id}","reps":12}]}
+Ejercicios disponibles:\n${allowedDescriptions}
 El JSON de nivel anterior SOLO se usa cuando realmente falta el nivel.
 El JSON de perfil (edad/frecuencia) se usa cuando falte alguno de esos datos; si ya tienes edad y frecuencia, no lo envíes.
 Si el usuario ya dijo su nivel (ej. principiante/intermedio/avanzado), está prohibido devolver un JSON con needsLevel; no preguntes el nivel otra vez.
@@ -365,6 +362,12 @@ export const parseProfilePrompt = (raw: string): ProfilePrompt | null => {
 };
 
 export function useAiCoach() {
+  // Only allowed exercises for use in the hook
+  const allowedExerciseDefinitions = useMemo(
+    () =>
+      EXERCISE_DEFINITIONS.filter((ex) => ALLOWED_EXERCISES.includes(ex.id)),
+    [],
+  );
   const { t, i18n } = useTranslation();
   const router = useRouter();
   const [input, setInput] = useState("");
@@ -680,7 +683,6 @@ export function useAiCoach() {
             role: msg.role,
             content: msg.content,
           }));
-        const exerciseList = ALLOWED_EXERCISES.join("|");
         const payload = {
           model: AI_COACH_MODEL,
           messages: [
@@ -690,7 +692,6 @@ export function useAiCoach() {
                 t("aiCoach.topicGuard"),
                 i18n.language,
                 conversationContext,
-                exerciseList,
                 levelPresent,
                 t("aiCoach.levelPromptTitle"),
                 levelOptions,
@@ -702,6 +703,7 @@ export function useAiCoach() {
                 t("aiCoach.profileAgeLabel"),
                 t("aiCoach.profileFrequencyLabel"),
                 t("aiCoach.profileSubmit"),
+                allowedExerciseDefinitions,
               ),
             },
             ...recentMessages,
@@ -777,6 +779,7 @@ export function useAiCoach() {
       }
     },
     [
+      allowedExerciseDefinitions,
       i18n.language,
       input,
       isAffirmation,
