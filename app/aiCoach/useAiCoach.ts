@@ -196,7 +196,7 @@ const buildSystemPrompt = (
   // Build allowed exercise keys and descriptions from allowedExerciseDefinitions
   const allowedKeys = allowedExerciseDefinitions.map((ex) => ex.id).join(", ");
   const allowedDescriptions = allowedExerciseDefinitions
-    .map((ex) => `- ${ex.id}: ${ex.copyKey}`)
+    .map((ex) => ex.id)
     .join("\n");
 
   return `Eres un coach de entrenamiento. Responde SOLO en ${responseLanguage}.
