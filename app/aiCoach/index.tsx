@@ -1,38 +1,43 @@
 import { Ionicons } from "@expo/vector-icons";
-import { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import {
-    ActivityIndicator,
-    Keyboard,
-    KeyboardAvoidingView,
-    Platform,
-    Pressable,
-    ScrollView,
-    Text,
-    TextInput,
-    View,
-} from "react-native";
+import { KeyboardAvoidingView, Platform } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import {
+  Button,
+  Card,
+  Input,
+  ScrollView,
+  Separator,
+  Text,
+  XStack,
+  YStack,
+  useMedia,
+} from "tamagui";
 
 import ScreenHeader from "@/components/ScreenHeader";
+import { TButton } from "@/components/TButton";
+import { TInput } from "@/components/TInput";
+import { TTag } from "@/components/TTag";
 import { EXERCISE_COPY_KEYS } from "@/constants/exercises";
-import { useThemeColor } from "@/hooks/useThemeColor";
+
 import { styles } from "./aiCoach.styles";
 import type {
-    LevelPrompt,
-    ParsedRoutinePlan,
-    ProfilePrompt,
+  LevelPrompt,
+  ParsedRoutinePlan,
+  ProfilePrompt,
 } from "./aiCoach.types";
 import {
-    parseJsonPlan,
-    parseLevelPrompt,
-    parseProfilePrompt,
-    useAiCoach,
+  parseJsonPlan,
+  parseLevelPrompt,
+  parseProfilePrompt,
+  useAiCoach,
 } from "./useAiCoach";
 
-const AiCoachScreen = () => {
+const AiCoachScreen: React.FC = () => {
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
+  const media = useMedia();
   const scrollRef = useRef<ScrollView>(null);
   const {
     input,
@@ -48,48 +53,16 @@ const AiCoachScreen = () => {
     handleProfileSubmit,
   } = useAiCoach();
 
-  const backgroundColor = useThemeColor({}, "background");
-  const textPrimary = useThemeColor({}, "text");
-  const surfaceColor = useThemeColor(
-    { light: "#f8fafc", dark: "#0b1220" },
-    "background",
-  );
-  const secondarySurface = useThemeColor(
-    { light: "#e2f3ff", dark: "#0f172a" },
-    "background",
-  );
-  const userSurface = useThemeColor(
-    { light: "#e6ffed", dark: "rgba(34,211,238,0.16)" },
-    "background",
-  );
-  const borderColor = useThemeColor(
-    { light: "#e2e8f0", dark: "#1f2937" },
-    "background",
-  );
-  const subtleText = useThemeColor(
-    { light: "#475569", dark: "#94a3b8" },
-    "text",
-  );
-  const accent = useThemeColor({ light: "#0284c7", dark: "#22d3ee" }, "tint");
-  const chipBg = useThemeColor(
-    { light: "#e2e8f0", dark: "#0f172a" },
-    "background",
-  );
-  const chipBorder = useThemeColor(
-    { light: "#cbd5e1", dark: "rgba(255,255,255,0.12)" },
-    "background",
-  );
-  const inputBarColor = useThemeColor(
-    { light: "rgba(255,255,255,0.95)", dark: "rgba(7,15,38,0.98)" },
-    "background",
-  );
-
   const [profileAge, setProfileAge] = useState("");
   const [profileFrequency, setProfileFrequency] = useState("");
 
+  const titleSize = media.md ? "$5" : "$4";
+  const bodySize = media.md ? "$4" : "$3";
+  const labelSize = media.md ? "$4" : "$3";
+  const metaSize = media.md ? "$3" : "$2";
+
   const handleSendWithDismiss = () => {
     handleSend();
-    Keyboard.dismiss();
   };
 
   const formatTime = useMemo(
@@ -106,7 +79,7 @@ const AiCoachScreen = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       scrollRef.current?.scrollToEnd({ animated: true });
-    }, 40);
+    }, 50);
     return () => clearTimeout(timer);
   }, [messages]);
 
@@ -131,105 +104,90 @@ const AiCoachScreen = () => {
   }, [messages]);
 
   const renderPlan = (parsed: ParsedRoutinePlan) => (
-    <View style={styles.planPreview}>
-      <View style={styles.planHeader}>
-        <Text style={[styles.planTitle, { color: textPrimary }]}>
+    <Card
+      bordered
+      padding="$4"
+      backgroundColor="$background"
+      borderColor="$borderColor"
+      gap="$3"
+    >
+      <XStack alignItems="center" justifyContent="space-between" gap="$3">
+        <Text fontSize={titleSize} fontWeight="700" color="$color">
           {t("aiCoach.planExercisesTitle")}
         </Text>
-        <View
-          style={[
-            styles.planBadge,
-            {
-              backgroundColor: `${accent}26`,
-              borderColor: accent,
-            },
-          ]}
-        >
-          <Text style={[styles.planBadgeText, { color: accent }]}>
-            {t("aiCoach.planRoundsLabel", { rounds: parsed.rounds ?? 1 })}
-          </Text>
-        </View>
-      </View>
-      <View style={styles.planList}>
+        <TTag
+          iconName="barbell-outline"
+          label={t("aiCoach.planRoundsLabel", { rounds: parsed.rounds ?? 1 })}
+          tone="primary"
+        />
+      </XStack>
+
+      <YStack gap="$3">
         {parsed.plan.map((item, idx) => {
           const copyKey = EXERCISE_COPY_KEYS[item.exerciseId];
           const exerciseLabel = t(`${copyKey}.title`);
           return (
-            <View style={styles.planRow} key={`${item.exerciseId}-${idx}`}>
-              <View style={[styles.planDot, { backgroundColor: accent }]} />
-              <Text style={[styles.assistantText, { color: textPrimary }]}>
+            <XStack
+              key={`${item.exerciseId}-${idx}`}
+              gap="$3"
+              alignItems="center"
+            >
+              <YStack
+                width={8}
+                height={8}
+                borderRadius={9999}
+                backgroundColor="$primary"
+              />
+              <Text fontSize={bodySize} lineHeight={20} color="$color">
                 {t("aiCoach.planExerciseLine", {
                   exercise: exerciseLabel,
                   reps: item.targetReps,
                 })}
               </Text>
-            </View>
+            </XStack>
           );
         })}
-      </View>
-      <View style={styles.planActions}>
-        <Pressable
-          style={({ pressed }) => [
-            styles.planActionButton,
-            { backgroundColor: accent },
-            pressed ? { opacity: 0.9 } : null,
-          ]}
-          accessibilityRole="button"
-          accessibilityLabel={t("aiCoach.usePlanCta")}
+      </YStack>
+
+      <XStack gap="$3" flexWrap="wrap">
+        <TButton
           onPress={() => handleStartRoutineFromPlan(parsed.plan, parsed.rounds)}
+          accessibilityLabel={t("aiCoach.usePlanCta")}
         >
-          <Text style={[styles.planActionText, { color: "#0b122f" }]}>
-            {t("aiCoach.usePlanCta")}
-          </Text>
-        </Pressable>
-        <Pressable
-          style={({ pressed }) => [
-            styles.planActionGhost,
-            { borderColor, backgroundColor: surfaceColor },
-            pressed ? { opacity: 0.9 } : null,
-          ]}
-          accessibilityRole="button"
-          accessibilityLabel={t("aiCoach.editPlanCta")}
+          {t("aiCoach.usePlanCta")}
+        </TButton>
+        <TButton
+          variant="outline"
           onPress={() => handleEditRoutineFromPlan(parsed.plan, parsed.rounds)}
+          accessibilityLabel={t("aiCoach.editPlanCta")}
         >
-          <Text style={[styles.planActionGhostText, { color: textPrimary }]}>
-            {t("aiCoach.editPlanCta")}
-          </Text>
-        </Pressable>
-      </View>
-    </View>
+          {t("aiCoach.editPlanCta")}
+        </TButton>
+      </XStack>
+    </Card>
   );
 
   const renderLevelPrompt = (levelPrompt: LevelPrompt, disabled: boolean) => (
-    <View style={styles.profilePrompt}>
-      <Text style={[styles.levelPromptTitle, { color: textPrimary }]}>
+    <Card bordered padding="$4" gap="$3" backgroundColor="$backgroundHover">
+      <Text fontSize={titleSize} fontWeight="700" color="$color">
         {levelPrompt.prompt?.trim() || t("aiCoach.levelPromptFallback")}
       </Text>
-      <View style={styles.levelOptions}>
+      <XStack gap="$2" flexWrap="wrap">
         {levelPrompt.options.map((option) => (
-          <Pressable
+          <Button
             key={option}
-            style={({ pressed }) => [
-              styles.levelOptionButton,
-              {
-                backgroundColor: accent,
-                borderColor: accent,
-              },
-              pressed ? { opacity: 0.92 } : null,
-              disabled ? styles.profileSubmitDisabled : null,
-            ]}
-            accessibilityRole="button"
-            accessibilityLabel={option}
+            size="$3"
+            backgroundColor="$primary"
+            color="$onPrimary"
+            borderColor="$primary"
             disabled={disabled}
             onPress={() => handleLevelSelect(option)}
           >
-            <Text style={[styles.levelOptionText, { color: "#0b122f" }]}>
-              {option}
-            </Text>
-          </Pressable>
+            {option}
+          </Button>
         ))}
-      </View>
-    </View>
+      </XStack>
+    </Card>
   );
 
   const renderProfilePrompt = (
@@ -243,108 +201,75 @@ const AiCoachScreen = () => {
       activeAge.trim().length > 0 || activeFrequency.trim().length > 0;
     const showAgeField = profilePrompt.needAge !== false;
     const showFrequencyField = profilePrompt.needFrequency !== false;
+
+    const handleSubmit = () => {
+      handleProfileSubmit(profileAge, profileFrequency);
+      setProfileAge("");
+      setProfileFrequency("");
+    };
+
     return (
-      <View style={styles.profilePrompt}>
-        <Text
-          style={[styles.profilePromptTitle, { color: textPrimary }]}
-          accessibilityRole="header"
-        >
+      <Card bordered padding="$4" gap="$4" backgroundColor="$backgroundHover">
+        <Text fontSize={titleSize} fontWeight="700" color="$color">
           {profilePrompt.prompt?.trim() || t("aiCoach.profilePromptFallback")}
         </Text>
-        <View style={styles.profileFields}>
+        <XStack gap="$3" flexWrap="wrap">
           {showAgeField ? (
-            <View style={styles.profileFieldBlock}>
-              <Text
-                style={[styles.profileFieldLabel, { color: subtleText }]}
-                accessibilityLabel={t("aiCoach.profileAgeLabel")}
-              >
+            <YStack flex={1} minWidth={160} gap="$2">
+              <Text fontSize={metaSize} fontWeight="700" color="$color">
                 {profilePrompt.ageLabel || t("aiCoach.profileAgeLabel")}
               </Text>
-              <TextInput
-                value={activeAge}
-                onChangeText={isActive ? setProfileAge : undefined}
-                placeholder={t("aiCoach.profileAgePlaceholder")}
-                placeholderTextColor={subtleText}
+              <TInput
                 keyboardType="number-pad"
                 inputMode="numeric"
                 maxLength={3}
-                style={[
-                  styles.profileInput,
-                  { color: textPrimary, borderColor },
-                ]}
-                editable={!disabled}
-                accessible
+                value={activeAge}
+                onChangeText={isActive ? setProfileAge : undefined}
+                placeholder={t("aiCoach.profileAgePlaceholder")}
                 accessibilityLabel={t("aiCoach.profileAgeLabel")}
               />
-            </View>
+            </YStack>
           ) : null}
+
           {showFrequencyField ? (
-            <View style={styles.profileFieldBlock}>
-              <Text
-                style={[styles.profileFieldLabel, { color: subtleText }]}
-                accessibilityLabel={t("aiCoach.profileFrequencyLabel")}
-              >
+            <YStack flex={1} minWidth={160} gap="$2">
+              <Text fontSize={metaSize} fontWeight="700" color="$color">
                 {profilePrompt.frequencyLabel ||
                   t("aiCoach.profileFrequencyLabel")}
               </Text>
-              <TextInput
-                value={activeFrequency}
-                onChangeText={isActive ? setProfileFrequency : undefined}
-                placeholder={t("aiCoach.profileFrequencyPlaceholder")}
-                placeholderTextColor={subtleText}
+              <TInput
                 keyboardType="number-pad"
                 inputMode="numeric"
                 maxLength={2}
-                style={[
-                  styles.profileInput,
-                  { color: textPrimary, borderColor },
-                ]}
-                editable={!disabled}
-                accessible
+                value={activeFrequency}
+                onChangeText={isActive ? setProfileFrequency : undefined}
+                placeholder={t("aiCoach.profileFrequencyPlaceholder")}
                 accessibilityLabel={t("aiCoach.profileFrequencyLabel")}
               />
-            </View>
+            </YStack>
           ) : null}
-        </View>
-        <Pressable
-          style={({ pressed }) => [
-            styles.profileSubmit,
-            { backgroundColor: accent },
-            pressed && hasAnyValue ? { opacity: 0.9 } : null,
-            !hasAnyValue || disabled ? styles.profileSubmitDisabled : null,
-          ]}
-          accessibilityRole="button"
+        </XStack>
+
+        <TButton
+          onPress={handleSubmit}
+          disabled={!hasAnyValue || loading || disabled}
           accessibilityLabel={
             profilePrompt.submitLabel || t("aiCoach.profileSubmit")
           }
-          disabled={!hasAnyValue || loading || disabled}
-          onPress={() => {
-            handleProfileSubmit(profileAge, profileFrequency);
-            Keyboard.dismiss();
-            setProfileAge("");
-            setProfileFrequency("");
-          }}
         >
-          <Text
-            style={[styles.profileSubmitText, { color: "#0b122f" }]}
-            accessibilityLabel={
-              profilePrompt.submitLabel || t("aiCoach.profileSubmit")
-            }
-          >
-            {profilePrompt.submitLabel || t("aiCoach.profileSubmit")}
-          </Text>
-        </Pressable>
-      </View>
+          {profilePrompt.submitLabel || t("aiCoach.profileSubmit")}
+        </TButton>
+      </Card>
     );
   };
 
   return (
     <KeyboardAvoidingView
-      style={{ flex: 1 }}
+      style={styles.avoider}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       keyboardVerticalOffset={insets.top + 12}
     >
-      <View style={[styles.container, { backgroundColor }]}>
+      <YStack flex={1} backgroundColor="$background">
         <ScrollView
           ref={scrollRef}
           contentContainerStyle={styles.scrollContent}
@@ -360,34 +285,29 @@ const AiCoachScreen = () => {
             subtitle={t("aiCoach.screenSubtitle")}
           />
 
-          <View style={styles.suggestionsWrap}>
+          <XStack gap="$2" flexWrap="wrap">
             {suggestions.map((item) => (
-              <Pressable
+              <Button
                 key={item.id}
-                style={({ pressed }) => [
-                  styles.suggestionChip,
-                  {
-                    backgroundColor: chipBg,
-                    borderColor: chipBorder,
-                  },
-                  pressed ? { opacity: 0.9 } : null,
-                ]}
+                size="$3"
+                backgroundColor="$backgroundHover"
+                color="$color"
+                borderColor="$borderColor"
+                borderWidth={1}
                 onPress={createSuggestionHandler(item.text)}
-                accessibilityRole="button"
                 accessibilityLabel={item.text}
               >
-                <Text style={[styles.suggestionText, { color: textPrimary }]}>
-                  {item.text}
-                </Text>
-              </Pressable>
+                {item.text}
+              </Button>
             ))}
-          </View>
+          </XStack>
 
-          <View
-            style={[
-              styles.messagesCard,
-              { backgroundColor: surfaceColor, borderColor },
-            ]}
+          <Card
+            bordered
+            padding="$4"
+            backgroundColor="$background"
+            borderColor="$borderColor"
+            gap="$4"
           >
             {messages.map((message) => {
               const parsedLevelPrompt =
@@ -398,143 +318,179 @@ const AiCoachScreen = () => {
                 message.role === "assistant"
                   ? parseProfilePrompt(message.content)
                   : null;
-              const parsedMessagePlan =
+              const parsedPlan =
                 message.role === "assistant"
                   ? parseJsonPlan(message.content)
                   : null;
+              const isUser = message.role === "user";
 
-              const justify =
-                message.role === "user" ? "flex-end" : "flex-start";
-              const bubbleStyle =
-                message.role === "user"
-                  ? [
-                      styles.bubbleUser,
-                      { backgroundColor: userSurface, borderColor: accent },
-                    ]
-                  : [
-                      styles.bubbleAssistant,
-                      {
-                        backgroundColor: secondarySurface,
-                        borderColor: accent,
-                        shadowColor: accent,
-                      },
-                    ];
-              const metaNameStyle =
-                message.role === "user"
-                  ? [styles.metaNameUser, { color: textPrimary }]
-                  : [styles.metaName, { color: subtleText }];
-              const metaTimeStyle =
-                message.role === "user"
-                  ? [styles.metaTimeUser, { color: subtleText }]
-                  : [styles.metaTime, { color: subtleText }];
-              const bodyStyle =
-                message.role === "user"
-                  ? [styles.userText, { color: textPrimary }]
-                  : [styles.assistantText, { color: textPrimary }];
-
-              return (
-                <View
-                  key={message.id}
-                  style={[styles.messageRow, { justifyContent: justify }]}
-                >
-                  <View style={bubbleStyle}>
-                    <View style={[styles.metaRow, { justifyContent: justify }]}>
-                      <Text style={metaNameStyle}>
-                        {message.role === "user"
-                          ? t("aiCoach.meLabel")
-                          : t("aiCoach.coachLabel")}
+              if (parsedPlan) {
+                return (
+                  <YStack key={message.id} gap="$3">
+                    <XStack gap="$2" alignItems="center">
+                      <Text
+                        fontSize={labelSize}
+                        fontWeight="700"
+                        color="$color"
+                      >
+                        {t("aiCoach.coachLabel")}
                       </Text>
-                      <Text style={metaTimeStyle}>
+                      <Separator vertical />
+                      <Text fontSize={metaSize} color="$color" opacity={0.7}>
                         {formatTime(message.createdAt)}
                       </Text>
-                    </View>
+                    </XStack>
+                    {renderPlan(parsedPlan)}
+                  </YStack>
+                );
+              }
 
-                    {parsedProfilePrompt ? (
-                      renderProfilePrompt(
-                        parsedProfilePrompt,
-                        message.id !== lastProfilePromptId,
-                        message.id === lastProfilePromptId,
-                      )
-                    ) : parsedLevelPrompt ? (
-                      renderLevelPrompt(
-                        parsedLevelPrompt,
-                        message.id !== lastLevelPromptId,
-                      )
-                    ) : parsedMessagePlan ? (
-                      renderPlan(parsedMessagePlan)
-                    ) : (
-                      <Text style={bodyStyle}>{message.content}</Text>
+              if (parsedLevelPrompt) {
+                const isMostRecent = lastLevelPromptId === message.id;
+                return (
+                  <YStack key={message.id} gap="$3">
+                    <XStack gap="$2" alignItems="center">
+                      <Text
+                        fontSize={labelSize}
+                        fontWeight="700"
+                        color="$color"
+                      >
+                        {t("aiCoach.coachLabel")}
+                      </Text>
+                      <Separator vertical />
+                      <Text fontSize={metaSize} color="$color" opacity={0.7}>
+                        {formatTime(message.createdAt)}
+                      </Text>
+                    </XStack>
+                    {renderLevelPrompt(
+                      parsedLevelPrompt,
+                      loading || !isMostRecent,
                     )}
-                  </View>
-                </View>
+                  </YStack>
+                );
+              }
+
+              if (parsedProfilePrompt) {
+                const isMostRecentProfilePrompt =
+                  lastProfilePromptId === message.id;
+                return (
+                  <YStack key={message.id} gap="$3">
+                    <XStack gap="$2" alignItems="center">
+                      <Text
+                        fontSize={labelSize}
+                        fontWeight="700"
+                        color="$color"
+                      >
+                        {t("aiCoach.coachLabel")}
+                      </Text>
+                      <Separator vertical />
+                      <Text fontSize={metaSize} color="$color" opacity={0.7}>
+                        {formatTime(message.createdAt)}
+                      </Text>
+                    </XStack>
+                    {renderProfilePrompt(
+                      parsedProfilePrompt,
+                      loading || !isMostRecentProfilePrompt,
+                      isMostRecentProfilePrompt,
+                    )}
+                  </YStack>
+                );
+              }
+
+              const bubbleColor = isUser ? "$primary" : "$backgroundHover";
+              const bubbleText = isUser ? "$onPrimary" : "$color";
+              const bubbleBorder = isUser ? "$primary" : "$borderColor";
+
+              return (
+                <YStack
+                  key={message.id}
+                  gap="$2"
+                  alignItems={isUser ? "flex-end" : "flex-start"}
+                >
+                  <XStack gap="$2" alignItems="center">
+                    <Text fontSize={labelSize} fontWeight="700" color="$color">
+                      {isUser ? t("aiCoach.meLabel") : t("aiCoach.coachLabel")}
+                    </Text>
+                    <Separator vertical />
+                    <Text fontSize={metaSize} color="$color" opacity={0.7}>
+                      {formatTime(message.createdAt)}
+                    </Text>
+                  </XStack>
+                  <YStack
+                    padding="$3"
+                    borderRadius="$4"
+                    backgroundColor={bubbleColor}
+                    borderColor={bubbleBorder}
+                    borderWidth={1}
+                    maxWidth="92%"
+                  >
+                    <Text
+                      fontSize={bodySize}
+                      lineHeight={20}
+                      color={bubbleText}
+                    >
+                      {message.content}
+                    </Text>
+                  </YStack>
+                </YStack>
               );
             })}
+          </Card>
 
-            {loading ? (
-              <View style={styles.statusRow}>
-                <ActivityIndicator size="small" color={accent} />
-                <Text style={[styles.statusText, { color: subtleText }]}>
-                  {t("aiCoach.thinking")}
-                </Text>
-              </View>
-            ) : null}
-          </View>
+          {loading ? (
+            <XStack gap="$2" alignItems="center" paddingVertical="$2">
+              <Ionicons
+                name="sparkles-outline"
+                size={16}
+                color="gray"
+                accessibilityElementsHidden
+              />
+              <Text fontSize={metaSize} color="$color" opacity={0.7}>
+                {t("aiCoach.thinking")}
+              </Text>
+            </XStack>
+          ) : null}
         </ScrollView>
 
-        <View
-          style={[
-            styles.inputBar,
-            {
-              paddingBottom: insets.bottom + 12,
-              backgroundColor: inputBarColor,
-              borderColor,
-            },
-          ]}
+        <Card
+          borderColor="$borderColor"
+          backgroundColor="$background"
+          padding="$3"
+          borderRadius="$6"
+          style={[styles.inputBar, { paddingBottom: insets.bottom + 12 }]}
         >
-          <View
-            style={[
-              styles.inputInner,
-              { backgroundColor: surfaceColor, borderColor },
-            ]}
-          >
-            <TextInput
+          <XStack alignItems="center" gap="$3">
+            <Input
+              flex={1}
+              size="$5"
               value={input}
               onChangeText={setInput}
               placeholder={t("aiCoach.inputPlaceholder")}
-              placeholderTextColor={subtleText}
-              style={[styles.textInput, { color: textPrimary }]}
-              returnKeyType="send"
-              onSubmitEditing={handleSendWithDismiss}
-              blurOnSubmit
-              editable={!loading}
-              multiline
+              placeholderTextColor="$color10"
+              autoCapitalize="sentences"
+              autoCorrect
+              accessibilityLabel={t("aiCoach.inputPlaceholder")}
             />
-            <Pressable
+            <Button
+              size="$5"
+              backgroundColor="$primary"
+              color="$onPrimary"
+              borderColor="$primary"
+              icon={
+                <Ionicons
+                  name="arrow-up"
+                  size={18}
+                  color="white"
+                  accessibilityElementsHidden
+                />
+              }
               onPress={handleSendWithDismiss}
               disabled={loading || !input.trim().length}
-              accessibilityRole="button"
               accessibilityLabel={t("aiCoach.sendLabel")}
-              style={({ pressed }) => [
-                styles.sendButton,
-                { backgroundColor: accent },
-                loading || !input.trim().length
-                  ? styles.sendButtonDisabled
-                  : null,
-                pressed && !loading && input.trim().length
-                  ? { opacity: 0.92 }
-                  : null,
-              ]}
-            >
-              {loading ? (
-                <ActivityIndicator size="small" color="#0b122f" />
-              ) : (
-                <Ionicons name="send" size={18} color="#0b122f" />
-              )}
-            </Pressable>
-          </View>
-          <View style={{ height: insets.bottom > 0 ? insets.bottom / 2 : 0 }} />
-        </View>
-      </View>
+            />
+          </XStack>
+        </Card>
+      </YStack>
     </KeyboardAvoidingView>
   );
 };

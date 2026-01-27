@@ -17,7 +17,6 @@ import { ThemedText } from "@/components/ThemedText";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { useAuthStore } from "@/stores/authStore";
 
-import { useTheme } from "tamagui";
 import { getOnboardingSteps } from "./onboarding.data";
 import styles from "./onboarding.styles";
 import type { OnboardingStep } from "./onboarding.types";
@@ -34,7 +33,6 @@ const OnboardingScreen: React.FC = () => {
   const flatListRef = useRef<FlatList<OnboardingStep>>(null);
   const { width } = useWindowDimensions();
   const insets = useSafeAreaInsets();
-  const theme = useTheme();
 
   const setHasCompletedOnboarding = useAuthStore(
     (state: { setHasCompletedOnboarding: (completed: boolean) => void }) =>
