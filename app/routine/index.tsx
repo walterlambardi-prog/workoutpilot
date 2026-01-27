@@ -180,242 +180,244 @@ const RoutineBuilderScreen: React.FC<RoutineBuilderScreenProps> = () => {
   }, [exercises, rounds, startRoutineSession, router]);
 
   return (
-    <ScrollView
-      bounces
-      showsVerticalScrollIndicator={false}
-      contentContainerStyle={styles.scrollContent}
-    >
-      <YStack gap={Spacing.xxl}>
-        <ScreenHeader
-          title={t("routineBuilder.title")}
-          subtitle={t("routineBuilder.subtitle")}
-        />
+    <YStack flex={1} backgroundColor="$background">
+      <ScrollView
+        bounces
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+      >
+        <YStack gap={Spacing.xxl}>
+          <ScreenHeader
+            title={t("routineBuilder.title")}
+            subtitle={t("routineBuilder.subtitle")}
+          />
 
-        <Card
-          bordered
-          size={media.md ? "$5" : "$4"}
-          padding={media.md ? "$5" : "$4"}
-          backgroundColor="$backgroundHover"
-          overflow="hidden"
-          elevate={false}
-        >
-          <YStack gap="$3">
-            <YStack gap="$2">
-              <Text fontSize={titleSize} fontWeight="700" color="$color">
-                {t("routineBuilder.rounds.label")}
-              </Text>
-              <Text fontSize={bodySize} color="$color" opacity={0.7}>
-                {t("routineBuilder.rounds.description")}
-              </Text>
-            </YStack>
-            <XStack alignItems="center" justifyContent="space-between">
-              <XStack alignItems="center" gap="$3">
-                <StepperButton
-                  icon="remove-outline"
-                  onPress={decrementRounds}
-                  accessibilityLabel={t("routineBuilder.rounds.decrement")}
-                  disabled={rounds <= 1}
-                  iconColor={iconPrimary}
-                />
+          <Card
+            bordered
+            size={media.md ? "$5" : "$4"}
+            padding={media.md ? "$5" : "$4"}
+            backgroundColor="$backgroundHover"
+            overflow="hidden"
+            elevate={false}
+          >
+            <YStack gap="$3">
+              <YStack gap="$2">
                 <Text fontSize={titleSize} fontWeight="700" color="$color">
-                  {rounds}
+                  {t("routineBuilder.rounds.label")}
                 </Text>
-                <StepperButton
-                  icon="add-outline"
-                  onPress={incrementRounds}
-                  accessibilityLabel={t("routineBuilder.rounds.increment")}
-                  iconColor={iconPrimary}
-                />
-              </XStack>
-              <Separator alignSelf="stretch" vertical />
-              <YStack gap="$1" maxWidth="50%">
-                <Text fontSize={metaSize} color="$color" opacity={0.7}>
-                  {t("routineBuilder.exercises.selectedCount", {
-                    count: selectedCount,
-                  })}
+                <Text fontSize={bodySize} color="$color" opacity={0.7}>
+                  {t("routineBuilder.rounds.description")}
                 </Text>
               </YStack>
-            </XStack>
-          </YStack>
-        </Card>
+              <XStack alignItems="center" justifyContent="space-between">
+                <XStack alignItems="center" gap="$3">
+                  <StepperButton
+                    icon="remove-outline"
+                    onPress={decrementRounds}
+                    accessibilityLabel={t("routineBuilder.rounds.decrement")}
+                    disabled={rounds <= 1}
+                    iconColor={iconPrimary}
+                  />
+                  <Text fontSize={titleSize} fontWeight="700" color="$color">
+                    {rounds}
+                  </Text>
+                  <StepperButton
+                    icon="add-outline"
+                    onPress={incrementRounds}
+                    accessibilityLabel={t("routineBuilder.rounds.increment")}
+                    iconColor={iconPrimary}
+                  />
+                </XStack>
+                <Separator alignSelf="stretch" vertical />
+                <YStack gap="$1" maxWidth="50%">
+                  <Text fontSize={metaSize} color="$color" opacity={0.7}>
+                    {t("routineBuilder.exercises.selectedCount", {
+                      count: selectedCount,
+                    })}
+                  </Text>
+                </YStack>
+              </XStack>
+            </YStack>
+          </Card>
 
-        <YStack gap={Spacing.md}>
-          <YStack gap="$1">
-            <Text fontSize={titleSize} fontWeight="700" color="$color">
-              {t("routineBuilder.exercises.title")}
-            </Text>
-            <Text fontSize={bodySize} color="$color" opacity={0.7}>
-              {t("routineBuilder.exercises.subtitle")}
-            </Text>
-            <Text fontSize={metaSize} color="$color" opacity={0.7}>
-              {t("routineBuilder.exercises.selectedCount", {
-                count: selectedCount,
-              })}
-            </Text>
-          </YStack>
+          <YStack gap={Spacing.md}>
+            <YStack gap="$1">
+              <Text fontSize={titleSize} fontWeight="700" color="$color">
+                {t("routineBuilder.exercises.title")}
+              </Text>
+              <Text fontSize={bodySize} color="$color" opacity={0.7}>
+                {t("routineBuilder.exercises.subtitle")}
+              </Text>
+              <Text fontSize={metaSize} color="$color" opacity={0.7}>
+                {t("routineBuilder.exercises.selectedCount", {
+                  count: selectedCount,
+                })}
+              </Text>
+            </YStack>
 
-          <TGrid columns={3} gap="$3">
-            {exerciseList.map((item) => {
-              const config = exercises[item.id] ?? {
-                reps: ROUTINE_DEFAULT_REPS,
-                isSelected: true,
-              };
-              const isDisabled = !config.isSelected;
-              const cardBackground = config.isSelected
-                ? "$background"
-                : "$backgroundHover";
-              const cardBorderColorToken = config.isSelected
-                ? "$color"
-                : "$borderColor";
-              const overlayOpacity = config.isSelected ? 0.08 : 0.2;
-              const toggleBg = config.isSelected
-                ? "$color"
-                : "$backgroundHover";
-              const toggleText = config.isSelected ? "$background" : "$color";
+            <TGrid columns={3} gap="$3">
+              {exerciseList.map((item) => {
+                const config = exercises[item.id] ?? {
+                  reps: ROUTINE_DEFAULT_REPS,
+                  isSelected: true,
+                };
+                const isDisabled = !config.isSelected;
+                const cardBackground = config.isSelected
+                  ? "$background"
+                  : "$backgroundHover";
+                const cardBorderColorToken = config.isSelected
+                  ? "$color"
+                  : "$borderColor";
+                const overlayOpacity = config.isSelected ? 0.08 : 0.2;
+                const toggleBg = config.isSelected
+                  ? "$color"
+                  : "$backgroundHover";
+                const toggleText = config.isSelected ? "$background" : "$color";
 
-              const handleDecrement = createDecrementHandler(item.id);
-              const handleIncrement = createIncrementHandler(item.id);
-              const handleToggle = createToggleHandler(item.id);
+                const handleDecrement = createDecrementHandler(item.id);
+                const handleIncrement = createIncrementHandler(item.id);
+                const handleToggle = createToggleHandler(item.id);
 
-              return (
-                <Card
-                  key={item.id}
-                  bordered
-                  elevate={false}
-                  opacity={isDisabled ? 0.65 : 1}
-                  backgroundColor={cardBackground}
-                  padding={media.md ? "$4" : "$3"}
-                  borderColor={cardBorderColorToken}
-                  borderWidth={1}
-                  style={
-                    config.isSelected && selectedBorderColor
-                      ? { borderColor: selectedBorderColor }
-                      : undefined
-                  }
-                >
-                  <YStack gap="$3">
-                    <YStack position="relative">
-                      <Image
-                        source={item.image}
-                        resizeMode="cover"
-                        style={styles.coverImage}
-                        accessibilityElementsHidden
-                        accessibilityIgnoresInvertColors
-                      />
-                      <YStack
-                        position="absolute"
-                        top={0}
-                        right={0}
-                        bottom={0}
-                        left={0}
-                        backgroundColor="$background"
-                        opacity={overlayOpacity}
-                        borderRadius={Spacing.lg}
-                        pointerEvents="none"
-                      />
-                    </YStack>
-                    <YStack gap="$2">
-                      <Text
-                        fontSize={titleSize}
-                        fontWeight="700"
-                        color="$color"
-                      >
-                        {item.title}
-                      </Text>
-                      <Text fontSize={bodySize} color="$color" opacity={0.9}>
-                        {item.description}
-                      </Text>
-                    </YStack>
-
-                    <XStack
-                      alignItems="center"
-                      justifyContent="space-between"
-                      gap="$3"
-                    >
-                      <XStack alignItems="center" gap="$2">
-                        <StepperButton
-                          icon="remove-outline"
-                          onPress={handleDecrement}
-                          accessibilityLabel={t(
-                            "routineBuilder.exercises.decrement",
-                            { exercise: item.title },
-                          )}
-                          disabled={isDisabled || config.reps <= 1}
-                          iconColor={iconPrimary}
+                return (
+                  <Card
+                    key={item.id}
+                    bordered
+                    elevate={false}
+                    opacity={isDisabled ? 0.65 : 1}
+                    backgroundColor={cardBackground}
+                    padding={media.md ? "$4" : "$3"}
+                    borderColor={cardBorderColorToken}
+                    borderWidth={1}
+                    style={
+                      config.isSelected && selectedBorderColor
+                        ? { borderColor: selectedBorderColor }
+                        : undefined
+                    }
+                  >
+                    <YStack gap="$3">
+                      <YStack position="relative">
+                        <Image
+                          source={item.image}
+                          resizeMode="cover"
+                          style={styles.coverImage}
+                          accessibilityElementsHidden
+                          accessibilityIgnoresInvertColors
                         />
+                        <YStack
+                          position="absolute"
+                          top={0}
+                          right={0}
+                          bottom={0}
+                          left={0}
+                          backgroundColor="$background"
+                          opacity={overlayOpacity}
+                          borderRadius={Spacing.lg}
+                          pointerEvents="none"
+                        />
+                      </YStack>
+                      <YStack gap="$2">
                         <Text
-                          fontSize={bodySize}
+                          fontSize={titleSize}
                           fontWeight="700"
                           color="$color"
                         >
-                          {config.reps}
+                          {item.title}
                         </Text>
-                        <StepperButton
-                          icon="add-outline"
-                          onPress={handleIncrement}
-                          accessibilityLabel={t(
-                            "routineBuilder.exercises.increment",
-                            { exercise: item.title },
-                          )}
-                          disabled={isDisabled}
-                          iconColor={iconPrimary}
-                        />
-                      </XStack>
+                        <Text fontSize={bodySize} color="$color" opacity={0.9}>
+                          {item.description}
+                        </Text>
+                      </YStack>
 
-                      <Button
-                        onPress={handleToggle}
-                        size="$3"
-                        backgroundColor={toggleBg}
-                        borderColor={cardBorderColorToken}
-                        style={
-                          config.isSelected && selectedBorderColor
-                            ? { borderColor: selectedBorderColor }
-                            : undefined
-                        }
-                        borderWidth={1}
-                        color={toggleText}
-                        accessibilityRole="switch"
-                        aria-checked={config.isSelected}
-                        aria-label={t("routineBuilder.exercises.toggleA11y", {
-                          exercise: item.title,
-                        })}
-                        icon={
-                          <Ionicons
-                            name={
-                              config.isSelected
-                                ? "checkmark-circle"
-                                : "add-circle"
-                            }
-                            size={18}
-                            color={
-                              config.isSelected ? iconOnPrimary : iconPrimary
-                            }
-                          />
-                        }
+                      <XStack
+                        alignItems="center"
+                        justifyContent="space-between"
+                        gap="$3"
                       >
-                        {config.isSelected
-                          ? t("routineBuilder.exercises.buttonSelected")
-                          : t("routineBuilder.exercises.buttonAdd")}
-                      </Button>
-                    </XStack>
-                  </YStack>
-                </Card>
-              );
-            })}
-          </TGrid>
+                        <XStack alignItems="center" gap="$2">
+                          <StepperButton
+                            icon="remove-outline"
+                            onPress={handleDecrement}
+                            accessibilityLabel={t(
+                              "routineBuilder.exercises.decrement",
+                              { exercise: item.title },
+                            )}
+                            disabled={isDisabled || config.reps <= 1}
+                            iconColor={iconPrimary}
+                          />
+                          <Text
+                            fontSize={bodySize}
+                            fontWeight="700"
+                            color="$color"
+                          >
+                            {config.reps}
+                          </Text>
+                          <StepperButton
+                            icon="add-outline"
+                            onPress={handleIncrement}
+                            accessibilityLabel={t(
+                              "routineBuilder.exercises.increment",
+                              { exercise: item.title },
+                            )}
+                            disabled={isDisabled}
+                            iconColor={iconPrimary}
+                          />
+                        </XStack>
+
+                        <Button
+                          onPress={handleToggle}
+                          size="$3"
+                          backgroundColor={toggleBg}
+                          borderColor={cardBorderColorToken}
+                          style={
+                            config.isSelected && selectedBorderColor
+                              ? { borderColor: selectedBorderColor }
+                              : undefined
+                          }
+                          borderWidth={1}
+                          color={toggleText}
+                          accessibilityRole="switch"
+                          aria-checked={config.isSelected}
+                          aria-label={t("routineBuilder.exercises.toggleA11y", {
+                            exercise: item.title,
+                          })}
+                          icon={
+                            <Ionicons
+                              name={
+                                config.isSelected
+                                  ? "checkmark-circle"
+                                  : "add-circle"
+                              }
+                              size={18}
+                              color={
+                                config.isSelected ? iconOnPrimary : iconPrimary
+                              }
+                            />
+                          }
+                        >
+                          {config.isSelected
+                            ? t("routineBuilder.exercises.buttonSelected")
+                            : t("routineBuilder.exercises.buttonAdd")}
+                        </Button>
+                      </XStack>
+                    </YStack>
+                  </Card>
+                );
+              })}
+            </TGrid>
+          </YStack>
+
+          <Separator />
+
+          <TButton
+            onPress={handleStartRoutine}
+            disabled={selectedCount === 0}
+            accessibilityLabel={t("routineBuilder.cta")}
+          >
+            {t("routineBuilder.cta")}
+          </TButton>
         </YStack>
-
-        <Separator />
-
-        <TButton
-          onPress={handleStartRoutine}
-          disabled={selectedCount === 0}
-          accessibilityLabel={t("routineBuilder.cta")}
-        >
-          {t("routineBuilder.cta")}
-        </TButton>
-      </YStack>
-    </ScrollView>
+      </ScrollView>
+    </YStack>
   );
 };
 

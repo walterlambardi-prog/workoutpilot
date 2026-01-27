@@ -68,7 +68,7 @@ const HomeScreen: React.FC = () => {
       />
 
       {/* Action Cards Grid */}
-      <TGrid columns={2} gap="$4">
+      <TGrid columns={3} gap="$4">
         {actions.map((action) => (
           <TActionCard
             key={action.key}
