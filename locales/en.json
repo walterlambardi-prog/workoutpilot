@@ -244,8 +244,7 @@
     "chips": {
       "target": "Target",
       "round": "Round",
-      "step": "Step",
-      "stepValue": "Step {{current}}/{{total}}"
+      "step": "Step"
     },
     "progressLabel": "Progress: {{current}} / {{target}} reps",
     "nextExercise": "Next: {{exercise}}"

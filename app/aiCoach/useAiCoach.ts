@@ -196,8 +196,11 @@ const buildSystemPrompt = (
   // Build allowed exercise keys and descriptions from allowedExerciseDefinitions
   const allowedKeys = allowedExerciseDefinitions.map((ex) => ex.id).join(", ");
   const allowedDescriptions = allowedExerciseDefinitions
-    .map((ex) => ex.id)
+    .map((ex) => ex.id + ": " + ex.copyKey)
     .join("\n");
+
+  console.log("allowedExerciseDefinitions", allowedExerciseDefinitions);
+  console.log("allowedKeys", allowedKeys);
 
   return `Eres un coach de entrenamiento. Responde SOLO en ${responseLanguage}.
 Checklist de respuesta (en orden):
@@ -219,7 +222,7 @@ Cuando tengas edad, frecuencia semanal y nivel, devuelve SOLO un JSON válido co
 - "reps" debe ser un entero entre ${REP_MIN} y ${REP_MAX}.
 - "rounds" debe ser un entero entre ${ROUND_MIN} y ${ROUND_MAX}.
 - No agregues texto antes o después del JSON ni metas el JSON dentro de otro objeto.
-Ejemplo de respuesta válida: {"rounds":3,"exercises":[{"key":"${allowedExerciseDefinitions[0]?.id}","reps":12}]}
+Ejemplo de respuesta válida: {"rounds":3,"exercises":[{"key":"${allowedExerciseDefinitions[0]?.id}","reps":12}, {"key":"${allowedExerciseDefinitions[1]?.id}","reps":8}, {"key":"${allowedExerciseDefinitions[2]?.id}","reps":8}]}
 Ejercicios disponibles:\n${allowedDescriptions}
 El JSON de nivel anterior SOLO se usa cuando realmente falta el nivel.
 El JSON de perfil (edad/frecuencia) se usa cuando falte alguno de esos datos; si ya tienes edad y frecuencia, no lo envíes.

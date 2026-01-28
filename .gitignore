@@ -38,3 +38,5 @@ yarn-error.*
 
 app-example
 ui-refactor-tracking.txt
+extract-code.js
+project-code.txt

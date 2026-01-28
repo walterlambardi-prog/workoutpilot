@@ -244,8 +244,7 @@
     "chips": {
       "target": "Meta",
       "round": "Ronda",
-      "step": "Paso",
-      "stepValue": "Paso {{current}}/{{total}}"
+      "step": "Paso"
     },
     "progressLabel": "Progreso: {{current}} / {{target}} reps",
     "nextExercise": "Siguiente: {{exercise}}"

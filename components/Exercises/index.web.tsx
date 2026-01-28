@@ -1,12 +1,19 @@
 import React, { useEffect, useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
+import {
+  Button,
+  Card,
+  Separator,
+  Text,
+  Theme,
+  XStack,
+  YStack,
+  useMedia,
+} from "tamagui";
 
-import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
 import { EXERCISE_COPY_KEYS } from "@/constants/exercises";
-import { useThemeColor } from "@/hooks/useThemeColor";
 import type { ExercisesProps } from "./exercises.types";
-import { rnStyles, webMediaStyles } from "./exercises.web.styles";
+import { webMediaStyles } from "./exercises.web.styles";
 import { useWebPoseDetection } from "./hooks/useWebPoseDetection";
 
 /**
@@ -26,16 +33,16 @@ export default function ExercisesWebScreen({
     startCamera,
     stopCamera,
   } = useWebPoseDetection(exerciseId, routineContext?.stepIndex);
+
   const { t } = useTranslation();
+  const media = useMedia();
+
   const autoStartAttemptedRef = useRef(false);
   const advanceRef = useRef(false);
   const lastStepIndexRef = useRef<number | null>(null);
 
   useEffect(() => {
-    if (status !== "ready" || autoStartAttemptedRef.current) {
-      return;
-    }
-
+    if (status !== "ready" || autoStartAttemptedRef.current) return;
     autoStartAttemptedRef.current = true;
     startCamera();
   }, [status, startCamera]);
@@ -66,13 +73,9 @@ export default function ExercisesWebScreen({
 
     const stepChanged = routineStepIndex !== lastStepIndexRef.current;
 
-    if (stepChanged && (repCount ?? 0) > 0) {
-      return;
-    }
+    if (stepChanged && (repCount ?? 0) > 0) return;
 
-    if (stepChanged) {
-      lastStepIndexRef.current = routineStepIndex;
-    }
+    if (stepChanged) lastStepIndexRef.current = routineStepIndex;
 
     if (typeof repCount !== "number") return;
 
@@ -95,35 +98,13 @@ export default function ExercisesWebScreen({
     routineTargetReps,
   ]);
 
-  const pageBackground = useThemeColor({}, "background");
-  const heroBorder = useThemeColor(
-    { light: "rgba(249, 252, 255, 0.4)", dark: "rgba(15, 23, 42, 0.65)" },
-    "background",
-  );
-  const scrimColor = useThemeColor(
-    { light: "rgba(7,12,22,0.55)", dark: "rgba(15,23,42,0.45)" },
-    "background",
-  );
-  const cardBackground = useThemeColor(
-    { light: "rgba(255,255,255,0.25)", dark: "rgba(15,23,42,0.45)" },
-    "background",
-  );
-  const overlayBorder = useThemeColor(
-    { light: "rgba(15,23,42,0.15)", dark: "rgba(248,250,252,0.12)" },
-    "background",
-  );
-  const overlayHeading = useThemeColor(
-    { light: "#f8fafc", dark: "#f8fafc" },
-    "text",
-  );
-  const overlayMuted = useThemeColor(
-    { light: "rgba(226,232,240,0.9)", dark: "rgba(148,163,184,0.9)" },
-    "text",
-  );
-  const messageColor = useThemeColor(
-    { light: "#e2e8f0", dark: "#cbd5f5" },
-    "text",
-  );
+  const copyKey = exerciseId ? EXERCISE_COPY_KEYS[exerciseId] : undefined;
+  const headerTitle = copyKey
+    ? t(`${copyKey}.title`)
+    : t("exercises.web.title");
+  const headerSubtitle = copyKey
+    ? t(`${copyKey}.description`)
+    : t("exercises.web.subtitle");
 
   const primaryChip = useMemo(() => {
     if (routineContext?.isActive && routineContext.targetReps > 0) {
@@ -150,264 +131,308 @@ export default function ExercisesWebScreen({
   }, [routineContext, stats?.repCount, t]);
 
   const heroChips = useMemo(() => {
-    const chips = [];
-
     if (routineContext?.isActive && routineContext.targetReps > 0) {
-      chips.push({
-        key: "round",
-        label: t("routineRun.chips.round"),
-        value: `${routineContext.currentRound}/${routineContext.totalRounds}`,
-      });
-
-      chips.push({
-        key: "step",
-        label: t("routineRun.chips.step"),
-        value: `${routineContext.stepIndex + 1}/${routineContext.totalSteps}`,
-      });
+      return [
+        {
+          key: "round",
+          label: t("routineRun.chips.round"),
+          value: `${routineContext.currentRound}/${routineContext.totalRounds}`,
+        },
+        {
+          key: "step",
+          label: t("routineRun.chips.step"),
+          value: `${routineContext.stepIndex + 1}/${routineContext.totalSteps}`,
+        },
+      ];
     }
-
-    return chips;
+    return [];
   }, [routineContext, t]);
 
-  const copyKey = exerciseId ? EXERCISE_COPY_KEYS[exerciseId] : undefined;
-  const headerTitle = copyKey
-    ? t(`${copyKey}.title`)
-    : t("exercises.web.title");
-  const headerSubtitle = copyKey
-    ? t(`${copyKey}.description`)
-    : t("exercises.web.subtitle");
-
-  const routineProgress = useMemo(() => {
-    if (!routineContext?.isActive || routineContext.targetReps <= 0) {
-      return null;
-    }
+  const progress = useMemo(() => {
+    if (!routineContext?.isActive || !routineContext.targetReps) return null;
 
     const completed = Math.max(
       0,
       Math.min(routineContext.targetReps, stats?.repCount ?? 0),
     );
-    const ratio = Math.min(1, completed / routineContext.targetReps);
+    const target = routineContext.targetReps;
+    const ratio = target > 0 ? completed / target : 0;
 
-    return { completed, target: routineContext.targetReps, ratio };
-  }, [routineContext, stats?.repCount]);
+    let nextExerciseTitle: string | null = null;
+    if (routineContext.nextExerciseId) {
+      const nextCopyKey = EXERCISE_COPY_KEYS[routineContext.nextExerciseId];
+      nextExerciseTitle = nextCopyKey ? t(`${nextCopyKey}.title`) : null;
+    }
 
-  const nextExerciseTitle = useMemo(() => {
-    if (!routineContext?.nextExerciseId) return null;
-    const nextKey = EXERCISE_COPY_KEYS[routineContext.nextExerciseId];
-    return t(`${nextKey}.title`);
-  }, [routineContext?.nextExerciseId, t]);
+    return { completed, target, ratio, nextExerciseTitle };
+  }, [routineContext, stats?.repCount, t]);
+
+  const heroTitleSize = media.md ? 34 : 28;
+  const heroSubtitleSize = media.md ? 18 : 16;
+
+  const overlayPadding = media.md ? "$6" : "$4";
+  const topRightPadding = media.lg ? "22%" : media.md ? "10%" : "0%";
+
+  const isCameraRunning = status === "running";
 
   return (
-    <ThemedView
-      style={[rnStyles.screen, { backgroundColor: pageBackground }]}
-      lightColor="transparent"
-      darkColor="transparent"
-    >
-      <ThemedView
-        style={rnStyles.content}
-        lightColor="transparent"
-        darkColor="transparent"
-      >
-        <ThemedView
-          style={[rnStyles.hero, { borderColor: heroBorder }]}
-          lightColor="transparent"
-          darkColor="transparent"
+    <Theme name="dark">
+      <YStack f={1} w="100%" bg="$background" position="relative" ov="hidden">
+        {/* Media background */}
+        <YStack
+          w="100%"
+          h="100%"
+          position="absolute"
+          t={0}
+          l={0}
+          r={0}
+          b={0}
+          zIndex={0}
         >
-          <ThemedView style={rnStyles.mediaLayer} pointerEvents="none">
-            <ThemedView style={rnStyles.mediaFrame} pointerEvents="none">
-              <video
-                ref={videoRef}
-                style={webMediaStyles.video}
-                playsInline
-                muted
-              />
-              <ThemedView
-                style={[rnStyles.mediaTint, { backgroundColor: scrimColor }]}
-                pointerEvents="none"
-              />
-              <canvas ref={canvasRef} style={webMediaStyles.canvas} />
-            </ThemedView>
-          </ThemedView>
+          <video
+            ref={videoRef}
+            style={webMediaStyles.video}
+            playsInline
+            muted
+          />
+          <canvas ref={canvasRef} style={webMediaStyles.canvas} />
 
-          <ThemedView
-            style={rnStyles.overlayLayer}
-            pointerEvents="box-none"
-            lightColor="transparent"
-            darkColor="transparent"
-          >
-            <ThemedView
-              style={rnStyles.overlayTop}
-              pointerEvents="none"
-              lightColor="transparent"
-              darkColor="transparent"
+          <YStack
+            position="absolute"
+            t={0}
+            l={0}
+            r={0}
+            b={0}
+            zIndex={2}
+            style={{
+              background:
+                "linear-gradient(180deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.25) 35%, rgba(0,0,0,0.65) 100%)",
+            }}
+          />
+        </YStack>
+
+        {/* Overlay UI */}
+        <YStack
+          position="absolute"
+          t={0}
+          l={0}
+          r={0}
+          b={0}
+          p={overlayPadding}
+          jc="space-between"
+          pointerEvents="box-none"
+          zIndex={3}
+          bg="transparent"
+          gap="$4"
+        >
+          {/* Top content */}
+          <YStack gap="$4" pr={topRightPadding} pointerEvents="box-none">
+            <Card
+              bordered
+              p={media.md ? "$6" : "$5"}
+              borderRadius="$6"
+              borderWidth={1}
+              borderColor="$borderColor"
+              style={{
+                backgroundColor: "rgba(20, 20, 24, 0.55)",
+                backdropFilter: "blur(10px)",
+                WebkitBackdropFilter: "blur(10px)",
+              }}
             >
-              <ThemedView
-                style={[
-                  rnStyles.headerBlock,
-                  {
-                    backgroundColor: cardBackground,
-                    borderColor: overlayBorder,
-                  },
-                ]}
-                pointerEvents="none"
-              >
-                <ThemedText style={[rnStyles.title, { color: overlayHeading }]}>
-                  {headerTitle}
-                </ThemedText>
-                <ThemedText
-                  style={[rnStyles.subtitle, { color: messageColor }]}
-                >
+              <YStack gap="$3">
+                <XStack ai="center" jc="space-between" gap="$3" flexWrap="wrap">
+                  <Text
+                    fontSize={heroTitleSize}
+                    fontWeight="800"
+                    color="$color"
+                  >
+                    {headerTitle}
+                  </Text>
+
+                  <Card
+                    bordered
+                    p="$2"
+                    br="$6"
+                    borderColor="$borderColor"
+                    style={{ backgroundColor: "rgba(0,0,0,0.25)" }}
+                  >
+                    <Text
+                      fontSize={12}
+                      fontWeight="700"
+                      color="$color"
+                      o={0.85}
+                    >
+                      {t(`exercises.messages.${messageKey}`)}
+                    </Text>
+                  </Card>
+                </XStack>
+
+                <Text fontSize={heroSubtitleSize} color="$color" o={0.82}>
                   {headerSubtitle}
-                </ThemedText>
-              </ThemedView>
+                </Text>
 
-              {primaryChip ? (
-                <ThemedView
-                  style={rnStyles.primaryChipRow}
-                  pointerEvents="none"
-                  lightColor="transparent"
-                  darkColor="transparent"
-                >
-                  <ThemedView
-                    style={[
-                      rnStyles.primaryChip,
-                      {
-                        borderColor: overlayHeading,
-                        backgroundColor: cardBackground,
-                      },
-                    ]}
-                    lightColor="transparent"
-                    darkColor="transparent"
+                <Separator o={0.6} />
+
+                <XStack ai="center" gap="$3" flexWrap="wrap">
+                  <Button
+                    size="$3"
+                    backgroundColor="$primary"
+                    color="$onPrimary"
+                    borderColor="$primary"
+                    onPress={isCameraRunning ? stopCamera : startCamera}
+                    disabled={status === "loading"}
                   >
-                    <ThemedText
-                      style={[
-                        rnStyles.primaryChipLabel,
-                        { color: overlayMuted },
-                      ]}
-                    >
-                      {primaryChip.label}
-                    </ThemedText>
-                    <ThemedText
-                      style={[
-                        rnStyles.primaryChipValue,
-                        { color: overlayHeading },
-                      ]}
-                    >
-                      {primaryChip.value}
-                    </ThemedText>
-                  </ThemedView>
-                </ThemedView>
-              ) : null}
+                    {isCameraRunning ? "Stop camera" : "Start camera"}
+                  </Button>
 
-              <ThemedView
-                style={rnStyles.chipRow}
-                pointerEvents="none"
-                lightColor="transparent"
-                darkColor="transparent"
+                  <Card
+                    bordered
+                    p="$3"
+                    br="$5"
+                    borderColor="$borderColor"
+                    style={{ backgroundColor: "rgba(0,0,0,0.25)" }}
+                  >
+                    <Text fontSize={13} color="$color" o={0.78}>
+                      {stats?.feedback ?? t(`exercises.messages.${messageKey}`)}
+                    </Text>
+                  </Card>
+                </XStack>
+              </YStack>
+            </Card>
+
+            {primaryChip ? (
+              <Card
+                bordered
+                p="$4"
+                borderRadius="$6"
+                borderWidth={2}
+                borderColor="$primary"
+                alignSelf="flex-start"
+                style={{
+                  backgroundColor: "rgba(10, 10, 14, 0.55)",
+                  backdropFilter: "blur(10px)",
+                  WebkitBackdropFilter: "blur(10px)",
+                }}
               >
+                <Text
+                  fontSize={13}
+                  fontWeight="800"
+                  color="$color"
+                  ls={1}
+                  tt="uppercase"
+                  mb={4}
+                  o={0.8}
+                >
+                  {primaryChip.label}
+                </Text>
+                <Text
+                  fontSize={media.md ? 44 : 38}
+                  fontWeight="900"
+                  color="$color"
+                >
+                  {primaryChip.value}
+                </Text>
+              </Card>
+            ) : null}
+
+            {heroChips.length ? (
+              <XStack gap="$3" flexWrap="wrap">
                 {heroChips.map((chip) => (
-                  <ThemedView
+                  <Card
                     key={chip.key}
-                    style={[
-                      rnStyles.chip,
-                      {
-                        borderColor: overlayBorder,
-                        backgroundColor: cardBackground,
-                      },
-                    ]}
-                    lightColor="transparent"
-                    darkColor="transparent"
+                    bordered
+                    p="$3"
+                    borderRadius="$5"
+                    borderWidth={1}
+                    borderColor="$borderColor"
+                    style={{
+                      backgroundColor: "rgba(20, 20, 24, 0.50)",
+                      backdropFilter: "blur(10px)",
+                      WebkitBackdropFilter: "blur(10px)",
+                    }}
                   >
-                    <ThemedText
-                      style={[rnStyles.chipLabel, { color: overlayMuted }]}
+                    <Text
+                      fontSize={12}
+                      fontWeight="700"
+                      color="$color"
+                      ls={0.8}
+                      tt="uppercase"
+                      mb={2}
+                      o={0.8}
                     >
                       {chip.label}
-                    </ThemedText>
-                    <ThemedText
-                      style={[rnStyles.chipValue, { color: overlayHeading }]}
-                    >
+                    </Text>
+                    <Text fontSize={18} fontWeight="800" color="$color">
                       {chip.value}
-                    </ThemedText>
-                  </ThemedView>
+                    </Text>
+                  </Card>
                 ))}
-              </ThemedView>
-            </ThemedView>
+              </XStack>
+            ) : null}
+          </YStack>
 
-            <ThemedView
-              style={[
-                rnStyles.overlayBottom,
-                {
-                  backgroundColor: cardBackground,
-                  borderColor: overlayBorder,
-                },
-              ]}
-              lightColor="transparent"
-              darkColor="transparent"
+          {/* Bottom card */}
+          {routineIsActive && (
+            <YStack
+              gap="$4"
+              borderRadius="$6"
+              p={media.md ? "$6" : "$5"}
+              borderColor="$borderColor"
+              borderWidth={1}
+              ai="stretch"
+              style={{
+                backgroundColor: "rgba(20, 20, 24, 0.55)",
+                backdropFilter: "blur(12px)",
+                WebkitBackdropFilter: "blur(12px)",
+                maxWidth: 560,
+              }}
             >
-              {routineProgress ? (
-                <ThemedView
-                  style={rnStyles.progressCard}
-                  lightColor="transparent"
-                  darkColor="transparent"
-                >
-                  <ThemedView
-                    style={rnStyles.progressHeader}
-                    lightColor="transparent"
-                    darkColor="transparent"
-                  >
-                    <ThemedText
-                      style={[
-                        rnStyles.progressLabel,
-                        { color: overlayHeading },
-                      ]}
-                    >
+              {progress ? (
+                <YStack gap="$3">
+                  <XStack jc="space-between" ai="center">
+                    <Text fontSize={15} fontWeight="700" color="$color">
                       {t("routineRun.progressLabel", {
-                        current: routineProgress.completed,
-                        target: routineProgress.target,
+                        current: progress.completed,
+                        target: progress.target,
                       })}
-                    </ThemedText>
-                    <ThemedText
-                      style={[
-                        rnStyles.progressValue,
-                        { color: overlayHeading },
-                      ]}
-                    >
-                      {Math.round(routineProgress.ratio * 100)}%
-                    </ThemedText>
-                  </ThemedView>
+                    </Text>
+                    <Text fontSize={15} fontWeight="800" color="$color">
+                      {Math.round(progress.ratio * 100)}%
+                    </Text>
+                  </XStack>
 
-                  <ThemedView style={rnStyles.progressTrack}>
-                    <ThemedView
-                      style={[
-                        rnStyles.progressFill,
-                        {
-                          width: `${Math.min(100, Math.max(0, routineProgress.ratio * 100))}%`,
-                          backgroundColor: overlayHeading,
-                        },
-                      ]}
+                  <YStack w="100%" h={10} br={999} ov="hidden">
+                    <YStack
+                      h="100%"
+                      br={999}
+                      bg="$primary"
+                      w={`${Math.min(100, Math.max(0, progress.ratio * 100))}%`}
                     />
-                  </ThemedView>
+                  </YStack>
 
-                  {nextExerciseTitle ? (
-                    <ThemedText
-                      style={[rnStyles.nextExercise, { color: overlayMuted }]}
-                      numberOfLines={1}
+                  {progress.nextExerciseTitle ? (
+                    <Text
+                      fontSize={13}
+                      fontWeight="700"
+                      color="$color"
+                      o={0.7}
+                      style={{
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      }}
                     >
                       {t("routineRun.nextExercise", {
-                        exercise: nextExerciseTitle,
+                        exercise: progress.nextExerciseTitle,
                       })}
-                    </ThemedText>
+                    </Text>
                   ) : null}
-                </ThemedView>
+                </YStack>
               ) : null}
-
-              <ThemedText style={[rnStyles.message, { color: overlayMuted }]}>
-                {stats?.feedback ?? t(`exercises.messages.${messageKey}`)}
-              </ThemedText>
-            </ThemedView>
-          </ThemedView>
-        </ThemedView>
-      </ThemedView>
-    </ThemedView>
+            </YStack>
+          )}
+        </YStack>
+      </YStack>
+    </Theme>
   );
 }

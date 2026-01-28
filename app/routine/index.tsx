@@ -408,11 +408,7 @@ const RoutineBuilderScreen: React.FC<RoutineBuilderScreenProps> = () => {
 
           <Separator />
 
-          <TButton
-            onPress={handleStartRoutine}
-            disabled={selectedCount === 0}
-            accessibilityLabel={t("routineBuilder.cta")}
-          >
+          <TButton onPress={handleStartRoutine} disabled={selectedCount === 0}>
             {t("routineBuilder.cta")}
           </TButton>
         </YStack>

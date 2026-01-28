@@ -38,16 +38,16 @@ CRITICAL - Scoring criteria (performanceScore):
    - You will receive roundDetails array with timePerRep for EACH round
    - Analyze tempo consistency across rounds and flag significant variations
    - Healthy tempo ranges by exercise (time per rep):
-     * squats: 2-4 seconds (1.5-2s down, brief pause, 1s up - full depth critical)
-     * pushups: 2-4 seconds (1-1.5s down controlled, explosive up - chest to ground)
+     * squats: 1.5-4 seconds (1.5-2s down, brief pause, 1s up - full depth critical)
+     * pushups: 1.5-4 seconds (1-1.5s down controlled, explosive up - chest to ground)
      * lunges: 2-4 seconds per rep (single leg cycle - 1.5s down, brief pause, 1s up - count each leg)
-     * lateral-raises: 1.5-3.5 seconds (1s lift, 1.5-2.5s controlled lowering for shoulder safety)
-     * hammer-curls: 1.5-3.5 seconds PER ARM (if alternating - 1s up, 1.5-2.5s eccentric)
+     * lateral-raises: 1-3.5 seconds (1s lift, 1.5-2.5s controlled lowering for shoulder safety)
+     * hammer-curls: 1-3.5 seconds PER ARM (if alternating - 1s up, 1-2.5s eccentric)
      * calf-raises: 1-3 seconds (quick squeeze at top, controlled stretch at bottom)
      * standing-leg-raises: 1.5-3.5 seconds PER LEG (if alternating - controlled lift and lower each leg)
    
    - RED FLAGS by tempo (reduce score heavily):
-     * Under 1.5 sec/rep: Rushing, dangerous form, not achieving full range of motion, momentum instead of muscle
+     * Under 1 sec/rep: Rushing, dangerous form, not achieving full range of motion, momentum instead of muscle
      * Under 2 sec for squats/lunges: Not going deep enough, partial reps
      * Over 6 sec/rep: Excessive rest between reps, losing muscle tension
      * 20 reps in 5-15 seconds: Physically impossible with proper form, likely counting errors or partial reps

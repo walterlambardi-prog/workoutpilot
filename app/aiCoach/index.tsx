@@ -337,7 +337,6 @@ const AiCoachScreen: React.FC = () => {
                         fontSize={labelSize}
                         fontWeight="700"
                         color="$color"
-                        fontVariant={"small-caps"}
                       >
                         {t("aiCoach.coachLabel")}
                       </Text>
