@@ -28884,6 +28884,7 @@
         "borderColorPress": "#6b7280",
         "borderColorFocus": "#fff",
         "placeholderColor": "#6b7280",
+        "onPrimary": "#0f172a",
         "id": "dark"
       },
       "light": {
@@ -28921,6 +28922,7 @@
         "borderColorPress": "#a3a3a3",
         "borderColorFocus": "#0a7ea4",
         "placeholderColor": "#a3a3a3",
+        "onPrimary": "#ffffff",
         "id": "light"
       }
     },
