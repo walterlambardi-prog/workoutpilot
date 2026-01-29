@@ -239,7 +239,6 @@ export default function ExercisesNativeScreen({
             width={cameraWidth}
             height={cameraHeight}
             onLandmark={handleLandmark}
-            cameraOverlayColor={scrimColor}
             face={true}
             leftArm={true}
             rightArm={true}

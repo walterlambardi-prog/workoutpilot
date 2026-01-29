@@ -1,26 +1,26 @@
-import React, { useMemo } from "react";
+import { useRouter } from "expo-router";
+import React, { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Image, Pressable, ScrollView, View } from "react-native";
+import { Image } from "react-native";
 
 import { EXERCISE_DEFINITION_MAP } from "@/app/exercises/exercises.data";
 import ScreenHeader from "@/components/ScreenHeader";
-import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
+import { TButton } from "@/components/TButton";
+import { TCard } from "@/components/TCard";
+import { TGrid } from "@/components/TGrid";
+import { TPage } from "@/components/TPage";
+import { TRow, TStack } from "@/components/TStack";
+import { THeading, TText } from "@/components/TText";
 import { ExerciseId } from "@/constants/exercises";
-import { useThemeColor } from "@/hooks/useThemeColor";
 import { useExerciseSessionStore } from "@/stores/exerciseSessionStore";
 import { useRoutineBuilderStore } from "@/stores/routineBuilderStore";
 import {
   type RoutineSession,
   useRoutineSessionStore,
 } from "@/stores/routineSessionStore";
-import { useRouter } from "expo-router";
-import styles from "./sessions.styles";
-import type {
-  RoutineListItem,
-  SessionListItem,
-  SessionStatItem,
-} from "./sessions.types";
+
+import styles, { THUMB_SIZE } from "./sessions.styles";
+import type { RoutineListItem, SessionListItem } from "./sessions.types";
 
 const formatDuration = (ms?: number) => {
   if (!ms || ms < 0) return "--";
@@ -35,6 +35,50 @@ const formatDate = (timestamp?: number) => {
   return new Date(timestamp).toLocaleString();
 };
 
+const formatNumber = (value?: number) => {
+  if (!value) return "0";
+  return value.toLocaleString();
+};
+
+const StatTile: React.FC<{
+  label: string;
+  value: string;
+  helper?: string;
+}> = ({ label, value, helper }) => (
+  <TCard gap="$2">
+    <TText variant="label" color="$placeholderColor">
+      {label}
+    </TText>
+    <THeading level={3}>{value}</THeading>
+    {helper ? (
+      <TText variant="caption" color="$placeholderColor">
+        {helper}
+      </TText>
+    ) : null}
+  </TCard>
+);
+
+const MetaPill: React.FC<{ label: string }> = ({ label }) => (
+  <TRow
+    backgroundColor="$backgroundHover"
+    borderColor="$borderColor"
+    borderWidth={1}
+    borderRadius="$4"
+    paddingHorizontal="$3"
+    paddingVertical="$2"
+    alignItems="center"
+    gap="$2"
+  >
+    <TText variant="caption">{label}</TText>
+  </TRow>
+);
+
+const EmptyState: React.FC<{ text: string }> = ({ text }) => (
+  <TText variant="caption" color="$placeholderColor">
+    {text}
+  </TText>
+);
+
 const SessionsScreen: React.FC = () => {
   const { t } = useTranslation();
   const router = useRouter();
@@ -42,27 +86,6 @@ const SessionsScreen: React.FC = () => {
   const applyPlan = useRoutineBuilderStore((state) => state.applyPlan);
   const { history: routineHistory, lastCompletedSession } =
     useRoutineSessionStore();
-  const backgroundColor = useThemeColor({}, "background");
-  const surfaceColor = useThemeColor(
-    { light: "#f8fafc", dark: "#0b1220" },
-    "background",
-  );
-  const borderColor = useThemeColor(
-    { light: "#e2e8f0", dark: "#1f2937" },
-    "background",
-  );
-  const mutedText = useThemeColor(
-    { light: "#475569", dark: "#cbd5e1" },
-    "text",
-  );
-  const subtleText = useThemeColor(
-    { light: "#64748b", dark: "#94a3b8" },
-    "text",
-  );
-  const thumbBackground = useThemeColor(
-    { light: "#f1f5f9", dark: "#111827" },
-    "background",
-  );
 
   const totals = useMemo(() => {
     const now = Date.now();
@@ -217,7 +240,7 @@ const SessionsScreen: React.FC = () => {
       .sort((a, b) => b.reps - a.reps);
   }, [currentSession, history]);
 
-  const statItems: SessionStatItem[] = useMemo(() => {
+  const topExercise = useMemo(() => {
     const exerciseTotals: Record<ExerciseId, number> = {} as Record<
       ExerciseId,
       number
@@ -235,7 +258,7 @@ const SessionsScreen: React.FC = () => {
       });
     });
 
-    const topExercise = Object.entries(exerciseTotals).reduce(
+    return Object.entries(exerciseTotals).reduce(
       (best, [exerciseId, reps]) => {
         if (!best || reps > best.reps) {
           return { exerciseId: exerciseId as ExerciseId, reps };
@@ -244,440 +267,412 @@ const SessionsScreen: React.FC = () => {
       },
       null as { exerciseId: ExerciseId; reps: number } | null,
     );
+  }, [history, routineSessions]);
 
-    return [
+  const bestSessionCopy = useMemo(() => {
+    if (!totals.bestSession) return t("sessions.empty.bestSession");
+    const exercise =
+      EXERCISE_DEFINITION_MAP[totals.bestSession.exerciseId as ExerciseId];
+    const reps = formatNumber(totals.bestSession.reps ?? 0);
+    return `${t(`${exercise.copyKey}.title`)} · ${reps} ${t("sessions.labels.reps")}`;
+  }, [t, totals.bestSession]);
+
+  const lastSessionCopy = useMemo(() => {
+    if (!totals.lastSession) return t("sessions.empty.lastSession");
+    const exercise =
+      EXERCISE_DEFINITION_MAP[totals.lastSession.exerciseId as ExerciseId];
+    const endedAt = formatDate(
+      totals.lastSession.endedAt ?? totals.lastSession.startedAt,
+    );
+    return `${t(`${exercise.copyKey}.title`)} · ${endedAt}`;
+  }, [t, totals.lastSession]);
+
+  const topExerciseCopy = useMemo(() => {
+    if (!topExercise) return t("sessions.empty.topExercise");
+    const exercise = EXERCISE_DEFINITION_MAP[topExercise.exerciseId];
+    return `${t(`${exercise.copyKey}.title`)} · ${formatNumber(topExercise.reps)} ${t("sessions.labels.reps")}`;
+  }, [t, topExercise]);
+
+  const routineTopExerciseCopy = useMemo(() => {
+    if (!routineTotals.topExercise) return t("sessions.routines.empty");
+    const exercise =
+      EXERCISE_DEFINITION_MAP[routineTotals.topExercise.exerciseId];
+    return `${t(`${exercise.copyKey}.title`)} · ${formatNumber(
+      routineTotals.topExercise.reps,
+    )} ${t("sessions.labels.reps")}`;
+  }, [routineTotals.topExercise, t]);
+
+  const statHighlights = useMemo(
+    () => [
       {
-        label: t("sessions.stats.totalSessions"),
-        value: `${totals.totalSessions}`,
+        key: "volume",
+        label: t("sessions.stats.totalReps"),
+        value: formatNumber(totals.totalReps),
+        helper: `${t("sessions.stats.totalSessions")}: ${formatNumber(
+          totals.totalSessions,
+        )}`,
       },
-      { label: t("sessions.stats.totalReps"), value: `${totals.totalReps}` },
       {
+        key: "time",
         label: t("sessions.stats.totalDuration"),
         value: formatDuration(totals.totalDurationMs),
+        helper: `${t("sessions.stats.averageReps")}: ${formatNumber(
+          totals.averageReps,
+        )}`,
       },
       {
-        label: t("sessions.stats.averageReps"),
-        value: `${totals.averageReps}`,
-      },
-      {
-        label: t("sessions.stats.bestSession"),
-        value: totals.bestSession
-          ? `${t(
-              `${
-                EXERCISE_DEFINITION_MAP[
-                  totals.bestSession.exerciseId as ExerciseId
-                ].copyKey
-              }.title`,
-            )} · ${totals.bestSession.reps} ${t("sessions.labels.reps")}`
-          : t("sessions.empty.bestSession"),
-      },
-      {
-        label: t("sessions.stats.lastSession"),
-        value: totals.lastSession
-          ? `${t(
-              `${
-                EXERCISE_DEFINITION_MAP[
-                  totals.lastSession.exerciseId as ExerciseId
-                ].copyKey
-              }.title`,
-            )} · ${formatDate(
-              totals.lastSession.endedAt ?? totals.lastSession.startedAt,
-            )}`
-          : t("sessions.empty.lastSession"),
-      },
-      {
+        key: "coverage",
         label: t("sessions.stats.exercisesTracked"),
-        value: `${totals.uniqueExercises}`,
+        value: formatNumber(totals.uniqueExercises),
+        helper: topExerciseCopy,
       },
-      topExercise
-        ? {
-            label: t("sessions.stats.topExercise"),
-            value: `${t(
-              `${EXERCISE_DEFINITION_MAP[topExercise.exerciseId].copyKey}.title`,
-            )} · ${topExercise.reps} ${t("sessions.labels.reps")}`,
-          }
-        : {
-            label: t("sessions.stats.topExercise"),
-            value: t("sessions.empty.topExercise"),
-          },
-    ];
-  }, [history, routineSessions, t, totals]);
+      {
+        key: "recency",
+        label: t("sessions.stats.bestSession"),
+        value: bestSessionCopy,
+        helper: lastSessionCopy,
+      },
+    ],
+    [bestSessionCopy, lastSessionCopy, t, topExerciseCopy, totals],
+  );
 
-  const routineStatItems: SessionStatItem[] = [
-    {
-      label: t("sessions.routines.totalSessions"),
-      value: `${routineTotals.totalSessions}`,
-    },
-    {
-      label: t("sessions.routines.totalReps"),
-      value: `${routineTotals.totalReps}`,
-    },
-    {
-      label: t("sessions.routines.totalDuration"),
-      value: formatDuration(routineTotals.totalDurationMs),
-    },
-    {
-      label: t("sessions.routines.averageReps"),
-      value: `${routineTotals.averageReps}`,
-    },
-    {
-      label: t("sessions.routines.bestRoutine"),
-      value: routineTotals.bestRoutine
-        ? `${t("sessions.routines.bestRoutine")}: ${
-            routineTotals.bestRoutine.totalReps ?? 0
-          } ${t("sessions.labels.reps")}`
-        : t("sessions.routines.empty"),
-    },
-    {
-      label: t("sessions.routines.topExercise"),
-      value: routineTotals.topExercise
-        ? `${t(
-            `${
-              EXERCISE_DEFINITION_MAP[routineTotals.topExercise.exerciseId]
-                .copyKey
-            }.title`,
-          )} · ${routineTotals.topExercise.reps} ${t("sessions.labels.reps")}`
-        : t("sessions.routines.empty"),
-    },
-  ];
+  const routineHighlights = useMemo(
+    () => [
+      {
+        key: "routine-volume",
+        label: t("sessions.routines.totalReps"),
+        value: formatNumber(routineTotals.totalReps),
+        helper: `${t("sessions.routines.totalSessions")}: ${formatNumber(
+          routineTotals.totalSessions,
+        )}`,
+      },
+      {
+        key: "routine-time",
+        label: t("sessions.routines.totalDuration"),
+        value: formatDuration(routineTotals.totalDurationMs),
+        helper: `${t("sessions.routines.averageReps")}: ${formatNumber(
+          routineTotals.averageReps,
+        )}`,
+      },
+      {
+        key: "routine-top",
+        label: t("sessions.routines.bestRoutine"),
+        value: routineTotals.bestRoutine
+          ? `${formatNumber(routineTotals.bestRoutine.totalReps ?? 0)} ${t("sessions.labels.reps")}`
+          : t("sessions.routines.empty"),
+        helper: routineTopExerciseCopy,
+      },
+    ],
+    [routineTopExerciseCopy, routineTotals, t],
+  );
 
-  const recentHistory: SessionListItem[] = history
-    .slice(0, 8)
-    .map((item): SessionListItem => {
-      const copyKey =
-        EXERCISE_DEFINITION_MAP[item.exerciseId as ExerciseId].copyKey;
-      return {
-        id: item.id,
-        title: t(`${copyKey}.title`),
-        subtitle: t("sessions.history.meta", {
-          duration: formatDuration(item.durationMs),
-          ended: formatDate(item.endedAt ?? item.startedAt),
+  const recentHistory: SessionListItem[] = useMemo(
+    () =>
+      history.slice(0, 8).map((item): SessionListItem => {
+        const copyKey =
+          EXERCISE_DEFINITION_MAP[item.exerciseId as ExerciseId].copyKey;
+        return {
+          id: item.id,
+          title: t(`${copyKey}.title`),
+          subtitle: t("sessions.history.meta", {
+            duration: formatDuration(item.durationMs),
+            ended: formatDate(item.endedAt ?? item.startedAt),
+          }),
+          repsLabel: `${formatNumber(item.reps)} ${t("sessions.labels.reps")}`,
+          durationLabel: `${t("sessions.labels.duration")}: ${formatDuration(
+            item.durationMs,
+          )}`,
+          endedLabel: `${t("sessions.labels.ended")}: ${formatDate(
+            item.endedAt ?? item.startedAt,
+          )}`,
+        };
+      }),
+    [history, t],
+  );
+
+  const routineList: RoutineListItem[] = useMemo(
+    () =>
+      routineHistory
+        .slice(0, 8)
+        .filter((session) => session.completedAt)
+        .map((session): RoutineListItem => {
+          const uniqueExercises = new Set(
+            session.plan.map((step) => step.exerciseId),
+          ).size;
+          const durationMs = session.completedAt
+            ? session.completedAt - session.startedAt
+            : 0;
+
+          return {
+            id: session.id,
+            rounds: session.rounds,
+            totalReps: session.totalReps,
+            exerciseCount: uniqueExercises,
+            durationMs,
+            completedAt: session.completedAt ?? session.startedAt,
+          };
         }),
-        repsLabel: `${item.reps} ${t("sessions.labels.reps")}`,
-        durationLabel: `${t("sessions.labels.duration")}: ${formatDuration(
-          item.durationMs,
-        )}`,
-        endedLabel: `${t("sessions.labels.ended")}: ${formatDate(
-          item.endedAt ?? item.startedAt,
-        )}`,
-      };
-    });
+    [routineHistory],
+  );
 
-  const routineList: RoutineListItem[] = routineHistory
-    .slice(0, 8)
-    .filter((session) => session.completedAt)
-    .map((session): RoutineListItem => {
-      const uniqueExercises = new Set(
-        session.plan.map((step) => step.exerciseId),
-      ).size;
-      const durationMs = session.completedAt
-        ? session.completedAt - session.startedAt
-        : 0;
+  const filteredBreakdown = useMemo(
+    () => breakdown.filter((item) => item.sessions > 0).slice(0, 8),
+    [breakdown],
+  );
 
-      return {
-        id: session.id,
-        rounds: session.rounds,
-        totalReps: session.totalReps,
-        exerciseCount: uniqueExercises,
-        durationMs,
-        completedAt: session.completedAt ?? session.startedAt,
-      };
-    });
+  const handleStartRoutine = useCallback(
+    (routineId: string) => {
+      const sessionId = useRoutineSessionStore
+        .getState()
+        .restartFromSession(routineId);
+      if (!sessionId) return;
+
+      const activeSession = useRoutineSessionStore.getState().activeSession;
+      const firstStep = activeSession?.plan[0];
+
+      if (firstStep) {
+        router.push({
+          pathname: "/exercises/[exerciseId]",
+          params: {
+            exerciseId: firstStep.exerciseId,
+            routineId: sessionId,
+            stepIndex: "0",
+          },
+        });
+      }
+    },
+    [router],
+  );
+
+  const handleEditRoutine = useCallback(
+    (routineId: string) => {
+      const fullSession = routineHistory.find(
+        (session) => session.id === routineId,
+      );
+      if (fullSession) {
+        const planBase = fullSession.plan.map((step) => ({
+          exerciseId: step.exerciseId,
+          targetReps: step.targetReps,
+        }));
+        applyPlan(planBase, fullSession.rounds);
+      }
+      router.push("/routine");
+    },
+    [applyPlan, routineHistory, router],
+  );
+
+  const handleAnalyzeRoutine = useCallback(
+    (routineId: string) => {
+      router.push({ pathname: "/routineAnalysis", params: { routineId } });
+    },
+    [router],
+  );
+
+  const handleViewRoutineSummary = useCallback(
+    (routineId: string) => {
+      router.push({
+        pathname: "/routine/complete",
+        params: { sessionId: routineId },
+      });
+    },
+    [router],
+  );
 
   return (
-    <ScrollView
-      style={[styles.page, { backgroundColor }]}
-      showsVerticalScrollIndicator={false}
-    >
+    <TPage backgroundColor="$background" hasHeader gap="$4">
       <ScreenHeader
         title={t("sessions.title")}
         subtitle={t("sessions.subtitle")}
       />
 
-      <View style={styles.cards}>
-        <ThemedView
-          style={[styles.card, { backgroundColor: surfaceColor, borderColor }]}
-          lightColor="transparent"
-          darkColor="transparent"
-        >
-          <ThemedText style={styles.cardTitle}>
-            {t("sessions.stats.title")}
-          </ThemedText>
-          {statItems.map((item) => (
-            <View key={item.label} style={styles.statRow}>
-              <ThemedText style={[styles.statLabel, { color: mutedText }]}>
-                {item.label}
-              </ThemedText>
-              <ThemedText style={styles.statValue}>{item.value}</ThemedText>
-            </View>
+      <TGrid columns={3} gap="$3">
+        {statHighlights.map((item) => (
+          <StatTile
+            key={item.key}
+            label={item.label}
+            value={item.value}
+            helper={item.helper}
+          />
+        ))}
+      </TGrid>
+
+      <TCard gap="$3">
+        <THeading level={3}>{t("sessions.routines.title")}</THeading>
+        <TGrid columns={3} gap="$3">
+          {routineHighlights.map((item) => (
+            <StatTile
+              key={item.key}
+              label={item.label}
+              value={item.value}
+              helper={item.helper}
+            />
           ))}
-        </ThemedView>
-        <ThemedView
-          style={[styles.card, { backgroundColor: surfaceColor, borderColor }]}
-          lightColor="transparent"
-          darkColor="transparent"
-        >
-          <ThemedText style={styles.cardTitle}>
-            {t("sessions.routines.title")}
-          </ThemedText>
-          {routineStatItems.map((item) => (
-            <View key={item.label} style={styles.statRow}>
-              <ThemedText style={[styles.statLabel, { color: mutedText }]}>
-                {item.label}
-              </ThemedText>
-              <ThemedText style={styles.statValue}>{item.value}</ThemedText>
-            </View>
-          ))}
-        </ThemedView>
-        <ThemedView
-          style={[styles.card, { backgroundColor: surfaceColor, borderColor }]}
-          lightColor="transparent"
-          darkColor="transparent"
-        >
-          <ThemedText style={styles.cardTitle}>
-            {t("sessions.routineList.title")}
-          </ThemedText>
-          {routineList.length === 0 ? (
-            <ThemedText style={[styles.empty, { color: subtleText }]}>
-              {t("sessions.routineList.empty")}
-            </ThemedText>
-          ) : (
-            routineList.map((routine) => (
-              <View
-                key={routine.id}
-                style={[styles.routineItem, { borderBottomColor: borderColor }]}
-              >
-                <Pressable
-                  onPress={() => {
-                    router.push({
-                      pathname: "/routine/complete",
-                      params: { sessionId: routine.id },
-                    });
-                  }}
-                  style={({ pressed }) => [
-                    styles.routineHeader,
-                    pressed ? { opacity: 0.7 } : null,
-                  ]}
-                  accessibilityRole="button"
-                  accessibilityLabel={t("sessions.routineList.viewDetails")}
+        </TGrid>
+      </TCard>
+
+      <TCard gap="$3">
+        <THeading level={3}>{t("sessions.breakdown.title")}</THeading>
+        {filteredBreakdown.length === 0 ? (
+          <EmptyState text={t("sessions.breakdown.never")} />
+        ) : (
+          <TStack gap="$3">
+            {filteredBreakdown.map((item) => (
+              <TRow key={item.definition.id} gap="$3" alignItems="center">
+                <TStack
+                  width={THUMB_SIZE}
+                  height={THUMB_SIZE}
+                  borderRadius="$4"
+                  overflow="hidden"
+                  borderWidth={1}
+                  borderColor="$borderColor"
+                  backgroundColor="$backgroundHover"
                 >
-                  <ThemedText style={styles.routineTitle}>
+                  <Image
+                    source={item.definition.image}
+                    style={styles.thumbImage}
+                    resizeMode="cover"
+                  />
+                </TStack>
+                <TStack flex={1} gap="$1" minWidth={0}>
+                  <TText variant="label">
+                    {t(`${item.definition.copyKey}.title`)}
+                  </TText>
+                  <TRow gap="$2" flexWrap="wrap">
+                    <MetaPill
+                      label={t("sessions.breakdown.sessionsLabel", {
+                        count: item.sessions,
+                      })}
+                    />
+                    <MetaPill label={formatDuration(item.totalDuration)} />
+                  </TRow>
+                  <TText variant="caption" color="$placeholderColor">
+                    {item.last
+                      ? t("sessions.breakdown.last", {
+                          date: formatDate(
+                            item.last.endedAt ?? item.last.startedAt,
+                          ),
+                        })
+                      : t("sessions.breakdown.never")}
+                  </TText>
+                </TStack>
+                <TStack alignItems="flex-end" gap="$1">
+                  <THeading level={4}>{formatNumber(item.reps)}</THeading>
+                  <TText variant="caption" color="$placeholderColor">
+                    {t("sessions.labels.reps")}
+                  </TText>
+                </TStack>
+              </TRow>
+            ))}
+          </TStack>
+        )}
+      </TCard>
+
+      <TCard gap="$3">
+        <THeading level={3}>{t("sessions.routineList.title")}</THeading>
+        {routineList.length === 0 ? (
+          <EmptyState text={t("sessions.routineList.empty")} />
+        ) : (
+          <TGrid columns={3} gap="$3">
+            {routineList.map((routine) => (
+              <TCard
+                key={routine.id}
+                gap="$3"
+                onPress={() => handleViewRoutineSummary(routine.id)}
+                pressStyle={{ scale: 0.99 }}
+              >
+                <TStack gap="$1">
+                  <TText variant="label">
                     {t("sessions.routineList.roundsLabel", {
                       count: routine.rounds,
-                    })}{" "}
-                    ·{" "}
+                    })}
+                    {" · "}
                     {t("sessions.routineList.exercisesLabel", {
                       count: routine.exerciseCount,
                     })}
-                  </ThemedText>
-                  <ThemedText
-                    style={[styles.routineSubtitle, { color: mutedText }]}
-                  >
-                    {formatDuration(routine.durationMs)} ·{" "}
-                    {formatDate(routine.completedAt)} · {routine.totalReps}{" "}
-                    {t("sessions.labels.reps")}
-                  </ThemedText>
-                </Pressable>
-                <View style={styles.routineActions}>
-                  <Pressable
-                    style={({ pressed }) => [
-                      styles.actionButton,
-                      styles.actionButtonPrimary,
-                      pressed ? { opacity: 0.8 } : null,
-                    ]}
-                    onPress={() => {
-                      // Restart the routine from history
-                      const sessionId = useRoutineSessionStore
-                        .getState()
-                        .restartFromSession(routine.id);
-                      if (sessionId) {
-                        const activeSession =
-                          useRoutineSessionStore.getState().activeSession;
-                        const firstStep = activeSession?.plan[0];
-                        if (firstStep) {
-                          router.push({
-                            pathname: "/exercises/[exerciseId]",
-                            params: {
-                              exerciseId: firstStep.exerciseId,
-                              routineId: sessionId,
-                              stepIndex: "0",
-                            },
-                          });
-                        }
-                      }
-                    }}
-                    accessibilityRole="button"
+                  </TText>
+                  <TRow gap="$2" flexWrap="wrap">
+                    <MetaPill
+                      label={`${t("sessions.labels.reps")}: ${formatNumber(
+                        routine.totalReps,
+                      )}`}
+                    />
+                    <MetaPill
+                      label={`${t("sessions.labels.duration")}: ${formatDuration(
+                        routine.durationMs,
+                      )}`}
+                    />
+                    <MetaPill label={formatDate(routine.completedAt)} />
+                  </TRow>
+                </TStack>
+
+                <TRow gap="$2" flexWrap="wrap">
+                  <TButton
+                    variant="primary"
+                    fullWidth
+                    onPress={() => handleStartRoutine(routine.id)}
                     accessibilityLabel={t("sessions.routineList.actions.start")}
                   >
-                    <ThemedText
-                      style={[
-                        styles.actionButtonText,
-                        styles.actionButtonTextPrimary,
-                      ]}
-                    >
-                      {t("sessions.routineList.actions.start")}
-                    </ThemedText>
-                  </Pressable>
-                  <Pressable
-                    style={({ pressed }) => [
-                      styles.actionButton,
-                      styles.actionButtonSecondary,
-                      { borderColor },
-                      pressed ? { opacity: 0.6 } : null,
-                    ]}
-                    onPress={() => {
-                      // Find the full session from history
-                      const fullSession = routineHistory.find(
-                        (s) => s.id === routine.id,
-                      );
-                      if (fullSession) {
-                        // Apply the routine plan to the builder
-                        const planBase = fullSession.plan.map((step) => ({
-                          exerciseId: step.exerciseId,
-                          targetReps: step.targetReps,
-                        }));
-                        applyPlan(planBase, fullSession.rounds);
-                      }
-                      // Navigate to routine builder
-                      router.push("/routine");
-                    }}
-                    accessibilityRole="button"
+                    {t("sessions.routineList.actions.start")}
+                  </TButton>
+                  <TButton
+                    variant="outline"
+                    fullWidth
+                    onPress={() => handleEditRoutine(routine.id)}
                     accessibilityLabel={t("sessions.routineList.actions.edit")}
                   >
-                    <ThemedText style={styles.actionButtonText}>
-                      {t("sessions.routineList.actions.edit")}
-                    </ThemedText>
-                  </Pressable>
-                  <Pressable
-                    style={({ pressed }) => [
-                      styles.actionButton,
-                      styles.actionButtonSecondary,
-                      { borderColor },
-                      pressed ? { opacity: 0.6 } : null,
-                    ]}
-                    onPress={() => {
-                      // Navigate to AI analysis
-                      router.push({
-                        pathname: "/routineAnalysis",
-                        params: { routineId: routine.id },
-                      });
-                    }}
-                    accessibilityRole="button"
+                    {t("sessions.routineList.actions.edit")}
+                  </TButton>
+                  <TButton
+                    variant="ghost"
+                    fullWidth
+                    iconAfterName="sparkles-outline"
+                    onPress={() => handleAnalyzeRoutine(routine.id)}
                     accessibilityLabel={t(
                       "sessions.routineList.actions.analyze",
                     )}
                   >
-                    <ThemedText style={styles.actionButtonText}>
-                      {t("sessions.routineList.actions.analyze")}
-                    </ThemedText>
-                  </Pressable>
-                </View>
-              </View>
-            ))
-          )}
-        </ThemedView>
-        <ThemedView
-          style={[styles.card, { backgroundColor: surfaceColor, borderColor }]}
-          lightColor="transparent"
-          darkColor="transparent"
-        >
-          <ThemedText style={styles.cardTitle}>
-            {t("sessions.breakdown.title")}
-          </ThemedText>
-          {breakdown.map((item) => (
-            <View
-              key={item.definition.id}
-              style={[styles.breakdownRow, { borderBottomColor: borderColor }]}
-            >
-              <Image
-                source={item.definition.image}
-                style={[
-                  styles.thumb,
-                  { borderColor, backgroundColor: thumbBackground },
-                ]}
-              />
-              <View style={styles.breakdownContent}>
-                <ThemedText style={styles.historyTitle}>
-                  {t(`${item.definition.copyKey}.title`)}
-                </ThemedText>
-                <ThemedText
-                  style={[styles.historySubtitle, { color: mutedText }]}
-                >
-                  {t("sessions.breakdown.sessionsLabel", {
-                    count: item.sessions,
-                  })}
-                  {" · "}
-                  {formatDuration(item.totalDuration)}
-                </ThemedText>
-                <ThemedText style={[styles.historyMeta, { color: subtleText }]}>
-                  {item.last
-                    ? t("sessions.breakdown.last", {
-                        date: formatDate(
-                          item.last.endedAt ?? item.last.startedAt,
-                        ),
-                      })
-                    : t("sessions.breakdown.never")}
-                </ThemedText>
-              </View>
-              <View style={styles.breakdownBadge}>
-                <ThemedText style={styles.statValue}>{item.reps}</ThemedText>
-                <ThemedText style={[styles.historyMeta, { color: subtleText }]}>
-                  {t("sessions.labels.reps")}
-                </ThemedText>
-              </View>
-            </View>
-          ))}
-        </ThemedView>
+                    {t("sessions.routineList.actions.analyze")}
+                  </TButton>
+                </TRow>
+              </TCard>
+            ))}
+          </TGrid>
+        )}
+      </TCard>
 
-        <ThemedView
-          style={[styles.card, { backgroundColor: surfaceColor, borderColor }]}
-          lightColor="transparent"
-          darkColor="transparent"
-        >
-          <ThemedText style={styles.cardTitle}>
-            {t("sessions.history.title")}
-          </ThemedText>
-          {recentHistory.length === 0 ? (
-            <ThemedText style={[styles.empty, { color: subtleText }]}>
-              {t("sessions.history.empty")}
-            </ThemedText>
-          ) : (
-            recentHistory.map((item) => (
-              <View
+      <TCard gap="$3">
+        <THeading level={3}>{t("sessions.history.title")}</THeading>
+        {recentHistory.length === 0 ? (
+          <EmptyState text={t("sessions.history.empty")} />
+        ) : (
+          <TStack gap="$3">
+            {recentHistory.map((item) => (
+              <TStack
                 key={item.id}
-                style={[styles.historyItem, { borderBottomColor: borderColor }]}
+                gap="$2"
+                borderTopWidth={1}
+                borderColor="$borderColor"
+                paddingTop="$3"
               >
-                <ThemedText style={styles.historyTitle}>
-                  {item.title}
-                </ThemedText>
-                <ThemedText
-                  style={[styles.historySubtitle, { color: mutedText }]}
-                >
+                <THeading level={4}>{item.title}</THeading>
+                <TRow gap="$2" flexWrap="wrap">
+                  <MetaPill label={item.repsLabel} />
+                  {item.durationLabel ? (
+                    <MetaPill label={item.durationLabel} />
+                  ) : null}
+                  {item.endedLabel ? (
+                    <MetaPill label={item.endedLabel} />
+                  ) : null}
+                </TRow>
+                <TText variant="caption" color="$placeholderColor">
                   {item.subtitle}
-                </ThemedText>
-                <ThemedText style={[styles.historyMeta, { color: subtleText }]}>
-                  {item.repsLabel}
-                </ThemedText>
-                {item.durationLabel ? (
-                  <ThemedText
-                    style={[styles.historyMeta, { color: subtleText }]}
-                  >
-                    {item.durationLabel}
-                  </ThemedText>
-                ) : null}
-                {item.endedLabel ? (
-                  <ThemedText
-                    style={[styles.historyMeta, { color: subtleText }]}
-                  >
-                    {item.endedLabel}
-                  </ThemedText>
-                ) : null}
-              </View>
-            ))
-          )}
-        </ThemedView>
-      </View>
-    </ScrollView>
+                </TText>
+              </TStack>
+            ))}
+          </TStack>
+        )}
+      </TCard>
+    </TPage>
   );
 };
 
