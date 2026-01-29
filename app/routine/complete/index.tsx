@@ -1,20 +1,37 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { Pressable, ScrollView, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
+import ScreenHeader from "@/components/ScreenHeader";
+import { TButton } from "@/components/TButton";
+import { TGrid } from "@/components/TGrid";
+import { TPage } from "@/components/TPage";
+import { TRow, TStack } from "@/components/TStack";
+import { TTag } from "@/components/TTag";
+import { THeading, TText } from "@/components/TText";
 import { EXERCISE_COPY_KEYS } from "@/constants/exercises";
-import { useThemeColor } from "@/hooks/useThemeColor";
+import { ScreenPadding } from "@/constants/theme";
 import {
   useRoutineSessionStore,
   type RoutineSession,
   type RoutineStepResult,
 } from "@/stores/routineSessionStore";
 
-import styles from "./complete.styles";
+import {
+  ActionsRow,
+  HeroCard,
+  HighlightRow,
+  RoundCard,
+  RoundHeader,
+  RoundMetaRow,
+  RoundsStack,
+  StatCard,
+  StepRow,
+  StepRowLast,
+  StepsStack,
+  SummaryCard,
+} from "./complete.styles";
 import type { RoutineCompleteScreenProps } from "./complete.types";
 
 const formatDuration = (ms: number | null) => {
@@ -26,29 +43,13 @@ const formatDuration = (ms: number | null) => {
   return `${minutes}m ${seconds.toString().padStart(2, "0")}s`;
 };
 
+const formatNumber = (value: number) => new Intl.NumberFormat().format(value);
+
 const RoutineCompleteScreen: React.FC<RoutineCompleteScreenProps> = () => {
   const router = useRouter();
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const { sessionId } = useLocalSearchParams<{ sessionId?: string }>();
-
-  const backgroundColor = useThemeColor({}, "background");
-  const surfaceColor = useThemeColor(
-    { light: "#f8fafc", dark: "#0b1220" },
-    "background",
-  );
-  const borderColor = useThemeColor(
-    { light: "#e2e8f0", dark: "#1f2937" },
-    "background",
-  );
-  const mutedText = useThemeColor(
-    { light: "#475569", dark: "#cbd5e1" },
-    "text",
-  );
-  const subtleText = useThemeColor(
-    { light: "#64748b", dark: "#94a3b8" },
-    "text",
-  );
 
   const { history, lastCompletedSession, restartFromSession } =
     useRoutineSessionStore();
@@ -116,6 +117,11 @@ const RoutineCompleteScreen: React.FC<RoutineCompleteScreenProps> = () => {
     return Object.values(roundMap).sort((a, b) => a.round - b.round);
   }, [sortedSteps]);
 
+  const paddingBottom = useMemo(
+    () => ScreenPadding.bottom + insets.bottom,
+    [insets.bottom],
+  );
+
   if (!session) {
     return null;
   }
@@ -150,219 +156,234 @@ const RoutineCompleteScreen: React.FC<RoutineCompleteScreenProps> = () => {
     });
   };
 
+  const stats = [
+    {
+      key: "reps",
+      label: t("routineComplete.stats.totalReps"),
+      value: formatNumber(totalReps),
+    },
+    {
+      key: "duration",
+      label: t("routineComplete.stats.duration"),
+      value: duration,
+    },
+    {
+      key: "rounds",
+      label: t("routineComplete.stats.rounds"),
+      value: formatNumber(session.rounds),
+    },
+    {
+      key: "exercises",
+      label: t("routineComplete.stats.exercises"),
+      value: formatNumber(uniqueExercises),
+    },
+  ];
+
+  const highlightTags = [
+    {
+      key: "duration",
+      label: t("routineComplete.summary.roundDuration", { duration }),
+      iconName: "time-outline" as const,
+      tone: "primary" as const,
+    },
+    {
+      key: "rounds",
+      label: `${t("routineComplete.stats.rounds")}: ${session.rounds}`,
+      iconName: "repeat-outline" as const,
+      tone: "neutral" as const,
+    },
+    {
+      key: "exercises",
+      label: `${t("routineComplete.stats.exercises")}: ${uniqueExercises}`,
+      iconName: "barbell-outline" as const,
+      tone: "neutral" as const,
+    },
+  ];
+
+  const actionButtons = [
+    {
+      key: "repeat",
+      label: t("routineComplete.actions.repeat"),
+      onPress: handleRepeat,
+      variant: "primary" as const,
+      iconName: "refresh" as const,
+    },
+    {
+      key: "analyze",
+      label: t("routineComplete.actions.analyze"),
+      onPress: handleAnalyzeRoutine,
+      variant: "secondary" as const,
+      iconName: "analytics-outline" as const,
+    },
+    {
+      key: "backToRoutine",
+      label: t("routineComplete.actions.backToRoutine"),
+      onPress: handleBackToRoutine,
+      variant: "outline" as const,
+      iconName: "list-outline" as const,
+    },
+  ];
+
   return (
-    <ThemedView
-      style={[
-        styles.container,
-        { paddingBottom: insets.bottom + 24, backgroundColor },
-      ]}
-    >
-      <ScrollView
-        contentContainerStyle={{ gap: 16, paddingBottom: insets.bottom + 32 }}
-        showsVerticalScrollIndicator={false}
-      >
-        <ThemedView
-          style={[styles.hero, { backgroundColor: surfaceColor, borderColor }]}
-          lightColor="transparent"
-          darkColor="transparent"
-        >
-          <ThemedText style={styles.heroTitle}>
-            {t("routineComplete.title")}
-          </ThemedText>
-          <ThemedText style={[styles.heroSubtitle, { color: subtleText }]}>
-            {t("routineComplete.subtitle", { rounds: session.rounds })}
-          </ThemedText>
-          <ThemedText style={[styles.heroSubtitle, { color: mutedText }]}>
-            {t("routineComplete.encourage")}
-          </ThemedText>
-        </ThemedView>
+    <TPage scrollable hasHeader>
+      <ScreenHeader
+        title={t("routineComplete.navTitle")}
+        subtitle={t("routineComplete.subtitle", { rounds: session.rounds })}
+      />
 
-        <View style={styles.statsRow}>
-          <ThemedView
-            style={[
-              styles.statCard,
-              { backgroundColor: surfaceColor, borderColor },
-            ]}
-            lightColor="transparent"
-            darkColor="transparent"
-          >
-            <ThemedText style={[styles.statLabel, { color: mutedText }]}>
-              {t("routineComplete.stats.totalReps")}
-            </ThemedText>
-            <ThemedText style={styles.statValue}>{totalReps}</ThemedText>
-          </ThemedView>
-          <ThemedView
-            style={[
-              styles.statCard,
-              { backgroundColor: surfaceColor, borderColor },
-            ]}
-            lightColor="transparent"
-            darkColor="transparent"
-          >
-            <ThemedText style={[styles.statLabel, { color: mutedText }]}>
-              {t("routineComplete.stats.duration")}
-            </ThemedText>
-            <ThemedText style={styles.statValue}>{duration}</ThemedText>
-          </ThemedView>
-          <ThemedView
-            style={[
-              styles.statCard,
-              { backgroundColor: surfaceColor, borderColor },
-            ]}
-            lightColor="transparent"
-            darkColor="transparent"
-          >
-            <ThemedText style={[styles.statLabel, { color: mutedText }]}>
-              {t("routineComplete.stats.rounds")}
-            </ThemedText>
-            <ThemedText style={styles.statValue}>{session.rounds}</ThemedText>
-          </ThemedView>
-          <ThemedView
-            style={[
-              styles.statCard,
-              { backgroundColor: surfaceColor, borderColor },
-            ]}
-            lightColor="transparent"
-            darkColor="transparent"
-          >
-            <ThemedText style={[styles.statLabel, { color: mutedText }]}>
-              {t("routineComplete.stats.exercises")}
-            </ThemedText>
-            <ThemedText style={styles.statValue}>{uniqueExercises}</ThemedText>
-          </ThemedView>
-        </View>
+      <HeroCard>
+        <THeading level={2}>{t("routineComplete.title")}</THeading>
+        <TText opacity={0.85}>{t("routineComplete.encourage")}</TText>
+        <HighlightRow>
+          {highlightTags.map((tag) => (
+            <TTag
+              key={tag.key}
+              label={tag.label}
+              tone={tag.tone}
+              iconName={tag.iconName}
+              accessibilityLabel={tag.label}
+            />
+          ))}
+        </HighlightRow>
+      </HeroCard>
 
-        <View style={styles.buttonsRow}>
-          <Pressable
-            onPress={handleRepeat}
-            style={({ pressed }) => [
-              styles.button,
-              pressed ? { opacity: 0.9 } : null,
-            ]}
-            accessibilityRole="button"
-            accessibilityLabel={t("routineComplete.actions.repeat")}
-          >
-            <ThemedText style={styles.buttonText}>
-              {t("routineComplete.actions.repeat")}
-            </ThemedText>
-          </Pressable>
-          <Pressable
-            onPress={handleAnalyzeRoutine}
-            style={({ pressed }) => [
-              styles.button,
-              pressed ? { opacity: 0.9 } : null,
-            ]}
-            accessibilityRole="button"
-            accessibilityLabel={t("routineComplete.actions.analyze")}
-          >
-            <ThemedText style={styles.buttonText}>
-              {t("routineComplete.actions.analyze")}
-            </ThemedText>
-          </Pressable>
-          <Pressable
-            onPress={handleBackToRoutine}
-            style={({ pressed }) => [
-              styles.button,
-              pressed ? { opacity: 0.8 } : null,
-            ]}
-            accessibilityRole="button"
-            accessibilityLabel={t("routineComplete.actions.backToRoutine")}
-          >
-            <ThemedText style={styles.buttonText}>
-              {t("routineComplete.actions.backToRoutine")}
-            </ThemedText>
-          </Pressable>
-          <Pressable
-            onPress={handleGoHome}
-            style={({ pressed }) => [
-              styles.button,
-              pressed ? { opacity: 0.8 } : null,
-            ]}
-            accessibilityRole="button"
-            accessibilityLabel={t("routineComplete.actions.home")}
-          >
-            <ThemedText style={styles.buttonText}>
-              {t("routineComplete.actions.home")}
-            </ThemedText>
-          </Pressable>
-        </View>
+      <TGrid columns={2} gap="$3">
+        {stats.map((stat) => (
+          <StatCard key={stat.key}>
+            <TText variant="label" opacity={0.8}>
+              {stat.label}
+            </TText>
+            <THeading level={3}>{stat.value}</THeading>
+          </StatCard>
+        ))}
+      </TGrid>
 
-        <ThemedView
-          style={[
-            styles.summaryCard,
-            { backgroundColor: surfaceColor, borderColor },
-          ]}
-          lightColor="transparent"
-          darkColor="transparent"
-        >
-          <ThemedText style={styles.summaryHeader}>
-            {t("routineComplete.summary.title")}
-          </ThemedText>
-          <View style={styles.summaryRounds}>
-            {groupedRounds.map((group) => (
-              <View
-                key={`round-${group.round}`}
-                style={[styles.summaryRound, { borderColor }]}
-              >
-                <View style={styles.summaryRoundHeader}>
-                  <ThemedText style={styles.summaryRoundTitle}>
+      <ActionsRow>
+        {actionButtons.map((action) => (
+          <TStack key={action.key} flex={1} minWidth="46%">
+            <TButton
+              fullWidth
+              variant={action.variant}
+              iconName={action.iconName}
+              accessibilityLabel={action.label}
+              onPress={action.onPress}
+            >
+              {action.label}
+            </TButton>
+          </TStack>
+        ))}
+      </ActionsRow>
+
+      <SummaryCard>
+        <RoundHeader>
+          <TStack gap="$1" flex={1} minWidth={0}>
+            <THeading level={3}>{t("routineComplete.summary.title")}</THeading>
+            <TText variant="caption">{t("routineComplete.encourage")}</TText>
+          </TStack>
+          <RoundMetaRow>
+            <TTag
+              tone="neutral"
+              iconName="time-outline"
+              label={t("routineComplete.summary.roundDuration", {
+                duration,
+              })}
+            />
+            <TTag
+              tone="neutral"
+              iconName="barbell-outline"
+              label={`${formatNumber(totalReps)} ${t(
+                "routineComplete.stats.totalReps",
+              )}`}
+            />
+          </RoundMetaRow>
+        </RoundHeader>
+
+        <RoundsStack>
+          {groupedRounds.map((group) => (
+            <RoundCard key={`round-${group.round}`}>
+              <RoundHeader>
+                <TStack gap="$1" flex={1} minWidth={0}>
+                  <THeading level={4}>
                     {t("routineComplete.summary.round", {
                       round: group.round,
                     })}
-                  </ThemedText>
-                  <ThemedText
-                    style={[styles.summaryRoundMeta, { color: subtleText }]}
-                  >
+                  </THeading>
+                  <TText variant="caption">
                     {t("routineComplete.summary.roundMeta", {
                       count: group.steps.length,
                       reps: group.totalReps,
                     })}
-                  </ThemedText>
-                  <ThemedText
-                    style={[styles.summaryRoundMeta, { color: subtleText }]}
-                  >
-                    {t("routineComplete.summary.roundDuration", {
+                  </TText>
+                </TStack>
+                <RoundMetaRow>
+                  <TTag
+                    tone="neutral"
+                    iconName="time-outline"
+                    label={t("routineComplete.summary.roundDuration", {
                       duration: formatDuration(group.totalDurationMs),
                     })}
-                  </ThemedText>
-                </View>
+                  />
+                  <TTag
+                    tone="neutral"
+                    iconName="barbell-outline"
+                    label={`${formatNumber(group.totalReps)} ${t(
+                      "routineComplete.stats.totalReps",
+                    )}`}
+                  />
+                </RoundMetaRow>
+              </RoundHeader>
 
+              <StepsStack>
                 {group.steps.map((step, index) => {
                   const exerciseTitle = t(
                     `${EXERCISE_COPY_KEYS[step.exerciseId]}.title`,
                   );
                   const isLast = index === group.steps.length - 1;
+                  const StepComponent = isLast ? StepRowLast : StepRow;
 
                   return (
-                    <View
+                    <StepComponent
                       key={`${step.stepIndex}-${step.exerciseId}`}
-                      style={[
-                        styles.summaryItem,
-                        isLast ? styles.summaryItemLast : null,
-                        { borderBottomColor: borderColor },
-                      ]}
+                      accessibilityRole="text"
                     >
-                      <ThemedText style={styles.summaryTitle}>
-                        {exerciseTitle}
-                      </ThemedText>
-                      <ThemedText
-                        style={[styles.summaryMeta, { color: subtleText }]}
-                      >
-                        {t("routineComplete.summary.meta", {
-                          round: step.round,
-                          reps: step.reps,
-                          target: step.targetReps,
-                        })}
-                      </ThemedText>
-                    </View>
+                      <TStack flex={1} gap="$1" minWidth={0}>
+                        <TText fontWeight="700">{exerciseTitle}</TText>
+                        <TText variant="caption">
+                          {t("routineComplete.summary.meta", {
+                            round: step.round,
+                            reps: step.reps,
+                            target: step.targetReps,
+                          })}
+                        </TText>
+                      </TStack>
+                      <TRow gap="$2" alignItems="center">
+                        <TTag
+                          tone="neutral"
+                          iconName="repeat-outline"
+                          label={formatNumber(step.reps)}
+                          accessibilityLabel={t(
+                            "routineComplete.stats.totalReps",
+                          )}
+                        />
+                        <TTag
+                          tone="neutral"
+                          iconName="time-outline"
+                          label={formatDuration(step.durationMs)}
+                          accessibilityLabel={t(
+                            "routineComplete.summary.roundDuration",
+                            { duration: formatDuration(step.durationMs) },
+                          )}
+                        />
+                      </TRow>
+                    </StepComponent>
                   );
                 })}
-              </View>
-            ))}
-          </View>
-        </ThemedView>
-      </ScrollView>
-    </ThemedView>
+              </StepsStack>
+            </RoundCard>
+          ))}
+        </RoundsStack>
+      </SummaryCard>
+    </TPage>
   );
 };
 

@@ -263,8 +263,7 @@
     "actions": {
       "repeat": "Repetir rutina",
       "analyze": "Análisis IA",
-      "backToRoutine": "Volver a rutina",
-      "home": "Ir al inicio"
+      "backToRoutine": "Volver a rutina"
     },
     "summary": {
       "title": "Resumen de sesión",

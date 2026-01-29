@@ -263,8 +263,7 @@
     "actions": {
       "repeat": "Repeat routine",
       "analyze": "AI Analysis",
-      "backToRoutine": "Back to routine",
-      "home": "Go home"
+      "backToRoutine": "Back to routine"
     },
     "summary": {
       "title": "Session summary",
