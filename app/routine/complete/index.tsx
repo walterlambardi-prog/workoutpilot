@@ -1,7 +1,6 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import ScreenHeader from "@/components/ScreenHeader";
 import { TButton } from "@/components/TButton";
@@ -11,7 +10,6 @@ import { TRow, TStack } from "@/components/TStack";
 import { TTag } from "@/components/TTag";
 import { THeading, TText } from "@/components/TText";
 import { EXERCISE_COPY_KEYS } from "@/constants/exercises";
-import { ScreenPadding } from "@/constants/theme";
 import {
   useRoutineSessionStore,
   type RoutineSession,
@@ -48,7 +46,6 @@ const formatNumber = (value: number) => new Intl.NumberFormat().format(value);
 const RoutineCompleteScreen: React.FC<RoutineCompleteScreenProps> = () => {
   const router = useRouter();
   const { t } = useTranslation();
-  const insets = useSafeAreaInsets();
   const { sessionId } = useLocalSearchParams<{ sessionId?: string }>();
 
   const { history, lastCompletedSession, restartFromSession } =
@@ -117,11 +114,6 @@ const RoutineCompleteScreen: React.FC<RoutineCompleteScreenProps> = () => {
     return Object.values(roundMap).sort((a, b) => a.round - b.round);
   }, [sortedSteps]);
 
-  const paddingBottom = useMemo(
-    () => ScreenPadding.bottom + insets.bottom,
-    [insets.bottom],
-  );
-
   if (!session) {
     return null;
   }
@@ -143,10 +135,6 @@ const RoutineCompleteScreen: React.FC<RoutineCompleteScreenProps> = () => {
 
   const handleBackToRoutine = () => {
     router.replace("/routine");
-  };
-
-  const handleGoHome = () => {
-    router.replace("/");
   };
 
   const handleAnalyzeRoutine = () => {
