@@ -4,7 +4,7 @@ import { useAuthStore } from "@/stores/authStore";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Platform, Pressable } from "react-native";
+import { Pressable } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme, XStack, YStack } from "tamagui";
 
@@ -12,7 +12,6 @@ import { usePathname, useRouter } from "expo-router";
 import {
   avatarShadowStyle,
   getAvatarPressableStyle,
-  getBackButtonStyle,
   getMenuButtonStyle,
 } from "./TAppHeader.styles";
 
@@ -40,13 +39,6 @@ export const TAppHeader: React.FC<TAppHeaderProps> = ({
   const { t } = useTranslation();
   const router = useRouter();
   const pathname = usePathname();
-  const isWeb = Platform.OS === "web";
-  const isHome = pathname === "/" || pathname === "/index";
-
-  const canGoBack = (() => {
-    const candidate = router as { canGoBack?: () => boolean };
-    return typeof candidate.canGoBack === "function" && candidate.canGoBack();
-  })();
 
   const handleMenuPress = () => {
     setIsDrawerOpen(true);
@@ -54,14 +46,6 @@ export const TAppHeader: React.FC<TAppHeaderProps> = ({
 
   const handleCloseDrawer = () => {
     setIsDrawerOpen(false);
-  };
-
-  const handleBackPress = () => {
-    if (canGoBack) {
-      router.back();
-      return;
-    }
-    router.replace("/");
   };
 
   const handleAvatarPress = () => {
@@ -83,55 +67,41 @@ export const TAppHeader: React.FC<TAppHeaderProps> = ({
         borderBottomColor="$borderColor"
       >
         {/* Left side */}
-        {!isWeb && !isHome ? (
-          <Pressable
-            onPress={handleBackPress}
-            accessibilityLabel={t("navigation.back")}
-            accessibilityRole="button"
-            style={getBackButtonStyle}
-          >
-            <Ionicons name="chevron-back" size={26} color={iconColor} />
-          </Pressable>
-        ) : (
-          <Pressable
-            onPress={handleAvatarPress}
-            style={getAvatarPressableStyle}
-          >
-            <XStack gap="$3" alignItems="center" flex={1} minWidth={0}>
-              {/* User avatar/icon */}
-              <YStack
-                width={44}
-                height={44}
-                borderRadius={22}
-                backgroundColor="$backgroundHover"
-                alignItems="center"
-                justifyContent="center"
-                borderWidth={2}
-                borderColor="$background"
-                style={avatarShadowStyle}
-              >
-                <Ionicons name="person" size={22} color={iconColor} />
-              </YStack>
+        <Pressable onPress={handleAvatarPress} style={getAvatarPressableStyle}>
+          <XStack gap="$3" alignItems="center" flex={1} minWidth={0}>
+            {/* User avatar/icon */}
+            <YStack
+              width={44}
+              height={44}
+              borderRadius={22}
+              backgroundColor="$backgroundHover"
+              alignItems="center"
+              justifyContent="center"
+              borderWidth={2}
+              borderColor="$background"
+              style={avatarShadowStyle}
+            >
+              <Ionicons name="person" size={22} color={iconColor} />
+            </YStack>
 
-              {/* Username */}
-              <YStack flex={1}>
-                <TText
-                  fontSize="$3"
-                  variant="caption"
-                  opacity={0.6}
-                  color="$color"
-                >
-                  {t("header.welcome")}
-                </TText>
-                <TText fontSize="$5" numberOfLines={1} color="$color">
-                  {t("header.greeting", {
-                    name: username || t("header.defaultUser"),
-                  })}
-                </TText>
-              </YStack>
-            </XStack>
-          </Pressable>
-        )}
+            {/* Username */}
+            <YStack flex={1}>
+              <TText
+                fontSize="$3"
+                variant="caption"
+                opacity={0.6}
+                color="$color"
+              >
+                {t("header.welcome")}
+              </TText>
+              <TText fontSize="$5" numberOfLines={1} color="$color">
+                {t("header.greeting", {
+                  name: username || t("header.defaultUser"),
+                })}
+              </TText>
+            </YStack>
+          </XStack>
+        </Pressable>
 
         {/* Right side: Menu button */}
         {showMenuButton && (

@@ -18,6 +18,7 @@ import { useColorScheme } from "@/hooks/useColorScheme";
 import "@/locales/i18n";
 import { useAuthStore } from "@/stores/authStore";
 import { usePreferencesStore } from "@/stores/preferencesStore";
+import { Platform } from "react-native";
 import config from "../tamagui.config";
 
 export default function RootLayout() {
@@ -97,7 +98,7 @@ export default function RootLayout() {
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
         <Stack
           screenOptions={{
-            header: () => <TAppHeader />,
+            headerShown: Platform.OS === "web" ? false : undefined,
           }}
         >
           <Stack.Screen name="login/index" options={{ headerShown: false }} />
@@ -106,10 +107,32 @@ export default function RootLayout() {
             options={{ headerShown: false }}
           />
           <Stack.Screen
-            name="routine/complete/index"
+            name="index"
             options={{
-              title: t("routineComplete.navTitle"),
-              header: undefined,
+              headerShown: true,
+              header: () => <TAppHeader />,
+            }}
+          />
+          <Stack.Screen
+            name="routine/index"
+            options={{
+              headerShown: true,
+              header: () => <TAppHeader />,
+            }}
+          />
+          <Stack.Screen
+            name="routine/complete/index"
+            //options={{ title: t("routineComplete.navTitle") }}
+            options={{
+              headerShown: true,
+              header: () => <TAppHeader />,
+            }}
+          />
+          <Stack.Screen
+            name="exercises/index"
+            options={{
+              headerShown: true,
+              header: () => <TAppHeader />,
             }}
           />
           <Stack.Screen
@@ -117,8 +140,34 @@ export default function RootLayout() {
             options={{ title: t("navigation.exercises"), header: undefined }}
           />
           <Stack.Screen
+            name="sessions/index"
+            options={{
+              headerShown: true,
+              header: () => <TAppHeader />,
+            }}
+          />
+          <Stack.Screen
+            name="settings/index"
+            options={{
+              headerShown: true,
+              header: () => <TAppHeader />,
+            }}
+          />
+          <Stack.Screen
+            name="aiCoach/index"
+            //options={{ title: t("navigation.exercises"), header: undefined }}
+            options={{
+              headerShown: true,
+              header: () => <TAppHeader />,
+            }}
+          />
+          <Stack.Screen
             name="routineAnalysis/index"
-            options={{ title: t("routineAnalysis.title"), header: undefined }}
+            //options={{ title: t("routineAnalysis.title"), header: undefined }}
+            options={{
+              headerShown: true,
+              header: () => <TAppHeader />,
+            }}
           />
         </Stack>
         <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
