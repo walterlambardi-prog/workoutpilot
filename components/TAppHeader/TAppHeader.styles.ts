@@ -29,6 +29,13 @@ const styles = StyleSheet.create({
   avatarPressablePressed: {
     opacity: 0.7,
   },
+  backButton: {
+    padding: 8,
+    borderRadius: 8,
+  },
+  backButtonPressed: {
+    opacity: 0.7,
+  },
 });
 
 export const getMenuButtonStyle = ({ pressed }: PressableStateCallbackType) => [
@@ -41,4 +48,9 @@ export const getAvatarPressableStyle = ({
 }: PressableStateCallbackType) => [
   styles.avatarPressable,
   pressed && styles.avatarPressablePressed,
+];
+
+export const getBackButtonStyle = ({ pressed }: PressableStateCallbackType) => [
+  styles.backButton,
+  pressed && styles.backButtonPressed,
 ];

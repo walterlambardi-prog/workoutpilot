@@ -5,7 +5,8 @@
     "sessions": "Sessions",
     "settings": "Settings",
     "routine": "Routine",
-    "aiCoach": "AI Coach"
+    "aiCoach": "AI Coach",
+    "back": "Back"
   },
   "drawer": {
     "title": "Menu"
