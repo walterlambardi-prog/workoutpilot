@@ -255,7 +255,7 @@
       "repsLabel": "Reps",
       "increment": "Increase reps for {{exercise}}",
       "decrement": "Decrease reps for {{exercise}}",
-      "selectedCount": "Selected exercises: {{count}}"
+      "selectedLabel": "Exercises"
     },
     "cta": "Start routine"
   },

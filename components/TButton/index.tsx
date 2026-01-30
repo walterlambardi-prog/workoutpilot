@@ -1,12 +1,12 @@
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import {
-    ButtonText,
-    Spinner,
-    Button as TamaguiButton,
-    XStack,
-    useTheme,
-    type ButtonProps,
+  ButtonText,
+  Spinner,
+  Button as TamaguiButton,
+  XStack,
+  useTheme,
+  type ButtonProps,
 } from "tamagui";
 
 import { BUTTON_ICON_SIZE, VARIANT_STYLES } from "./TButton.styles";
@@ -25,6 +25,8 @@ export const TButton: React.FC<TButtonProps> = ({
   isLoading = false,
   children,
   disabled,
+  iconOnly = false,
+  size,
   ...props
 }) => {
   const theme = useTheme();
@@ -48,6 +50,9 @@ export const TButton: React.FC<TButtonProps> = ({
   const resolvedIconColor = (iconColor ??
     resolveTokenColor(resolvedTextColor)) as string | undefined;
 
+  const buttonSize = size ?? "$5";
+  const contentGap = iconOnly ? 0 : "$2";
+
   const leadingIcon = iconName ? (
     <Ionicons
       name={iconName}
@@ -66,9 +71,10 @@ export const TButton: React.FC<TButtonProps> = ({
 
   return (
     <TamaguiButton
-      size="$5"
+      size={buttonSize}
       fontWeight="700"
       borderRadius="$4"
+      circular={iconOnly ? true : props.circular}
       backgroundColor={palette.backgroundColor}
       color={resolvedTextColor}
       hoverStyle={palette.hoverStyle}
@@ -76,16 +82,19 @@ export const TButton: React.FC<TButtonProps> = ({
       borderColor={palette.borderColor}
       borderWidth={palette.borderColor ? 1 : undefined}
       width={fullWidth ? "100%" : undefined}
-      icon={leadingIcon}
-      iconAfter={trailingIcon}
       disabled={disabled || isLoading}
       {...props}
     >
-      <XStack gap="$2" alignItems="center" justifyContent="center">
+      <XStack gap={contentGap} alignItems="center" justifyContent="center">
         {isLoading && <Spinner size="small" color={resolvedIconColor} />}
-        <ButtonText color={resolvedTextColor} fontWeight="700">
-          {children}
-        </ButtonText>
+        {leadingIcon}
+        {!iconOnly && (
+          <ButtonText color={resolvedTextColor} fontWeight="700">
+            {children}
+          </ButtonText>
+        )}
+        {!iconOnly && trailingIcon}
+        {iconOnly && trailingIcon}
       </XStack>
     </TamaguiButton>
   );

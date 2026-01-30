@@ -100,6 +100,17 @@ const RoutineBuilderScreen: React.FC<RoutineBuilderScreenProps> = () => {
     [exerciseList, exercises],
   );
 
+  const hasReadyExercises = useMemo(
+    () =>
+      exerciseList.some(({ id }) => {
+        const config = exercises[id];
+        const isSelected = config?.isSelected !== false;
+        const reps = config?.reps ?? ROUTINE_DEFAULT_REPS;
+        return isSelected && reps > 0;
+      }),
+    [exerciseList, exercises],
+  );
+
   const titleSize = media.md ? "$6" : "$5";
   const bodySize = media.md ? "$4" : "$3";
   const metaSize = media.md ? "$3" : "$2";
@@ -146,6 +157,10 @@ const RoutineBuilderScreen: React.FC<RoutineBuilderScreenProps> = () => {
   );
 
   const handleStartRoutine = useCallback(() => {
+    if (!hasReadyExercises) {
+      return;
+    }
+
     const selectedExercises = EXERCISE_DEFINITIONS.filter(
       ({ id }) => ALLOWED_EXERCISES.includes(id) && exercises[id]?.isSelected,
     );
@@ -177,7 +192,7 @@ const RoutineBuilderScreen: React.FC<RoutineBuilderScreenProps> = () => {
         stepIndex: "0",
       },
     });
-  }, [exercises, rounds, startRoutineSession, router]);
+  }, [exercises, hasReadyExercises, rounds, startRoutineSession, router]);
 
   return (
     <YStack flex={1} backgroundColor="$background">
@@ -209,7 +224,12 @@ const RoutineBuilderScreen: React.FC<RoutineBuilderScreenProps> = () => {
                   {t("routineBuilder.rounds.description")}
                 </Text>
               </YStack>
-              <XStack alignItems="center" justifyContent="space-between">
+              <XStack
+                alignItems="center"
+                justifyContent="space-evenly"
+                gap="$3"
+                flexWrap="wrap"
+              >
                 <XStack alignItems="center" gap="$3">
                   <StepperButton
                     icon="remove-outline"
@@ -229,13 +249,23 @@ const RoutineBuilderScreen: React.FC<RoutineBuilderScreenProps> = () => {
                   />
                 </XStack>
                 <Separator alignSelf="stretch" vertical />
-                <YStack gap="$1" maxWidth="50%">
+                <YStack gap="$1" maxWidth="50%" alignItems="center">
                   <Text fontSize={metaSize} color="$color" opacity={0.7}>
-                    {t("routineBuilder.exercises.selectedCount", {
-                      count: selectedCount,
-                    })}
+                    {t("routineBuilder.exercises.selectedLabel")}
+                  </Text>
+                  <Text fontSize={titleSize} fontWeight="700" color="$color">
+                    {selectedCount}
                   </Text>
                 </YStack>
+                <Separator alignSelf="stretch" vertical />
+                <TButton
+                  onPress={handleStartRoutine}
+                  disabled={!hasReadyExercises}
+                  aria-label={t("routineBuilder.cta")}
+                  iconName="play"
+                  iconOnly
+                  size="$4"
+                />
               </XStack>
             </YStack>
           </Card>
@@ -247,11 +277,6 @@ const RoutineBuilderScreen: React.FC<RoutineBuilderScreenProps> = () => {
               </Text>
               <Text fontSize={bodySize} color="$color" opacity={0.7}>
                 {t("routineBuilder.exercises.subtitle")}
-              </Text>
-              <Text fontSize={metaSize} color="$color" opacity={0.7}>
-                {t("routineBuilder.exercises.selectedCount", {
-                  count: selectedCount,
-                })}
               </Text>
             </YStack>
 
@@ -408,7 +433,7 @@ const RoutineBuilderScreen: React.FC<RoutineBuilderScreenProps> = () => {
 
           <Separator />
 
-          <TButton onPress={handleStartRoutine} disabled={selectedCount === 0}>
+          <TButton onPress={handleStartRoutine} disabled={!hasReadyExercises}>
             {t("routineBuilder.cta")}
           </TButton>
         </YStack>

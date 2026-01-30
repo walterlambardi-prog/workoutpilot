@@ -22,5 +22,7 @@ export interface TButtonProps extends Omit<
   fullWidth?: boolean;
   /** Visual variant */
   variant?: TButtonVariant;
-  children: React.ReactNode;
+  /** Hide text and render an icon-only button */
+  iconOnly?: boolean;
+  children?: React.ReactNode;
 }
