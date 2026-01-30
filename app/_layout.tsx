@@ -1,3 +1,4 @@
+import { Ionicons } from "@expo/vector-icons";
 import {
   DarkTheme,
   DefaultTheme,
@@ -5,21 +6,23 @@ import {
 } from "@react-navigation/native";
 import { Stack, useRouter, useSegments } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import "react-native-reanimated";
 import { TamaguiProvider } from "tamagui";
 
 import AppLoader from "@/components/AppLoader";
 import { TAppHeader } from "@/components/TAppHeader";
+import { TDrawer } from "@/components/TDrawer";
 import "@/config/initReactotron";
 import { useAppLanguage } from "@/hooks/useAppLanguage";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import "@/locales/i18n";
 import { useAuthStore } from "@/stores/authStore";
 import { usePreferencesStore } from "@/stores/preferencesStore";
-import { Platform } from "react-native";
+import { Platform, Pressable } from "react-native";
 import config from "../tamagui.config";
+import { getDrawerButtonStyle } from "./navigation/navigation.styles";
 
 export default function RootLayout() {
   const { t } = useTranslation();
@@ -27,6 +30,9 @@ export default function RootLayout() {
   const segments = useSegments();
   const router = useRouter();
   const [isNavigationReady, setIsNavigationReady] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const isWeb = Platform.OS === "web";
+  const navigationTheme = colorScheme === "dark" ? DarkTheme : DefaultTheme;
 
   const preferencesHasHydrated = usePreferencesStore(
     (state: { _hasHydrated: boolean }) => state._hasHydrated,
@@ -41,6 +47,47 @@ export default function RootLayout() {
     (state: { hasCompletedOnboarding: boolean }) =>
       state.hasCompletedOnboarding,
   );
+
+  const openDrawer = useCallback(() => {
+    setIsDrawerOpen(true);
+  }, []);
+
+  const closeDrawer = useCallback(() => {
+    setIsDrawerOpen(false);
+  }, []);
+
+  const drawerState = useMemo(
+    () => ({
+      isOpen: isDrawerOpen,
+      open: openDrawer,
+      close: closeDrawer,
+    }),
+    [isDrawerOpen, openDrawer, closeDrawer],
+  );
+
+  const renderDrawerToggle = useCallback(
+    () => (
+      <Pressable
+        onPress={openDrawer}
+        style={getDrawerButtonStyle}
+        accessibilityRole="button"
+        accessibilityLabel={t("drawer.title")}
+      >
+        <Ionicons name="menu" size={24} color={navigationTheme.colors.text} />
+      </Pressable>
+    ),
+    [navigationTheme.colors.text, openDrawer, t],
+  );
+
+  const appHeaderOptions = isWeb
+    ? {
+        headerShown: true,
+        header: () => <TAppHeader drawerState={drawerState} />,
+      }
+    : {
+        headerShown: true,
+        headerRight: renderDrawerToggle,
+      };
 
   // Initialize language preference on app startup
   useAppLanguage();
@@ -95,10 +142,10 @@ export default function RootLayout() {
 
   return (
     <TamaguiProvider config={config} defaultTheme={colorScheme}>
-      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+      <ThemeProvider value={navigationTheme}>
         <Stack
           screenOptions={{
-            headerShown: Platform.OS === "web" ? false : undefined,
+            headerShown: !isWeb,
           }}
         >
           <Stack.Screen name="login/index" options={{ headerShown: false }} />
@@ -110,66 +157,67 @@ export default function RootLayout() {
             name="index"
             options={{
               headerShown: true,
-              header: () => <TAppHeader />,
+              header: () => <TAppHeader drawerState={drawerState} />,
             }}
           />
           <Stack.Screen
             name="routine/index"
             options={{
-              headerShown: true,
-              header: () => <TAppHeader />,
+              ...appHeaderOptions,
+              title: t("navigation.routine"),
             }}
           />
           <Stack.Screen
             name="routine/complete/index"
-            //options={{ title: t("routineComplete.navTitle") }}
             options={{
-              headerShown: true,
-              header: () => <TAppHeader />,
+              ...appHeaderOptions,
+              title: t("routineComplete.navTitle"),
             }}
           />
           <Stack.Screen
             name="exercises/index"
             options={{
-              headerShown: true,
-              header: () => <TAppHeader />,
+              ...appHeaderOptions,
+              title: t("navigation.exercises"),
             }}
           />
           <Stack.Screen
             name="exercises/[exerciseId]"
-            options={{ title: t("navigation.exercises"), header: undefined }}
+            options={{
+              ...appHeaderOptions,
+              title: t("navigation.exercises"),
+            }}
           />
           <Stack.Screen
             name="sessions/index"
             options={{
-              headerShown: true,
-              header: () => <TAppHeader />,
+              ...appHeaderOptions,
+              title: t("sessions.title"),
             }}
           />
           <Stack.Screen
             name="settings/index"
             options={{
-              headerShown: true,
-              header: () => <TAppHeader />,
+              ...appHeaderOptions,
+              title: t("settings.title"),
             }}
           />
           <Stack.Screen
             name="aiCoach/index"
-            //options={{ title: t("navigation.exercises"), header: undefined }}
             options={{
-              headerShown: true,
-              header: () => <TAppHeader />,
+              ...appHeaderOptions,
+              title: t("navigation.aiCoach"),
             }}
           />
           <Stack.Screen
             name="routineAnalysis/index"
-            //options={{ title: t("routineAnalysis.title"), header: undefined }}
             options={{
-              headerShown: true,
-              header: () => <TAppHeader />,
+              ...appHeaderOptions,
+              title: t("routineAnalysis.title"),
             }}
           />
         </Stack>
+        <TDrawer isOpen={drawerState.isOpen} onClose={drawerState.close} />
         <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
       </ThemeProvider>
     </TamaguiProvider>

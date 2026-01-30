@@ -17,6 +17,11 @@ import {
 
 export interface TAppHeaderProps {
   showMenuButton?: boolean;
+  drawerState?: {
+    isOpen: boolean;
+    open: () => void;
+    close: () => void;
+  };
 }
 
 /**
@@ -30,6 +35,7 @@ export interface TAppHeaderProps {
  */
 export const TAppHeader: React.FC<TAppHeaderProps> = ({
   showMenuButton = true,
+  drawerState,
 }) => {
   const username = useAuthStore((state: any) => state.username);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -41,10 +47,20 @@ export const TAppHeader: React.FC<TAppHeaderProps> = ({
   const pathname = usePathname();
 
   const handleMenuPress = () => {
+    if (drawerState) {
+      drawerState.open();
+      return;
+    }
+
     setIsDrawerOpen(true);
   };
 
   const handleCloseDrawer = () => {
+    if (drawerState) {
+      drawerState.close();
+      return;
+    }
+
     setIsDrawerOpen(false);
   };
 
@@ -112,7 +128,9 @@ export const TAppHeader: React.FC<TAppHeaderProps> = ({
       </XStack>
 
       {/* Drawer */}
-      <TDrawer isOpen={isDrawerOpen} onClose={handleCloseDrawer} />
+      {!drawerState && (
+        <TDrawer isOpen={isDrawerOpen} onClose={handleCloseDrawer} />
+      )}
     </>
   );
 };
