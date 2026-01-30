@@ -254,11 +254,9 @@
   "routineComplete": {
     "navTitle": "Rutina completa",
     "title": "¡Rutina completada!",
-    "subtitle": "Terminaste {{rounds}} rondas.",
-    "encourage": "Gran trabajo: sigue con el impulso.",
+    "subtitle": "Gran trabajo: sigue con el impulso.",
     "stats": {
       "totalReps": "Reps totales",
-      "duration": "Duración",
       "rounds": "Rondas",
       "exercises": "Ejercicios"
     },
@@ -270,9 +268,7 @@
     "summary": {
       "title": "Resumen de sesión",
       "round": "Ronda {{round}}",
-      "roundMeta": "{{count}} ejercicios · {{reps}} reps",
-      "roundDuration": "Tiempo: {{duration}}",
-      "meta": "Ronda {{round}} · {{reps}} reps (meta {{target}})"
+      "roundDuration": "Tiempo: {{duration}}"
     }
   },
   "exercises": {

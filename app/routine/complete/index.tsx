@@ -4,7 +4,6 @@ import { useTranslation } from "react-i18next";
 
 import ScreenHeader from "@/components/ScreenHeader";
 import { TButton } from "@/components/TButton";
-import { TGrid } from "@/components/TGrid";
 import { TPage } from "@/components/TPage";
 import { TRow, TStack } from "@/components/TStack";
 import { TTag } from "@/components/TTag";
@@ -18,13 +17,11 @@ import {
 
 import {
   ActionsRow,
-  HeroCard,
   HighlightRow,
   RoundCard,
   RoundHeader,
   RoundMetaRow,
   RoundsStack,
-  StatCard,
   StepRow,
   StepRowLast,
   StepsStack,
@@ -144,29 +141,6 @@ const RoutineCompleteScreen: React.FC<RoutineCompleteScreenProps> = () => {
     });
   };
 
-  const stats = [
-    {
-      key: "reps",
-      label: t("routineComplete.stats.totalReps"),
-      value: formatNumber(totalReps),
-    },
-    {
-      key: "duration",
-      label: t("routineComplete.stats.duration"),
-      value: duration,
-    },
-    {
-      key: "rounds",
-      label: t("routineComplete.stats.rounds"),
-      value: formatNumber(session.rounds),
-    },
-    {
-      key: "exercises",
-      label: t("routineComplete.stats.exercises"),
-      value: formatNumber(uniqueExercises),
-    },
-  ];
-
   const highlightTags = [
     {
       key: "duration",
@@ -183,6 +157,14 @@ const RoutineCompleteScreen: React.FC<RoutineCompleteScreenProps> = () => {
     {
       key: "exercises",
       label: `${t("routineComplete.stats.exercises")}: ${uniqueExercises}`,
+      iconName: "barbell-outline" as const,
+      tone: "neutral" as const,
+    },
+    {
+      key: "totalReps",
+      label: `${formatNumber(totalReps)} ${t(
+        "routineComplete.stats.totalReps",
+      )}`,
       iconName: "barbell-outline" as const,
       tone: "neutral" as const,
     },
@@ -215,36 +197,21 @@ const RoutineCompleteScreen: React.FC<RoutineCompleteScreenProps> = () => {
   return (
     <TPage scrollable hasHeader>
       <ScreenHeader
-        title={t("routineComplete.navTitle")}
-        subtitle={t("routineComplete.subtitle", { rounds: session.rounds })}
+        title={t("routineComplete.title")}
+        subtitle={t("routineComplete.subtitle")}
       />
 
-      <HeroCard>
-        <THeading level={2}>{t("routineComplete.title")}</THeading>
-        <TText opacity={0.85}>{t("routineComplete.encourage")}</TText>
-        <HighlightRow>
-          {highlightTags.map((tag) => (
-            <TTag
-              key={tag.key}
-              label={tag.label}
-              tone={tag.tone}
-              iconName={tag.iconName}
-              accessibilityLabel={tag.label}
-            />
-          ))}
-        </HighlightRow>
-      </HeroCard>
-
-      <TGrid columns={2} gap="$3">
-        {stats.map((stat) => (
-          <StatCard key={stat.key}>
-            <TText variant="label" opacity={0.8}>
-              {stat.label}
-            </TText>
-            <THeading level={3}>{stat.value}</THeading>
-          </StatCard>
+      <HighlightRow>
+        {highlightTags.map((tag) => (
+          <TTag
+            key={tag.key}
+            label={tag.label}
+            tone={tag.tone}
+            iconName={tag.iconName}
+            accessibilityLabel={tag.label}
+          />
         ))}
-      </TGrid>
+      </HighlightRow>
 
       <ActionsRow>
         {actionButtons.map((action) => (
@@ -253,7 +220,6 @@ const RoutineCompleteScreen: React.FC<RoutineCompleteScreenProps> = () => {
               fullWidth
               variant={action.variant}
               iconName={action.iconName}
-              accessibilityLabel={action.label}
               onPress={action.onPress}
             >
               {action.label}
@@ -266,60 +232,35 @@ const RoutineCompleteScreen: React.FC<RoutineCompleteScreenProps> = () => {
         <RoundHeader>
           <TStack gap="$1" flex={1} minWidth={0}>
             <THeading level={3}>{t("routineComplete.summary.title")}</THeading>
-            <TText variant="caption">{t("routineComplete.encourage")}</TText>
           </TStack>
-          <RoundMetaRow>
-            <TTag
-              tone="neutral"
-              iconName="time-outline"
-              label={t("routineComplete.summary.roundDuration", {
-                duration,
-              })}
-            />
-            <TTag
-              tone="neutral"
-              iconName="barbell-outline"
-              label={`${formatNumber(totalReps)} ${t(
-                "routineComplete.stats.totalReps",
-              )}`}
-            />
-          </RoundMetaRow>
         </RoundHeader>
 
         <RoundsStack>
           {groupedRounds.map((group) => (
             <RoundCard key={`round-${group.round}`}>
-              <RoundHeader>
-                <TStack gap="$1" flex={1} minWidth={0}>
-                  <THeading level={4}>
-                    {t("routineComplete.summary.round", {
-                      round: group.round,
-                    })}
-                  </THeading>
-                  <TText variant="caption">
-                    {t("routineComplete.summary.roundMeta", {
-                      count: group.steps.length,
-                      reps: group.totalReps,
-                    })}
-                  </TText>
-                </TStack>
-                <RoundMetaRow>
-                  <TTag
-                    tone="neutral"
-                    iconName="time-outline"
-                    label={t("routineComplete.summary.roundDuration", {
-                      duration: formatDuration(group.totalDurationMs),
-                    })}
-                  />
-                  <TTag
-                    tone="neutral"
-                    iconName="barbell-outline"
-                    label={`${formatNumber(group.totalReps)} ${t(
-                      "routineComplete.stats.totalReps",
-                    )}`}
-                  />
-                </RoundMetaRow>
-              </RoundHeader>
+              <TStack gap="$1" flex={1} minWidth={0}>
+                <THeading level={4}>
+                  {t("routineComplete.summary.round", {
+                    round: group.round,
+                  })}
+                </THeading>
+              </TStack>
+              <RoundMetaRow>
+                <TTag
+                  tone="neutral"
+                  iconName="time-outline"
+                  label={t("routineComplete.summary.roundDuration", {
+                    duration: formatDuration(group.totalDurationMs),
+                  })}
+                />
+                <TTag
+                  tone="neutral"
+                  iconName="barbell-outline"
+                  label={`${formatNumber(group.totalReps)} ${t(
+                    "routineComplete.stats.totalReps",
+                  )}`}
+                />
+              </RoundMetaRow>
 
               <StepsStack>
                 {group.steps.map((step, index) => {
@@ -330,19 +271,9 @@ const RoutineCompleteScreen: React.FC<RoutineCompleteScreenProps> = () => {
                   const StepComponent = isLast ? StepRowLast : StepRow;
 
                   return (
-                    <StepComponent
-                      key={`${step.stepIndex}-${step.exerciseId}`}
-                      accessibilityRole="text"
-                    >
-                      <TStack flex={1} gap="$1" minWidth={0}>
+                    <StepComponent key={`${step.stepIndex}-${step.exerciseId}`}>
+                      <TStack flex={1} minWidth={0}>
                         <TText fontWeight="700">{exerciseTitle}</TText>
-                        <TText variant="caption">
-                          {t("routineComplete.summary.meta", {
-                            round: step.round,
-                            reps: step.reps,
-                            target: step.targetReps,
-                          })}
-                        </TText>
                       </TStack>
                       <TRow gap="$2" alignItems="center">
                         <TTag

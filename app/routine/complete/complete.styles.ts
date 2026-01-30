@@ -65,7 +65,7 @@ export const StepsStack = styled(TStack, {
 export const StepRow = styled(TRow, {
   gap: "$2",
   justifyContent: "space-between",
-  alignItems: "flex-start",
+  alignItems: "center",
   paddingVertical: "$3",
   borderBottomWidth: 1,
   borderBottomColor: "$borderColor",

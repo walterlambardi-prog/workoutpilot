@@ -254,11 +254,9 @@
   "routineComplete": {
     "navTitle": "Routine complete",
     "title": "Routine complete!",
-    "subtitle": "You finished {{rounds}} rounds.",
-    "encourage": "Amazing work—keep the momentum going.",
+    "subtitle": "Amazing work—keep the momentum going.",
     "stats": {
       "totalReps": "Total reps",
-      "duration": "Duration",
       "rounds": "Rounds",
       "exercises": "Exercises"
     },
@@ -270,9 +268,7 @@
     "summary": {
       "title": "Session summary",
       "round": "Round {{round}}",
-      "roundMeta": "{{count}} exercises · {{reps}} reps",
-      "roundDuration": "Time: {{duration}}",
-      "meta": "Round {{round}} · {{reps}} reps (target {{target}})"
+      "roundDuration": "Time: {{duration}}"
     }
   },
   "exercises": {
