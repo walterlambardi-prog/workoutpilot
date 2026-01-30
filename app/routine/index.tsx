@@ -216,56 +216,67 @@ const RoutineBuilderScreen: React.FC<RoutineBuilderScreenProps> = () => {
             elevate={false}
           >
             <YStack gap="$3">
-              <YStack gap="$2">
-                <Text fontSize={titleSize} fontWeight="700" color="$color">
-                  {t("routineBuilder.rounds.label")}
-                </Text>
-                <Text fontSize={bodySize} color="$color" opacity={0.7}>
-                  {t("routineBuilder.rounds.description")}
-                </Text>
-              </YStack>
               <XStack
-                alignItems="center"
-                justifyContent="space-evenly"
-                gap="$3"
-                flexWrap="wrap"
+                alignItems="flex-start"
+                justifyContent="space-between"
+                gap="$4"
+                flexWrap="nowrap"
               >
-                <XStack alignItems="center" gap="$3">
-                  <StepperButton
-                    icon="remove-outline"
-                    onPress={decrementRounds}
-                    accessibilityLabel={t("routineBuilder.rounds.decrement")}
-                    disabled={rounds <= 1}
-                    iconColor={iconPrimary}
-                  />
-                  <Text fontSize={titleSize} fontWeight="700" color="$color">
-                    {rounds}
+                <YStack gap="$2" alignItems="center" flex={1}>
+                  <Text fontSize={metaSize} color="$color" opacity={0.7}>
+                    {t("routineBuilder.rounds.label")}
                   </Text>
-                  <StepperButton
-                    icon="add-outline"
-                    onPress={incrementRounds}
-                    accessibilityLabel={t("routineBuilder.rounds.increment")}
-                    iconColor={iconPrimary}
-                  />
-                </XStack>
+                  <XStack alignItems="center" gap="$3">
+                    <StepperButton
+                      icon="remove-outline"
+                      onPress={decrementRounds}
+                      accessibilityLabel={t("routineBuilder.rounds.decrement")}
+                      disabled={rounds <= 1}
+                      iconColor={iconPrimary}
+                    />
+                    <Text fontSize={titleSize} fontWeight="700" color="$color">
+                      {rounds}
+                    </Text>
+                    <StepperButton
+                      icon="add-outline"
+                      onPress={incrementRounds}
+                      accessibilityLabel={t("routineBuilder.rounds.increment")}
+                      iconColor={iconPrimary}
+                    />
+                  </XStack>
+                </YStack>
+
                 <Separator alignSelf="stretch" vertical />
-                <YStack gap="$1" maxWidth="50%" alignItems="center">
+
+                <YStack gap="$2" alignItems="center" flex={1}>
                   <Text fontSize={metaSize} color="$color" opacity={0.7}>
                     {t("routineBuilder.exercises.selectedLabel")}
                   </Text>
-                  <Text fontSize={titleSize} fontWeight="700" color="$color">
+                  <Text
+                    fontSize={titleSize}
+                    fontWeight="700"
+                    color="$color"
+                    paddingTop={Spacing.xs}
+                  >
                     {selectedCount}
                   </Text>
                 </YStack>
+
                 <Separator alignSelf="stretch" vertical />
-                <TButton
-                  onPress={handleStartRoutine}
-                  disabled={!hasReadyExercises}
-                  aria-label={t("routineBuilder.cta")}
-                  iconName="play"
-                  iconOnly
-                  size="$4"
-                />
+
+                <YStack gap="$2" alignItems="center" flex={1}>
+                  <Text fontSize={metaSize} color="$color" opacity={0.7}>
+                    {t("routineBuilder.cta")}
+                  </Text>
+                  <TButton
+                    onPress={handleStartRoutine}
+                    disabled={!hasReadyExercises}
+                    aria-label={t("routineBuilder.cta")}
+                    iconName="play"
+                    iconOnly
+                    size="$4"
+                  />
+                </YStack>
               </XStack>
             </YStack>
           </Card>
