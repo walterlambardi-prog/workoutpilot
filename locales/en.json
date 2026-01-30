@@ -111,7 +111,9 @@
     "subtitle": "Configure your preferences and manage app data.",
     "appearance": {
       "title": "Appearance",
-      "themeDescription": "Choose between light and dark mode."
+      "themeDescription": "Choose between light and dark mode.",
+      "lightMode": "Light mode",
+      "darkMode": "Dark mode"
     },
     "language": {
       "title": "Language",

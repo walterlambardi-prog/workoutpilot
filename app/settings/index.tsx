@@ -1,115 +1,84 @@
-import React from "react";
+import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import React, { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Pressable, ScrollView, View } from "react-native";
+import { XStack, YStack, useTheme } from "tamagui";
 
 import ScreenHeader from "@/components/ScreenHeader";
-import { ThemedText } from "@/components/ThemedText";
+import { TButton } from "@/components/TButton";
+import { TCard } from "@/components/TCard";
+import { TPage } from "@/components/TPage";
+import { TRow, TStack } from "@/components/TStack";
+import { THeading, TText } from "@/components/TText";
 import { useAppLanguage } from "@/hooks/useAppLanguage";
-import { useThemeColor } from "@/hooks/useThemeColor";
 import { useAuthStore } from "@/stores/authStore";
 import { useExerciseSessionStore } from "@/stores/exerciseSessionStore";
 import { usePreferencesStore, type ThemeMode } from "@/stores/preferencesStore";
 import { useRoutineBuilderStore } from "@/stores/routineBuilderStore";
 import { useRoutineSessionStore } from "@/stores/routineSessionStore";
 import { showAlert } from "@/utils/alert";
-import { useRouter } from "expo-router";
-import styles from "./settings.styles";
+import {
+  ACTION_GAP,
+  ACTION_ICON_SIZE,
+  CARD_GAP,
+  OPTION_ICON_SIZE,
+  SECTION_GAP,
+} from "./settings.styles";
+import { SettingsAction } from "./settings.types";
 
 type LanguageCode = ReturnType<
   typeof useAppLanguage
 >["supportedLanguages"][number];
 
-interface LanguageSwitcherProps {
-  value: LanguageCode;
-  options: { code: LanguageCode; label: string }[];
-  onChange: (code: LanguageCode) => void;
+interface ChoiceButtonProps {
+  label: string;
+  selected: boolean;
+  onPress: () => void;
+  accessibilityLabel: string;
 }
 
-const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
-  value,
-  options,
-  onChange,
+const ChoiceButton: React.FC<ChoiceButtonProps> = ({
+  label,
+  selected,
+  onPress,
+  accessibilityLabel,
 }) => (
-  <View style={styles.languageToggle}>
-    {options.map(({ code, label }) => {
-      const selected = value === code;
-      return (
-        <Pressable
-          key={code}
-          onPress={() => onChange(code)}
-          style={({ pressed }) => [
-            styles.languagePill,
-            selected ? styles.languagePillActive : null,
-            pressed ? styles.languagePillPressed : null,
-          ]}
-          accessibilityRole="button"
-          accessibilityLabel={label}
-          accessibilityState={{ selected }}
-        >
-          <ThemedText
-            style={[
-              styles.languagePillText,
-              selected ? styles.languagePillTextActive : null,
-            ]}
-          >
-            {label}
-          </ThemedText>
-        </Pressable>
-      );
-    })}
-  </View>
+  <TButton
+    size="$4"
+    variant={selected ? "primary" : "outline"}
+    iconName={selected ? "checkmark-circle" : undefined}
+    onPress={onPress}
+    accessibilityRole="button"
+    accessibilityLabel={accessibilityLabel}
+    accessibilityState={{ selected }}
+  >
+    {label}
+  </TButton>
 );
 
-interface ThemeSwitcherProps {
-  value: ThemeMode;
-  onChange: (mode: ThemeMode) => void;
-}
-
-const ThemeSwitcher: React.FC<ThemeSwitcherProps> = ({ value, onChange }) => {
-  const modes: { mode: ThemeMode; label: string }[] = [
-    { mode: "light", label: "LIGHT" },
-    { mode: "dark", label: "DARK" },
-  ];
-
-  return (
-    <View style={styles.languageToggle}>
-      {modes.map(({ mode, label }) => {
-        const selected = value === mode;
-        return (
-          <Pressable
-            key={mode}
-            onPress={() => onChange(mode)}
-            style={({ pressed }) => [
-              styles.languagePill,
-              selected ? styles.languagePillActive : null,
-              pressed ? styles.languagePillPressed : null,
-            ]}
-            accessibilityRole="button"
-            accessibilityLabel={label}
-            accessibilityState={{ selected }}
-          >
-            <ThemedText
-              style={[
-                styles.languagePillText,
-                selected ? styles.languagePillTextActive : null,
-              ]}
-            >
-              {label}
-            </ThemedText>
-          </Pressable>
-        );
-      })}
-    </View>
-  );
+const resolveTokenColor = (
+  theme: Record<string, unknown>,
+  token: string,
+): string => {
+  const key = token.replace("$", "");
+  const value = theme[key];
+  if (value && typeof value === "object" && "val" in (value as object)) {
+    return (value as { val?: string }).val ?? token;
+  }
+  if (typeof value === "string") {
+    return value;
+  }
+  return token;
 };
 
 /**
  * Settings screen for WorkoutPilot
- * Allows users to configure app preferences
+ * Modernized with Tamagui components for a consistent, professional layout.
  */
 const SettingsScreen: React.FC = () => {
   const { t } = useTranslation();
   const router = useRouter();
+  const theme = useTheme();
   const { language, changeLanguage, supportedLanguages } = useAppLanguage();
   const resetHistory = useExerciseSessionStore((state) => state.resetHistory);
   const resetRoutineHistory = useRoutineSessionStore(
@@ -119,7 +88,6 @@ const SettingsScreen: React.FC = () => {
   const resetAuth = useAuthStore(
     (state: { resetAuth: () => void }) => state.resetAuth,
   );
-  const backgroundColor = useThemeColor({}, "background");
   const themeMode = usePreferencesStore(
     (state: { themeMode: ThemeMode | null }) => state.themeMode,
   );
@@ -127,17 +95,49 @@ const SettingsScreen: React.FC = () => {
     (state: { setThemeMode: (mode: ThemeMode) => void }) => state.setThemeMode,
   );
 
-  const languageLabels = {
-    en: t("settings.language.english"),
-    es: t("settings.language.spanish"),
-  } as const;
+  const accentColor = resolveTokenColor(
+    theme as Record<string, unknown>,
+    "$info",
+  );
+  const dangerColor = resolveTokenColor(
+    theme as Record<string, unknown>,
+    "$error",
+  );
 
-  const languageOptions = supportedLanguages.map((code) => ({
-    code,
-    label: languageLabels[code],
-  }));
+  const languageLabels = useMemo(
+    () => ({
+      en: t("settings.language.english"),
+      es: t("settings.language.spanish"),
+    }),
+    [t],
+  ) as Record<LanguageCode, string>;
 
-  const handleClearHistory = () => {
+  const languageOptions = useMemo(
+    () =>
+      supportedLanguages.map((code) => ({
+        code,
+        label: languageLabels[code],
+      })),
+    [languageLabels, supportedLanguages],
+  );
+
+  const themeOptions = useMemo(
+    () => [
+      {
+        mode: "light" as ThemeMode,
+        label: t("settings.appearance.lightMode"),
+        accessibility: t("settings.appearance.themeDescription"),
+      },
+      {
+        mode: "dark" as ThemeMode,
+        label: t("settings.appearance.darkMode"),
+        accessibility: t("settings.appearance.themeDescription"),
+      },
+    ],
+    [t],
+  );
+
+  const handleClearHistory = useCallback(() => {
     showAlert(
       t("settings.data.clearHistoryConfirmTitle"),
       t("settings.data.clearHistoryConfirmMessage"),
@@ -159,9 +159,9 @@ const SettingsScreen: React.FC = () => {
         },
       ],
     );
-  };
+  }, [resetHistory, t]);
 
-  const handleClearRoutineHistory = () => {
+  const handleClearRoutineHistory = useCallback(() => {
     showAlert(
       t("settings.data.clearRoutineHistoryConfirmTitle"),
       t("settings.data.clearRoutineHistoryConfirmMessage"),
@@ -183,9 +183,9 @@ const SettingsScreen: React.FC = () => {
         },
       ],
     );
-  };
+  }, [resetRoutineHistory, t]);
 
-  const handleDeleteAccount = () => {
+  const handleDeleteAccount = useCallback(() => {
     showAlert(
       t("settings.data.deleteAccountConfirmTitle"),
       t("settings.data.deleteAccountConfirmMessage"),
@@ -198,7 +198,6 @@ const SettingsScreen: React.FC = () => {
           text: t("settings.data.deleteAccountConfirm"),
           style: "destructive",
           onPress: () => {
-            // Reset all stores
             resetAuth();
             resetHistory();
             resetRoutineHistory();
@@ -209,111 +208,167 @@ const SettingsScreen: React.FC = () => {
               t("settings.data.accountDeletedMessage"),
             );
 
-            // Navigate to login screen
             router.replace("/login");
           },
         },
       ],
     );
-  };
+  }, [resetAuth, resetHistory, resetRoutine, resetRoutineHistory, router, t]);
+
+  const dataActions = useMemo<SettingsAction[]>(
+    () => [
+      {
+        key: "clear-history",
+        title: t("settings.data.clearHistory"),
+        description: t("settings.data.clearHistoryConfirmMessage"),
+        iconName: "trash-outline",
+        tone: "danger",
+        onPress: handleClearHistory,
+      },
+      {
+        key: "clear-routine-history",
+        title: t("settings.data.clearRoutineHistory"),
+        description: t("settings.data.clearRoutineHistoryConfirmMessage"),
+        iconName: "repeat-outline",
+        tone: "danger",
+        onPress: handleClearRoutineHistory,
+      },
+      {
+        key: "delete-account",
+        title: t("settings.data.deleteAccount"),
+        description: t("settings.data.deleteAccountConfirmMessage"),
+        iconName: "warning-outline",
+        tone: "danger",
+        onPress: handleDeleteAccount,
+      },
+    ],
+    [handleClearHistory, handleClearRoutineHistory, handleDeleteAccount, t],
+  );
 
   return (
-    <ScrollView
-      style={[styles.page, { backgroundColor }]}
-      showsVerticalScrollIndicator={false}
-    >
+    <TPage backgroundColor="$background" hasHeader>
       <ScreenHeader
         title={t("settings.title")}
         subtitle={t("settings.subtitle")}
       />
 
-      <View style={styles.section}>
-        <ThemedText type="subtitle" style={styles.sectionTitle}>
-          {t("settings.appearance.title")}
-        </ThemedText>
-        <ThemedText style={styles.sectionDescription}>
-          {t("settings.appearance.themeDescription")}
-        </ThemedText>
-        <ThemeSwitcher value={themeMode ?? "light"} onChange={setThemeMode} />
-      </View>
+      <TStack gap={SECTION_GAP} paddingBottom="$5">
+        <TCard gap={CARD_GAP}>
+          <TRow gap="$3" alignItems="center">
+            <Ionicons
+              name="color-palette-outline"
+              size={ACTION_ICON_SIZE}
+              color={accentColor}
+              accessibilityElementsHidden
+            />
+            <THeading level={3}>{t("settings.appearance.title")}</THeading>
+          </TRow>
 
-      <View style={styles.section}>
-        <ThemedText type="subtitle" style={styles.sectionTitle}>
-          {t("settings.language.title")}
-        </ThemedText>
-        <ThemedText style={styles.sectionDescription}>
-          {t("settings.language.description")}
-        </ThemedText>
-        <LanguageSwitcher
-          value={language}
-          options={languageOptions}
-          onChange={changeLanguage}
-        />
-      </View>
+          <TText variant="caption" color="$placeholderColor">
+            {t("settings.appearance.themeDescription")}
+          </TText>
 
-      <View style={styles.section}>
-        <ThemedText type="subtitle" style={styles.sectionTitle}>
-          {t("settings.data.title")}
-        </ThemedText>
-        <Pressable
-          onPress={handleClearHistory}
-          style={({ pressed }) => [
-            styles.actionButton,
-            styles.actionButtonDestructive,
-            pressed ? styles.actionButtonPressed : null,
-          ]}
-          accessibilityRole="button"
-          accessibilityLabel={t("settings.data.clearHistory")}
-        >
-          <ThemedText
-            style={[
-              styles.actionButtonText,
-              styles.actionButtonTextDestructive,
-            ]}
-          >
-            {t("settings.data.clearHistory")}
-          </ThemedText>
-        </Pressable>
-        <Pressable
-          onPress={handleClearRoutineHistory}
-          style={({ pressed }) => [
-            styles.actionButton,
-            styles.actionButtonDestructive,
-            pressed ? styles.actionButtonPressed : null,
-          ]}
-          accessibilityRole="button"
-          accessibilityLabel={t("settings.data.clearRoutineHistory")}
-        >
-          <ThemedText
-            style={[
-              styles.actionButtonText,
-              styles.actionButtonTextDestructive,
-            ]}
-          >
-            {t("settings.data.clearRoutineHistory")}
-          </ThemedText>
-        </Pressable>
-        <Pressable
-          onPress={handleDeleteAccount}
-          style={({ pressed }) => [
-            styles.actionButton,
-            styles.actionButtonDestructive,
-            pressed ? styles.actionButtonPressed : null,
-          ]}
-          accessibilityRole="button"
-          accessibilityLabel={t("settings.data.deleteAccount")}
-        >
-          <ThemedText
-            style={[
-              styles.actionButtonText,
-              styles.actionButtonTextDestructive,
-            ]}
-          >
-            {t("settings.data.deleteAccount")}
-          </ThemedText>
-        </Pressable>
-      </View>
-    </ScrollView>
+          <TRow gap="$3" flexWrap="wrap">
+            {themeOptions.map(({ mode, label, accessibility }) => (
+              <ChoiceButton
+                key={mode}
+                label={label}
+                selected={(themeMode ?? "light") === mode}
+                onPress={() => setThemeMode(mode)}
+                accessibilityLabel={`${label}. ${accessibility}`}
+              />
+            ))}
+          </TRow>
+        </TCard>
+
+        <TCard gap={CARD_GAP}>
+          <TRow gap="$3" alignItems="center">
+            <Ionicons
+              name="language-outline"
+              size={ACTION_ICON_SIZE}
+              color={accentColor}
+              accessibilityElementsHidden
+            />
+            <THeading level={3}>{t("settings.language.title")}</THeading>
+          </TRow>
+
+          <TText variant="caption" color="$placeholderColor">
+            {t("settings.language.description")}
+          </TText>
+
+          <TRow gap="$3" flexWrap="wrap">
+            {languageOptions.map(({ code, label }) => (
+              <ChoiceButton
+                key={code}
+                label={label}
+                selected={language === code}
+                onPress={() => changeLanguage(code)}
+                accessibilityLabel={label}
+              />
+            ))}
+          </TRow>
+        </TCard>
+
+        <TCard gap={CARD_GAP} borderColor="$borderColor">
+          <TRow gap="$3" alignItems="center">
+            <Ionicons
+              name="shield-checkmark-outline"
+              size={ACTION_ICON_SIZE}
+              color={accentColor}
+              accessibilityElementsHidden
+            />
+            <THeading level={3}>{t("settings.data.title")}</THeading>
+          </TRow>
+
+          <YStack gap={ACTION_GAP} width="100%">
+            {dataActions.map((action) => (
+              <TCard
+                key={action.key}
+                gap="$3"
+                padding="$3"
+                borderColor={
+                  action.tone === "danger" ? "$error" : "$borderColor"
+                }
+                backgroundColor="$background"
+              >
+                <XStack gap="$3" alignItems="flex-start">
+                  <Ionicons
+                    name={action.iconName}
+                    size={OPTION_ICON_SIZE}
+                    color={action.tone === "danger" ? dangerColor : accentColor}
+                    accessibilityElementsHidden
+                  />
+
+                  <TStack gap="$2" flex={1} minWidth={0}>
+                    <THeading level={4}>{action.title}</THeading>
+                    <TText variant="caption" color="$placeholderColor">
+                      {action.description}
+                    </TText>
+
+                    <TRow>
+                      <TButton
+                        size="$4"
+                        variant={
+                          action.tone === "danger" ? "outline" : "secondary"
+                        }
+                        textColor={
+                          action.tone === "danger" ? "$error" : undefined
+                        }
+                        iconName={action.iconName}
+                        onPress={action.onPress}
+                        accessibilityLabel={action.title}
+                      >
+                        {action.title}
+                      </TButton>
+                    </TRow>
+                  </TStack>
+                </XStack>
+              </TCard>
+            ))}
+          </YStack>
+        </TCard>
+      </TStack>
+    </TPage>
   );
 };
 

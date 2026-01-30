@@ -111,7 +111,9 @@
     "subtitle": "Configura tus preferencias y gestiona los datos de la app.",
     "appearance": {
       "title": "Apariencia",
-      "themeDescription": "Elige entre modo claro y oscuro."
+      "themeDescription": "Elige entre modo claro y oscuro.",
+      "lightMode": "Modo claro",
+      "darkMode": "Modo oscuro"
     },
     "language": {
       "title": "Idioma",
