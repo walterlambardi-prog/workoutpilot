@@ -19,6 +19,7 @@ import {
   useRoutineSessionStore,
 } from "@/stores/routineSessionStore";
 
+import ActivityHeatmap from "@/components/ActivityHeatmap";
 import styles, { THUMB_SIZE } from "./sessions.styles";
 import type { RoutineListItem, SessionListItem } from "./sessions.types";
 
@@ -484,6 +485,8 @@ const SessionsScreen: React.FC = () => {
         title={t("sessions.title")}
         subtitle={t("sessions.subtitle")}
       />
+
+      <ActivityHeatmap />
 
       <TGrid columns={3} gap="$3">
         {statHighlights.map((item) => (
