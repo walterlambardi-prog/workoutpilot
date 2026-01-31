@@ -22,7 +22,7 @@ import type {
 import ScreenHeader from "@/components/ScreenHeader";
 import { TButton } from "@/components/TButton";
 import { TGrid } from "@/components/TGrid";
-import TPage from "@/components/TPage";
+import { TPage } from "@/components/TPage";
 import { ALLOWED_EXERCISES } from "@/constants/exercises";
 import { Spacing } from "@/constants/theme";
 import {

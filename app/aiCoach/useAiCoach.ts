@@ -5,33 +5,33 @@ import { useTranslation } from "react-i18next";
 
 import { ALLOWED_EXERCISES, ExerciseId } from "@/constants/exercises";
 import {
-    useRoutineBuilderStore,
-    type RoutinePlanStepBase,
+  useRoutineBuilderStore,
+  type RoutinePlanStepBase,
 } from "@/stores/routineBuilderStore";
 import { useRoutineSessionStore } from "@/stores/routineSessionStore";
 import {
-    AFFIRMATIVE_REGEX,
-    AGE_REGEX,
-    AI_COACH_API_URL,
-    AI_COACH_MODEL,
-    FREQUENCY_REGEX,
-    HISTORY_WINDOW,
-    LEVEL_REGEX,
-    MAX_TOKENS,
-    REP_MAX,
-    REP_MIN,
-    ROUND_MAX,
-    ROUND_MIN,
-    TEMPERATURE,
-    TOPIC_KEYWORDS,
+  AFFIRMATIVE_REGEX,
+  AGE_REGEX,
+  AI_COACH_API_URL,
+  AI_COACH_MODEL,
+  FREQUENCY_REGEX,
+  HISTORY_WINDOW,
+  LEVEL_REGEX,
+  MAX_TOKENS,
+  REP_MAX,
+  REP_MIN,
+  ROUND_MAX,
+  ROUND_MIN,
+  TEMPERATURE,
+  TOPIC_KEYWORDS,
 } from "./aiCoach.constants";
 import type {
-    ChatMessage,
-    LevelPrompt,
-    ParsedRoutinePlan,
-    ProfilePrompt,
-    RoutinePlanItem,
-    Suggestion,
+  ChatMessage,
+  LevelPrompt,
+  ParsedRoutinePlan,
+  ProfilePrompt,
+  RoutinePlanItem,
+  Suggestion,
 } from "./aiCoach.types";
 
 const normalizeText = (value?: string) => value?.trim() ?? "";
@@ -793,13 +793,6 @@ export function useAiCoach() {
       messages,
       t,
     ],
-  );
-
-  const handleSuggestion = useCallback(
-    (suggestion: string) => {
-      void sendMessage(suggestion);
-    },
-    [sendMessage],
   );
 
   const handleSuggestionClick = useCallback(

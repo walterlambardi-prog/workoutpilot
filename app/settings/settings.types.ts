@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 
-export type SettingsActionTone = "neutral" | "danger";
+export type SettingsActionTone = "neutral" | "danger" | "primary";
 
 export interface SettingsAction {
   key: string;

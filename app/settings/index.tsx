@@ -17,6 +17,7 @@ import { usePreferencesStore, type ThemeMode } from "@/stores/preferencesStore";
 import { useRoutineBuilderStore } from "@/stores/routineBuilderStore";
 import { useRoutineSessionStore } from "@/stores/routineSessionStore";
 import { showAlert } from "@/utils/alert";
+import { exportAppData, importAppData } from "@/utils/dataExport";
 import {
   ACTION_GAP,
   ACTION_ICON_SIZE,
@@ -215,8 +216,80 @@ const SettingsScreen: React.FC = () => {
     );
   }, [resetAuth, resetHistory, resetRoutine, resetRoutineHistory, router, t]);
 
+  const handleExportData = useCallback(async () => {
+    try {
+      await exportAppData();
+      showAlert(t("settings.data.exportSuccess"));
+    } catch (error) {
+      if (
+        error instanceof Error &&
+        error.message === "File selection cancelled"
+      ) {
+        // User cancelled, don't show error
+        return;
+      }
+      console.error("Export error:", error);
+      showAlert(
+        t("settings.data.exportError"),
+        error instanceof Error ? error.message : "Unknown error",
+      );
+    }
+  }, [t]);
+
+  const handleImportData = useCallback(() => {
+    showAlert(
+      t("settings.data.importConfirmTitle"),
+      t("settings.data.importConfirmMessage"),
+      [
+        {
+          text: t("settings.data.cancel"),
+          style: "cancel",
+        },
+        {
+          text: t("settings.data.importConfirm"),
+          style: "default",
+          onPress: async () => {
+            try {
+              await importAppData();
+              showAlert(t("settings.data.importSuccess"));
+            } catch (error) {
+              if (
+                error instanceof Error &&
+                error.message === "File selection cancelled"
+              ) {
+                showAlert(t("settings.data.importCancelled"));
+                return;
+              }
+              console.error("Import error:", error);
+              showAlert(
+                t("settings.data.importError"),
+                error instanceof Error ? error.message : "Unknown error",
+              );
+            }
+          },
+        },
+      ],
+    );
+  }, [t]);
+
   const dataActions = useMemo<SettingsAction[]>(
     () => [
+      {
+        key: "export-data",
+        title: t("settings.data.exportData"),
+        description: t("settings.data.exportDataDescription"),
+        iconName: "download-outline",
+        tone: "primary",
+        onPress: handleExportData,
+      },
+      {
+        key: "import-data",
+        title: t("settings.data.importData"),
+        description: t("settings.data.importDataDescription"),
+        iconName: "cloud-upload-outline",
+        tone: "primary",
+        onPress: handleImportData,
+      },
       {
         key: "clear-history",
         title: t("settings.data.clearHistory"),
@@ -242,7 +315,14 @@ const SettingsScreen: React.FC = () => {
         onPress: handleDeleteAccount,
       },
     ],
-    [handleClearHistory, handleClearRoutineHistory, handleDeleteAccount, t],
+    [
+      handleClearHistory,
+      handleClearRoutineHistory,
+      handleDeleteAccount,
+      handleExportData,
+      handleImportData,
+      t,
+    ],
   );
 
   return (
@@ -327,7 +407,11 @@ const SettingsScreen: React.FC = () => {
                 gap="$3"
                 padding="$3"
                 borderColor={
-                  action.tone === "danger" ? "$error" : "$borderColor"
+                  action.tone === "danger"
+                    ? "$error"
+                    : action.tone === "primary"
+                      ? "$info"
+                      : "$borderColor"
                 }
                 backgroundColor="$background"
               >
@@ -335,7 +419,13 @@ const SettingsScreen: React.FC = () => {
                   <Ionicons
                     name={action.iconName}
                     size={OPTION_ICON_SIZE}
-                    color={action.tone === "danger" ? dangerColor : accentColor}
+                    color={
+                      action.tone === "danger"
+                        ? dangerColor
+                        : action.tone === "primary"
+                          ? accentColor
+                          : accentColor
+                    }
                     accessibilityElementsHidden
                   />
 
@@ -349,7 +439,11 @@ const SettingsScreen: React.FC = () => {
                       <TButton
                         size="$4"
                         variant={
-                          action.tone === "danger" ? "outline" : "secondary"
+                          action.tone === "danger"
+                            ? "outline"
+                            : action.tone === "primary"
+                              ? "primary"
+                              : "secondary"
                         }
                         textColor={
                           action.tone === "danger" ? "$error" : undefined
