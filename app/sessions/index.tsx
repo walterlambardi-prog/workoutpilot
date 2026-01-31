@@ -319,10 +319,9 @@ const SessionsScreen: React.FC = () => {
         const reps = scoped.reduce((sum, s) => sum + (s.reps ?? 0), 0);
         const totalDuration = scoped.reduce(
           (sum, s) => sum + (s.durationMs ?? 0),
-          0,
+          0
         );
         const last = scoped[0];
-
         return {
           definition,
           reps,
