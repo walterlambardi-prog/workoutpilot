@@ -293,17 +293,6 @@ const RoutineBuilderScreen: React.FC<RoutineBuilderScreenProps> = () => {
                 isSelected: true,
               };
               const isDisabled = !config.isSelected;
-              const cardBackground = config.isSelected
-                ? "$background"
-                : "$backgroundHover";
-              const cardBorderColorToken = config.isSelected
-                ? "$color"
-                : "$borderColor";
-              const overlayOpacity = config.isSelected ? 0.08 : 0.2;
-              const toggleBg = config.isSelected
-                ? "$color"
-                : "$backgroundHover";
-              const toggleText = config.isSelected ? "$background" : "$color";
 
               const handleDecrement = createDecrementHandler(item.id);
               const handleIncrement = createIncrementHandler(item.id);
@@ -315,121 +304,127 @@ const RoutineBuilderScreen: React.FC<RoutineBuilderScreenProps> = () => {
                   bordered
                   elevate={false}
                   opacity={isDisabled ? 0.65 : 1}
-                  backgroundColor={cardBackground}
-                  padding={media.md ? "$4" : "$3"}
-                  borderColor={cardBorderColorToken}
-                  borderWidth={1}
+                  padding={0}
+                  overflow="hidden"
                   style={
                     config.isSelected && selectedBorderColor
                       ? { borderColor: selectedBorderColor }
                       : undefined
                   }
                 >
-                  <YStack gap="$3">
-                    <YStack position="relative">
-                      <Image
-                        source={item.image}
-                        resizeMode="cover"
-                        style={styles.coverImage}
-                        accessibilityElementsHidden
-                        accessibilityIgnoresInvertColors
-                      />
-                      <YStack
-                        position="absolute"
-                        top={0}
-                        right={0}
-                        bottom={0}
-                        left={0}
-                        backgroundColor="$background"
-                        opacity={overlayOpacity}
-                        borderRadius={Spacing.lg}
-                        pointerEvents="none"
-                      />
-                    </YStack>
-                    <YStack gap="$2">
-                      <Text
-                        fontSize={titleSize}
-                        fontWeight="700"
-                        color="$color"
-                      >
-                        {item.title}
-                      </Text>
-                      <Text fontSize={bodySize} color="$color" opacity={0.9}>
-                        {item.description}
-                      </Text>
-                    </YStack>
+                  <YStack position="relative" height={280}>
+                    {/* Background Image */}
+                    <Image
+                      source={item.image}
+                      resizeMode="cover"
+                      style={styles.backgroundImage}
+                      accessibilityElementsHidden
+                      accessibilityIgnoresInvertColors
+                    />
 
-                    <XStack
-                      alignItems="center"
+                    {/* Dark overlay for better text readability */}
+                    <YStack
+                      position="absolute"
+                      top={0}
+                      right={0}
+                      bottom={0}
+                      left={0}
+                      backgroundColor="$background"
+                      opacity={isDisabled ? 0.75 : 0.45}
+                      pointerEvents="none"
+                    />
+
+                    {/* Content Layout */}
+                    <YStack
+                      flex={1}
                       justifyContent="space-between"
-                      gap="$3"
+                      padding={media.md ? "$4" : "$3"}
+                      pointerEvents="box-none"
                     >
-                      <XStack alignItems="center" gap="$2">
-                        <StepperButton
-                          icon="remove-outline"
-                          onPress={handleDecrement}
-                          accessibilityLabel={t(
-                            "routineBuilder.exercises.decrement",
-                            { exercise: item.title },
-                          )}
-                          disabled={isDisabled || config.reps <= 1}
-                          iconColor={iconPrimary}
-                        />
-                        <Text
-                          fontSize={bodySize}
-                          fontWeight="700"
-                          color="$color"
-                        >
-                          {config.reps}
-                        </Text>
-                        <StepperButton
-                          icon="add-outline"
-                          onPress={handleIncrement}
-                          accessibilityLabel={t(
-                            "routineBuilder.exercises.increment",
-                            { exercise: item.title },
-                          )}
-                          disabled={isDisabled}
-                          iconColor={iconPrimary}
-                        />
-                      </XStack>
-
-                      <Button
-                        onPress={handleToggle}
-                        size="$3"
-                        backgroundColor={toggleBg}
-                        borderColor={cardBorderColorToken}
-                        style={
-                          config.isSelected && selectedBorderColor
-                            ? { borderColor: selectedBorderColor }
-                            : undefined
-                        }
-                        borderWidth={1}
-                        color={toggleText}
-                        accessibilityRole="switch"
-                        aria-checked={config.isSelected}
-                        aria-label={t("routineBuilder.exercises.toggleA11y", {
-                          exercise: item.title,
-                        })}
-                        icon={
-                          <Ionicons
-                            name={
-                              config.isSelected
-                                ? "checkmark-circle"
-                                : "add-circle"
-                            }
-                            size={18}
-                            color={
-                              config.isSelected ? iconOnPrimary : iconPrimary
-                            }
-                          />
-                        }
+                      {/* Header - Title and Description */}
+                      <YStack
+                        gap="$1"
+                        pointerEvents="none"
+                        paddingHorizontal="$2"
                       >
-                        {config.isSelected
-                          ? t("routineBuilder.exercises.buttonSelected")
-                          : t("routineBuilder.exercises.buttonAdd")}
-                      </Button>
-                    </XStack>
+                        <Text
+                          fontSize={titleSize}
+                          fontWeight="700"
+                          color="white"
+                        >
+                          {item.title}
+                        </Text>
+                        <Text fontSize={bodySize} color="white" opacity={0.95}>
+                          {item.description}
+                        </Text>
+                      </YStack>
+
+                      {/* Footer - Controls */}
+                      <XStack
+                        alignItems="center"
+                        justifyContent="space-between"
+                        gap="$2"
+                        backgroundColor="$background"
+                        opacity={0.85}
+                        padding="$3"
+                        borderRadius="$4"
+                        pointerEvents="box-none"
+                      >
+                        {/* Reps Stepper */}
+                        <XStack alignItems="center" gap="$2">
+                          <StepperButton
+                            icon="remove-outline"
+                            onPress={handleDecrement}
+                            accessibilityLabel={t(
+                              "routineBuilder.exercises.decrement",
+                              { exercise: item.title },
+                            )}
+                            disabled={isDisabled || config.reps <= 1}
+                            iconColor={iconPrimary}
+                          />
+                          <Text
+                            fontSize={titleSize}
+                            fontWeight="700"
+                            color="$color"
+                            minWidth={40}
+                            textAlign="center"
+                          >
+                            {config.reps}
+                          </Text>
+                          <StepperButton
+                            icon="add-outline"
+                            onPress={handleIncrement}
+                            accessibilityLabel={t(
+                              "routineBuilder.exercises.increment",
+                              { exercise: item.title },
+                            )}
+                            disabled={isDisabled}
+                            iconColor={iconPrimary}
+                          />
+                        </XStack>
+
+                        {/* Add/Remove Button */}
+                        <TButton
+                          onPress={handleToggle}
+                          variant={config.isSelected ? "primary" : "outline"}
+                          size="$3"
+                          iconName={
+                            config.isSelected
+                              ? "checkmark-circle"
+                              : "add-circle"
+                          }
+                          accessibilityRole="switch"
+                          aria-checked={config.isSelected}
+                          aria-label={t("routineBuilder.exercises.toggleA11y", {
+                            exercise: item.title,
+                          })}
+                        >
+                          {config.isSelected
+                            ? t("routineBuilder.exercises.buttonSelected")
+                            : t("routineBuilder.exercises.buttonAdd")}
+                        </TButton>
+                      </XStack>
+                    </YStack>
                   </YStack>
                 </Card>
               );
