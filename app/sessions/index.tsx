@@ -1,7 +1,7 @@
 import { useRouter } from "expo-router";
 import React, { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { ImageBackground, Platform, StyleSheet } from "react-native";
+import { Platform } from "react-native";
 
 import { EXERCISE_DEFINITION_MAP } from "@/app/exercises/exercises.data";
 import ScreenHeader from "@/components/ScreenHeader";
@@ -58,120 +58,11 @@ const StatTile: React.FC<{
   </TCard>
 );
 
-const MetaPill: React.FC<{ label: string }> = ({ label }) => (
-  <TRow
-    backgroundColor="$backgroundHover"
-    borderColor="$borderColor"
-    borderWidth={1}
-    borderRadius="$4"
-    paddingHorizontal="$3"
-    paddingVertical="$2"
-    alignItems="center"
-    gap="$2"
-  >
-    <TText variant="caption">{label}</TText>
-  </TRow>
-);
-
 const EmptyState: React.FC<{ text: string }> = ({ text }) => (
   <TText variant="caption" color="$placeholderColor">
     {text}
   </TText>
 );
-
-const ExerciseBreakdownCard: React.FC<{
-  image: any;
-  title: string;
-  sessions: number;
-  reps: number;
-  duration: number;
-  lastDate: string;
-  sessionsLabel: string;
-  repsLabel: string;
-}> = ({
-  image,
-  title,
-  sessions,
-  reps,
-  duration,
-  lastDate,
-  sessionsLabel,
-  repsLabel,
-}) => (
-  <TStack
-    borderRadius="$6"
-    overflow="hidden"
-    borderWidth={1}
-    borderColor="$borderColor"
-    backgroundColor="$background"
-  >
-    <ImageBackground
-      source={image}
-      style={breakdownCardStyles.imageBackground}
-      imageStyle={breakdownCardStyles.imageStyle}
-    >
-      {/* Gradient overlay */}
-      <TStack
-        style={StyleSheet.absoluteFillObject}
-        backgroundColor="rgba(0, 0, 0, 0.65)"
-        pointerEvents="none"
-      />
-
-      {/* Content */}
-      <TStack padding="$4" gap="$3" position="relative" zIndex={1}>
-        {/* Title */}
-        <THeading level={4} color="white">
-          {title}
-        </THeading>
-
-        {/* Stats Grid */}
-        <TRow gap="$3" flexWrap="wrap">
-          <TStack flex={1} minWidth={Platform.OS === "web" ? 100 : 80} gap="$1">
-            <TText variant="caption" style={{ color: "rgba(255,255,255,0.7)" }}>
-              {sessionsLabel}
-            </TText>
-            <THeading level={3} color="white">
-              {sessions}
-            </THeading>
-          </TStack>
-
-          <TStack flex={1} minWidth={Platform.OS === "web" ? 100 : 80} gap="$1">
-            <TText variant="caption" style={{ color: "rgba(255,255,255,0.7)" }}>
-              {repsLabel}
-            </TText>
-            <THeading level={3} color="white">
-              {formatNumber(reps)}
-            </THeading>
-          </TStack>
-
-          <TStack flex={1} minWidth={Platform.OS === "web" ? 100 : 80} gap="$1">
-            <TText variant="caption" style={{ color: "rgba(255,255,255,0.7)" }}>
-              Duración
-            </TText>
-            <THeading level={4} color="white">
-              {formatDuration(duration)}
-            </THeading>
-          </TStack>
-        </TRow>
-
-        {/* Last session date */}
-        <TText variant="caption" style={{ color: "rgba(255,255,255,0.6)" }}>
-          {lastDate}
-        </TText>
-      </TStack>
-    </ImageBackground>
-  </TStack>
-);
-
-const breakdownCardStyles = StyleSheet.create({
-  imageBackground: {
-    width: "100%",
-    minHeight: Platform.OS === "web" ? 200 : 180,
-  },
-  imageStyle: {
-    borderRadius: 16,
-  },
-});
 
 const SessionsScreen: React.FC = () => {
   const { t } = useTranslation();
@@ -234,105 +125,6 @@ const SessionsScreen: React.FC = () => {
     return sessions;
   }, [lastCompletedSession, routineHistory]);
 
-  const routineTotals = useMemo(() => {
-    if (routineSessions.length === 0) {
-      return {
-        totalSessions: 0,
-        totalReps: 0,
-        totalDurationMs: 0,
-        averageReps: 0,
-        bestRoutine: null as RoutineSession | null,
-        topExercise: null as { exerciseId: ExerciseId; reps: number } | null,
-      };
-    }
-
-    const totalReps = routineSessions.reduce(
-      (sum, session) => sum + (session.totalReps ?? 0),
-      0,
-    );
-    const totalDurationMs = routineSessions.reduce((sum, session) => {
-      if (session.completedAt && session.startedAt) {
-        return sum + Math.max(0, session.completedAt - session.startedAt);
-      }
-      return sum;
-    }, 0);
-
-    const bestRoutine = routineSessions.reduce(
-      (best, session) => {
-        if (!best) return session;
-        return session.totalReps > (best?.totalReps ?? 0) ? session : best;
-      },
-      null as RoutineSession | null,
-    );
-
-    const exerciseReps = routineSessions.reduce<Record<ExerciseId, number>>(
-      (acc, session) => {
-        session.stepResults.forEach((step) => {
-          acc[step.exerciseId] = (acc[step.exerciseId] ?? 0) + step.reps;
-        });
-        return acc;
-      },
-      {} as Record<ExerciseId, number>,
-    );
-
-    const topExerciseEntry = Object.entries(exerciseReps).reduce(
-      (best, [exerciseId, reps]) => {
-        if (!best || reps > best.reps) {
-          return { exerciseId: exerciseId as ExerciseId, reps };
-        }
-        return best;
-      },
-      null as { exerciseId: ExerciseId; reps: number } | null,
-    );
-
-    return {
-      totalSessions: routineSessions.length,
-      totalReps,
-      totalDurationMs,
-      averageReps:
-        routineSessions.length > 0
-          ? Math.round(totalReps / routineSessions.length)
-          : 0,
-      bestRoutine,
-      topExercise: topExerciseEntry,
-    };
-  }, [routineSessions]);
-
-  const breakdown = useMemo(() => {
-    const now = Date.now();
-    const sessions = [
-      ...history,
-      ...(currentSession
-        ? [
-            {
-              ...currentSession,
-              durationMs:
-                currentSession.durationMs ?? now - currentSession.startedAt,
-            },
-          ]
-        : []),
-    ];
-
-    return Object.values(EXERCISE_DEFINITION_MAP)
-      .map((definition) => {
-        const scoped = sessions.filter((s) => s.exerciseId === definition.id);
-        const reps = scoped.reduce((sum, s) => sum + (s.reps ?? 0), 0);
-        const totalDuration = scoped.reduce(
-          (sum, s) => sum + (s.durationMs ?? 0),
-          0,
-        );
-        const last = scoped[0];
-        return {
-          definition,
-          reps,
-          sessions: scoped.length,
-          last,
-          totalDuration,
-        };
-      })
-      .sort((a, b) => b.reps - a.reps);
-  }, [currentSession, history]);
-
   const topExercise = useMemo(() => {
     const exerciseTotals: Record<ExerciseId, number> = {} as Record<
       ExerciseId,
@@ -386,15 +178,6 @@ const SessionsScreen: React.FC = () => {
     return `${t(`${exercise.copyKey}.title`)} · ${formatNumber(topExercise.reps)} ${t("sessions.labels.reps")}`;
   }, [t, topExercise]);
 
-  const routineTopExerciseCopy = useMemo(() => {
-    if (!routineTotals.topExercise) return t("sessions.routines.empty");
-    const exercise =
-      EXERCISE_DEFINITION_MAP[routineTotals.topExercise.exerciseId];
-    return `${t(`${exercise.copyKey}.title`)} · ${formatNumber(
-      routineTotals.topExercise.reps,
-    )} ${t("sessions.labels.reps")}`;
-  }, [routineTotals.topExercise, t]);
-
   const statHighlights = useMemo(
     () => [
       {
@@ -429,36 +212,6 @@ const SessionsScreen: React.FC = () => {
     [bestSessionCopy, lastSessionCopy, t, topExerciseCopy, totals],
   );
 
-  const routineHighlights = useMemo(
-    () => [
-      {
-        key: "routine-volume",
-        label: t("sessions.routines.totalReps"),
-        value: formatNumber(routineTotals.totalReps),
-        helper: `${t("sessions.routines.totalSessions")}: ${formatNumber(
-          routineTotals.totalSessions,
-        )}`,
-      },
-      {
-        key: "routine-time",
-        label: t("sessions.routines.totalDuration"),
-        value: formatDuration(routineTotals.totalDurationMs),
-        helper: `${t("sessions.routines.averageReps")}: ${formatNumber(
-          routineTotals.averageReps,
-        )}`,
-      },
-      {
-        key: "routine-top",
-        label: t("sessions.routines.bestRoutine"),
-        value: routineTotals.bestRoutine
-          ? `${formatNumber(routineTotals.bestRoutine.totalReps ?? 0)} ${t("sessions.labels.reps")}`
-          : t("sessions.routines.empty"),
-        helper: routineTopExerciseCopy,
-      },
-    ],
-    [routineTopExerciseCopy, routineTotals, t],
-  );
-
   const routineList: RoutineListItem[] = useMemo(
     () =>
       routineHistory
@@ -481,11 +234,6 @@ const SessionsScreen: React.FC = () => {
           };
         }),
     [routineHistory],
-  );
-
-  const filteredBreakdown = useMemo(
-    () => breakdown.filter((item) => item.sessions > 0).slice(0, 8),
-    [breakdown],
   );
 
   const handleStartRoutine = useCallback(

@@ -183,9 +183,20 @@ export default function RootLayout() {
           />
           <Stack.Screen
             name="exercises/[exerciseId]"
+            options={
+              isWeb
+                ? { headerShown: false }
+                : {
+                    headerShown: true,
+                    headerRight: renderDrawerToggle,
+                    title: t("navigation.exercises"),
+                  }
+            }
+          />
+          <Stack.Screen
+            name="exerciseSession/index"
             options={{
-              ...appHeaderOptions,
-              title: t("navigation.exercises"),
+              headerShown: false,
             }}
           />
           <Stack.Screen
