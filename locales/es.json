@@ -223,11 +223,7 @@
       "last": "Última: {{date}}",
       "never": "Aún sin registros"
     },
-    "history": {
-      "title": "Sesiones recientes",
-      "empty": "Aún no hay sesiones registradas",
-      "meta": "{{duration}} · {{ended}}"
-    },
+
     "empty": {
       "bestSession": "Sin sesiones",
       "lastSession": "Sin sesiones recientes",

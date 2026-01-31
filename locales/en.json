@@ -223,11 +223,7 @@
       "last": "Last: {{date}}",
       "never": "Not yet logged"
     },
-    "history": {
-      "title": "Recent sessions",
-      "empty": "No sessions recorded yet",
-      "meta": "{{duration}} · {{ended}}"
-    },
+
     "empty": {
       "bestSession": "No sessions yet",
       "lastSession": "No recent sessions",

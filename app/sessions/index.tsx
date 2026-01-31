@@ -20,7 +20,7 @@ import {
 } from "@/stores/routineSessionStore";
 
 import ActivityHeatmap from "@/components/ActivityHeatmap";
-import type { RoutineListItem, SessionListItem } from "./sessions.types";
+import type { RoutineListItem } from "./sessions.types";
 
 const formatDuration = (ms?: number) => {
   if (!ms || ms < 0) return "--";
@@ -459,30 +459,6 @@ const SessionsScreen: React.FC = () => {
     [routineTopExerciseCopy, routineTotals, t],
   );
 
-  const recentHistory: SessionListItem[] = useMemo(
-    () =>
-      history.slice(0, 8).map((item): SessionListItem => {
-        const copyKey =
-          EXERCISE_DEFINITION_MAP[item.exerciseId as ExerciseId].copyKey;
-        return {
-          id: item.id,
-          title: t(`${copyKey}.title`),
-          subtitle: t("sessions.history.meta", {
-            duration: formatDuration(item.durationMs),
-            ended: formatDate(item.endedAt ?? item.startedAt),
-          }),
-          repsLabel: `${formatNumber(item.reps)} ${t("sessions.labels.reps")}`,
-          durationLabel: `${t("sessions.labels.duration")}: ${formatDuration(
-            item.durationMs,
-          )}`,
-          endedLabel: `${t("sessions.labels.ended")}: ${formatDate(
-            item.endedAt ?? item.startedAt,
-          )}`,
-        };
-      }),
-    [history, t],
-  );
-
   const routineList: RoutineListItem[] = useMemo(
     () =>
       routineHistory
@@ -753,39 +729,6 @@ const SessionsScreen: React.FC = () => {
               </TStack>
             ))}
           </TGrid>
-        )}
-      </TCard>
-
-      <TCard gap="$3">
-        <THeading level={3}>{t("sessions.history.title")}</THeading>
-        {recentHistory.length === 0 ? (
-          <EmptyState text={t("sessions.history.empty")} />
-        ) : (
-          <TStack gap="$3">
-            {recentHistory.map((item) => (
-              <TStack
-                key={item.id}
-                gap="$2"
-                borderTopWidth={1}
-                borderColor="$borderColor"
-                paddingTop="$3"
-              >
-                <THeading level={4}>{item.title}</THeading>
-                <TRow gap="$2" flexWrap="wrap">
-                  <MetaPill label={item.repsLabel} />
-                  {item.durationLabel ? (
-                    <MetaPill label={item.durationLabel} />
-                  ) : null}
-                  {item.endedLabel ? (
-                    <MetaPill label={item.endedLabel} />
-                  ) : null}
-                </TRow>
-                <TText variant="caption" color="$placeholderColor">
-                  {item.subtitle}
-                </TText>
-              </TStack>
-            ))}
-          </TStack>
         )}
       </TCard>
     </TPage>
