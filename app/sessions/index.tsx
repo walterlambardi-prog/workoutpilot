@@ -487,7 +487,6 @@ const SessionsScreen: React.FC = () => {
   const routineList: RoutineListItem[] = useMemo(
     () =>
       routineHistory
-        .slice(0, 8)
         .filter((session) => session.completedAt)
         .map((session): RoutineListItem => {
           const uniqueExercises = new Set(
@@ -591,51 +590,6 @@ const SessionsScreen: React.FC = () => {
           />
         ))}
       </TGrid>
-
-      <TCard gap="$3">
-        <THeading level={3}>{t("sessions.routines.title")}</THeading>
-        <TGrid columns={3} gap="$3">
-          {routineHighlights.map((item) => (
-            <StatTile
-              key={item.key}
-              label={item.label}
-              value={item.value}
-              helper={item.helper}
-            />
-          ))}
-        </TGrid>
-      </TCard>
-
-      <TCard gap="$3">
-        <THeading level={3}>{t("sessions.breakdown.title")}</THeading>
-        {filteredBreakdown.length === 0 ? (
-          <EmptyState text={t("sessions.breakdown.never")} />
-        ) : (
-          <TGrid columns={Platform.OS === "web" ? 3 : 1} gap="$4">
-            {filteredBreakdown.map((item) => (
-              <ExerciseBreakdownCard
-                key={item.definition.id}
-                image={item.definition.image}
-                title={t(`${item.definition.copyKey}.title`)}
-                sessions={item.sessions}
-                reps={item.reps}
-                duration={item.totalDuration}
-                lastDate={
-                  item.last
-                    ? t("sessions.breakdown.last", {
-                        date: formatDate(
-                          item.last.endedAt ?? item.last.startedAt,
-                        ),
-                      })
-                    : t("sessions.breakdown.never")
-                }
-                sessionsLabel={t("sessions.labels.sessions")}
-                repsLabel={t("sessions.labels.reps")}
-              />
-            ))}
-          </TGrid>
-        )}
-      </TCard>
 
       <TCard gap="$3">
         <THeading level={3}>{t("sessions.routineList.title")}</THeading>
