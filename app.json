@@ -29,7 +29,7 @@
     },
     "extra": {
       "router": {
-        "basename": "/workoutpilot/"
+        "basename": "/"
       }
     },
     "plugins": [
