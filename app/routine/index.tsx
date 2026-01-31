@@ -302,7 +302,6 @@ const RoutineBuilderScreen: React.FC<RoutineBuilderScreenProps> = () => {
                   key={item.id}
                   bordered
                   elevate={false}
-                  opacity={isDisabled ? 0.65 : 1}
                   padding={0}
                   overflow="hidden"
                   style={
@@ -329,9 +328,22 @@ const RoutineBuilderScreen: React.FC<RoutineBuilderScreenProps> = () => {
                       bottom={0}
                       left={0}
                       backgroundColor="$background"
-                      opacity={isDisabled ? 0.75 : 0.45}
+                      opacity={0.15}
                       pointerEvents="none"
                     />
+
+                    {/* Additional overlay for disabled state */}
+                    {isDisabled && (
+                      <YStack
+                        position="absolute"
+                        top={0}
+                        right={0}
+                        bottom={0}
+                        left={0}
+                        backgroundColor="rgba(0,0,0,0.45)"
+                        pointerEvents="none"
+                      />
+                    )}
 
                     {/* Content Layout */}
                     <YStack
