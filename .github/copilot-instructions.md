@@ -9,6 +9,79 @@
 3. Fix ALL errors and warnings before proceeding
 4. Never skip these checks - they prevent production bugs
 
+# Copilot Instructions — Tamagui (Web + Mobile)
+
+## Project context
+
+- This repo builds a cross-platform app (iOS/Android/Web) using **Tamagui**.
+- Goal: a consistent, professional UI, adapted to each platform (touch vs mouse/keyboard) without duplicating screens.
+- Assume there is (or must be) a **design system** based on Tamagui tokens/themes.
+
+## General rules (mandatory)
+
+1. **Use Tamagui** for UI (Stacks, Text, Button, Input, Card, Sheet, Dialog, Popover, Tabs, etc.).
+   Do not use arbitrary inline styles or raw CSS unless it’s a documented exception.
+2. **No hardcoded** visual values (colors, spacing, radius, shadows, font sizes).
+   Use tokens: `p="$4"`, `bg="$background"`, `color="$color"`, `br="$6"`, etc.
+3. **Composition > platform conditionals**: avoid `Platform.OS` for UI decisions.
+   Prefer:
+   - `media` (breakpoints) for layout/density
+   - `Adapt` to switch interaction patterns (Popover ↔ Sheet, Dialog ↔ Sheet, Select ↔ Sheet)
+4. Every component/screen must:
+   - work on **small and large screens**
+   - support **dark/light theme**
+   - support **touch** and **keyboard/mouse** on web
+
+## How to “understand the code” before writing
+
+Before proposing changes, Copilot must:
+
+- Identify whether it’s editing: `Screen`, `Component`, `Layout`, `Navigation`, `Design system`, `Form`.
+- Read existing imports and patterns (e.g. `AppButton`, `AppCard`, `Theme`, `useMedia`, `Adapt`).
+- Preserve existing naming/architecture. If it doesn’t exist, propose it without breaking the API.
+
+## Responsive & Adapt (repo standard)
+
+- Layout responsiveness:
+  - Use `media` to change `flexDirection`, `gap`, `padding`, `maxWidth`, `display`.
+  - On desktop web, avoid overly long line lengths: use `maxWidth` and center content.
+- Interaction responsiveness (patterns):
+  - Menus/actions: `Popover` on desktop → `Sheet` on mobile using `Adapt`.
+  - Select: `Select` adapted to `Sheet` on mobile.
+  - Modals: `Dialog` on web → `Sheet` on mobile (if applicable).
+
+## Accessibility and states (non-negotiable)
+
+- All interactive controls must have:
+  - states: `hover` (web), `press`, `focusVisible`, `disabled`, `loading`
+  - reasonable touch targets (>= 44px height for primary buttons)
+- Inputs and forms:
+  - label + error message + equivalent `aria`/accessibility label
+- On web: do not break keyboard navigation.
+
+## Required UI patterns
+
+- Prefer **design system components**:
+  - `AppButton`, `AppText`, `AppInput`, `AppCard`, `AppScreen` (or whatever exists)
+- If creating a new component:
+  - Expose simple props, support theming, and use tokens.
+  - Include a usage example.
+
+## Performance / quality
+
+- Avoid creating inline objects/functions in props when they cause rerenders.
+- In lists: keep items lightweight and props stable.
+- Do not introduce heavy dependencies just to solve layout/styling.
+
+## Expected output when generating UI
+
+When Copilot writes UI, it must:
+
+- Produce complete components (imports, types, props) that compile.
+- Include responsive defaults (at least `sm` and `md`).
+- Use tokens and theme.
+- Avoid duplicating screens for web/mobile; use `Adapt` when the interaction pattern changes.
+
 **Additional guardrails (Tamagui refactor):**
 
 - No inline styles in components; move to `*.styles.ts` using StyleSheet/Tamagui tokens.
