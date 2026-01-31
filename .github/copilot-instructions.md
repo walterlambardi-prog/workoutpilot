@@ -352,6 +352,43 @@ ScreenPadding.vertical; // 24px - Standard top padding for screens
 ScreenPadding.bottom; // 32px - Standard bottom padding for scrollable content
 ```
 
+#### Layout Constants
+
+Use `Layout` for responsive layout constraints:
+
+```typescript
+import { Layout } from "@/constants/theme";
+
+// Available layout values:
+Layout.maxContentWidth; // 1280px - Maximum content width for web layout
+```
+
+**Web vs Mobile Layout**:
+
+- **Mobile**: Content uses full width with horizontal padding (`ScreenPadding.horizontal`)
+- **Web**: Content is centered with max width (`Layout.maxContentWidth`) to prevent overly wide layouts on large screens
+- Use `TPage` component with `fullWidth={false}` (default) to automatically apply responsive max-width on web
+- For full-width layouts (e.g., image galleries, maps), use `fullWidth={true}` prop
+
+```typescript
+// ✅ GOOD - Responsive layout with max-width on web
+<TPage>
+  <TWelcomeHeader title="Home" />
+  {/* Content automatically centered and max-width on web */}
+</TPage>
+
+// ✅ GOOD - Full-width layout when needed
+<TPage fullWidth>
+  <ImageGallery />
+  {/* Content uses full viewport width */}
+</TPage>
+
+// ❌ BAD - Hardcoded max-width
+<View style={{ maxWidth: 1280 }}>
+  {/* Content */}
+</View>
+```
+
 #### Example Usage
 
 ```typescript

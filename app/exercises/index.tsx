@@ -3,12 +3,12 @@ import React, { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
 import ExerciseCard from "@/components/ExerciseCard";
-import ScreenHeader from "@/components/ScreenHeader";
 import { TGrid } from "@/components/TGrid";
 import { TPage } from "@/components/TPage";
 import { ALLOWED_EXERCISES, ExerciseId } from "@/constants/exercises";
 import { EXERCISE_DEFINITIONS } from "./exercises.data";
 
+import ScreenHeader from "@/components/ScreenHeader";
 import {
   type ExerciseListItem,
   type ExercisesScreenProps,
@@ -48,7 +48,6 @@ const ExercisesScreen: React.FC<ExercisesScreenProps> = () => {
         title={t("exercises.list.title")}
         subtitle={t("exercises.list.subtitle")}
       />
-
       <TGrid columns={3} gap="$3">
         {exercises.map((item) => (
           <ExerciseCard

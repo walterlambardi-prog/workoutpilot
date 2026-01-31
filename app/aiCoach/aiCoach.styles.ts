@@ -1,24 +1,18 @@
-import { StyleSheet } from "react-native";
-
-import { ScreenPadding, Spacing } from "@/constants/theme";
+import { Layout } from "@/constants/theme";
+import { Platform, StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
   avoider: {
     flex: 1,
   },
-  scrollContent: {
-    paddingHorizontal: ScreenPadding.horizontal,
-    paddingTop: ScreenPadding.bottom,
-    paddingBottom: 160,
-    gap: Spacing.md,
-  },
   inputBar: {
     position: "absolute",
-    left: 0,
-    right: 0,
     bottom: 0,
     paddingHorizontal: 16,
     paddingTop: 10,
     borderTopWidth: 1,
+    width: "100%",
+    maxWidth: Platform.OS === "web" ? Layout.maxContentWidth : undefined,
+    alignSelf: "center",
   },
 });

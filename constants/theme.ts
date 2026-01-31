@@ -80,3 +80,8 @@ export const ScreenPadding = {
   /** Bottom padding for scrollable content */
   bottom: Spacing.xxxl,
 } as const;
+
+export const Layout = {
+  /** Maximum content width for web layout (1280px) */
+  maxContentWidth: 1280,
+} as const;

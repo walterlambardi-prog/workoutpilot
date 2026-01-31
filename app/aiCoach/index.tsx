@@ -7,7 +7,6 @@ import {
   Button,
   Card,
   Input,
-  ScrollView,
   Separator,
   Spinner,
   Text,
@@ -20,6 +19,7 @@ import {
 import ScreenHeader from "@/components/ScreenHeader";
 import { TButton } from "@/components/TButton";
 import { TInput } from "@/components/TInput";
+import { TPage } from "@/components/TPage";
 import { TTag } from "@/components/TTag";
 import { EXERCISE_COPY_KEYS } from "@/constants/exercises";
 
@@ -41,7 +41,7 @@ const AiCoachScreen: React.FC = () => {
   const insets = useSafeAreaInsets();
   const media = useMedia();
   const theme = useTheme();
-  const scrollRef = useRef<ScrollView>(null);
+  const scrollRef = useRef<any>(null);
   const {
     input,
     setInput,
@@ -49,7 +49,7 @@ const AiCoachScreen: React.FC = () => {
     messages,
     suggestions,
     handleSend,
-    createSuggestionHandler,
+    handleSuggestionClick,
     handleStartRoutineFromPlan,
     handleEditRoutineFromPlan,
     handleLevelSelect,
@@ -115,6 +115,8 @@ const AiCoachScreen: React.FC = () => {
       backgroundColor="$background"
       borderColor="$borderColor"
       gap="$3"
+      maxWidth={Platform.OS === "web" ? "75%" : "100%"}
+      alignSelf="flex-start"
     >
       <XStack alignItems="center" justifyContent="space-between" gap="$3">
         <Text fontSize={titleSize} fontWeight="700" color="$color">
@@ -157,14 +159,12 @@ const AiCoachScreen: React.FC = () => {
       <XStack gap="$3" flexWrap="wrap">
         <TButton
           onPress={() => handleStartRoutineFromPlan(parsed.plan, parsed.rounds)}
-          accessibilityLabel={t("aiCoach.usePlanCta")}
         >
           {t("aiCoach.usePlanCta")}
         </TButton>
         <TButton
           variant="outline"
           onPress={() => handleEditRoutineFromPlan(parsed.plan, parsed.rounds)}
-          accessibilityLabel={t("aiCoach.editPlanCta")}
         >
           {t("aiCoach.editPlanCta")}
         </TButton>
@@ -173,7 +173,14 @@ const AiCoachScreen: React.FC = () => {
   );
 
   const renderLevelPrompt = (levelPrompt: LevelPrompt, disabled: boolean) => (
-    <Card bordered padding="$4" gap="$3" backgroundColor="$backgroundHover">
+    <Card
+      bordered
+      padding="$4"
+      gap="$3"
+      backgroundColor="$backgroundHover"
+      maxWidth={Platform.OS === "web" ? "75%" : "100%"}
+      alignSelf="flex-start"
+    >
       <Text fontSize={titleSize} fontWeight="700" color="$color">
         {levelPrompt.prompt?.trim() || t("aiCoach.levelPromptFallback")}
       </Text>
@@ -214,7 +221,14 @@ const AiCoachScreen: React.FC = () => {
     };
 
     return (
-      <Card bordered padding="$4" gap="$4" backgroundColor="$backgroundHover">
+      <Card
+        bordered
+        padding="$4"
+        gap="$4"
+        backgroundColor="$backgroundHover"
+        maxWidth={Platform.OS === "web" ? "75%" : "100%"}
+        alignSelf="flex-start"
+      >
         <Text fontSize={titleSize} fontWeight="700" color="$color">
           {profilePrompt.prompt?.trim() || t("aiCoach.profilePromptFallback")}
         </Text>
@@ -258,9 +272,6 @@ const AiCoachScreen: React.FC = () => {
         <TButton
           onPress={handleSubmit}
           disabled={!hasAnyValue || loading || disabled}
-          accessibilityLabel={
-            profilePrompt.submitLabel || t("aiCoach.profileSubmit")
-          }
         >
           {profilePrompt.submitLabel || t("aiCoach.profileSubmit")}
         </TButton>
@@ -275,10 +286,9 @@ const AiCoachScreen: React.FC = () => {
       keyboardVerticalOffset={insets.top + 12}
     >
       <YStack flex={1} backgroundColor="$background">
-        <ScrollView
-          ref={scrollRef}
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
+        <TPage
+          hasHeader
+          scrollRef={scrollRef}
           keyboardShouldPersistTaps="handled"
           keyboardDismissMode="on-drag"
           onContentSizeChange={() =>
@@ -290,26 +300,40 @@ const AiCoachScreen: React.FC = () => {
             subtitle={t("aiCoach.screenSubtitle")}
           />
 
-          <XStack gap="$2" flexWrap="wrap">
-            {suggestions.map((item) => (
-              <Button
-                key={item.id}
-                size="$3"
-                backgroundColor="$backgroundHover"
-                color="$color"
-                borderColor="$borderColor"
-                borderWidth={1}
-                onPress={createSuggestionHandler(item.text)}
-                accessibilityLabel={item.text}
-              >
-                {item.text}
-              </Button>
-            ))}
-          </XStack>
+          {suggestions.length > 0 && (
+            <YStack gap="$3">
+              <Text fontSize={bodySize} fontWeight="600" color="$color">
+                {t("aiCoach.suggestionsTitle")}
+              </Text>
+              <YStack gap="$2">
+                {suggestions.map((item) => {
+                  const iconName =
+                    item.id === "starter"
+                      ? "fitness-outline"
+                      : item.id === "reps"
+                        ? "timer-outline"
+                        : "checkmark-circle-outline";
+                  return (
+                    <TButton
+                      key={item.id}
+                      variant="outline"
+                      onPress={() => handleSuggestionClick(item.text)}
+                      iconName={iconName as any}
+                      textAlign="left"
+                      justifyContent="flex-start"
+                    >
+                      {item.text}
+                    </TButton>
+                  );
+                })}
+              </YStack>
+            </YStack>
+          )}
 
           <Card
             bordered
             padding="$4"
+            paddingBottom="$9"
             backgroundColor="$background"
             borderColor="$borderColor"
             gap="$4"
@@ -444,6 +468,7 @@ const AiCoachScreen: React.FC = () => {
                 </YStack>
               );
             })}
+            <YStack height={32} />
           </Card>
 
           {loading ? (
@@ -454,13 +479,14 @@ const AiCoachScreen: React.FC = () => {
               </Text>
             </XStack>
           ) : null}
-        </ScrollView>
+        </TPage>
 
         <Card
           borderColor="$borderColor"
           backgroundColor="$background"
           padding="$3"
           borderRadius="$6"
+          maxWidth={Platform.OS === "web" ? "75%" : "100%"}
           style={[styles.inputBar, { paddingBottom: insets.bottom + 12 }]}
         >
           <XStack alignItems="center" gap="$3">

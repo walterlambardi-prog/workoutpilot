@@ -165,6 +165,7 @@
     "title": "Session insights",
     "subtitle": "Review your active session and historical workout data.",
     "labels": {
+      "sessions": "Sessions",
       "reps": "reps",
       "duration": "Duration",
       "ended": "Ended"
@@ -194,6 +195,8 @@
       "title": "Routines",
       "empty": "No routines completed yet",
       "viewDetails": "View routine details",
+      "rounds": "Rounds",
+      "exercises": "Exercises",
       "roundsLabel": "{{count}} rounds",
       "exercisesLabel": "{{count}} exercises",
       "actions": {
@@ -524,6 +527,7 @@
     "welcome": "Hey there! 👋 I'm your AI coach, and I'm here to create personalized workout routines that fit your needs perfectly. Just share your age, how many times you train per week, and your fitness level, and I'll design the perfect plan for you. Let's get started!",
     "greetingInvite": "Hey! I'm your workout co-pilot. I can craft routines, tweak reps, and give form tips. Tell me your goal and level (beginner/intermediate/advanced) so we can start strong — if you haven't picked a level yet, choose one below and I'll suggest a routine.",
     "profilePrompt": "I need your age, how many times you train per week, and your level (beginner/intermediate/advanced). Pick your level:",
+    "suggestionsTitle": "Quick starts",
     "suggestions": {
       "starter": "Create a beginner plan",
       "reps": "I have 10 minutes—set reps for a quick routine",

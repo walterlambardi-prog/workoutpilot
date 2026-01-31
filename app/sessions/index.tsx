@@ -1,7 +1,7 @@
 import { useRouter } from "expo-router";
 import React, { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Image } from "react-native";
+import { ImageBackground, Platform, StyleSheet } from "react-native";
 
 import { EXERCISE_DEFINITION_MAP } from "@/app/exercises/exercises.data";
 import ScreenHeader from "@/components/ScreenHeader";
@@ -20,7 +20,6 @@ import {
 } from "@/stores/routineSessionStore";
 
 import ActivityHeatmap from "@/components/ActivityHeatmap";
-import styles, { THUMB_SIZE } from "./sessions.styles";
 import type { RoutineListItem, SessionListItem } from "./sessions.types";
 
 const formatDuration = (ms?: number) => {
@@ -79,6 +78,100 @@ const EmptyState: React.FC<{ text: string }> = ({ text }) => (
     {text}
   </TText>
 );
+
+const ExerciseBreakdownCard: React.FC<{
+  image: any;
+  title: string;
+  sessions: number;
+  reps: number;
+  duration: number;
+  lastDate: string;
+  sessionsLabel: string;
+  repsLabel: string;
+}> = ({
+  image,
+  title,
+  sessions,
+  reps,
+  duration,
+  lastDate,
+  sessionsLabel,
+  repsLabel,
+}) => (
+  <TStack
+    borderRadius="$6"
+    overflow="hidden"
+    borderWidth={1}
+    borderColor="$borderColor"
+    backgroundColor="$background"
+  >
+    <ImageBackground
+      source={image}
+      style={breakdownCardStyles.imageBackground}
+      imageStyle={breakdownCardStyles.imageStyle}
+    >
+      {/* Gradient overlay */}
+      <TStack
+        style={StyleSheet.absoluteFillObject}
+        backgroundColor="rgba(0, 0, 0, 0.65)"
+        pointerEvents="none"
+      />
+
+      {/* Content */}
+      <TStack padding="$4" gap="$3" position="relative" zIndex={1}>
+        {/* Title */}
+        <THeading level={4} color="white">
+          {title}
+        </THeading>
+
+        {/* Stats Grid */}
+        <TRow gap="$3" flexWrap="wrap">
+          <TStack flex={1} minWidth={Platform.OS === "web" ? 100 : 80} gap="$1">
+            <TText variant="caption" style={{ color: "rgba(255,255,255,0.7)" }}>
+              {sessionsLabel}
+            </TText>
+            <THeading level={3} color="white">
+              {sessions}
+            </THeading>
+          </TStack>
+
+          <TStack flex={1} minWidth={Platform.OS === "web" ? 100 : 80} gap="$1">
+            <TText variant="caption" style={{ color: "rgba(255,255,255,0.7)" }}>
+              {repsLabel}
+            </TText>
+            <THeading level={3} color="white">
+              {formatNumber(reps)}
+            </THeading>
+          </TStack>
+
+          <TStack flex={1} minWidth={Platform.OS === "web" ? 100 : 80} gap="$1">
+            <TText variant="caption" style={{ color: "rgba(255,255,255,0.7)" }}>
+              Duración
+            </TText>
+            <THeading level={4} color="white">
+              {formatDuration(duration)}
+            </THeading>
+          </TStack>
+        </TRow>
+
+        {/* Last session date */}
+        <TText variant="caption" style={{ color: "rgba(255,255,255,0.6)" }}>
+          {lastDate}
+        </TText>
+      </TStack>
+    </ImageBackground>
+  </TStack>
+);
+
+const breakdownCardStyles = StyleSheet.create({
+  imageBackground: {
+    width: "100%",
+    minHeight: Platform.OS === "web" ? 200 : 180,
+  },
+  imageStyle: {
+    borderRadius: 16,
+  },
+});
 
 const SessionsScreen: React.FC = () => {
   const { t } = useTranslation();
@@ -518,55 +611,29 @@ const SessionsScreen: React.FC = () => {
         {filteredBreakdown.length === 0 ? (
           <EmptyState text={t("sessions.breakdown.never")} />
         ) : (
-          <TStack gap="$3">
+          <TGrid columns={Platform.OS === "web" ? 3 : 1} gap="$4">
             {filteredBreakdown.map((item) => (
-              <TRow key={item.definition.id} gap="$3" alignItems="center">
-                <TStack
-                  width={THUMB_SIZE}
-                  height={THUMB_SIZE}
-                  borderRadius="$4"
-                  overflow="hidden"
-                  borderWidth={1}
-                  borderColor="$borderColor"
-                  backgroundColor="$backgroundHover"
-                >
-                  <Image
-                    source={item.definition.image}
-                    style={styles.thumbImage}
-                    resizeMode="cover"
-                  />
-                </TStack>
-                <TStack flex={1} gap="$1" minWidth={0}>
-                  <TText variant="label">
-                    {t(`${item.definition.copyKey}.title`)}
-                  </TText>
-                  <TRow gap="$2" flexWrap="wrap">
-                    <MetaPill
-                      label={t("sessions.breakdown.sessionsLabel", {
-                        count: item.sessions,
-                      })}
-                    />
-                    <MetaPill label={formatDuration(item.totalDuration)} />
-                  </TRow>
-                  <TText variant="caption" color="$placeholderColor">
-                    {item.last
-                      ? t("sessions.breakdown.last", {
-                          date: formatDate(
-                            item.last.endedAt ?? item.last.startedAt,
-                          ),
-                        })
-                      : t("sessions.breakdown.never")}
-                  </TText>
-                </TStack>
-                <TStack alignItems="flex-end" gap="$1">
-                  <THeading level={4}>{formatNumber(item.reps)}</THeading>
-                  <TText variant="caption" color="$placeholderColor">
-                    {t("sessions.labels.reps")}
-                  </TText>
-                </TStack>
-              </TRow>
+              <ExerciseBreakdownCard
+                key={item.definition.id}
+                image={item.definition.image}
+                title={t(`${item.definition.copyKey}.title`)}
+                sessions={item.sessions}
+                reps={item.reps}
+                duration={item.totalDuration}
+                lastDate={
+                  item.last
+                    ? t("sessions.breakdown.last", {
+                        date: formatDate(
+                          item.last.endedAt ?? item.last.startedAt,
+                        ),
+                      })
+                    : t("sessions.breakdown.never")
+                }
+                sessionsLabel={t("sessions.labels.sessions")}
+                repsLabel={t("sessions.labels.reps")}
+              />
             ))}
-          </TStack>
+          </TGrid>
         )}
       </TCard>
 
@@ -575,69 +642,162 @@ const SessionsScreen: React.FC = () => {
         {routineList.length === 0 ? (
           <EmptyState text={t("sessions.routineList.empty")} />
         ) : (
-          <TGrid columns={3} gap="$3">
+          <TGrid columns={Platform.OS === "web" ? 3 : 1} gap="$4">
             {routineList.map((routine) => (
-              <TCard
+              <TStack
                 key={routine.id}
-                gap="$3"
-                onPress={() => handleViewRoutineSummary(routine.id)}
-                pressStyle={{ scale: 0.99 }}
+                borderRadius="$6"
+                borderWidth={1}
+                borderColor="$borderColor"
+                backgroundColor="$backgroundHover"
+                overflow="hidden"
               >
-                <TStack gap="$1">
-                  <TText variant="label">
-                    {t("sessions.routineList.roundsLabel", {
-                      count: routine.rounds,
-                    })}
-                    {" · "}
-                    {t("sessions.routineList.exercisesLabel", {
-                      count: routine.exerciseCount,
-                    })}
-                  </TText>
-                  <TRow gap="$2" flexWrap="wrap">
-                    <MetaPill
-                      label={`${t("sessions.labels.reps")}: ${formatNumber(
-                        routine.totalReps,
-                      )}`}
-                    />
-                    <MetaPill
-                      label={`${t("sessions.labels.duration")}: ${formatDuration(
-                        routine.durationMs,
-                      )}`}
-                    />
-                    <MetaPill label={formatDate(routine.completedAt)} />
+                {/* Header con stats principales */}
+                <TStack padding="$4" gap="$3">
+                  <TRow alignItems="center" justifyContent="space-between">
+                    <TStack gap="$1">
+                      <TText
+                        variant="caption"
+                        color="$placeholderColor"
+                        style={{
+                          fontSize: 11,
+                          textTransform: "uppercase",
+                          letterSpacing: 0.5,
+                        }}
+                      >
+                        {t("sessions.routineList.rounds")}
+                      </TText>
+                      <THeading
+                        level={2}
+                        style={{
+                          fontSize: 36,
+                          fontWeight: "700",
+                        }}
+                      >
+                        {routine.rounds}
+                      </THeading>
+                    </TStack>
+
+                    <TStack alignItems="flex-end" gap="$1">
+                      <TText
+                        variant="caption"
+                        color="$placeholderColor"
+                        style={{
+                          fontSize: 11,
+                          textTransform: "uppercase",
+                          letterSpacing: 0.5,
+                        }}
+                      >
+                        {t("sessions.routineList.exercises")}
+                      </TText>
+                      <THeading
+                        level={3}
+                        style={{
+                          fontSize: 24,
+                          fontWeight: "600",
+                        }}
+                      >
+                        {routine.exerciseCount}
+                      </THeading>
+                    </TStack>
                   </TRow>
                 </TStack>
 
-                <TRow gap="$2" flexWrap="wrap">
-                  <TButton
-                    variant="primary"
-                    fullWidth
-                    onPress={() => handleStartRoutine(routine.id)}
-                    accessibilityLabel={t("sessions.routineList.actions.start")}
+                {/* Body con detalles */}
+                <TStack padding="$4" gap="$3">
+                  {/* Stats secundarias */}
+                  <TRow gap="$3" justifyContent="space-around">
+                    <TStack alignItems="center" gap="$1">
+                      <THeading level={4} style={{ fontSize: 20 }}>
+                        {formatNumber(routine.totalReps)}
+                      </THeading>
+                      <TText
+                        variant="caption"
+                        color="$placeholderColor"
+                        style={{ fontSize: 11, textTransform: "uppercase" }}
+                      >
+                        {t("sessions.labels.reps")}
+                      </TText>
+                    </TStack>
+
+                    <TStack
+                      width={1}
+                      height="100%"
+                      backgroundColor="$borderColor"
+                    />
+
+                    <TStack alignItems="center" gap="$1">
+                      <THeading level={4} style={{ fontSize: 18 }}>
+                        {formatDuration(routine.durationMs)}
+                      </THeading>
+                      <TText
+                        variant="caption"
+                        color="$placeholderColor"
+                        style={{ fontSize: 11, textTransform: "uppercase" }}
+                      >
+                        {t("sessions.labels.duration")}
+                      </TText>
+                    </TStack>
+                  </TRow>
+
+                  {/* Fecha */}
+                  <TText
+                    variant="caption"
+                    color="$placeholderColor"
+                    style={{ textAlign: "center", fontSize: 12 }}
                   >
-                    {t("sessions.routineList.actions.start")}
-                  </TButton>
-                  <TButton
-                    variant="outline"
-                    fullWidth
-                    onPress={() => handleEditRoutine(routine.id)}
-                    accessibilityLabel={t("sessions.routineList.actions.edit")}
-                  >
-                    {t("sessions.routineList.actions.edit")}
-                  </TButton>
-                  <TButton
-                    variant="ghost"
-                    fullWidth
-                    iconAfterName="sparkles-outline"
-                    onPress={() => handleAnalyzeRoutine(routine.id)}
-                    accessibilityLabel={t(
-                      "sessions.routineList.actions.analyze",
-                    )}
-                  >
-                    {t("sessions.routineList.actions.analyze")}
-                  </TButton>
-                </TRow>
-              </TCard>
+                    {formatDate(routine.completedAt)}
+                  </TText>
+
+                  {/* Divider */}
+                  <TStack height={1} backgroundColor="$borderColor" />
+
+                  {/* Actions */}
+                  <TRow gap="$2" flexWrap="wrap">
+                    <TButton
+                      variant="primary"
+                      flex={1}
+                      minWidth={100}
+                      onPress={() => handleStartRoutine(routine.id)}
+                      iconName="play"
+                      size="$3"
+                    >
+                      {t("sessions.routineList.actions.start")}
+                    </TButton>
+                    <TButton
+                      variant="outline"
+                      flex={1}
+                      minWidth={100}
+                      onPress={() => handleEditRoutine(routine.id)}
+                      iconName="create-outline"
+                      size="$3"
+                    >
+                      {t("sessions.routineList.actions.edit")}
+                    </TButton>
+                  </TRow>
+
+                  <TRow gap="$2" flexWrap="wrap">
+                    <TButton
+                      variant="ghost"
+                      flex={1}
+                      iconAfterName="sparkles-outline"
+                      onPress={() => handleAnalyzeRoutine(routine.id)}
+                      size="$3"
+                    >
+                      {t("sessions.routineList.actions.analyze")}
+                    </TButton>
+                    <TButton
+                      variant="ghost"
+                      flex={1}
+                      iconAfterName="eye-outline"
+                      onPress={() => handleViewRoutineSummary(routine.id)}
+                      size="$3"
+                    >
+                      {t("sessions.routineList.viewDetails")}
+                    </TButton>
+                  </TRow>
+                </TStack>
+              </TStack>
             ))}
           </TGrid>
         )}
