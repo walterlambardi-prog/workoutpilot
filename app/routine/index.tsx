@@ -138,7 +138,6 @@ const RoutineBuilderScreen: React.FC<RoutineBuilderScreenProps> = () => {
   }, []);
 
   const iconPrimary = resolveToken("$color") ?? "#0F172A";
-  const iconOnPrimary = resolveToken("$background") ?? "#F8FAFC";
   const selectedBorderColor = withAlpha(resolveToken("$color"));
 
   const createDecrementHandler = useCallback(

@@ -1,54 +1,40 @@
-import { useLocalSearchParams } from "expo-router";
-import React, { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { ActivityIndicator, Pressable, ScrollView, View } from "react-native";
-
 import { EXERCISE_DEFINITION_MAP } from "@/app/exercises/exercises.data";
 import { analyzeRoutine } from "@/app/routineAnalysis/routineAnalysis.service";
 import ScreenHeader from "@/components/ScreenHeader";
-import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
+import { TButton } from "@/components/TButton";
+import { TCard } from "@/components/TCard";
+import { TPage } from "@/components/TPage";
+import { TRow, TStack } from "@/components/TStack";
+import { THeading, TText } from "@/components/TText";
 import type { ExerciseId } from "@/constants/exercises";
-import { useThemeColor } from "@/hooks/useThemeColor";
 import { useRoutineSessionStore } from "@/stores/routineSessionStore";
-import styles from "./routineAnalysis.styles";
+import { useLocalSearchParams } from "expo-router";
+import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { ActivityIndicator } from "react-native";
 import type {
-    ExercisePerformance,
-    RoutineAnalysisRequest,
-    RoutineAnalysisResponse,
+  ExercisePerformance,
+  RoutineAnalysisRequest,
+  RoutineAnalysisResponse,
 } from "./routineAnalysis.types";
 
 const RoutineAnalysisScreen: React.FC = () => {
   const { t, i18n } = useTranslation();
   const { routineId } = useLocalSearchParams<{ routineId: string }>();
   const { history, getAnalysis, saveAnalysis } = useRoutineSessionStore();
-
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [analysis, setAnalysis] = useState<RoutineAnalysisResponse | null>(
     null,
   );
 
-  const backgroundColor = useThemeColor({}, "background");
-  const surfaceColor = useThemeColor(
-    { light: "#f8fafc", dark: "#0b1220" },
-    "background",
-  );
-  const borderColor = useThemeColor(
-    { light: "#e2e8f0", dark: "#1f2937" },
-    "background",
-  );
-  const mutedText = useThemeColor(
-    { light: "#475569", dark: "#cbd5e1" },
-    "text",
-  );
-  const subtleText = useThemeColor(
-    { light: "#64748b", dark: "#94a3b8" },
-    "text",
-  );
-  const successColor = "#10b981";
-  const warningColor = "#f59e0b";
-  const errorColor = "#ef4444";
+  // Tamagui tokens/colors
+  const successColor = "$success";
+  const warningColor = "$warning";
+  const errorColor = "$error";
+  const surfaceColor = "$backgroundHover";
+  const borderColor = "$borderColor";
+  const subtleText = "$placeholderColor";
 
   const getScoreColor = (score: number) => {
     if (score >= 80) return successColor;
@@ -155,49 +141,39 @@ const RoutineAnalysisScreen: React.FC = () => {
 
   if (loading) {
     return (
-      <View style={[styles.page, { backgroundColor }]}>
+      <TPage>
         <ScreenHeader
           title={t("routineAnalysis.title")}
           subtitle={t("routineAnalysis.subtitle")}
         />
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={successColor} />
-          <ThemedText style={styles.loadingText}>
-            {t("routineAnalysis.analyzing")}
-          </ThemedText>
-        </View>
-      </View>
+        <TStack flex={1} alignItems="center" justifyContent="center" gap="$4">
+          <ActivityIndicator size="large" color="#10b981" />
+          <TText>{t("routineAnalysis.analyzing")}</TText>
+        </TStack>
+      </TPage>
     );
   }
 
   if (error) {
     return (
-      <ScrollView style={[styles.page, { backgroundColor }]}>
+      <TPage>
         <ScreenHeader
           title={t("routineAnalysis.title")}
           subtitle={t("routineAnalysis.subtitle")}
         />
-        <View style={styles.content}>
-          <View
-            style={[
-              styles.errorContainer,
-              { backgroundColor: surfaceColor, borderColor: errorColor },
-            ]}
-          >
-            <ThemedText style={styles.errorText}>{error}</ThemedText>
-            <Pressable
-              style={[styles.retryButton, { backgroundColor: errorColor }]}
+        <TStack gap="$4">
+          <TCard borderColor={errorColor} backgroundColor={surfaceColor}>
+            <TText color={errorColor}>{error}</TText>
+            <TButton
+              variant="primary"
               onPress={() => performAnalysis(true)}
+              style={{ marginTop: 12 }}
             >
-              <ThemedText
-                style={[styles.retryButtonText, { color: "#ffffff" }]}
-              >
-                {t("routineAnalysis.retry")}
-              </ThemedText>
-            </Pressable>
-          </View>
-        </View>
-      </ScrollView>
+              {t("routineAnalysis.retry")}
+            </TButton>
+          </TCard>
+        </TStack>
+      </TPage>
     );
   }
 
@@ -206,183 +182,122 @@ const RoutineAnalysisScreen: React.FC = () => {
   }
 
   return (
-    <ScrollView
-      style={[styles.page, { backgroundColor }]}
-      contentContainerStyle={styles.scrollContent}
-      showsVerticalScrollIndicator={false}
-    >
+    <TPage>
       <ScreenHeader
         title={t("routineAnalysis.title")}
         subtitle={t("routineAnalysis.subtitle")}
       />
-
-      <View style={styles.content}>
+      <TStack gap="$4">
         {/* Overall Score */}
-        <View
-          style={[
-            styles.scoreCard,
-            {
-              backgroundColor: surfaceColor,
-              borderColor: getScoreColor(analysis.overallScore),
-            },
-          ]}
+        <TCard
+          borderColor={getScoreColor(analysis.overallScore)}
+          backgroundColor={surfaceColor}
+          alignItems="center"
+          gap="$2"
         >
-          <ThemedText
-            style={[
-              styles.scoreValue,
-              { color: getScoreColor(analysis.overallScore) },
-            ]}
-          >
+          <THeading level={1} color={getScoreColor(analysis.overallScore)}>
             {analysis.overallScore}
-          </ThemedText>
-          <ThemedText style={[styles.scoreLabel, { color: mutedText }]}>
-            {t("routineAnalysis.overallScore")}
-          </ThemedText>
-        </View>
+          </THeading>
+          <TText variant="label">{t("routineAnalysis.overallScore")}</TText>
+        </TCard>
 
         {/* Overall Feedback */}
-        <ThemedView
-          style={[styles.card, { backgroundColor: surfaceColor, borderColor }]}
-          lightColor="transparent"
-          darkColor="transparent"
-        >
-          <ThemedText style={styles.cardTitle}>
-            {t("routineAnalysis.feedback")}
-          </ThemedText>
-          <ThemedText style={[styles.feedbackText, { color: mutedText }]}>
-            {analysis.overallFeedback}
-          </ThemedText>
-        </ThemedView>
+        <TCard borderColor={borderColor} backgroundColor={surfaceColor}>
+          <THeading level={3}>{t("routineAnalysis.feedback")}</THeading>
+          <TText>{analysis.overallFeedback}</TText>
+        </TCard>
 
         {/* Strengths */}
-        <ThemedView
-          style={[styles.card, { backgroundColor: surfaceColor, borderColor }]}
-          lightColor="transparent"
-          darkColor="transparent"
-        >
-          <ThemedText style={styles.cardTitle}>
-            {t("routineAnalysis.strengths")}
-          </ThemedText>
-          {analysis.strengths.map((strength, index) => (
-            <View key={index} style={styles.listItem}>
-              <ThemedText style={[styles.bullet, { color: successColor }]}>
-                ✓
-              </ThemedText>
-              <ThemedText style={[styles.itemText, { color: mutedText }]}>
-                {strength}
-              </ThemedText>
-            </View>
-          ))}
-        </ThemedView>
+        <TCard borderColor={borderColor} backgroundColor={surfaceColor}>
+          <THeading level={3}>{t("routineAnalysis.strengths")}</THeading>
+          <TStack gap="$2">
+            {analysis.strengths.map((strength, index) => (
+              <TRow key={index} gap="$2" alignItems="center">
+                <TText color={successColor}>✓</TText>
+                <TText>{strength}</TText>
+              </TRow>
+            ))}
+          </TStack>
+        </TCard>
 
         {/* Improvements */}
-        <ThemedView
-          style={[styles.card, { backgroundColor: surfaceColor, borderColor }]}
-          lightColor="transparent"
-          darkColor="transparent"
-        >
-          <ThemedText style={styles.cardTitle}>
-            {t("routineAnalysis.improvements")}
-          </ThemedText>
-          {analysis.improvements.map((improvement, index) => (
-            <View key={index} style={styles.listItem}>
-              <ThemedText style={[styles.bullet, { color: warningColor }]}>
-                →
-              </ThemedText>
-              <ThemedText style={[styles.itemText, { color: mutedText }]}>
-                {improvement}
-              </ThemedText>
-            </View>
-          ))}
-        </ThemedView>
+        <TCard borderColor={borderColor} backgroundColor={surfaceColor}>
+          <THeading level={3}>{t("routineAnalysis.improvements")}</THeading>
+          <TStack gap="$2">
+            {analysis.improvements.map((improvement, index) => (
+              <TRow key={index} gap="$2" alignItems="center">
+                <TText color={warningColor}>→</TText>
+                <TText>{improvement}</TText>
+              </TRow>
+            ))}
+          </TStack>
+        </TCard>
 
         {/* Exercise Breakdown */}
-        <ThemedView
-          style={[styles.card, { backgroundColor: surfaceColor, borderColor }]}
-          lightColor="transparent"
-          darkColor="transparent"
-        >
-          <ThemedText style={styles.cardTitle}>
+        <TCard borderColor={borderColor} backgroundColor={surfaceColor}>
+          <THeading level={3}>
             {t("routineAnalysis.exerciseBreakdown")}
-          </ThemedText>
-          {analysis.exercises.map((exercise, index) => {
-            const definition =
-              EXERCISE_DEFINITION_MAP[exercise.exerciseId as ExerciseId];
-            return (
-              <View
-                key={index}
-                style={[
-                  styles.exerciseCard,
-                  {
-                    backgroundColor: surfaceColor,
-                    borderColor: getScoreColor(exercise.performanceScore),
-                  },
-                ]}
-              >
-                <View style={styles.exerciseHeader}>
-                  <ThemedText style={styles.exerciseName}>
-                    {definition
-                      ? t(`${definition.copyKey}.title`)
-                      : exercise.exerciseId}
-                  </ThemedText>
-                  <ThemedText
-                    style={[
-                      styles.exerciseScore,
-                      { color: getScoreColor(exercise.performanceScore) },
-                    ]}
-                  >
-                    {exercise.performanceScore}
-                  </ThemedText>
-                </View>
-                <ThemedText
-                  style={[styles.exerciseFeedback, { color: mutedText }]}
+          </THeading>
+          <TStack gap="$3">
+            {analysis.exercises.map((exercise, index) => {
+              const definition =
+                EXERCISE_DEFINITION_MAP[exercise.exerciseId as ExerciseId];
+              return (
+                <TCard
+                  key={index}
+                  borderColor={getScoreColor(exercise.performanceScore)}
+                  backgroundColor={surfaceColor}
+                  gap="$2"
                 >
-                  {exercise.feedback}
-                </ThemedText>
-                {exercise.suggestions.map((suggestion, idx) => (
-                  <ThemedText
-                    key={idx}
-                    style={[styles.suggestionItem, { color: subtleText }]}
-                  >
-                    • {suggestion}
-                  </ThemedText>
-                ))}
-              </View>
-            );
-          })}
-        </ThemedView>
+                  <TRow alignItems="center" justifyContent="space-between">
+                    <TText fontWeight="700">
+                      {definition
+                        ? t(`${definition.copyKey}.title`)
+                        : exercise.exerciseId}
+                    </TText>
+                    <TText
+                      color={getScoreColor(exercise.performanceScore)}
+                      fontWeight="700"
+                    >
+                      {exercise.performanceScore}
+                    </TText>
+                  </TRow>
+                  <TText>{exercise.feedback}</TText>
+                  <TStack gap="$1">
+                    {exercise.suggestions.map((suggestion, idx) => (
+                      <TText key={idx} color={subtleText}>
+                        • {suggestion}
+                      </TText>
+                    ))}
+                  </TStack>
+                </TCard>
+              );
+            })}
+          </TStack>
+        </TCard>
 
         {/* Next Steps */}
-        <ThemedView
-          style={[styles.card, { backgroundColor: surfaceColor, borderColor }]}
-          lightColor="transparent"
-          darkColor="transparent"
-        >
-          <ThemedText style={styles.cardTitle}>
-            {t("routineAnalysis.nextSteps")}
-          </ThemedText>
-          {analysis.nextSteps.map((step, index) => (
-            <View key={index} style={styles.listItem}>
-              <ThemedText style={[styles.bullet, { color: successColor }]}>
-                {index + 1}.
-              </ThemedText>
-              <ThemedText style={[styles.itemText, { color: mutedText }]}>
-                {step}
-              </ThemedText>
-            </View>
-          ))}
-        </ThemedView>
+        <TCard borderColor={borderColor} backgroundColor={surfaceColor}>
+          <THeading level={3}>{t("routineAnalysis.nextSteps")}</THeading>
+          <TStack gap="$2">
+            {analysis.nextSteps.map((step, index) => (
+              <TRow key={index} gap="$2" alignItems="center">
+                <TText color={successColor}>{index + 1}.</TText>
+                <TText>{step}</TText>
+              </TRow>
+            ))}
+          </TStack>
+        </TCard>
 
-        <Pressable
-          style={[styles.reanalyzeButton, { backgroundColor: successColor }]}
+        <TButton
+          variant="primary"
           onPress={handleReanalyze}
+          style={{ marginTop: 12 }}
         >
-          <ThemedText style={styles.reanalyzeButtonText}>
-            {t("routineAnalysis.reanalyze")}
-          </ThemedText>
-        </Pressable>
-      </View>
-    </ScrollView>
+          {t("routineAnalysis.reanalyze")}
+        </TButton>
+      </TStack>
+    </TPage>
   );
 };
 
