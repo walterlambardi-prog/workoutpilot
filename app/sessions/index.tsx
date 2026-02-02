@@ -1,9 +1,10 @@
 import { useRouter } from "expo-router";
 import React, { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Platform } from "react-native";
+import { Platform, StyleSheet } from "react-native";
 
 import { EXERCISE_DEFINITION_MAP } from "@/app/exercises/exercises.data";
+import MapView from "@/components/MapView";
 import ScreenHeader from "@/components/ScreenHeader";
 import { TButton } from "@/components/TButton";
 import { TCard } from "@/components/TCard";
@@ -18,6 +19,7 @@ import {
   type RoutineSession,
   useRoutineSessionStore,
 } from "@/stores/routineSessionStore";
+import { useWalkingSessionStore } from "@/stores/walkingSessionStore";
 
 import ActivityHeatmap from "@/components/ActivityHeatmap";
 import type { RoutineListItem } from "./sessions.types";
@@ -71,6 +73,13 @@ const SessionsScreen: React.FC = () => {
   const applyPlan = useRoutineBuilderStore((state) => state.applyPlan);
   const { history: routineHistory, lastCompletedSession } =
     useRoutineSessionStore();
+  const walkingHistory = useWalkingSessionStore((state) => state.history);
+
+  const formatDistance = useCallback(
+    (distanceKm: number) =>
+      t("walking.stats.distanceValue", { distance: distanceKm.toFixed(2) }),
+    [t],
+  );
 
   const totals = useMemo(() => {
     const now = Date.now();
@@ -113,6 +122,34 @@ const SessionsScreen: React.FC = () => {
       uniqueExercises,
     };
   }, [currentSession, history]);
+
+  const walkingTotals = useMemo(() => {
+    const totalSteps = walkingHistory.reduce(
+      (sum, entry) => sum + (entry.steps ?? 0),
+      0,
+    );
+    const totalDistanceKm = walkingHistory.reduce(
+      (sum, entry) => sum + (entry.distanceKm ?? 0),
+      0,
+    );
+    const totalDurationMs = walkingHistory.reduce(
+      (sum, entry) => sum + (entry.durationMs ?? 0),
+      0,
+    );
+    const lastSession = walkingHistory[0] ?? null;
+
+    return {
+      totalSteps,
+      totalDistanceKm,
+      totalDurationMs,
+      lastSession,
+    };
+  }, [walkingHistory]);
+
+  const walkingRecent = useMemo(
+    () => walkingHistory.slice(0, 3),
+    [walkingHistory],
+  );
 
   const routineSessions = useMemo(() => {
     const sessions: RoutineSession[] = [...routineHistory];
@@ -315,6 +352,91 @@ const SessionsScreen: React.FC = () => {
       </TGrid>
 
       <TCard gap="$3">
+        <THeading level={3}>{t("sessions.walking.title")}</THeading>
+
+        <TGrid columns={Platform.OS === "web" ? 3 : 1} gap="$3">
+          <StatTile
+            label={t("sessions.walking.totalSteps")}
+            value={formatNumber(walkingTotals.totalSteps)}
+            helper={
+              walkingTotals.lastSession
+                ? t("sessions.walking.lastSession", {
+                    date: formatDate(
+                      walkingTotals.lastSession.endedAt ??
+                        walkingTotals.lastSession.startedAt,
+                    ),
+                  })
+                : undefined
+            }
+          />
+          <StatTile
+            label={t("sessions.walking.totalDistance")}
+            value={formatDistance(walkingTotals.totalDistanceKm)}
+          />
+          <StatTile
+            label={t("sessions.walking.totalTime")}
+            value={formatDuration(walkingTotals.totalDurationMs)}
+          />
+        </TGrid>
+
+        {walkingRecent.length === 0 ? (
+          <EmptyState text={t("sessions.walking.empty")} />
+        ) : (
+          <TGrid columns={Platform.OS === "web" ? 2 : 1} gap="$3">
+            {walkingRecent.map((entry) => (
+              <TStack
+                key={entry.id}
+                gap="$2"
+                borderRadius="$6"
+                borderWidth={1}
+                borderColor="$borderColor"
+                backgroundColor="$backgroundHover"
+                padding="$3"
+              >
+                <TRow justifyContent="space-between" alignItems="flex-start">
+                  <TStack gap="$1">
+                    <TText variant="label" color="$placeholderColor">
+                      {t("walking.stats.distance")}
+                    </TText>
+                    <THeading level={4}>
+                      {formatDistance(entry.distanceKm)}
+                    </THeading>
+                  </TStack>
+                  <TStack alignItems="flex-end" gap="$1">
+                    <TText variant="label" color="$placeholderColor">
+                      {t("walking.stats.steps")}
+                    </TText>
+                    <THeading level={4}>{formatNumber(entry.steps)}</THeading>
+                  </TStack>
+                </TRow>
+
+                <TRow justifyContent="space-between" alignItems="center">
+                  <TStack gap="$1">
+                    <TText variant="caption" color="$placeholderColor">
+                      {t("walking.stats.duration")}
+                    </TText>
+                    <THeading level={4}>
+                      {formatDuration(entry.durationMs)}
+                    </THeading>
+                  </TStack>
+                  <TText variant="caption" color="$placeholderColor">
+                    {formatDate(entry.endedAt ?? entry.startedAt)}
+                  </TText>
+                </TRow>
+
+                <TStack borderRadius="$6" overflow="hidden">
+                  <MapView
+                    positions={entry.positions}
+                    style={styles.walkingMap}
+                  />
+                </TStack>
+              </TStack>
+            ))}
+          </TGrid>
+        )}
+      </TCard>
+
+      <TCard gap="$3">
         <THeading level={3}>{t("sessions.routineList.title")}</THeading>
         {routineList.length === 0 ? (
           <EmptyState text={t("sessions.routineList.empty")} />
@@ -482,5 +604,13 @@ const SessionsScreen: React.FC = () => {
     </TPage>
   );
 };
+
+const styles = StyleSheet.create({
+  walkingMap: {
+    height: 220,
+    borderRadius: 12,
+    overflow: "hidden",
+  },
+});
 
 export default SessionsScreen;

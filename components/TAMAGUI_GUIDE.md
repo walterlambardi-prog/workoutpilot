@@ -58,7 +58,7 @@ import TCard from '@/components/TCard';
 </TCard>
 
 // Card con elevación
-<TCard elevated padding="$4">
+<TCard padding="$4">
   <THeading level={3}>Título</THeading>
   <TText>Descripción del ejercicio</TText>
 </TCard>

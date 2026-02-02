@@ -1,15 +1,21 @@
 import * as Location from "expo-location";
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, {
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+} from "react";
 import { useTranslation } from "react-i18next";
 import { XStack, YStack } from "tamagui";
 
 import MapView from "@/components/MapView";
+import type { LatLng } from "@/components/MapView/MapView.types";
 import ScreenHeader from "@/components/ScreenHeader";
 import { TButton } from "@/components/TButton";
 import { TCard } from "@/components/TCard";
-import { THeading, TText } from "@/components/TText";
 import { TPage } from "@/components/TPage";
-import type { LatLng } from "@/components/MapView/MapView.types";
+import { THeading, TText } from "@/components/TText";
 
 import styles from "./walking.styles";
 import type { WalkingStatusKey } from "./walking.types";
@@ -28,8 +34,7 @@ const calculateDistanceKm = (positions: LatLng[]): number => {
     const lat2 = toRadians(curr.latitude);
     const a =
       Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(lat1) * Math.cos(lat2) *
-        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     const earthRadiusKm = 6371;
     distance += earthRadiusKm * c;
@@ -56,7 +61,9 @@ const WalkingWebScreen: React.FC = () => {
   const [elapsedMs, setElapsedMs] = useState(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const startTimestampRef = useRef<number | null>(null);
-  const locationSubscriptionRef = useRef<Location.LocationSubscription | null>(null);
+  const locationSubscriptionRef = useRef<Location.LocationSubscription | null>(
+    null,
+  );
   const [isSecureContext, setIsSecureContext] = useState<boolean>(true);
   const browserWatchIdRef = useRef<number | null>(null);
 
@@ -67,7 +74,8 @@ const WalkingWebScreen: React.FC = () => {
     }
 
     if (typeof window !== "undefined") {
-      const secure = window.isSecureContext || window.location.hostname === "localhost";
+      const secure =
+        window.isSecureContext || window.location.hostname === "localhost";
       setIsSecureContext(secure);
     }
   }, []);
@@ -89,7 +97,11 @@ const WalkingWebScreen: React.FC = () => {
     stopTimer();
     locationSubscriptionRef.current?.remove();
     locationSubscriptionRef.current = null;
-    if (browserWatchIdRef.current !== null && typeof navigator !== "undefined" && navigator.geolocation?.clearWatch) {
+    if (
+      browserWatchIdRef.current !== null &&
+      typeof navigator !== "undefined" &&
+      navigator.geolocation?.clearWatch
+    ) {
       navigator.geolocation.clearWatch(browserWatchIdRef.current);
     }
     browserWatchIdRef.current = null;
@@ -120,7 +132,8 @@ const WalkingWebScreen: React.FC = () => {
   }, []);
 
   const startBrowserTracking = useCallback(async () => {
-    if (typeof navigator === "undefined" || !navigator.geolocation) return false;
+    if (typeof navigator === "undefined" || !navigator.geolocation)
+      return false;
 
     return new Promise<boolean>((resolve) => {
       browserWatchIdRef.current = navigator.geolocation.watchPosition(
@@ -135,7 +148,10 @@ const WalkingWebScreen: React.FC = () => {
           }
 
           // Ignore transient unknown/unavailable errors; keep watching for a valid fix.
-          if (error.code === error.POSITION_UNAVAILABLE || error.code === error.TIMEOUT) {
+          if (
+            error.code === error.POSITION_UNAVAILABLE ||
+            error.code === error.TIMEOUT
+          ) {
             console.warn("Transient location error", error);
             return;
           }
@@ -161,7 +177,9 @@ const WalkingWebScreen: React.FC = () => {
       return false;
     }
 
-    const servicesEnabled = await Location.hasServicesEnabledAsync().catch(() => true);
+    const servicesEnabled = await Location.hasServicesEnabledAsync().catch(
+      () => true,
+    );
     if (!servicesEnabled) {
       const fallbackStarted = await startBrowserTracking();
       if (fallbackStarted) return true;
@@ -171,7 +189,8 @@ const WalkingWebScreen: React.FC = () => {
       return false;
     }
 
-    const { status: locationStatus } = await Location.requestForegroundPermissionsAsync();
+    const { status: locationStatus } =
+      await Location.requestForegroundPermissionsAsync();
     if (locationStatus !== Location.PermissionStatus.GRANTED) {
       setStatus("error");
       setErrorMessage(t("walking.errors.permissionDenied"));
@@ -219,11 +238,18 @@ const WalkingWebScreen: React.FC = () => {
     setStatus("requesting");
 
     // Try browser API first for cases where Expo web location fails or is blocked.
-    const started = (await startBrowserTracking()) || (await startExpoTracking());
+    const started =
+      (await startBrowserTracking()) || (await startExpoTracking());
     if (started) {
       setStatus("tracking");
     }
-  }, [resetState, startBrowserTracking, startExpoTracking, startTimer, stopSubscriptions]);
+  }, [
+    resetState,
+    startBrowserTracking,
+    startExpoTracking,
+    startTimer,
+    stopSubscriptions,
+  ]);
 
   useEffect(() => {
     return () => {
@@ -234,15 +260,18 @@ const WalkingWebScreen: React.FC = () => {
 
   const distanceKm = useMemo(() => calculateDistanceKm(positions), [positions]);
   const statusLabel = t(`walking.status.${status}`);
-  const primaryCtaLabel = status === "tracking"
-    ? t("walking.actions.stop")
-    : t("walking.actions.start");
+  const primaryCtaLabel =
+    status === "tracking"
+      ? t("walking.actions.stop")
+      : t("walking.actions.start");
 
   const stats = [
     {
       key: "distance",
       label: t("walking.stats.distance"),
-      value: t("walking.stats.distanceValue", { distance: distanceKm.toFixed(2) }),
+      value: t("walking.stats.distanceValue", {
+        distance: distanceKm.toFixed(2),
+      }),
     },
     {
       key: "duration",
@@ -258,16 +287,17 @@ const WalkingWebScreen: React.FC = () => {
         subtitle={t("walking.subtitleWeb")}
       />
 
-      <TCard padding="$4" elevated>
+      <TCard padding="$4">
         <YStack gap="$2">
           <TText variant="label">{t("walking.status.label")}</TText>
           <THeading level={3}>{statusLabel}</THeading>
           {errorMessage ? (
-            <TText color={"$red10" as any}>
-              {errorMessage}
-            </TText>
+            <TText color={"$red10" as any}>{errorMessage}</TText>
           ) : null}
-          <TButton onPress={status === "tracking" ? stopTracking : startTracking} iconName={status === "tracking" ? "pause" : "walk"}>
+          <TButton
+            onPress={status === "tracking" ? stopTracking : startTracking}
+            iconName={status === "tracking" ? "pause" : "walk"}
+          >
             {primaryCtaLabel}
           </TButton>
         </YStack>
@@ -286,7 +316,7 @@ const WalkingWebScreen: React.FC = () => {
 
       <YStack gap="$2">
         <TText variant="label">{t("walking.map.title")}</TText>
-        <TCard padding="$1" elevated>
+        <TCard padding="$1">
           <MapView positions={positions} style={styles.mapWrapper} />
         </TCard>
       </YStack>

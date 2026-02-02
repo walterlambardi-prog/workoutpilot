@@ -214,6 +214,14 @@
       "exercisesLabel": "{{count}} ejercicios",
       "actions": {
         "start": "Iniciar",
+        "walking": {
+          "title": "Sesiones de caminata",
+          "empty": "Aún no hay sesiones de caminata",
+          "totalSteps": "Pasos totales",
+          "totalDistance": "Distancia total",
+          "totalTime": "Tiempo total caminando",
+          "lastSession": "Última: {{date}}"
+        },
         "edit": "Editar",
         "analyze": "Análisis IA"
       }

@@ -204,6 +204,14 @@
       "topExercise": "Top routine exercise",
       "empty": "No routine history"
     },
+    "walking": {
+      "title": "Walking sessions",
+      "empty": "No walking sessions yet",
+      "totalSteps": "Total steps",
+      "totalDistance": "Total distance",
+      "totalTime": "Total walking time",
+      "lastSession": "Last: {{date}}"
+    },
     "routineList": {
       "title": "Routines",
       "empty": "No routines completed yet",

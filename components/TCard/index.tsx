@@ -2,9 +2,9 @@ import React from "react";
 import { CardProps, Card as TamaguiCard } from "tamagui";
 
 import {
-    CARD_BASE_PROPS,
-    CARD_HOVER_STYLE,
-    CARD_PRESS_STYLE,
+  CARD_BASE_PROPS,
+  CARD_HOVER_STYLE,
+  CARD_PRESS_STYLE,
 } from "./TCard.styles";
 
 export interface TCardProps extends CardProps {
@@ -20,8 +20,8 @@ export interface TCardProps extends CardProps {
  *   <Text>Card content</Text>
  * </TCard>
  *
- * <TCard elevated padding="$4">
- *   <Text>Elevated card with padding</Text>
+ * <TCard padding="$4">
+ *   <Text>card with padding</Text>
  * </TCard>
  * ```
  */

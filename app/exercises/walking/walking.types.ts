@@ -22,3 +22,12 @@ export interface GeoTrackingState {
   status: WalkingStatusKey;
   errorMessage?: string;
 }
+
+export interface WalkingSessionEntry {
+  startedAt: number;
+  endedAt: number;
+  durationMs: number;
+  steps: number;
+  distanceKm: number;
+  positions: LatLng[];
+}
