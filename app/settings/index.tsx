@@ -16,6 +16,7 @@ import { useExerciseSessionStore } from "@/stores/exerciseSessionStore";
 import { usePreferencesStore, type ThemeMode } from "@/stores/preferencesStore";
 import { useRoutineBuilderStore } from "@/stores/routineBuilderStore";
 import { useRoutineSessionStore } from "@/stores/routineSessionStore";
+import { useWalkingSessionStore } from "@/stores/walkingSessionStore";
 import { showAlert } from "@/utils/alert";
 import { exportAppData, importAppData } from "@/utils/dataExport";
 import {
@@ -83,6 +84,9 @@ const SettingsScreen: React.FC = () => {
   const { language, changeLanguage, supportedLanguages } = useAppLanguage();
   const resetHistory = useExerciseSessionStore((state) => state.resetHistory);
   const resetRoutineHistory = useRoutineSessionStore(
+    (state) => state.resetHistory,
+  );
+  const resetWalkingHistory = useWalkingSessionStore(
     (state) => state.resetHistory,
   );
   const resetRoutine = useRoutineBuilderStore((state) => state.resetRoutine);
@@ -185,6 +189,30 @@ const SettingsScreen: React.FC = () => {
       ],
     );
   }, [resetRoutineHistory, t]);
+
+  const handleClearWalkingHistory = useCallback(() => {
+    showAlert(
+      t("settings.data.clearWalkingHistoryConfirmTitle"),
+      t("settings.data.clearWalkingHistoryConfirmMessage"),
+      [
+        {
+          text: t("settings.data.cancel"),
+          style: "cancel",
+        },
+        {
+          text: t("settings.data.clearWalkingHistoryConfirm"),
+          style: "destructive",
+          onPress: () => {
+            resetWalkingHistory();
+            showAlert(
+              t("settings.data.clearedWalkingTitle"),
+              t("settings.data.clearedWalkingMessage"),
+            );
+          },
+        },
+      ],
+    );
+  }, [resetWalkingHistory, t]);
 
   const handleDeleteAccount = useCallback(() => {
     showAlert(
@@ -299,6 +327,14 @@ const SettingsScreen: React.FC = () => {
         onPress: handleClearHistory,
       },
       {
+        key: "clear-walking-history",
+        title: t("settings.data.clearWalkingHistory"),
+        description: t("settings.data.clearWalkingHistoryConfirmMessage"),
+        iconName: "walk-outline",
+        tone: "danger",
+        onPress: handleClearWalkingHistory,
+      },
+      {
         key: "clear-routine-history",
         title: t("settings.data.clearRoutineHistory"),
         description: t("settings.data.clearRoutineHistoryConfirmMessage"),
@@ -318,6 +354,7 @@ const SettingsScreen: React.FC = () => {
     [
       handleClearHistory,
       handleClearRoutineHistory,
+      handleClearWalkingHistory,
       handleDeleteAccount,
       handleExportData,
       handleImportData,

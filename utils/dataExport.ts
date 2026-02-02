@@ -5,6 +5,10 @@ import { useExerciseSessionStore } from "@/stores/exerciseSessionStore";
 import { usePreferencesStore } from "@/stores/preferencesStore";
 import { useRoutineBuilderStore } from "@/stores/routineBuilderStore";
 import { useRoutineSessionStore } from "@/stores/routineSessionStore";
+import {
+  type WalkingSessionEntry,
+  useWalkingSessionStore,
+} from "@/stores/walkingSessionStore";
 
 /**
  * Interface representing all exportable app data (excluding username)
@@ -33,6 +37,9 @@ export interface AppExportData {
     history: unknown[];
     analysisCache: unknown;
   };
+  walkingSessions?: {
+    history: WalkingSessionEntry[];
+  };
 }
 
 /**
@@ -44,6 +51,7 @@ const collectAppData = (): AppExportData => {
   const exerciseSessionState = useExerciseSessionStore.getState();
   const routineBuilderState = useRoutineBuilderStore.getState();
   const routineSessionState = useRoutineSessionStore.getState();
+  const walkingSessionState = useWalkingSessionStore.getState();
 
   return {
     version: "1.0",
@@ -69,6 +77,9 @@ const collectAppData = (): AppExportData => {
       lastCompletedSession: routineSessionState.lastCompletedSession,
       history: routineSessionState.history,
       analysisCache: routineSessionState.analysisCache,
+    },
+    walkingSessions: {
+      history: walkingSessionState.history,
     },
   };
 };
@@ -206,6 +217,12 @@ const validateImportData = (data: unknown): data is AppExportData => {
 
   const d = data as Partial<AppExportData>;
 
+  const walkingValid =
+    d.walkingSessions === undefined ||
+    (d.walkingSessions !== undefined &&
+      typeof d.walkingSessions === "object" &&
+      Array.isArray((d.walkingSessions as { history?: unknown }).history));
+
   return (
     typeof d.version === "string" &&
     typeof d.exportedAt === "number" &&
@@ -213,7 +230,8 @@ const validateImportData = (data: unknown): data is AppExportData => {
     d.preferences !== undefined &&
     d.exerciseSessions !== undefined &&
     d.routineBuilder !== undefined &&
-    d.routineSessions !== undefined
+    d.routineSessions !== undefined &&
+    walkingValid
   );
 };
 
@@ -262,6 +280,11 @@ const applyImportData = (data: AppExportData): void => {
     history: data.routineSessions.history,
     analysisCache: data.routineSessions.analysisCache,
   } as Partial<ReturnType<typeof useRoutineSessionStore.getState>>);
+
+  // Walking sessions (optional for backward compatibility)
+  useWalkingSessionStore.setState({
+    history: data.walkingSessions?.history ?? [],
+  } as Partial<ReturnType<typeof useWalkingSessionStore.getState>>);
 };
 
 /**
