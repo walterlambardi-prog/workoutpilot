@@ -1,8 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import * as BackgroundFetch from "expo-background-fetch";
 import * as Location from "expo-location";
 import { Pedometer } from "expo-sensors";
-import * as TaskManager from "expo-task-manager";
 import React, {
     useCallback,
     useEffect,
@@ -26,8 +24,6 @@ import { useWalkingSessionStore } from "@/stores/walkingSessionStore";
 import styles from "./walking.styles";
 import type { WalkingStatusKey } from "./walking.types";
 
-const BG_LOCATION_TASK = "walking-location-background";
-const BG_STEPS_TASK = "walking-steps-background";
 const STORAGE_KEYS = {
   positions: "walking:positions",
   start: "walking:start",
@@ -75,6 +71,7 @@ const WalkingScreen: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState<string | undefined>();
   const [elapsedMs, setElapsedMs] = useState(0);
   const statusRef = useRef<WalkingStatusKey>("idle");
+  const pedometerBaselineRef = useRef<number | null>(null);
   const pedometerSubscriptionRef = useRef<ReturnType<
     typeof Pedometer.watchStepCount
   > | null>(null);
@@ -86,90 +83,14 @@ const WalkingScreen: React.FC = () => {
   const appStateRef = useRef<AppStateStatus>(AppState.currentState);
   const addWalkingSession = useWalkingSessionStore((state) => state.addSession);
 
-  useEffect(() => {
-    if (!TaskManager.isTaskDefined(BG_LOCATION_TASK)) {
-      TaskManager.defineTask(
-        BG_LOCATION_TASK,
-        async (body: TaskManager.TaskManagerTaskBody | null) => {
-          const error = body?.error as Error | undefined;
-          const data = body?.data as
-            | { locations?: Location.LocationObject[] }
-            | undefined;
-          if (error) {
-            return;
-          }
-          const locations = data?.locations;
-          if (!locations || locations.length === 0) return;
-
-          try {
-            const stored = await AsyncStorage.getItem(STORAGE_KEYS.positions);
-            const existing: LatLng[] = stored ? JSON.parse(stored) : [];
-            const incoming: LatLng[] = locations.map((loc) => ({
-              latitude: loc.coords.latitude,
-              longitude: loc.coords.longitude,
-            }));
-            const next = [...existing, ...incoming];
-            const trimmed = next.slice(-500); // prevent unbounded growth
-            await AsyncStorage.setItem(
-              STORAGE_KEYS.positions,
-              JSON.stringify(trimmed),
-            );
-          } catch {
-            // ignore storage errors
-          }
-        },
-      );
-    }
-
-    if (!TaskManager.isTaskDefined(BG_STEPS_TASK)) {
-      TaskManager.defineTask(
-        BG_STEPS_TASK,
-        async (body: TaskManager.TaskManagerTaskBody | null) => {
-          const error = body?.error as Error | undefined;
-          if (error) {
-            return BackgroundFetch.BackgroundFetchResult.Failed;
-          }
-
-          try {
-            const storedStart = await AsyncStorage.getItem(STORAGE_KEYS.start);
-            if (!storedStart)
-              return BackgroundFetch.BackgroundFetchResult.NoData;
-            const parsedStart = Number(storedStart);
-            if (Number.isNaN(parsedStart))
-              return BackgroundFetch.BackgroundFetchResult.NoData;
-
-            const permission = await Pedometer.getPermissionsAsync();
-            if (permission.status !== "granted")
-              return BackgroundFetch.BackgroundFetchResult.NoData;
-
-            const history = await Pedometer.getStepCountAsync(
-              new Date(parsedStart),
-              new Date(),
-            );
-            if (history && typeof history.steps === "number") {
-              await AsyncStorage.setItem(
-                STORAGE_KEYS.steps,
-                `${history.steps}`,
-              );
-              return BackgroundFetch.BackgroundFetchResult.NewData;
-            }
-            return BackgroundFetch.BackgroundFetchResult.NoData;
-          } catch {
-            return BackgroundFetch.BackgroundFetchResult.Failed;
-          }
-        },
-      );
-    }
-  }, []);
-
   const resetState = useCallback(() => {
     setPositions([]);
-    setSteps(null);
+    setSteps(0);
     setElapsedMs(0);
     setErrorMessage(undefined);
   }, []);
 
-  const stopSubscriptions = useCallback((stopBackground = true) => {
+  const stopSubscriptions = useCallback(() => {
     pedometerSubscriptionRef.current?.remove();
     pedometerSubscriptionRef.current = null;
     locationSubscriptionRef.current?.remove();
@@ -177,12 +98,6 @@ const WalkingScreen: React.FC = () => {
     if (timerRef.current) {
       clearInterval(timerRef.current);
       timerRef.current = null;
-    }
-
-    if (stopBackground) {
-      void Location.stopLocationUpdatesAsync(BG_LOCATION_TASK).catch(
-        () => undefined,
-      );
     }
   }, []);
 
@@ -242,18 +157,21 @@ const WalkingScreen: React.FC = () => {
     }
   }, []);
 
-  const getStoredStepsValue = useCallback(async (): Promise<number | null> => {
-    if (steps !== null && steps !== undefined) return steps;
-    try {
-      const stored = await AsyncStorage.getItem(STORAGE_KEYS.steps);
-      if (!stored) return null;
-      const parsed = Number(stored);
-      if (!Number.isNaN(parsed)) return parsed;
-    } catch {
-      // ignore
-    }
-    return steps ?? null;
-  }, [steps]);
+  const getStoredStepsValue = useCallback(
+    async (preferStorage = false): Promise<number | null> => {
+      if (!preferStorage && steps !== null && steps !== undefined) return steps;
+      try {
+        const stored = await AsyncStorage.getItem(STORAGE_KEYS.steps);
+        if (!stored) return preferStorage ? 0 : null;
+        const parsed = Number(stored);
+        if (!Number.isNaN(parsed)) return parsed;
+      } catch {
+        // ignore
+      }
+      return preferStorage ? 0 : (steps ?? null);
+    },
+    [steps],
+  );
 
   const startTimer = useCallback(
     (startTime?: number) => {
@@ -282,10 +200,8 @@ const WalkingScreen: React.FC = () => {
       const start = new Date(startTimestampRef.current);
       const history = await Pedometer.getStepCountAsync(start, now);
       if (history && typeof history.steps === "number") {
-        setSteps((prev) => {
-          if (prev === null || prev === undefined) return history.steps;
-          return Math.max(prev, history.steps);
-        });
+        setSteps(history.steps);
+        pedometerBaselineRef.current = 0;
         await persistSteps(history.steps);
       }
     } catch {
@@ -293,15 +209,14 @@ const WalkingScreen: React.FC = () => {
     }
   }, [loadSessionStart, persistSteps]);
 
-  const loadBackgroundPositions = useCallback(async () => {
+  const loadStoredPositions = useCallback(async () => {
     try {
       const stored = await AsyncStorage.getItem(STORAGE_KEYS.positions);
       if (!stored) return;
       const parsed: LatLng[] = JSON.parse(stored);
       if (!Array.isArray(parsed) || parsed.length === 0) return;
       setPositions((prev) => {
-        if (prev.length === 0) return parsed;
-        const merged = [...prev];
+        const merged = prev.length === 0 ? [...parsed] : [...prev];
         parsed.forEach((p) => {
           const last = merged[merged.length - 1];
           if (
@@ -312,9 +227,8 @@ const WalkingScreen: React.FC = () => {
             merged.push(p);
           }
         });
-        return merged;
+        return merged.slice(-750);
       });
-      await AsyncStorage.removeItem(STORAGE_KEYS.positions);
     } catch {
       // ignore parse errors
     }
@@ -344,9 +258,6 @@ const WalkingScreen: React.FC = () => {
   const stopTracking = useCallback(() => {
     const finalize = async () => {
       stopSubscriptions();
-      void BackgroundFetch.unregisterTaskAsync(BG_STEPS_TASK).catch(
-        () => undefined,
-      );
 
       const startedAt = startTimestampRef.current;
       if (!startedAt) {
@@ -377,6 +288,7 @@ const WalkingScreen: React.FC = () => {
       }
 
       startTimestampRef.current = null;
+      pedometerBaselineRef.current = null;
       await AsyncStorage.multiRemove([
         STORAGE_KEYS.start,
         STORAGE_KEYS.positions,
@@ -392,6 +304,46 @@ const WalkingScreen: React.FC = () => {
     getStoredStepsValue,
     mergePositions,
     stopSubscriptions,
+  ]);
+
+  const finalizeLingeringSession = useCallback(async () => {
+    const startedAt = await loadSessionStart();
+    if (!startedAt || statusRef.current === "tracking") return;
+
+    const [path, storedSteps] = await Promise.all([
+      mergePositions(),
+      getStoredStepsValue(true),
+    ]);
+
+    const endedAt = Date.now();
+    const durationMs = Math.max(0, endedAt - startedAt);
+    const stepsValue = storedSteps ?? 0;
+
+    if (stepsValue > 0 || path.length > 0 || durationMs > 60000) {
+      addWalkingSession({
+        startedAt,
+        endedAt,
+        durationMs,
+        steps: stepsValue,
+        distanceKm: calculateDistanceKm(path),
+        positions: path,
+      });
+    }
+
+    startTimestampRef.current = null;
+    await AsyncStorage.multiRemove([
+      STORAGE_KEYS.start,
+      STORAGE_KEYS.positions,
+      STORAGE_KEYS.steps,
+    ]);
+    resetState();
+    setStatus("paused");
+  }, [
+    addWalkingSession,
+    getStoredStepsValue,
+    loadSessionStart,
+    mergePositions,
+    resetState,
   ]);
 
   const startPedometer = useCallback(async () => {
@@ -411,8 +363,15 @@ const WalkingScreen: React.FC = () => {
     }
 
     pedometerSubscriptionRef.current = Pedometer.watchStepCount((result) => {
-      setSteps(result.steps);
-      void persistSteps(result.steps);
+      if (pedometerBaselineRef.current === null) {
+        pedometerBaselineRef.current = result.steps;
+      }
+      const relativeSteps = Math.max(
+        0,
+        result.steps - (pedometerBaselineRef.current ?? 0),
+      );
+      setSteps(relativeSteps);
+      void persistSteps(relativeSteps);
       // Reconcile with history to prevent resets after background.
       void refreshStepsFromHistory();
     });
@@ -420,31 +379,6 @@ const WalkingScreen: React.FC = () => {
     void refreshStepsFromHistory();
     return true;
   }, [persistSteps, refreshStepsFromHistory, t]);
-
-  const ensureStepsBackgroundTask = useCallback(async () => {
-    try {
-      const status = await BackgroundFetch.getStatusAsync();
-      if (
-        status === BackgroundFetch.BackgroundFetchStatus.Restricted ||
-        status === BackgroundFetch.BackgroundFetchStatus.Denied
-      ) {
-        return false;
-      }
-
-      const isRegistered =
-        await TaskManager.isTaskRegisteredAsync(BG_STEPS_TASK);
-      if (!isRegistered) {
-        await BackgroundFetch.registerTaskAsync(BG_STEPS_TASK, {
-          minimumInterval: 300,
-          stopOnTerminate: false,
-          startOnBoot: false,
-        });
-      }
-      return true;
-    } catch {
-      return false;
-    }
-  }, []);
 
   const ensureResumePermissions = useCallback(async () => {
     const foreground = await Location.getForegroundPermissionsAsync();
@@ -457,18 +391,6 @@ const WalkingScreen: React.FC = () => {
         return false;
       }
     }
-
-    const background = await Location.getBackgroundPermissionsAsync();
-    if (background.status !== Location.PermissionStatus.GRANTED) {
-      const { status: bgStatus } =
-        await Location.requestBackgroundPermissionsAsync();
-      if (bgStatus !== Location.PermissionStatus.GRANTED) {
-        setStatus("error");
-        setErrorMessage(t("walking.errors.permissionDenied"));
-        return false;
-      }
-    }
-
     return true;
   }, [t]);
 
@@ -483,22 +405,25 @@ const WalkingScreen: React.FC = () => {
         },
         (update) => {
           const { latitude, longitude } = update.coords;
-          setPositions((prev) => [...prev, { latitude, longitude }]);
+          setPositions((prev) => {
+            const last = prev[prev.length - 1];
+            if (
+              last &&
+              last.latitude === latitude &&
+              last.longitude === longitude
+            ) {
+              return prev;
+            }
+            const next = [...prev, { latitude, longitude }];
+            const trimmed = next.slice(-750);
+            void AsyncStorage.setItem(
+              STORAGE_KEYS.positions,
+              JSON.stringify(trimmed),
+            ).catch(() => undefined);
+            return trimmed;
+          });
         },
       );
-
-      // Background updates for route/distance while app is backgrounded
-      await Location.startLocationUpdatesAsync(BG_LOCATION_TASK, {
-        accuracy: Location.Accuracy.High,
-        timeInterval: 30000,
-        distanceInterval: 5,
-        showsBackgroundLocationIndicator: true,
-        foregroundService: {
-          notificationTitle: "Walking tracker",
-          notificationBody: "Tracking your route and distance.",
-          notificationColor: "#0A84FF",
-        },
-      });
       return true;
     } catch {
       setStatus("error");
@@ -508,35 +433,30 @@ const WalkingScreen: React.FC = () => {
   }, [t]);
 
   const startTracking = useCallback(async () => {
+    await finalizeLingeringSession();
     const granted = await requestPermissions();
     if (!granted) return;
-
-    const { status: bgStatus } =
-      await Location.requestBackgroundPermissionsAsync();
-    if (bgStatus !== Location.PermissionStatus.GRANTED) {
-      setStatus("error");
-      setErrorMessage(t("walking.errors.permissionDenied"));
-      return;
-    }
 
     resetState();
     // Fully stop existing foreground/background watchers before starting fresh.
     stopSubscriptions();
+    pedometerBaselineRef.current = null;
     startTimer();
     setErrorMessage(undefined);
     setStatus("tracking");
-    await AsyncStorage.setItem(
+    const now = startTimestampRef.current ?? Date.now();
+    await AsyncStorage.multiRemove([
       STORAGE_KEYS.start,
-      `${startTimestampRef.current ?? Date.now()}`,
-    );
-    await AsyncStorage.removeItem(STORAGE_KEYS.positions);
+      STORAGE_KEYS.positions,
+      STORAGE_KEYS.steps,
+    ]);
+    await AsyncStorage.setItem(STORAGE_KEYS.start, `${now}`);
     await AsyncStorage.removeItem(STORAGE_KEYS.steps);
     const pedometerStarted = await startPedometer();
     if (!pedometerStarted) {
       // Steps may be unavailable; continue to track distance/time.
       setErrorMessage((prev) => prev ?? t("walking.steps.unavailable"));
     }
-    void ensureStepsBackgroundTask();
     const locationStarted = await startLocationTracking();
     if (locationStarted) {
       setStatus("tracking");
@@ -545,7 +465,7 @@ const WalkingScreen: React.FC = () => {
       setStatus("error");
     }
   }, [
-    ensureStepsBackgroundTask,
+    finalizeLingeringSession,
     requestPermissions,
     resetState,
     startLocationTracking,
@@ -564,7 +484,7 @@ const WalkingScreen: React.FC = () => {
       await Promise.all([
         refreshStepsFromHistory(),
         loadStoredSteps(),
-        loadBackgroundPositions(),
+        loadStoredPositions(),
       ]);
       return;
     }
@@ -579,10 +499,9 @@ const WalkingScreen: React.FC = () => {
     await Promise.all([
       refreshStepsFromHistory(),
       loadStoredSteps(),
-      loadBackgroundPositions(),
+      loadStoredPositions(),
     ]);
 
-    void ensureStepsBackgroundTask();
     const pedometerStarted = await startPedometer();
     if (!pedometerStarted) {
       setErrorMessage((prev) => prev ?? t("walking.steps.unavailable"));
@@ -594,8 +513,7 @@ const WalkingScreen: React.FC = () => {
     }
   }, [
     ensureResumePermissions,
-    ensureStepsBackgroundTask,
-    loadBackgroundPositions,
+    loadStoredPositions,
     loadSessionStart,
     loadStoredSteps,
     refreshStepsFromHistory,
@@ -636,9 +554,7 @@ const WalkingScreen: React.FC = () => {
 
   useEffect(() => {
     return () => {
-      // Avoid auto-stopping background tracking when leaving the screen;
-      // only clear foreground listeners/timer.
-      stopSubscriptions(false);
+      stopSubscriptions();
     };
   }, [stopSubscriptions]);
 

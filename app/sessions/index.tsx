@@ -358,16 +358,6 @@ const SessionsScreen: React.FC = () => {
           <StatTile
             label={t("sessions.walking.totalSteps")}
             value={formatNumber(walkingTotals.totalSteps)}
-            helper={
-              walkingTotals.lastSession
-                ? t("sessions.walking.lastSession", {
-                    date: formatDate(
-                      walkingTotals.lastSession.endedAt ??
-                        walkingTotals.lastSession.startedAt,
-                    ),
-                  })
-                : undefined
-            }
           />
           <StatTile
             label={t("sessions.walking.totalDistance")}
@@ -382,7 +372,7 @@ const SessionsScreen: React.FC = () => {
         {walkingRecent.length === 0 ? (
           <EmptyState text={t("sessions.walking.empty")} />
         ) : (
-          <TGrid columns={Platform.OS === "web" ? 2 : 1} gap="$3">
+          <TGrid columns={Platform.OS === "web" ? 3 : 1} gap="$3">
             {walkingRecent.map((entry) => (
               <TStack
                 key={entry.id}

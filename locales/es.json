@@ -225,8 +225,7 @@
           "empty": "Aún no hay sesiones de caminata",
           "totalSteps": "Pasos totales",
           "totalDistance": "Distancia total",
-          "totalTime": "Tiempo total caminando",
-          "lastSession": "Última: {{date}}"
+          "totalTime": "Tiempo total caminando"
         },
         "edit": "Editar",
         "analyze": "Análisis IA"

@@ -215,8 +215,7 @@
       "empty": "No walking sessions yet",
       "totalSteps": "Total steps",
       "totalDistance": "Total distance",
-      "totalTime": "Total walking time",
-      "lastSession": "Last: {{date}}"
+      "totalTime": "Total walking time"
     },
     "routineList": {
       "title": "Routines",
