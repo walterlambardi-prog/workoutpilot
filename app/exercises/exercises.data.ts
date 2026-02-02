@@ -39,6 +39,11 @@ export const EXERCISE_DEFINITIONS: ExerciseDefinition[] = [
     copyKey: EXERCISE_COPY_KEYS[ExerciseId.STANDING_LEG_RAISES],
     image: exerciseImages[ExerciseId.STANDING_LEG_RAISES],
   },
+  {
+    id: ExerciseId.WALKING,
+    copyKey: EXERCISE_COPY_KEYS[ExerciseId.WALKING],
+    image: exerciseImages[ExerciseId.WALKING],
+  },
 ];
 
 export const EXERCISE_DEFINITION_MAP: Record<ExerciseId, ExerciseDefinition> =

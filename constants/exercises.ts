@@ -6,6 +6,7 @@ export enum ExerciseId {
   PUSHUPS = "pushups",
   SQUATS = "squats",
   STANDING_LEG_RAISES = "standing-leg-raises",
+  WALKING = "walking",
 }
 
 export const EXERCISE_COPY_KEYS: Record<ExerciseId, string> = {
@@ -16,6 +17,7 @@ export const EXERCISE_COPY_KEYS: Record<ExerciseId, string> = {
   [ExerciseId.PUSHUPS]: "exercises.list.items.pushups",
   [ExerciseId.SQUATS]: "exercises.list.items.squats",
   [ExerciseId.STANDING_LEG_RAISES]: "exercises.list.items.standingLegRaises",
+  [ExerciseId.WALKING]: "exercises.list.items.walking",
 };
 
 export const ALLOWED_EXERCISES: ExerciseId[] = [
@@ -26,4 +28,5 @@ export const ALLOWED_EXERCISES: ExerciseId[] = [
   //ExerciseId.LUNGES,
   ExerciseId.CALF_RAISES,
   ExerciseId.STANDING_LEG_RAISES,
+  ExerciseId.WALKING,
 ];

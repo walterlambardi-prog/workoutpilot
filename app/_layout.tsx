@@ -182,6 +182,13 @@ export default function RootLayout() {
             }}
           />
           <Stack.Screen
+            name="exercises/walking/index"
+            options={{
+              ...appHeaderOptions,
+              title: t("walking.title"),
+            }}
+          />
+          <Stack.Screen
             name="exercises/[exerciseId]"
             options={
               isWeb

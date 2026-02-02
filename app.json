@@ -10,7 +10,12 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.workoutpilot"
+      "bundleIdentifier": "com.anonymous.workoutpilot",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "WorkoutPilot tracks your walking route to measure distance.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "Allow background location to keep tracking your walk when the app is not open.",
+        "UIBackgroundModes": ["location", "fetch"]
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -21,7 +26,14 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.anonymous.workoutpilot"
+      "package": "com.anonymous.workoutpilot",
+      "permissions": [
+        "ACTIVITY_RECOGNITION",
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_BACKGROUND_LOCATION",
+        "FOREGROUND_SERVICE"
+      ]
     },
     "web": {
       "output": "static",

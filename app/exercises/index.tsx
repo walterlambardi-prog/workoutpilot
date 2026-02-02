@@ -34,6 +34,11 @@ const ExercisesScreen: React.FC<ExercisesScreenProps> = () => {
 
   const handlePress = useCallback(
     (exerciseId: ExerciseId) => {
+      if (exerciseId === ExerciseId.WALKING) {
+        router.push("/exercises/walking");
+        return;
+      }
+
       router.push({
         pathname: "/exercises/[exerciseId]",
         params: { exerciseId },

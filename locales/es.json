@@ -5,7 +5,8 @@
     "sessions": "Sesiones",
     "settings": "Configuración",
     "routine": "Rutina",
-    "aiCoach": "Coach IA"
+    "aiCoach": "Coach IA",
+    "walking": "Caminata"
   },
   "drawer": {
     "title": "Menú"
@@ -360,6 +361,10 @@
         "standingLegRaises": {
           "title": "Elevaciones laterales de pierna",
           "description": "Eleva una pierna lateralmente para fortalecer abductores y mejorar equilibrio."
+        },
+        "walking": {
+          "title": "Contador de pasos",
+          "description": "Sigue tus pasos y ruta en caminatas o cinta."
         }
       }
     },
@@ -526,6 +531,42 @@
         "leftReps": "Reps pierna izquierda",
         "rightReps": "Reps pierna derecha"
       }
+    }
+  },
+  "walking": {
+    "title": "Contador de pasos",
+    "subtitle": "Sigue tus pasos, ruta GPS y tiempo en mobile.",
+    "subtitleWeb": "Sigue tu distancia y ruta por GPS en web.",
+    "actions": {
+      "start": "Iniciar seguimiento",
+      "stop": "Detener seguimiento"
+    },
+    "status": {
+      "label": "Estado",
+      "idle": "Sin seguimiento",
+      "requesting": "Solicitando permisos...",
+      "tracking": "En seguimiento",
+      "paused": "Pausado",
+      "error": "Necesita permiso"
+    },
+    "errors": {
+      "permissionDenied": "Se requiere el permiso de ubicación para registrar la ruta.",
+      "insecureContext": "Usa HTTPS o localhost en el navegador para habilitar la ubicación.",
+      "servicesDisabled": "Activa los servicios de ubicación para registrar la ruta.",
+      "unavailable": "La ubicación no está disponible ahora. Intenta nuevamente."
+    },
+    "steps": {
+      "unavailable": "El contador de pasos no está disponible en este dispositivo"
+    },
+    "stats": {
+      "steps": "Pasos",
+      "distance": "Distancia",
+      "duration": "Tiempo",
+      "distanceValue": "{{distance}} km"
+    },
+    "map": {
+      "title": "Mapa de ruta",
+      "ariaLabel": "Mapa con la ruta de caminata"
     }
   },
   "aiCoach": {

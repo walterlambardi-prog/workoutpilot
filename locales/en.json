@@ -5,7 +5,8 @@
     "sessions": "Sessions",
     "settings": "Settings",
     "routine": "Routine",
-    "aiCoach": "AI Coach"
+    "aiCoach": "AI Coach",
+    "walking": "Walking tracker"
   },
   "drawer": {
     "title": "Menu"
@@ -360,6 +361,10 @@
         "standingLegRaises": {
           "title": "Standing leg raises",
           "description": "Lift one leg laterally to strengthen hip abductors and improve balance."
+        },
+        "walking": {
+          "title": "Walking tracker",
+          "description": "Track your steps and route outdoors or on a treadmill."
         }
       }
     },
@@ -526,6 +531,42 @@
         "leftReps": "Left leg reps",
         "rightReps": "Right leg reps"
       }
+    }
+  },
+  "walking": {
+    "title": "Walking tracker",
+    "subtitle": "Track your steps, GPS route, and time on mobile.",
+    "subtitleWeb": "Track your distance and route via GPS on web.",
+    "actions": {
+      "start": "Start tracking",
+      "stop": "Stop tracking"
+    },
+    "status": {
+      "label": "Status",
+      "idle": "Not tracking",
+      "requesting": "Requesting permissions...",
+      "tracking": "Tracking",
+      "paused": "Paused",
+      "error": "Permission needed"
+    },
+    "errors": {
+      "permissionDenied": "Location permission is required to track your route.",
+      "insecureContext": "Use HTTPS or localhost in your browser to enable location.",
+      "servicesDisabled": "Turn on location services to track your route.",
+      "unavailable": "Location is unavailable right now. Please try again."
+    },
+    "steps": {
+      "unavailable": "Step counter unavailable on this device"
+    },
+    "stats": {
+      "steps": "Steps",
+      "distance": "Distance",
+      "duration": "Time",
+      "distanceValue": "{{distance}} km"
+    },
+    "map": {
+      "title": "Route map",
+      "ariaLabel": "Route map with the walking path"
     }
   },
   "aiCoach": {
