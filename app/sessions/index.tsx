@@ -146,11 +146,6 @@ const SessionsScreen: React.FC = () => {
     };
   }, [walkingHistory]);
 
-  const walkingRecent = useMemo(
-    () => walkingHistory.slice(0, 3),
-    [walkingHistory],
-  );
-
   const routineSessions = useMemo(() => {
     const sessions: RoutineSession[] = [...routineHistory];
     if (
@@ -369,11 +364,11 @@ const SessionsScreen: React.FC = () => {
           />
         </TGrid>
 
-        {walkingRecent.length === 0 ? (
+        {walkingHistory.length === 0 ? (
           <EmptyState text={t("sessions.walking.empty")} />
         ) : (
           <TGrid columns={Platform.OS === "web" ? 3 : 1} gap="$3">
-            {walkingRecent.map((entry) => (
+            {walkingHistory.map((entry) => (
               <TStack
                 key={entry.id}
                 gap="$2"

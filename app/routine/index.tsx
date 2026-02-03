@@ -23,7 +23,7 @@ import ScreenHeader from "@/components/ScreenHeader";
 import { TButton } from "@/components/TButton";
 import { TGrid } from "@/components/TGrid";
 import { TPage } from "@/components/TPage";
-import { ALLOWED_EXERCISES } from "@/constants/exercises";
+import { ROUTINE_ALLOWED_EXERCISES } from "@/constants/exercises";
 import { Spacing } from "@/constants/theme";
 import {
   ROUTINE_DEFAULT_REPS,
@@ -81,7 +81,7 @@ const RoutineBuilderScreen: React.FC<RoutineBuilderScreenProps> = () => {
   const exerciseList = useMemo<RoutineExerciseListItem[]>(
     () =>
       EXERCISE_DEFINITIONS.filter(({ id }) =>
-        ALLOWED_EXERCISES.includes(id),
+        ROUTINE_ALLOWED_EXERCISES.includes(id),
       ).map(({ id, copyKey, image }) => ({
         id,
         copyKey,
@@ -161,7 +161,8 @@ const RoutineBuilderScreen: React.FC<RoutineBuilderScreenProps> = () => {
     }
 
     const selectedExercises = EXERCISE_DEFINITIONS.filter(
-      ({ id }) => ALLOWED_EXERCISES.includes(id) && exercises[id]?.isSelected,
+      ({ id }) =>
+        ROUTINE_ALLOWED_EXERCISES.includes(id) && exercises[id]?.isSelected,
     );
 
     if (selectedExercises.length === 0) {

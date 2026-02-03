@@ -10,6 +10,7 @@
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
 		88B33D866733F3A9E2B2B959 /* libPods-workoutpilot.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EB946785A34784581F8E3B41 /* libPods-workoutpilot.a */; };
+		976C2F622F32217E00685D53 /* WalkingTrackingModule.m in Sources */ = {isa = PBXBuildFile; fileRef = 976C2F612F32217E00685D53 /* WalkingTrackingModule.m */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
 		E552EFF21D7F697064E173D5 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36EE196C26606199658F8397 /* ExpoModulesProvider.swift */; };
 		F003C34C124732816A651049 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 1A995D0A211332EA71E1D814 /* PrivacyInfo.xcprivacy */; };
@@ -20,10 +21,12 @@
 		13B07F961A680F5B00A75B9A /* workoutpilot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = workoutpilot.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = workoutpilot/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = workoutpilot/Info.plist; sourceTree = "<group>"; };
-		1A995D0A211332EA71E1D814 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = workoutpilot/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		1A995D0A211332EA71E1D814 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = workoutpilot/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		36EE196C26606199658F8397 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-workoutpilot/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 		5C1AB5B979D26222B81472C6 /* Pods-workoutpilot.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-workoutpilot.release.xcconfig"; path = "Target Support Files/Pods-workoutpilot/Pods-workoutpilot.release.xcconfig"; sourceTree = "<group>"; };
 		76FA596DC786E62B4556B36A /* Pods-workoutpilot.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-workoutpilot.debug.xcconfig"; path = "Target Support Files/Pods-workoutpilot/Pods-workoutpilot.debug.xcconfig"; sourceTree = "<group>"; };
+		976C2F602F32217E00685D53 /* WalkingTrackingModule.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WalkingTrackingModule.h; sourceTree = "<group>"; };
+		976C2F612F32217E00685D53 /* WalkingTrackingModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WalkingTrackingModule.m; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = workoutpilot/SplashScreen.storyboard; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
 		EB946785A34784581F8E3B41 /* libPods-workoutpilot.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-workoutpilot.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -85,6 +88,8 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				976C2F602F32217E00685D53 /* WalkingTrackingModule.h */,
+				976C2F612F32217E00685D53 /* WalkingTrackingModule.m */,
 				13B07FAE1A68108700A75B9A /* workoutpilot */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
@@ -111,7 +116,6 @@
 				76FA596DC786E62B4556B36A /* Pods-workoutpilot.debug.xcconfig */,
 				5C1AB5B979D26222B81472C6 /* Pods-workoutpilot.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -273,6 +277,7 @@
 				"${PODS_ROOT}/Target Support Files/Pods-workoutpilot/Pods-workoutpilot-resources.sh",
 				"${PODS_CONFIGURATION_BUILD_DIR}/EXConstants/EXConstants.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/EXConstants/ExpoConstants_privacy.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/EXTaskManager/ExpoTaskManager_privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/ExpoFileSystem/ExpoFileSystem_privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/ExpoLocalization/ExpoLocalization_privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/ExpoSystemUI/ExpoSystemUI_privacy.bundle",
@@ -287,6 +292,7 @@
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/EXConstants.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ExpoConstants_privacy.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ExpoTaskManager_privacy.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ExpoFileSystem_privacy.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ExpoLocalization_privacy.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ExpoSystemUI_privacy.bundle",
@@ -335,6 +341,7 @@
 			files = (
 				F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */,
 				E552EFF21D7F697064E173D5 /* ExpoModulesProvider.swift in Sources */,
+				976C2F622F32217E00685D53 /* WalkingTrackingModule.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -368,7 +375,7 @@
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = com.anonymous.workoutpilot;
-				PRODUCT_NAME = "workoutpilot";
+				PRODUCT_NAME = workoutpilot;
 				SWIFT_OBJC_BRIDGING_HEADER = "workoutpilot/workoutpilot-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -399,7 +406,7 @@
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
 				PRODUCT_BUNDLE_IDENTIFIER = com.anonymous.workoutpilot;
-				PRODUCT_NAME = "workoutpilot";
+				PRODUCT_NAME = workoutpilot;
 				SWIFT_OBJC_BRIDGING_HEADER = "workoutpilot/workoutpilot-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

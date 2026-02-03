@@ -1,4 +1,10 @@
 {
+  "common": {
+    "allow": "Permitir",
+    "deny": "Denegar",
+    "cancel": "Cancelar",
+    "ok": "OK"
+  },
   "navigation": {
     "home": "Inicio",
     "exercises": "Ejercicios",
@@ -548,25 +554,31 @@
   },
   "walking": {
     "title": "Contador de pasos",
-    "subtitle": "Sigue tus pasos, ruta GPS y tiempo en mobile.",
+    "subtitle": "Sigue tus pasos, ruta GPS y tiempo. Funciona en segundo plano.",
     "subtitleWeb": "Sigue tu distancia y ruta por GPS en web.",
     "actions": {
       "start": "Iniciar seguimiento",
       "stop": "Detener seguimiento"
     },
+    "permissions": {
+      "activityTitle": "Permiso de Actividad Física",
+      "activityMessage": "WorkoutPilot necesita acceso a tus datos de actividad física para contar tus pasos mientras caminas."
+    },
     "status": {
       "label": "Estado",
       "idle": "Sin seguimiento",
       "requesting": "Solicitando permisos...",
-      "tracking": "En seguimiento",
+      "tracking": "Seguimiento en progreso",
       "paused": "Pausado",
       "error": "Necesita permiso"
     },
     "errors": {
-      "permissionDenied": "Se requiere el permiso de ubicación para registrar la ruta.",
+      "permissionDenied": "Se requieren permisos de ubicación y movimiento para seguir tu caminata.",
+      "backgroundPermissionDenied": "Se recomienda el permiso de ubicación en segundo plano para rastreo continuo.",
       "insecureContext": "Usa HTTPS o localhost en el navegador para habilitar la ubicación.",
       "servicesDisabled": "Activa los servicios de ubicación para registrar la ruta.",
-      "unavailable": "La ubicación no está disponible ahora. Intenta nuevamente."
+      "unavailable": "La ubicación no está disponible ahora. Intenta nuevamente.",
+      "unknown": "Ocurrió un error durante el seguimiento. Intenta nuevamente."
     },
     "steps": {
       "unavailable": "El contador de pasos no está disponible en este dispositivo"
@@ -580,6 +592,12 @@
     "map": {
       "title": "Mapa de ruta",
       "ariaLabel": "Mapa con la ruta de caminata"
+    },
+    "background": {
+      "notification": {
+        "title": "Caminata en progreso",
+        "body": "{{steps}} pasos • {{distance}} km • {{duration}}"
+      }
     }
   },
   "aiCoach": {

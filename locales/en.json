@@ -1,4 +1,10 @@
 {
+  "common": {
+    "allow": "Allow",
+    "deny": "Deny",
+    "cancel": "Cancel",
+    "ok": "OK"
+  },
   "navigation": {
     "home": "Home",
     "exercises": "Exercises",
@@ -548,25 +554,31 @@
   },
   "walking": {
     "title": "Walking tracker",
-    "subtitle": "Track your steps, GPS route, and time on mobile.",
+    "subtitle": "Track your steps, GPS route, and time. Works in background.",
     "subtitleWeb": "Track your distance and route via GPS on web.",
     "actions": {
       "start": "Start tracking",
       "stop": "Stop tracking"
     },
+    "permissions": {
+      "activityTitle": "Physical Activity Permission",
+      "activityMessage": "WorkoutPilot needs access to your physical activity data to count your steps while walking."
+    },
     "status": {
       "label": "Status",
       "idle": "Not tracking",
       "requesting": "Requesting permissions...",
-      "tracking": "Tracking",
+      "tracking": "Tracking in progress",
       "paused": "Paused",
       "error": "Permission needed"
     },
     "errors": {
-      "permissionDenied": "Location permission is required to track your route.",
+      "permissionDenied": "Location and motion permissions are required to track your walk.",
+      "backgroundPermissionDenied": "Background location permission is recommended for continuous tracking.",
       "insecureContext": "Use HTTPS or localhost in your browser to enable location.",
       "servicesDisabled": "Turn on location services to track your route.",
-      "unavailable": "Location is unavailable right now. Please try again."
+      "unavailable": "Location is unavailable right now. Please try again.",
+      "unknown": "An error occurred while tracking. Please try again."
     },
     "steps": {
       "unavailable": "Step counter unavailable on this device"
@@ -580,6 +592,12 @@
     "map": {
       "title": "Route map",
       "ariaLabel": "Route map with the walking path"
+    },
+    "background": {
+      "notification": {
+        "title": "Walking in progress",
+        "body": "{{steps}} steps • {{distance}} km • {{duration}}"
+      }
     }
   },
   "aiCoach": {

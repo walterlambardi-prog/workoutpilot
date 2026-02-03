@@ -855,3 +855,635 @@ const App = () => {
 - Official docs: https://tamagui.dev
 - Theme configuration: `tamagui.config.ts` (root directory)
 - Component examples: Check refactored screens in tracking file
+
+## 🎯 Component Architecture & Custom Hooks
+
+### Core Principle: Separation of Concerns
+
+**MANDATORY PATTERN** for all screens and complex components:
+
+- **Components/Screens** = **100% presentational** (UI structure, layout, rendering)
+- **Custom Hooks** = **100% business logic** (state, effects, API calls, computations)
+- **Stores** = **Shared state** (cross-component data, persistence)
+- **Services** = **External APIs** (native modules, REST, GraphQL)
+
+### When to Create a Custom Hook
+
+**✅ ALWAYS create a custom hook when:**
+
+1. **Screen/component has business logic**
+   - State management (`useState`, `useReducer`)
+   - Side effects (`useEffect`, subscriptions)
+   - API calls or native module interactions
+   - Complex computations or derived state
+   - Event handlers with logic beyond simple callbacks
+
+2. **Logic exceeds 5-10 lines**
+   - If a `useEffect` or function has significant logic, extract it
+
+3. **Logic is reusable**
+   - Multiple components need the same behavior
+   - Similar patterns across different features
+
+4. **Component file exceeds 100 lines**
+   - Sign that business logic should be extracted
+
+**❌ DO NOT create a hook when:**
+
+- Component only renders static content
+- Only simple props passing (no state/effects)
+- Single `useState` for UI toggle (e.g., modal open/close)
+- Logic is <5 lines and won't be reused
+
+### Hook Placement: Co-location Pattern
+
+**Place hooks in a `hooks/` folder within the feature/screen directory:**
+
+```
+app/
+  exercises/
+    walking/
+      index.tsx              # Presentational component
+      hooks/
+        useWalkingSession.ts # Business logic hook
+      walking.styles.ts
+      walking.types.ts
+
+  routine/
+    index.tsx
+    hooks/
+      useRoutineBuilder.ts
+    routine.styles.ts
+    routine.types.ts
+```
+
+**Benefits of co-location:**
+
+- ✅ Keeps related code together
+- ✅ Easy to find and understand dependencies
+- ✅ Prevents accidental coupling with unrelated features
+- ✅ Clear ownership and responsibility
+
+**For shared hooks** (used across multiple features):
+
+```
+hooks/
+  useAppLanguage.ts       # Global hooks
+  useColorScheme.ts
+  useThemeColor.ts
+```
+
+### Hook Structure Template
+
+```typescript
+// app/[feature]/hooks/use[FeatureName].ts
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
+
+// Import stores, services, types
+import { useFeatureStore } from "@/stores/featureStore";
+import FeatureService from "@/utils/FeatureService";
+import type { StatusKey } from "../feature.types";
+
+export const useFeatureName = () => {
+  // 1. Local state
+  const [status, setStatus] = useState<StatusKey>("idle");
+  const [error, setError] = useState<string>();
+
+  // 2. External state (stores)
+  const { data, updateData } = useFeatureStore();
+
+  // 3. Translations
+  const { t } = useTranslation();
+
+  // 4. Side effects
+  useEffect(() => {
+    // Subscriptions, listeners, etc.
+    const unsubscribe = FeatureService.onEvent((event) => {
+      updateData(event.data);
+    });
+
+    return () => unsubscribe();
+  }, [updateData]);
+
+  // 5. Callbacks
+  const handleAction = useCallback(async () => {
+    setStatus("loading");
+    try {
+      await FeatureService.performAction();
+      setStatus("success");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : t("errors.unknown"));
+      setStatus("error");
+    }
+  }, [t]);
+
+  // 6. Computed values
+  const computedValue = useMemo(() => {
+    return data.map(/* transformation */);
+  }, [data]);
+
+  // 7. Return public API
+  return {
+    // State
+    status,
+    error,
+    data: computedValue,
+
+    // Actions
+    handleAction,
+  };
+};
+```
+
+### Component Using Hook
+
+```typescript
+// app/[feature]/index.tsx
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { YStack } from 'tamagui';
+
+import { TButton } from '@/components/TButton';
+import { TPage } from '@/components/TPage';
+import { TText } from '@/components/TText';
+
+import { useFeatureName } from './hooks/useFeatureName';
+import styles from './feature.styles';
+
+const FeatureScreen: React.FC = () => {
+  const { t } = useTranslation();
+  const { status, error, data, handleAction } = useFeatureName();
+
+  return (
+    <TPage>
+      <TText>{t('feature.title')}</TText>
+
+      {error && <TText color="$red10">{error}</TText>}
+
+      <YStack gap="$4">
+        {data.map((item) => (
+          <TText key={item.id}>{item.name}</TText>
+        ))}
+      </YStack>
+
+      <TButton onPress={handleAction} disabled={status === 'loading'}>
+        {t('feature.action')}
+      </TButton>
+    </TPage>
+  );
+};
+
+export default FeatureScreen;
+```
+
+### Decision Tree: Hook vs Inline Logic
+
+```
+Does the component have business logic?
+├─ NO → Keep component simple, no hook needed
+└─ YES → Is it <5 lines?
+    ├─ YES → Can stay inline (but consider future growth)
+    └─ NO → Create custom hook
+        └─ Will it be reused?
+            ├─ YES → Place in shared `hooks/` folder
+            └─ NO → Place in feature's `hooks/` subfolder
+```
+
+### Examples by Complexity
+
+#### ❌ **BAD - Logic mixed with presentation**
+
+```typescript
+const BadScreen = () => {
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const { activeSession, updateSession } = useStore();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      const result = await api.getData();
+      setData(result);
+      setLoading(false);
+    };
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    const subscription = NativeModule.onEvent((event) => {
+      updateSession(event.data);
+    });
+    return () => subscription.remove();
+  }, [updateSession]);
+
+  const handleSubmit = async () => {
+    try {
+      await api.submit(data);
+      updateSession({ submitted: true });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  return (
+    <YStack>
+      {loading ? <Spinner /> : data.map(/* ... */)}
+      <TButton onPress={handleSubmit}>Submit</TButton>
+    </YStack>
+  );
+};
+```
+
+#### ✅ **GOOD - Hook extracts all logic**
+
+```typescript
+// hooks/useDataManagement.ts
+export const useDataManagement = () => {
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const { activeSession, updateSession } = useStore();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      const result = await api.getData();
+      setData(result);
+      setLoading(false);
+    };
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    const subscription = NativeModule.onEvent((event) => {
+      updateSession(event.data);
+    });
+    return () => subscription.remove();
+  }, [updateSession]);
+
+  const handleSubmit = useCallback(async () => {
+    try {
+      await api.submit(data);
+      updateSession({ submitted: true });
+    } catch (error) {
+      console.error(error);
+    }
+  }, [data, updateSession]);
+
+  return { data, loading, handleSubmit };
+};
+
+// index.tsx
+const GoodScreen = () => {
+  const { data, loading, handleSubmit } = useDataManagement();
+
+  return (
+    <YStack>
+      {loading ? <Spinner /> : data.map(/* ... */)}
+      <TButton onPress={handleSubmit}>Submit</TButton>
+    </YStack>
+  );
+};
+```
+
+### Benefits of This Architecture
+
+**For Components:**
+
+- 📉 **Smaller files**: Typically 50-100 lines vs 200-500 lines
+- 🎨 **Clear responsibility**: Only rendering and layout
+- 🔍 **Easier to review**: Visual structure is obvious
+- ♿ **Accessibility focus**: More room for proper ARIA attributes
+
+**For Hooks:**
+
+- 🧪 **Testable**: Can test logic without rendering components
+- 🔁 **Reusable**: Share logic across multiple components
+- 📦 **Composable**: Combine multiple hooks for complex features
+- 🐛 **Debuggable**: Isolate and fix logic bugs independently
+
+**For Teams:**
+
+- 👥 **Parallel work**: Designer works on component, developer on hook
+- 📚 **Easier onboarding**: Clear patterns to follow
+- 🔄 **Maintainable**: Changes in logic don't affect UI structure
+
+## 📱 Native Modules & Background Tracking
+
+### Overview
+
+This project uses **custom native modules** for features that require platform-specific APIs (iOS/Android) not available in standard React Native or Expo. The primary example is **walking tracking with background location and step counting**.
+
+**Key principles:**
+
+- Native modules handle **platform-specific APIs** (CMPedometer, CLLocationManager, SensorManager, FusedLocationProvider)
+- TypeScript bridge services provide **unified cross-platform API**
+- React hooks encapsulate **all business logic** (subscriptions, state, effects)
+- Components remain **100% presentational**
+
+### Walking Tracker Architecture
+
+Located in `app/exercises/walking/`:
+
+```
+walking/
+├── index.tsx                  # Presentational component (UI only)
+├── hooks/
+│   └── useWalkingSession.ts   # Business logic hook
+├── walking.styles.ts          # StyleSheet with theme constants
+└── walking.types.ts           # TypeScript interfaces
+```
+
+**Native modules:**
+
+- `ios/workoutpilot/WalkingTrackingModule.[h|m]` - iOS implementation
+- `android/.../WalkingTrackingModule.kt` - Android implementation
+- `utils/WalkingTrackingService.ts` - TypeScript bridge
+
+**Documentation**: See `WALKING_BACKGROUND_TRACKING.md` for complete native module setup, permissions, and troubleshooting.
+
+### Native Module Guidelines
+
+#### 1. **Permission Handling**
+
+Always request permissions before using native features:
+
+```typescript
+const requestPermissions = async () => {
+  const result = await NativeModule.requestPermissions();
+
+  if (result.location !== "granted") {
+    setError("Permission denied");
+    return false;
+  }
+
+  return true;
+};
+```
+
+**Required permissions (documented in AndroidManifest.xml / Info.plist):**
+
+- iOS: `NSLocationAlwaysAndWhenInUseUsageDescription`, `NSMotionUsageDescription`, `UIBackgroundModes`
+- Android: `ACCESS_FINE_LOCATION`, `ACCESS_BACKGROUND_LOCATION`, `ACTIVITY_RECOGNITION`, `FOREGROUND_SERVICE_LOCATION`
+
+#### 2. **Event Subscriptions**
+
+Use `useEffect` to subscribe/unsubscribe from native events:
+
+```typescript
+useEffect(() => {
+  const unsubscribeSteps = WalkingTrackingService.onStepUpdate((event) => {
+    updateState({ steps: event.steps });
+  });
+
+  const unsubscribeLocation = WalkingTrackingService.onLocationUpdate(
+    (event) => {
+      addPosition({ latitude: event.latitude, longitude: event.longitude });
+    },
+  );
+
+  // CRITICAL: Always cleanup on unmount
+  return () => {
+    unsubscribeSteps();
+    unsubscribeLocation();
+  };
+}, [dependencies]);
+```
+
+#### 3. **Background/Foreground Sync**
+
+For background tracking, implement **position persistence** and **foreground resume**:
+
+```typescript
+// Native modules save positions to NSUserDefaults/SharedPreferences when app is backgrounded
+// TypeScript hook retrieves them on foreground resume
+
+const resumeTrackingIfNeeded = useCallback(async () => {
+  const isTracking = await NativeService.isTracking();
+
+  if (isTracking) {
+    // Retrieve positions collected while in background
+    const pendingPositions = await NativeService.getPendingPositions();
+
+    // Sync to store (prevents route from breaking)
+    pendingPositions.forEach((pos) => addPosition(pos));
+  }
+}, []);
+
+// Listen to AppState changes
+useEffect(() => {
+  const subscription = AppState.addEventListener("change", (nextState) => {
+    if (nextState === "active") {
+      void resumeTrackingIfNeeded();
+    }
+  });
+
+  return () => subscription.remove();
+}, [resumeTrackingIfNeeded]);
+```
+
+**Why this is critical:**
+
+- iOS/Android may suspend React Native bridge when app is backgrounded
+- Native events continue but may not reach JavaScript
+- Position persistence ensures **complete route tracking** even in background
+
+#### 4. **State Management with Native Modules**
+
+Use Zustand stores for **persistent session state**:
+
+```typescript
+// stores/walkingSessionStore.ts
+export const useWalkingSessionStore = create<WalkingStore>()(
+  persist(
+    (set) => ({
+      activeSession: null,
+
+      startActiveSession: () =>
+        set({
+          activeSession: {
+            steps: 0,
+            positions: [],
+            distanceKm: 0,
+            startedAt: Date.now(),
+          },
+        }),
+
+      addPositionToActiveSession: (position) =>
+        set((state) => {
+          if (!state.activeSession) return state;
+
+          // Prevent duplicates
+          const lastPos = state.activeSession.positions.at(-1);
+          if (
+            lastPos &&
+            lastPos.latitude === position.latitude &&
+            lastPos.longitude === position.longitude
+          ) {
+            return state;
+          }
+
+          return {
+            activeSession: {
+              ...state.activeSession,
+              positions: [...state.activeSession.positions, position],
+            },
+          };
+        }),
+    }),
+    {
+      name: "walking-session-storage",
+      storage: createJSONStorage(() => AsyncStorage),
+    },
+  ),
+);
+```
+
+**Benefits:**
+
+- ✅ Session survives app restarts
+- ✅ Native module can resume tracking after crash/kill
+- ✅ User doesn't lose progress
+
+#### 5. **Error Handling**
+
+Native modules can fail (permissions denied, sensors unavailable, GPS off):
+
+```typescript
+const startTracking = async () => {
+  try {
+    const result = await NativeModule.startTracking();
+
+    if (!result.success) {
+      setStatus("error");
+      setErrorMessage(result.message);
+      return;
+    }
+
+    setStatus("tracking");
+  } catch (error) {
+    setStatus("error");
+    setErrorMessage(
+      error instanceof Error ? error.message : t("errors.unknown"),
+    );
+  }
+};
+```
+
+**Always show user-friendly errors:**
+
+- Use translation keys from `locales/en.json` and `locales/es.json`
+- Display in UI with `<TText color="$red10">{errorMessage}</TText>`
+
+### When to Create Native Modules
+
+**Use native modules for:**
+
+- ✅ Background location tracking
+- ✅ Step counting (hardware sensors)
+- ✅ Health data (HealthKit, Google Fit)
+- ✅ Foreground services with notifications (Android)
+- ✅ Camera/ML processing (MediaPipe)
+
+**Do NOT use native modules for:**
+
+- ❌ Simple API calls (use fetch/axios)
+- ❌ UI rendering (use Tamagui)
+- ❌ State management (use Zustand)
+- ❌ Features available in Expo SDK
+
+### Testing Native Features
+
+**Device requirements:**
+
+- ❌ Emulators/simulators: Limited sensor support, unreliable for testing
+- ✅ Real devices: Required for step counting, background location, notifications
+
+**Testing checklist:**
+
+1. Start tracking → verify metrics update
+2. Minimize app (Home button) → walk → return → verify route continued
+3. Kill app → reopen → verify session restored
+4. Deny permissions → verify error messages shown
+5. Check battery usage (background tracking should be optimized)
+
+### Documentation Requirements
+
+When adding/modifying native modules:
+
+1. **Update `WALKING_BACKGROUND_TRACKING.md`** (or create similar docs):
+   - Architecture overview
+   - Native implementation details
+   - Permission requirements
+   - Build instructions
+   - Troubleshooting guide
+
+2. **Update this file** (copilot-instructions.md):
+   - New patterns or conventions
+   - Hook usage examples
+   - Common pitfalls to avoid
+
+3. **Add translations**:
+   - `locales/en.json` and `locales/es.json`
+   - Error messages, status labels, action buttons
+
+### Common Pitfalls
+
+❌ **Don't forget to cleanup subscriptions:**
+
+```typescript
+// BAD - Memory leak
+useEffect(() => {
+  NativeService.onEvent(() => {});
+  // Missing cleanup!
+}, []);
+
+// GOOD
+useEffect(() => {
+  const unsubscribe = NativeService.onEvent(() => {});
+  return () => unsubscribe();
+}, []);
+```
+
+❌ **Don't call native methods synchronously:**
+
+```typescript
+// BAD - Native methods are always async
+const start = () => {
+  NativeModule.startTracking(); // Missing await!
+};
+
+// GOOD
+const start = async () => {
+  await NativeModule.startTracking();
+};
+```
+
+❌ **Don't ignore AppState changes:**
+
+```typescript
+// BAD - Route breaks when returning from background
+// Missing AppState listener
+
+// GOOD - Syncs pending positions
+useEffect(() => {
+  const subscription = AppState.addEventListener("change", handleResume);
+  return () => subscription.remove();
+}, []);
+```
+
+### Example: Complete Native Feature Implementation
+
+See `app/exercises/walking/` for reference implementation showing:
+
+- ✅ TypeScript bridge (`utils/WalkingTrackingService.ts`)
+- ✅ Custom hook (`hooks/useWalkingSession.ts`)
+- ✅ Presentational component (`index.tsx`)
+- ✅ Zustand store with persistence (`stores/walkingSessionStore.ts`)
+- ✅ Native modules (iOS Objective-C, Android Kotlin)
+- ✅ Background position persistence
+- ✅ AppState synchronization
+- ✅ Error handling and permissions
+- ✅ Complete documentation (`WALKING_BACKGROUND_TRACKING.md`)
+
+This is the **recommended pattern** for all future native features.

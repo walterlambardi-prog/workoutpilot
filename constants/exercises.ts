@@ -22,11 +22,20 @@ export const EXERCISE_COPY_KEYS: Record<ExerciseId, string> = {
 
 export const ALLOWED_EXERCISES: ExerciseId[] = [
   ExerciseId.SQUATS,
-  //ExerciseId.PUSHUPS,
   ExerciseId.HAMMER_CURLS,
   ExerciseId.LATERAL_RAISES,
-  //ExerciseId.LUNGES,
   ExerciseId.CALF_RAISES,
   ExerciseId.STANDING_LEG_RAISES,
   ExerciseId.WALKING,
+];
+
+export const ROUTINE_ALLOWED_EXERCISES: ExerciseId[] = [
+  ExerciseId.SQUATS,
+  ExerciseId.HAMMER_CURLS,
+  ExerciseId.LATERAL_RAISES,
+  ExerciseId.CALF_RAISES,
+  ExerciseId.STANDING_LEG_RAISES,
+  ExerciseId.WALKING,
+  ExerciseId.LUNGES,
+  ExerciseId.PUSHUPS,
 ];

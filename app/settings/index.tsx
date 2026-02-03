@@ -230,6 +230,7 @@ const SettingsScreen: React.FC = () => {
             resetAuth();
             resetHistory();
             resetRoutineHistory();
+            resetWalkingHistory();
             resetRoutine();
 
             showAlert(
@@ -242,7 +243,15 @@ const SettingsScreen: React.FC = () => {
         },
       ],
     );
-  }, [resetAuth, resetHistory, resetRoutine, resetRoutineHistory, router, t]);
+  }, [
+    resetAuth,
+    resetHistory,
+    resetRoutine,
+    resetRoutineHistory,
+    resetWalkingHistory,
+    router,
+    t,
+  ]);
 
   const handleExportData = useCallback(async () => {
     try {

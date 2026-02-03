@@ -141,7 +141,7 @@ const RoutineAnalysisScreen: React.FC = () => {
 
   if (loading) {
     return (
-      <TPage>
+      <TPage hasHeader>
         <ScreenHeader
           title={t("routineAnalysis.title")}
           subtitle={t("routineAnalysis.subtitle")}
@@ -156,7 +156,7 @@ const RoutineAnalysisScreen: React.FC = () => {
 
   if (error) {
     return (
-      <TPage>
+      <TPage hasHeader>
         <ScreenHeader
           title={t("routineAnalysis.title")}
           subtitle={t("routineAnalysis.subtitle")}
@@ -182,7 +182,7 @@ const RoutineAnalysisScreen: React.FC = () => {
   }
 
   return (
-    <TPage>
+    <TPage hasHeader>
       <ScreenHeader
         title={t("routineAnalysis.title")}
         subtitle={t("routineAnalysis.subtitle")}
