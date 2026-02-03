@@ -54,16 +54,53 @@ export const useWalkingSession = () => {
   );
   const browserWatchIdRef = useRef<number | null>(null);
 
-  const {
-    activeSession,
-    startActiveSession,
-    addPositionToActiveSession,
-    finalizeActiveSession,
-  } = useWalkingSessionStore();
+  // Use Zustand selectors for proper reactivity
+  const activeSession = useWalkingSessionStore((state) => state.activeSession);
+  const startActiveSession = useWalkingSessionStore(
+    (state) => state.startActiveSession,
+  );
+  const addPositionToActiveSession = useWalkingSessionStore(
+    (state) => state.addPositionToActiveSession,
+  );
+  const updateActiveSession = useWalkingSessionStore(
+    (state) => state.updateActiveSession,
+  );
+  const finalizeActiveSession = useWalkingSessionStore(
+    (state) => state.finalizeActiveSession,
+  );
 
   const positions = useMemo(
     () => activeSession?.positions ?? [],
     [activeSession?.positions],
+  );
+
+  // Calculate and sync distance to store whenever positions change
+  useEffect(() => {
+    if (positions.length > 0) {
+      const calculated = calculateDistanceKm(positions);
+
+      console.log("[WalkingSession.web] 📏 Distance calculated:", {
+        positions: positions.length,
+        distanceKm: calculated.toFixed(2),
+      });
+
+      // Update store with calculated distance
+      if (
+        activeSession &&
+        Math.abs(calculated - activeSession.distanceKm) > 0.001
+      ) {
+        console.log(
+          "[WalkingSession.web] 💾 Updating store with distance:",
+          calculated.toFixed(2),
+        );
+        updateActiveSession({ distanceKm: calculated });
+      }
+    }
+  }, [positions, activeSession, updateActiveSession]);
+
+  const distanceKm = useMemo(
+    () => activeSession?.distanceKm ?? 0,
+    [activeSession?.distanceKm],
   );
 
   useEffect(() => {
@@ -193,6 +230,7 @@ export const useWalkingSession = () => {
             latitude: location.coords.latitude,
             longitude: location.coords.longitude,
           };
+          console.log("[WalkingSession.web] 📍 New position:", newPosition);
           addPositionToActiveSession(newPosition);
         },
       );
@@ -235,8 +273,6 @@ export const useWalkingSession = () => {
       }
     };
   }, [status, stopSubscriptions]);
-
-  const distanceKm = useMemo(() => calculateDistanceKm(positions), [positions]);
 
   const stats = [
     {

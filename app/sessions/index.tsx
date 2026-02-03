@@ -350,10 +350,12 @@ const SessionsScreen: React.FC = () => {
         <THeading level={3}>{t("sessions.walking.title")}</THeading>
 
         <TGrid columns={Platform.OS === "web" ? 3 : 1} gap="$3">
-          <StatTile
-            label={t("sessions.walking.totalSteps")}
-            value={formatNumber(walkingTotals.totalSteps)}
-          />
+          {walkingTotals.totalSteps > 0 && (
+            <StatTile
+              label={t("sessions.walking.totalSteps")}
+              value={formatNumber(walkingTotals.totalSteps)}
+            />
+          )}
           <StatTile
             label={t("sessions.walking.totalDistance")}
             value={formatDistance(walkingTotals.totalDistanceKm)}
@@ -379,7 +381,7 @@ const SessionsScreen: React.FC = () => {
                 padding="$3"
               >
                 <TRow justifyContent="space-between" alignItems="flex-start">
-                  <TStack gap="$1">
+                  <TStack>
                     <TText variant="label" color="$placeholderColor">
                       {t("walking.stats.distance")}
                     </TText>
@@ -387,16 +389,18 @@ const SessionsScreen: React.FC = () => {
                       {formatDistance(entry.distanceKm)}
                     </THeading>
                   </TStack>
-                  <TStack alignItems="flex-end" gap="$1">
+                  <TStack alignItems="flex-end">
                     <TText variant="label" color="$placeholderColor">
                       {t("walking.stats.steps")}
                     </TText>
-                    <THeading level={4}>{formatNumber(entry.steps)}</THeading>
+                    <THeading level={4}>
+                      {entry.steps > 0 ? formatNumber(entry.steps) : "-"}
+                    </THeading>
                   </TStack>
                 </TRow>
 
                 <TRow justifyContent="space-between" alignItems="center">
-                  <TStack gap="$1">
+                  <TStack>
                     <TText variant="caption" color="$placeholderColor">
                       {t("walking.stats.duration")}
                     </TText>
@@ -404,9 +408,6 @@ const SessionsScreen: React.FC = () => {
                       {formatDuration(entry.durationMs)}
                     </THeading>
                   </TStack>
-                  <TText variant="caption" color="$placeholderColor">
-                    {formatDate(entry.endedAt ?? entry.startedAt)}
-                  </TText>
                 </TRow>
 
                 <TStack borderRadius="$6" overflow="hidden">

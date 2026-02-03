@@ -9,7 +9,7 @@ import { TCard } from "@/components/TCard";
 import { TPage } from "@/components/TPage";
 import { THeading, TText } from "@/components/TText";
 
-import { useWalkingSession } from "./hooks/useWalkingSession";
+import { useWalkingSession } from "./hooks/useWalkingSession.web";
 import styles from "./walking.styles";
 
 const WalkingWebScreen: React.FC = () => {
