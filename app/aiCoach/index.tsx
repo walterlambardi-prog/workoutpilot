@@ -34,7 +34,7 @@ import {
   parseLevelPrompt,
   parseProfilePrompt,
   useAiCoach,
-} from "./useAiCoach";
+} from "./hooks/useAiCoach";
 
 const AiCoachScreen: React.FC = () => {
   const { t } = useTranslation();

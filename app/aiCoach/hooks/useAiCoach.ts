@@ -24,7 +24,7 @@ import {
   ROUND_MIN,
   TEMPERATURE,
   TOPIC_KEYWORDS,
-} from "./aiCoach.constants";
+} from "../aiCoach.constants";
 import type {
   ChatMessage,
   LevelPrompt,
@@ -32,7 +32,7 @@ import type {
   ProfilePrompt,
   RoutinePlanItem,
   Suggestion,
-} from "./aiCoach.types";
+} from "../aiCoach.types";
 
 const normalizeText = (value?: string) => value?.trim() ?? "";
 
