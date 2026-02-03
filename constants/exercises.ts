@@ -35,7 +35,4 @@ export const ROUTINE_ALLOWED_EXERCISES: ExerciseId[] = [
   ExerciseId.LATERAL_RAISES,
   ExerciseId.CALF_RAISES,
   ExerciseId.STANDING_LEG_RAISES,
-  ExerciseId.WALKING,
-  ExerciseId.LUNGES,
-  ExerciseId.PUSHUPS,
 ];

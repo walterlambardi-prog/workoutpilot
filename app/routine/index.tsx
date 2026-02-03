@@ -1,35 +1,17 @@
 import { Ionicons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
-import React, { useCallback, useMemo } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
-import {
-  Button,
-  Card,
-  Image,
-  Separator,
-  Text,
-  XStack,
-  YStack,
-  useMedia,
-  useTheme,
-} from "tamagui";
+import { Button, Card, Image, Separator, Text, XStack, YStack } from "tamagui";
 
-import { EXERCISE_DEFINITIONS } from "@/app/exercises/exercises.data";
-import type {
-  RoutineBuilderScreenProps,
-  RoutineExerciseListItem,
-} from "@/app/routine/routine.types";
+import type { RoutineBuilderScreenProps } from "@/app/routine/routine.types";
 import ScreenHeader from "@/components/ScreenHeader";
 import { TButton } from "@/components/TButton";
 import { TGrid } from "@/components/TGrid";
 import { TPage } from "@/components/TPage";
-import { ROUTINE_ALLOWED_EXERCISES } from "@/constants/exercises";
 import { Spacing } from "@/constants/theme";
-import {
-  ROUTINE_DEFAULT_REPS,
-  useRoutineBuilderStore,
-} from "@/stores/routineBuilderStore";
-import { useRoutineSessionStore } from "@/stores/routineSessionStore";
+import { ROUTINE_DEFAULT_REPS } from "@/stores/routineBuilderStore";
+
+import { useRoutineBuilder } from "./hooks/useRoutineBuilder";
 import { styles } from "./routine.styles";
 
 const StepperButton: React.FC<{
@@ -57,142 +39,26 @@ const StepperButton: React.FC<{
 
 const RoutineBuilderScreen: React.FC<RoutineBuilderScreenProps> = () => {
   const { t } = useTranslation();
-  const media = useMedia();
-  const theme = useTheme();
-  const router = useRouter();
 
-  const rounds = useRoutineBuilderStore((state) => state.rounds);
-  const exercises = useRoutineBuilderStore((state) => state.exercises);
-  const incrementRounds = useRoutineBuilderStore(
-    (state) => state.incrementRounds,
-  );
-  const decrementRounds = useRoutineBuilderStore(
-    (state) => state.decrementRounds,
-  );
-  const incrementReps = useRoutineBuilderStore((state) => state.incrementReps);
-  const decrementReps = useRoutineBuilderStore((state) => state.decrementReps);
-  const toggleExercise = useRoutineBuilderStore(
-    (state) => state.toggleExercise,
-  );
-  const startRoutineSession = useRoutineSessionStore(
-    (state) => state.startSession,
-  );
-
-  const exerciseList = useMemo<RoutineExerciseListItem[]>(
-    () =>
-      EXERCISE_DEFINITIONS.filter(({ id }) =>
-        ROUTINE_ALLOWED_EXERCISES.includes(id),
-      ).map(({ id, copyKey, image }) => ({
-        id,
-        copyKey,
-        image,
-        title: t(`${copyKey}.title`),
-        description: t(`${copyKey}.description`),
-      })),
-    [t],
-  );
-  const selectedCount = useMemo(
-    () =>
-      exerciseList.reduce((count, item) => {
-        const config = exercises[item.id];
-        return config?.isSelected === false ? count : count + 1;
-      }, 0),
-    [exerciseList, exercises],
-  );
-
-  const hasReadyExercises = useMemo(
-    () =>
-      exerciseList.some(({ id }) => {
-        const config = exercises[id];
-        const isSelected = config?.isSelected !== false;
-        const reps = config?.reps ?? ROUTINE_DEFAULT_REPS;
-        return isSelected && reps > 0;
-      }),
-    [exerciseList, exercises],
-  );
-
-  const titleSize = media.md ? "$6" : "$5";
-  const bodySize = media.md ? "$4" : "$3";
-  const metaSize = media.md ? "$3" : "$2";
-
-  const resolveToken = useCallback(
-    (token?: string) => {
-      if (!token) return undefined;
-      const key = token.startsWith("$") ? token.slice(1) : token;
-      const value = (theme as Record<string, unknown>)[key];
-      if (value && typeof value === "object" && "val" in (value as object)) {
-        return (value as { val?: string }).val;
-      }
-      if (typeof value === "string") return value;
-      return undefined;
-    },
-    [theme],
-  );
-
-  const withAlpha = useCallback((color?: string, alpha = "55") => {
-    if (!color) return undefined;
-    if (/^#([0-9a-fA-F]{6})$/.test(color)) {
-      return `${color}${alpha}`;
-    }
-    return color;
-  }, []);
-
-  const iconPrimary = resolveToken("$color") ?? "#0F172A";
-  const selectedBorderColor = withAlpha(resolveToken("$color"));
-
-  const createDecrementHandler = useCallback(
-    (exerciseId: string) => () => decrementReps(exerciseId as any),
-    [decrementReps],
-  );
-
-  const createIncrementHandler = useCallback(
-    (exerciseId: string) => () => incrementReps(exerciseId as any),
-    [incrementReps],
-  );
-
-  const createToggleHandler = useCallback(
-    (exerciseId: string) => () => toggleExercise(exerciseId as any),
-    [toggleExercise],
-  );
-
-  const handleStartRoutine = useCallback(() => {
-    if (!hasReadyExercises) {
-      return;
-    }
-
-    const selectedExercises = EXERCISE_DEFINITIONS.filter(
-      ({ id }) =>
-        ROUTINE_ALLOWED_EXERCISES.includes(id) && exercises[id]?.isSelected,
-    );
-
-    if (selectedExercises.length === 0) {
-      return;
-    }
-
-    const plan = Array.from({ length: rounds }).flatMap((_, roundIndex) =>
-      selectedExercises.map(({ id }) => ({
-        exerciseId: id,
-        targetReps: exercises[id]?.reps ?? ROUTINE_DEFAULT_REPS,
-        round: roundIndex + 1,
-      })),
-    );
-
-    const sessionId = startRoutineSession(plan, rounds);
-    const firstStep = plan[0];
-
-    if (!sessionId || !firstStep) {
-      return;
-    }
-
-    router.push({
-      pathname: "/exercises/[exerciseId]",
-      params: {
-        exerciseId: firstStep.exerciseId,
-        routineId: sessionId,
-        stepIndex: "0",
-      },
-    });
-  }, [exercises, hasReadyExercises, rounds, startRoutineSession, router]);
+  const {
+    rounds,
+    exercises,
+    exerciseList,
+    selectedCount,
+    hasReadyExercises,
+    titleSize,
+    bodySize,
+    metaSize,
+    iconPrimary,
+    selectedBorderColor,
+    media,
+    incrementRounds,
+    decrementRounds,
+    createDecrementHandler,
+    createIncrementHandler,
+    createToggleHandler,
+    handleStartRoutine,
+  } = useRoutineBuilder();
 
   return (
     <TPage hasHeader>

@@ -3,7 +3,7 @@ import React, { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
 import { EXERCISE_DEFINITION_MAP } from "@/app/exercises/exercises.data";
-import { useRoutineStep } from "@/app/routine/useRoutineStep";
+import { useRoutineStep } from "@/app/routine/hooks/useRoutineStep";
 import Exercises from "@/components/Exercises";
 import { ThemedView } from "@/components/ThemedView";
 import { ExerciseId } from "@/constants/exercises";
