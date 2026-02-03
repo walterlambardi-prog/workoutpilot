@@ -1,15 +1,14 @@
-import { useRouter } from "expo-router";
-import React, { useMemo, useState } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
 import { KeyboardAvoidingView, Platform } from "react-native";
-import { Card, XStack, YStack, useMedia, useTheme } from "tamagui";
+import { Card, XStack, YStack } from "tamagui";
 
 import ScreenHeader from "@/components/ScreenHeader";
 import { TButton } from "@/components/TButton";
 import { TInput } from "@/components/TInput";
 import { TTag } from "@/components/TTag";
-import { useAuthStore } from "@/stores/authStore";
 
+import { useLogin } from "./hooks/useLogin";
 import styles from "./login.styles";
 
 /**
@@ -18,70 +17,19 @@ import styles from "./login.styles";
  */
 const LoginScreen: React.FC = () => {
   const { t } = useTranslation();
-  const router = useRouter();
-  const theme = useTheme();
-  const media = useMedia();
-  const [username, setUsername] = useState("");
-  const [error, setError] = useState("");
 
-  const setStoredUsername = useAuthStore(
-    (state: { setUsername: (username: string) => void }) => state.setUsername,
-  );
-
-  const validateUsername = (value: string): string => {
-    if (!value.trim()) {
-      return t("login.errorEmpty");
-    }
-    if (value.trim().length < 2) {
-      return t("login.errorTooShort");
-    }
-    if (value.trim().length > 30) {
-      return t("login.errorTooLong");
-    }
-    return "";
-  };
-
-  const handleContinue = () => {
-    const validationError = validateUsername(username);
-    if (validationError) {
-      setError(validationError);
-      return;
-    }
-
-    setStoredUsername(username.trim());
-    // Navigate to onboarding screen
-    router.replace("/onboarding");
-  };
-
-  const handleChangeText = (text: string) => {
-    setUsername(text);
-    if (error) {
-      setError("");
-    }
-  };
-
-  const isValid = username.trim().length >= 2 && username.trim().length <= 30;
-  const badgeIconSize = media.gtSm ? 20 : 18;
-  const cardPadding = media.gtSm ? "$6" : "$5";
-  const gapSize = media.gtSm ? "$5" : "$4";
-
-  const highlights = useMemo(
-    () => [
-      {
-        icon: "shield-checkmark-outline" as const,
-        text: t("login.highlights.secure"),
-      },
-      {
-        icon: "flash-outline" as const,
-        text: t("login.highlights.fast"),
-      },
-      {
-        icon: "sparkles-outline" as const,
-        text: t("login.highlights.personalized"),
-      },
-    ],
-    [t],
-  );
+  const {
+    username,
+    error,
+    isValid,
+    theme,
+    badgeIconSize,
+    cardPadding,
+    gapSize,
+    highlights,
+    handleContinue,
+    handleChangeText,
+  } = useLogin();
 
   return (
     <KeyboardAvoidingView
