@@ -187,8 +187,8 @@
     }
   },
   "sessions": {
-    "title": "Session insights",
-    "subtitle": "Review your active session and historical workout data.",
+    "title": "Your progress",
+    "subtitle": "Track your performance and analyze workout metrics.",
     "labels": {
       "sessions": "Sessions",
       "reps": "reps",

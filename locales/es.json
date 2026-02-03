@@ -187,8 +187,8 @@
     }
   },
   "sessions": {
-    "title": "Insights de sesiones",
-    "subtitle": "Revisa tu sesión activa y el historial de entrenamiento.",
+    "title": "Tu progreso",
+    "subtitle": "Analiza tu rendimiento y métricas de entrenamiento.",
     "labels": {
       "sessions": "Sesiones",
       "reps": "reps",
