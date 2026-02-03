@@ -183,16 +183,44 @@ export const useWalkingSession = () => {
     }
 
     setStatus("requesting");
+
+    // For mobile browsers, check native geolocation API first
+    if (typeof navigator !== "undefined" && navigator.geolocation) {
+      try {
+        console.log("[WalkingSession.web] 🔐 Checking native geolocation API");
+
+        // Test with getCurrentPosition to trigger permission prompt
+        await new Promise<GeolocationPosition>((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(resolve, reject, {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 0,
+          });
+        });
+
+        console.log("[WalkingSession.web] ✅ Native geolocation available");
+        return true;
+      } catch (error) {
+        console.error(
+          "[WalkingSession.web] ❌ Native geolocation error:",
+          error,
+        );
+        setStatus("error");
+        setErrorMessage(t("walking.errors.permissionDenied"));
+        return false;
+      }
+    }
+
+    // Fallback to Expo Location API
     try {
-      console.log("[WalkingSession.web] 🔐 Requesting location permissions");
+      console.log(
+        "[WalkingSession.web] 🔐 Requesting location permissions via Expo",
+      );
 
       const { status: fgStatus } =
         await Location.requestForegroundPermissionsAsync();
 
-      console.log(
-        "[WalkingSession.web] 📋 Permission status:",
-        fgStatus,
-      );
+      console.log("[WalkingSession.web] 📋 Permission status:", fgStatus);
 
       if (fgStatus !== "granted") {
         setStatus("error");
@@ -229,26 +257,66 @@ export const useWalkingSession = () => {
 
       console.log("[WalkingSession.web] 🌍 Starting location tracking");
 
-      // Start location tracking with mobile-friendly options
+      // Try native browser geolocation API first (better for mobile browsers)
+      if (typeof navigator !== "undefined" && navigator.geolocation) {
+        console.log("[WalkingSession.web] 📱 Using native browser geolocation");
+
+        const watchId = navigator.geolocation.watchPosition(
+          (position) => {
+            const newPosition: LatLng = {
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude,
+            };
+            console.log(
+              "[WalkingSession.web] 📍 New position (native):",
+              newPosition,
+            );
+            addPositionToActiveSession(newPosition);
+          },
+          (error) => {
+            console.error(
+              "[WalkingSession.web] ❌ Native geolocation error:",
+              error,
+            );
+            setStatus("error");
+            setErrorMessage(t("walking.errors.locationUnavailable"));
+          },
+          {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 5000,
+          },
+        );
+
+        browserWatchIdRef.current = watchId;
+        console.log("[WalkingSession.web] ✅ Native location tracking started");
+        return;
+      }
+
+      // Fallback to Expo Location API
+      console.log("[WalkingSession.web] 📱 Using Expo Location API");
       const subscription = await Location.watchPositionAsync(
         {
-          accuracy: Location.Accuracy.Balanced, // Changed from High to Balanced for better mobile compatibility
-          timeInterval: 3000, // Update every 3 seconds
-          distanceInterval: 10, // Update every 10 meters
-          mayShowUserSettingsDialog: true, // Allow showing settings dialog on mobile
+          accuracy: Location.Accuracy.Balanced,
+          timeInterval: 3000,
+          distanceInterval: 10,
+          mayShowUserSettingsDialog: true,
         },
         (location) => {
           const newPosition: LatLng = {
             latitude: location.coords.latitude,
             longitude: location.coords.longitude,
           };
-          console.log("[WalkingSession.web] 📍 New position:", newPosition);
+          console.log(
+            "[WalkingSession.web] 📍 New position (Expo):",
+            newPosition,
+          );
           addPositionToActiveSession(newPosition);
         },
       );
 
       locationSubscriptionRef.current = subscription;
-      console.log("[WalkingSession.web] ✅ Location tracking started");
+      console.log("[WalkingSession.web] ✅ Expo location tracking started");
     } catch (error) {
       console.error("[WalkingSession.web] ❌ Location tracking error:", error);
       setStatus("error");
