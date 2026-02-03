@@ -203,8 +203,7 @@
       "averageReps": "Promedio reps / sesión",
       "exercisesTracked": "Ejercicios registrados",
       "topExercise": "Ejercicio destacado",
-      "bestSession": "Mejor sesión (reps)",
-      "lastSession": "Última sesión"
+      "bestSession": "Mejor sesión (reps)"
     },
     "routines": {
       "title": "Estadísticas de rutinas",

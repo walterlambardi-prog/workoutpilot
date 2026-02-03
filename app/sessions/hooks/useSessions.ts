@@ -7,8 +7,8 @@ import { ExerciseId } from "@/constants/exercises";
 import { useExerciseSessionStore } from "@/stores/exerciseSessionStore";
 import { useRoutineBuilderStore } from "@/stores/routineBuilderStore";
 import {
-    type RoutineSession,
-    useRoutineSessionStore,
+  type RoutineSession,
+  useRoutineSessionStore,
 } from "@/stores/routineSessionStore";
 import { useWalkingSessionStore } from "@/stores/walkingSessionStore";
 
@@ -176,15 +176,13 @@ export const useSessions = () => {
     return `${t(`${exercise.copyKey}.title`)} · ${reps} ${t("sessions.labels.reps")}`;
   }, [t, totals.bestSession]);
 
-  const lastSessionCopy = useMemo(() => {
-    if (!totals.lastSession) return t("sessions.empty.lastSession");
-    const exercise =
-      EXERCISE_DEFINITION_MAP[totals.lastSession.exerciseId as ExerciseId];
+  const bestSessionDateCopy = useMemo(() => {
+    if (!totals.bestSession) return undefined;
     const endedAt = formatDate(
-      totals.lastSession.endedAt ?? totals.lastSession.startedAt,
+      totals.bestSession.endedAt ?? totals.bestSession.startedAt,
     );
-    return `${t(`${exercise.copyKey}.title`)} · ${endedAt}`;
-  }, [t, totals.lastSession]);
+    return endedAt;
+  }, [totals.bestSession]);
 
   const topExerciseCopy = useMemo(() => {
     if (!topExercise) return t("sessions.empty.topExercise");
@@ -221,10 +219,10 @@ export const useSessions = () => {
         key: "recency",
         label: t("sessions.stats.bestSession"),
         value: bestSessionCopy,
-        helper: lastSessionCopy,
+        helper: bestSessionDateCopy,
       },
     ],
-    [bestSessionCopy, lastSessionCopy, t, topExerciseCopy, totals],
+    [bestSessionCopy, bestSessionDateCopy, t, topExerciseCopy, totals],
   );
 
   // Routine list for UI

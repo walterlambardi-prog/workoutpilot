@@ -203,8 +203,7 @@
       "averageReps": "Avg reps / session",
       "exercisesTracked": "Exercises tracked",
       "topExercise": "Top exercise",
-      "bestSession": "Best session (reps)",
-      "lastSession": "Last session"
+      "bestSession": "Best session (reps)"
     },
     "routines": {
       "title": "Routine stats",
