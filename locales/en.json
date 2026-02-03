@@ -587,6 +587,7 @@
       "steps": "Steps",
       "distance": "Distance",
       "duration": "Time",
+      "date": "Date",
       "distanceValue": "{{distance}} km"
     },
     "map": {

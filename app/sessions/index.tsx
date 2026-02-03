@@ -34,7 +34,15 @@ const formatDuration = (ms?: number) => {
 
 const formatDate = (timestamp?: number) => {
   if (!timestamp) return "--";
-  return new Date(timestamp).toLocaleString();
+  const date = new Date(timestamp);
+  return date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  });
 };
 
 const formatNumber = (value?: number) => {
@@ -381,7 +389,26 @@ const SessionsScreen: React.FC = () => {
                 padding="$3"
               >
                 <TRow justifyContent="space-between" alignItems="flex-start">
-                  <TStack>
+                  <TStack gap="$1">
+                    <TText variant="label" color="$placeholderColor">
+                      {t("walking.stats.date")}
+                    </TText>
+                    <THeading level={4}>
+                      {formatDate(entry.endedAt ?? entry.startedAt)}
+                    </THeading>
+                  </TStack>
+                  <TStack alignItems="flex-end" gap="$1">
+                    <TText variant="label" color="$placeholderColor">
+                      {t("walking.stats.duration")}
+                    </TText>
+                    <THeading level={4}>
+                      {formatDuration(entry.durationMs)}
+                    </THeading>
+                  </TStack>
+                </TRow>
+
+                <TRow justifyContent="space-between" alignItems="flex-start">
+                  <TStack gap="$1">
                     <TText variant="label" color="$placeholderColor">
                       {t("walking.stats.distance")}
                     </TText>
@@ -389,23 +416,12 @@ const SessionsScreen: React.FC = () => {
                       {formatDistance(entry.distanceKm)}
                     </THeading>
                   </TStack>
-                  <TStack alignItems="flex-end">
+                  <TStack alignItems="flex-end" gap="$1">
                     <TText variant="label" color="$placeholderColor">
                       {t("walking.stats.steps")}
                     </TText>
                     <THeading level={4}>
                       {entry.steps > 0 ? formatNumber(entry.steps) : "-"}
-                    </THeading>
-                  </TStack>
-                </TRow>
-
-                <TRow justifyContent="space-between" alignItems="center">
-                  <TStack>
-                    <TText variant="caption" color="$placeholderColor">
-                      {t("walking.stats.duration")}
-                    </TText>
-                    <THeading level={4}>
-                      {formatDuration(entry.durationMs)}
                     </THeading>
                   </TStack>
                 </TRow>
