@@ -184,8 +184,15 @@ export const useWalkingSession = () => {
 
     setStatus("requesting");
     try {
+      console.log("[WalkingSession.web] 🔐 Requesting location permissions");
+
       const { status: fgStatus } =
         await Location.requestForegroundPermissionsAsync();
+
+      console.log(
+        "[WalkingSession.web] 📋 Permission status:",
+        fgStatus,
+      );
 
       if (fgStatus !== "granted") {
         setStatus("error");
@@ -193,8 +200,10 @@ export const useWalkingSession = () => {
         return false;
       }
 
+      console.log("[WalkingSession.web] ✅ Location permissions granted");
       return true;
     } catch (error) {
+      console.error("[WalkingSession.web] ❌ Permission error:", error);
       setStatus("error");
       setErrorMessage(
         error instanceof Error ? error.message : t("walking.errors.unknown"),
@@ -218,12 +227,15 @@ export const useWalkingSession = () => {
       setStatus("tracking");
       startTimer();
 
-      // Start location tracking
+      console.log("[WalkingSession.web] 🌍 Starting location tracking");
+
+      // Start location tracking with mobile-friendly options
       const subscription = await Location.watchPositionAsync(
         {
-          accuracy: Location.Accuracy.High,
-          timeInterval: 5000, // Update every 5 seconds
-          distanceInterval: 5, // Update every 5 meters
+          accuracy: Location.Accuracy.Balanced, // Changed from High to Balanced for better mobile compatibility
+          timeInterval: 3000, // Update every 3 seconds
+          distanceInterval: 10, // Update every 10 meters
+          mayShowUserSettingsDialog: true, // Allow showing settings dialog on mobile
         },
         (location) => {
           const newPosition: LatLng = {
@@ -236,7 +248,9 @@ export const useWalkingSession = () => {
       );
 
       locationSubscriptionRef.current = subscription;
+      console.log("[WalkingSession.web] ✅ Location tracking started");
     } catch (error) {
+      console.error("[WalkingSession.web] ❌ Location tracking error:", error);
       setStatus("error");
       setErrorMessage(
         error instanceof Error ? error.message : t("walking.errors.unknown"),
