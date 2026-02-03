@@ -1,5 +1,4 @@
 import { EXERCISE_DEFINITION_MAP } from "@/app/exercises/exercises.data";
-import { analyzeRoutine } from "@/app/routineAnalysis/routineAnalysis.service";
 import ScreenHeader from "@/components/ScreenHeader";
 import { TButton } from "@/components/TButton";
 import { TCard } from "@/components/TCard";
@@ -7,137 +6,24 @@ import { TPage } from "@/components/TPage";
 import { TRow, TStack } from "@/components/TStack";
 import { THeading, TText } from "@/components/TText";
 import type { ExerciseId } from "@/constants/exercises";
-import { useRoutineSessionStore } from "@/stores/routineSessionStore";
 import { useLocalSearchParams } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
 import { ActivityIndicator } from "react-native";
-import type {
-  ExercisePerformance,
-  RoutineAnalysisRequest,
-  RoutineAnalysisResponse,
-} from "./routineAnalysis.types";
+import { useRoutineAnalysis } from "./hooks/useRoutineAnalysis";
 
 const RoutineAnalysisScreen: React.FC = () => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const { routineId } = useLocalSearchParams<{ routineId: string }>();
-  const { history, getAnalysis, saveAnalysis } = useRoutineSessionStore();
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [analysis, setAnalysis] = useState<RoutineAnalysisResponse | null>(
-    null,
-  );
 
-  // Tamagui tokens/colors
-  const successColor = "$success";
-  const warningColor = "$warning";
-  const errorColor = "$error";
-  const surfaceColor = "$backgroundHover";
-  const borderColor = "$borderColor";
-  const subtleText = "$placeholderColor";
-
-  const getScoreColor = (score: number) => {
-    if (score >= 80) return successColor;
-    if (score >= 60) return warningColor;
-    return errorColor;
-  };
-
-  const handleReanalyze = () => {
-    performAnalysis(true);
-  };
-
-  const performAnalysis = async (forceRefresh = false) => {
-    if (!routineId) {
-      setError(t("routineAnalysis.errors.noRoutineId"));
-      setLoading(false);
-      return;
-    }
-
-    // Check if analysis is already cached
-    const cachedAnalysis = getAnalysis(routineId);
-    if (cachedAnalysis && !forceRefresh) {
-      setAnalysis(cachedAnalysis);
-      setLoading(false);
-      return;
-    }
-
-    const routine = history.find((r) => r.id === routineId);
-
-    if (!routine || !routine.completedAt) {
-      setError(t("routineAnalysis.errors.routineNotFound"));
-      setLoading(false);
-      return;
-    }
-
-    try {
-      setLoading(true);
-      setError(null);
-
-      // Aggregate exercise performance with round details
-      const exerciseMap = new Map<ExerciseId, ExercisePerformance>();
-
-      routine.stepResults.forEach((step) => {
-        const existing = exerciseMap.get(step.exerciseId);
-        const timePerRep = step.reps > 0 ? step.durationMs / step.reps : 0;
-
-        if (existing) {
-          existing.actualReps += step.reps;
-          existing.durationMs += step.durationMs;
-          existing.rounds += 1;
-          existing.roundDetails.push({
-            roundNumber: existing.rounds,
-            reps: step.reps,
-            durationMs: step.durationMs,
-            timePerRep,
-          });
-        } else {
-          exerciseMap.set(step.exerciseId, {
-            exerciseId: step.exerciseId,
-            targetReps: step.targetReps,
-            actualReps: step.reps,
-            durationMs: step.durationMs,
-            rounds: 1,
-            roundDetails: [
-              {
-                roundNumber: 1,
-                reps: step.reps,
-                durationMs: step.durationMs,
-                timePerRep,
-              },
-            ],
-          });
-        }
-      });
-
-      const requestData: RoutineAnalysisRequest = {
-        routineId: routine.id,
-        totalRounds: routine.rounds,
-        totalDurationMs: routine.completedAt - routine.startedAt,
-        totalReps: routine.totalReps,
-        startedAt: routine.startedAt,
-        completedAt: routine.completedAt,
-        exercises: Array.from(exerciseMap.values()),
-      };
-
-      const result = await analyzeRoutine(requestData, i18n.language);
-      setAnalysis(result);
-      saveAnalysis(routineId, result);
-    } catch (err) {
-      console.error("Analysis error:", err);
-      setError(
-        err instanceof Error
-          ? err.message
-          : t("routineAnalysis.errors.generic"),
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    performAnalysis();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [routineId]);
+  const {
+    loading,
+    error,
+    analysis,
+    getScoreColor,
+    handleReanalyze,
+    performAnalysis,
+  } = useRoutineAnalysis(routineId);
 
   if (loading) {
     return (
@@ -162,8 +48,8 @@ const RoutineAnalysisScreen: React.FC = () => {
           subtitle={t("routineAnalysis.subtitle")}
         />
         <TStack gap="$4">
-          <TCard borderColor={errorColor} backgroundColor={surfaceColor}>
-            <TText color={errorColor}>{error}</TText>
+          <TCard borderColor="$error" backgroundColor="$backgroundHover">
+            <TText color="$error">{error}</TText>
             <TButton
               variant="primary"
               onPress={() => performAnalysis(true)}
@@ -191,7 +77,7 @@ const RoutineAnalysisScreen: React.FC = () => {
         {/* Overall Score */}
         <TCard
           borderColor={getScoreColor(analysis.overallScore)}
-          backgroundColor={surfaceColor}
+          backgroundColor="$backgroundHover"
           alignItems="center"
           gap="$2"
         >
@@ -202,18 +88,18 @@ const RoutineAnalysisScreen: React.FC = () => {
         </TCard>
 
         {/* Overall Feedback */}
-        <TCard borderColor={borderColor} backgroundColor={surfaceColor}>
+        <TCard borderColor="$borderColor" backgroundColor="$backgroundHover">
           <THeading level={3}>{t("routineAnalysis.feedback")}</THeading>
           <TText>{analysis.overallFeedback}</TText>
         </TCard>
 
         {/* Strengths */}
-        <TCard borderColor={borderColor} backgroundColor={surfaceColor}>
+        <TCard borderColor="$borderColor" backgroundColor="$backgroundHover">
           <THeading level={3}>{t("routineAnalysis.strengths")}</THeading>
           <TStack gap="$2">
             {analysis.strengths.map((strength, index) => (
               <TRow key={index} gap="$2" alignItems="center">
-                <TText color={successColor}>✓</TText>
+                <TText color="$success">✓</TText>
                 <TText>{strength}</TText>
               </TRow>
             ))}
@@ -221,12 +107,12 @@ const RoutineAnalysisScreen: React.FC = () => {
         </TCard>
 
         {/* Improvements */}
-        <TCard borderColor={borderColor} backgroundColor={surfaceColor}>
+        <TCard borderColor="$borderColor" backgroundColor="$backgroundHover">
           <THeading level={3}>{t("routineAnalysis.improvements")}</THeading>
           <TStack gap="$2">
             {analysis.improvements.map((improvement, index) => (
               <TRow key={index} gap="$2" alignItems="center">
-                <TText color={warningColor}>→</TText>
+                <TText color="$warning">→</TText>
                 <TText>{improvement}</TText>
               </TRow>
             ))}
@@ -234,7 +120,7 @@ const RoutineAnalysisScreen: React.FC = () => {
         </TCard>
 
         {/* Exercise Breakdown */}
-        <TCard borderColor={borderColor} backgroundColor={surfaceColor}>
+        <TCard borderColor="$borderColor" backgroundColor="$backgroundHover">
           <THeading level={3}>
             {t("routineAnalysis.exerciseBreakdown")}
           </THeading>
@@ -246,7 +132,7 @@ const RoutineAnalysisScreen: React.FC = () => {
                 <TCard
                   key={index}
                   borderColor={getScoreColor(exercise.performanceScore)}
-                  backgroundColor={surfaceColor}
+                  backgroundColor="$backgroundHover"
                   gap="$2"
                 >
                   <TRow alignItems="center" justifyContent="space-between">
@@ -265,7 +151,7 @@ const RoutineAnalysisScreen: React.FC = () => {
                   <TText>{exercise.feedback}</TText>
                   <TStack gap="$1">
                     {exercise.suggestions.map((suggestion, idx) => (
-                      <TText key={idx} color={subtleText}>
+                      <TText key={idx} color="$placeholderColor">
                         • {suggestion}
                       </TText>
                     ))}
@@ -277,12 +163,12 @@ const RoutineAnalysisScreen: React.FC = () => {
         </TCard>
 
         {/* Next Steps */}
-        <TCard borderColor={borderColor} backgroundColor={surfaceColor}>
+        <TCard borderColor="$borderColor" backgroundColor="$backgroundHover">
           <THeading level={3}>{t("routineAnalysis.nextSteps")}</THeading>
           <TStack gap="$2">
             {analysis.nextSteps.map((step, index) => (
               <TRow key={index} gap="$2" alignItems="center">
-                <TText color={successColor}>{index + 1}.</TText>
+                <TText color="$success">{index + 1}.</TText>
                 <TText>{step}</TText>
               </TRow>
             ))}
