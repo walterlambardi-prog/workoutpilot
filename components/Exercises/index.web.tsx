@@ -1,179 +1,39 @@
-import React, { useEffect, useMemo, useRef } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
-import {
-  Button,
-  Card,
-  Separator,
-  Text,
-  Theme,
-  XStack,
-  YStack,
-  useMedia,
-} from "tamagui";
+import { Button, Card, Separator, Text, Theme, XStack, YStack } from "tamagui";
 
-import { EXERCISE_COPY_KEYS } from "@/constants/exercises";
 import type { ExercisesProps } from "./exercises.types";
 import { webMediaStyles } from "./exercises.web.styles";
-import { useWebPoseDetection } from "./hooks/useWebPoseDetection";
+import { useExerciseSessionWeb } from "./hooks/useExerciseSessionWeb";
 
 /**
  * Web exercises screen with MediaPipe pose detection
  * Uses @mediapipe/tasks-vision for browser-based pose detection
  */
-export default function ExercisesWebScreen({
-  exerciseId,
-  routineContext,
-}: ExercisesProps) {
+export default function ExercisesWebScreen(props: ExercisesProps) {
+  const { t } = useTranslation();
+
   const {
     status,
     messageKey,
     stats,
     videoRef,
     canvasRef,
+    isCameraRunning,
     startCamera,
     stopCamera,
-  } = useWebPoseDetection(exerciseId, routineContext?.stepIndex);
-
-  const { t } = useTranslation();
-  const media = useMedia();
-
-  const autoStartAttemptedRef = useRef(false);
-  const advanceRef = useRef(false);
-  const lastStepIndexRef = useRef<number | null>(null);
-
-  useEffect(() => {
-    if (status !== "ready" || autoStartAttemptedRef.current) return;
-    autoStartAttemptedRef.current = true;
-    startCamera();
-  }, [status, startCamera]);
-
-  useEffect(() => {
-    return () => {
-      autoStartAttemptedRef.current = false;
-      stopCamera();
-    };
-  }, [stopCamera]);
-
-  useEffect(() => {
-    advanceRef.current = false;
-  }, [exerciseId, routineContext?.routineId, routineContext?.stepIndex]);
-
-  const routineIsActive = routineContext?.isActive ?? false;
-  const routineStepIndex = routineContext?.stepIndex ?? null;
-  const routineTargetReps = routineContext?.targetReps ?? 0;
-  const routineOnProgress = routineContext?.onProgress;
-  const routineOnComplete = routineContext?.onComplete;
-  const repCount = stats?.repCount;
-
-  useEffect(() => {
-    if (!routineIsActive) {
-      lastStepIndexRef.current = null;
-      return;
-    }
-
-    const stepChanged = routineStepIndex !== lastStepIndexRef.current;
-
-    if (stepChanged && (repCount ?? 0) > 0) return;
-
-    if (stepChanged) lastStepIndexRef.current = routineStepIndex;
-
-    if (typeof repCount !== "number") return;
-
-    routineOnProgress?.(repCount);
-
-    if (repCount >= routineTargetReps && routineTargetReps > 0) {
-      if (!advanceRef.current) {
-        advanceRef.current = true;
-        routineOnComplete?.(repCount);
-      }
-    } else {
-      advanceRef.current = false;
-    }
-  }, [
-    repCount,
+    headerTitle,
+    headerSubtitle,
+    primaryChip,
+    heroChips,
+    progress,
     routineIsActive,
-    routineOnComplete,
-    routineOnProgress,
-    routineStepIndex,
-    routineTargetReps,
-  ]);
-
-  const copyKey = exerciseId ? EXERCISE_COPY_KEYS[exerciseId] : undefined;
-  const headerTitle = copyKey
-    ? t(`${copyKey}.title`)
-    : t("exercises.web.title");
-  const headerSubtitle = copyKey
-    ? t(`${copyKey}.description`)
-    : t("exercises.web.subtitle");
-
-  const primaryChip = useMemo(() => {
-    if (routineContext?.isActive && routineContext.targetReps > 0) {
-      const safeProgress = Math.max(
-        0,
-        Math.min(routineContext.targetReps, stats?.repCount ?? 0),
-      );
-      return {
-        key: "target",
-        label: t("routineRun.chips.target"),
-        value: `${safeProgress}/${routineContext.targetReps}`,
-      };
-    }
-
-    if (typeof stats?.repCount === "number") {
-      return {
-        key: "reps",
-        label: t("exercises.web.reps"),
-        value: String(stats.repCount),
-      };
-    }
-
-    return null;
-  }, [routineContext, stats?.repCount, t]);
-
-  const heroChips = useMemo(() => {
-    if (routineContext?.isActive && routineContext.targetReps > 0) {
-      return [
-        {
-          key: "round",
-          label: t("routineRun.chips.round"),
-          value: `${routineContext.currentRound}/${routineContext.totalRounds}`,
-        },
-        {
-          key: "step",
-          label: t("routineRun.chips.step"),
-          value: `${routineContext.stepIndex + 1}/${routineContext.totalSteps}`,
-        },
-      ];
-    }
-    return [];
-  }, [routineContext, t]);
-
-  const progress = useMemo(() => {
-    if (!routineContext?.isActive || !routineContext.targetReps) return null;
-
-    const completed = Math.max(
-      0,
-      Math.min(routineContext.targetReps, stats?.repCount ?? 0),
-    );
-    const target = routineContext.targetReps;
-    const ratio = target > 0 ? completed / target : 0;
-
-    let nextExerciseTitle: string | null = null;
-    if (routineContext.nextExerciseId) {
-      const nextCopyKey = EXERCISE_COPY_KEYS[routineContext.nextExerciseId];
-      nextExerciseTitle = nextCopyKey ? t(`${nextCopyKey}.title`) : null;
-    }
-
-    return { completed, target, ratio, nextExerciseTitle };
-  }, [routineContext, stats?.repCount, t]);
-
-  const heroTitleSize = media.md ? 34 : 28;
-  const heroSubtitleSize = media.md ? 18 : 16;
-
-  const overlayPadding = media.md ? "$6" : "$4";
-  const topRightPadding = media.lg ? "22%" : media.md ? "10%" : "0%";
-
-  const isCameraRunning = status === "running";
+    media,
+    heroTitleSize,
+    heroSubtitleSize,
+    overlayPadding,
+    topRightPadding,
+  } = useExerciseSessionWeb(props);
 
   return (
     <Theme name="dark">
