@@ -236,17 +236,22 @@ export const useSettings = () => {
             resetStepTrackerHistory();
             resetRoutine();
 
-            // Clear all cloud data (non-blocking)
-            Promise.all([
-              deleteExerciseCloudHistory(),
-              deleteRoutineCloudHistory(),
-              deleteStepTrackerCloudHistory(),
-            ]).catch((error) => {
+            // Clear all cloud data (sequential to respect foreign keys)
+            try {
+              // Delete routine cloud history first (includes routine_analyses)
+              await deleteRoutineCloudHistory();
+
+              // Delete other histories in parallel (no dependencies)
+              await Promise.all([
+                deleteExerciseCloudHistory(),
+                deleteStepTrackerCloudHistory(),
+              ]);
+            } catch (error) {
               console.error(
                 "[Settings] Failed to delete user data from cloud:",
                 error,
               );
-            });
+            }
 
             showAlert(
               t("settings.data.accountDeletedTitle"),

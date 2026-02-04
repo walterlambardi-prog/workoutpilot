@@ -601,9 +601,11 @@ class SyncService {
     }
 
     try {
-      // Delete in order (respecting foreign keys)
+      // Delete routine_analyses first (has foreign key to routine_sessions)
+      await supabase.from("routine_analyses").delete().eq("user_id", user.id);
+
+      // Delete other tables in parallel (no dependencies between them)
       await Promise.all([
-        supabase.from("routine_analyses").delete().eq("user_id", user.id),
         supabase.from("exercise_sessions").delete().eq("user_id", user.id),
         supabase.from("routine_sessions").delete().eq("user_id", user.id),
         supabase.from("step_tracker_sessions").delete().eq("user_id", user.id),
