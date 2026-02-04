@@ -47,8 +47,8 @@ const SessionsScreen: React.FC = () => {
   const { t } = useTranslation();
 
   const {
-    walkingTotals,
-    walkingHistory,
+    stepTrackerTotals,
+    stepTrackerHistory,
     routineList,
     statHighlights,
     formatDistance,
@@ -79,30 +79,30 @@ const SessionsScreen: React.FC = () => {
       </TGrid>
 
       <TCard gap="$3">
-        <THeading level={3}>{t("sessions.walking.title")}</THeading>
+        <THeading level={3}>{t("sessions.stepTracker.title")}</THeading>
 
         <TGrid columns={Platform.OS === "web" ? 3 : 1} gap="$3">
-          {walkingTotals.totalSteps > 0 && (
+          {stepTrackerTotals.totalSteps > 0 && (
             <StatTile
-              label={t("sessions.walking.totalSteps")}
-              value={formatNumber(walkingTotals.totalSteps)}
+              label={t("sessions.stepTracker.totalSteps")}
+              value={formatNumber(stepTrackerTotals.totalSteps)}
             />
           )}
           <StatTile
-            label={t("sessions.walking.totalDistance")}
-            value={formatDistance(walkingTotals.totalDistanceKm)}
+            label={t("sessions.stepTracker.totalDistance")}
+            value={formatDistance(stepTrackerTotals.totalDistanceKm)}
           />
           <StatTile
-            label={t("sessions.walking.totalTime")}
-            value={formatDuration(walkingTotals.totalDurationMs)}
+            label={t("sessions.stepTracker.totalTime")}
+            value={formatDuration(stepTrackerTotals.totalDurationMs)}
           />
         </TGrid>
 
-        {walkingHistory.length === 0 ? (
-          <EmptyState text={t("sessions.walking.empty")} />
+        {stepTrackerHistory.length === 0 ? (
+          <EmptyState text={t("sessions.stepTracker.empty")} />
         ) : (
           <TGrid columns={Platform.OS === "web" ? 3 : 1} gap="$3">
-            {walkingHistory.map((entry) => (
+            {stepTrackerHistory.map((entry) => (
               <TStack
                 key={entry.id}
                 gap="$2"
@@ -115,7 +115,7 @@ const SessionsScreen: React.FC = () => {
                 <TRow justifyContent="space-between" alignItems="flex-start">
                   <TStack gap="$1">
                     <TText variant="label" color="$placeholderColor">
-                      {t("walking.stats.date")}
+                      {t("stepTracker.stats.date")}
                     </TText>
                     <THeading level={4}>
                       {formatDate(entry.endedAt ?? entry.startedAt)}
@@ -123,7 +123,7 @@ const SessionsScreen: React.FC = () => {
                   </TStack>
                   <TStack alignItems="flex-end" gap="$1">
                     <TText variant="label" color="$placeholderColor">
-                      {t("walking.stats.duration")}
+                      {t("stepTracker.stats.duration")}
                     </TText>
                     <THeading level={4}>
                       {formatDuration(entry.durationMs)}
@@ -134,7 +134,7 @@ const SessionsScreen: React.FC = () => {
                 <TRow justifyContent="space-between" alignItems="flex-start">
                   <TStack gap="$1">
                     <TText variant="label" color="$placeholderColor">
-                      {t("walking.stats.distance")}
+                      {t("stepTracker.stats.distance")}
                     </TText>
                     <THeading level={4}>
                       {formatDistance(entry.distanceKm)}
@@ -142,7 +142,7 @@ const SessionsScreen: React.FC = () => {
                   </TStack>
                   <TStack alignItems="flex-end" gap="$1">
                     <TText variant="label" color="$placeholderColor">
-                      {t("walking.stats.steps")}
+                      {t("stepTracker.stats.steps")}
                     </TText>
                     <THeading level={4}>
                       {entry.steps > 0 ? formatNumber(entry.steps) : "-"}
@@ -153,7 +153,7 @@ const SessionsScreen: React.FC = () => {
                 <TStack borderRadius="$6" overflow="hidden">
                   <MapView
                     positions={entry.positions}
-                    style={styles.walkingMap}
+                    style={styles.stepTrackerMap}
                   />
                 </TStack>
               </TStack>
@@ -332,7 +332,7 @@ const SessionsScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  walkingMap: {
+  stepTrackerMap: {
     height: 220,
     borderRadius: 12,
     overflow: "hidden",

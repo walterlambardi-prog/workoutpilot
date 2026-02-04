@@ -12,7 +12,7 @@
     "settings": "Settings",
     "routine": "Routine",
     "aiCoach": "AI Coach",
-    "walking": "Walking tracker"
+    "stepTracker": "Step tracker"
   },
   "drawer": {
     "title": "Menu"
@@ -154,12 +154,12 @@
       "cancel": "Cancel",
       "clearedTitle": "History cleared",
       "clearedMessage": "All session data has been deleted.",
-      "clearWalkingHistory": "Clear walking history",
-      "clearWalkingHistoryConfirmTitle": "Clear walking sessions?",
-      "clearWalkingHistoryConfirmMessage": "This will permanently delete all your walking session data. This action cannot be undone.",
-      "clearWalkingHistoryConfirm": "Clear walking sessions",
-      "clearedWalkingTitle": "Walking history cleared",
-      "clearedWalkingMessage": "All walking session data has been deleted.",
+      "clearStepTrackerHistory": "Clear step tracker history",
+      "clearStepTrackerHistoryConfirmTitle": "Clear step tracking sessions?",
+      "clearStepTrackerHistoryConfirmMessage": "This will permanently delete all your step tracking session data. This action cannot be undone.",
+      "clearStepTrackerHistoryConfirm": "Clear step tracking sessions",
+      "clearedStepTrackerTitle": "Step tracking history cleared",
+      "clearedStepTrackerMessage": "All step tracking session data has been deleted.",
       "clearRoutineHistory": "Clear routine history",
       "clearRoutineHistoryConfirmTitle": "Clear routine history?",
       "clearRoutineHistoryConfirmMessage": "This will permanently delete all your routine sessions. This action cannot be undone.",
@@ -215,12 +215,12 @@
       "topExercise": "Top routine exercise",
       "empty": "No routine history"
     },
-    "walking": {
-      "title": "Walking sessions",
-      "empty": "No walking sessions yet",
+    "stepTracker": {
+      "title": "Step tracking sessions",
+      "empty": "No step tracking sessions yet",
       "totalSteps": "Total steps",
       "totalDistance": "Total distance",
-      "totalTime": "Total walking time"
+      "totalTime": "Total tracking time"
     },
     "routineList": {
       "title": "Routines",
@@ -380,9 +380,9 @@
           "title": "Standing leg raises",
           "description": "Lift one leg laterally to strengthen hip abductors and improve balance."
         },
-        "walking": {
-          "title": "Walking tracker",
-          "description": "Track your steps and route outdoors or on a treadmill."
+        "stepTracker": {
+          "title": "Step tracker",
+          "description": "Track your steps, route, and time for walking or running."
         }
       }
     },
@@ -551,8 +551,8 @@
       }
     }
   },
-  "walking": {
-    "title": "Walking tracker",
+  "stepTracker": {
+    "title": "Step tracker",
     "subtitle": "Track your steps, GPS route, and time. Works in background.",
     "subtitleWeb": "Track your distance and route via GPS on web.",
     "actions": {
@@ -561,7 +561,7 @@
     },
     "permissions": {
       "activityTitle": "Physical Activity Permission",
-      "activityMessage": "WorkoutPilot needs access to your physical activity data to count your steps while walking."
+      "activityMessage": "WorkoutPilot needs access to your physical activity data to count your steps while moving."
     },
     "status": {
       "label": "Status",
@@ -572,7 +572,7 @@
       "error": "Permission needed"
     },
     "errors": {
-      "permissionDenied": "Location and motion permissions are required to track your walk.",
+      "permissionDenied": "Location and motion permissions are required to track your activity.",
       "backgroundPermissionDenied": "Background location permission is recommended for continuous tracking.",
       "insecureContext": "Use HTTPS or localhost in your browser to enable location.",
       "servicesDisabled": "Turn on location services to track your route.",
@@ -591,11 +591,11 @@
     },
     "map": {
       "title": "Route map",
-      "ariaLabel": "Route map with the walking path"
+      "ariaLabel": "Route map with the tracked path"
     },
     "background": {
       "notification": {
-        "title": "Walking in progress",
+        "title": "Step tracking in progress",
         "body": "{{steps}} steps • {{distance}} km • {{duration}}"
       }
     }

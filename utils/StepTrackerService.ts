@@ -1,13 +1,13 @@
 import { NativeEventEmitter, NativeModules, Platform } from "react-native";
 
 const LINKING_ERROR =
-  `The package 'WalkingTracking' doesn't seem to be linked. Make sure: \n\n` +
+  `The package 'StepTracker' doesn't seem to be linked. Make sure: \n\n` +
   Platform.select({ ios: "- You have run 'pod install'\n", default: "" }) +
   "- You rebuilt the app after installing the package\n" +
   "- You are not using Expo Go\n";
 
-const WalkingTrackingNative = NativeModules.WalkingTracking
-  ? NativeModules.WalkingTracking
+const StepTrackerNative = NativeModules.StepTracker
+  ? NativeModules.StepTracker
   : new Proxy(
       {},
       {
@@ -17,7 +17,7 @@ const WalkingTrackingNative = NativeModules.WalkingTracking
       },
     );
 
-const eventEmitter = new NativeEventEmitter(WalkingTrackingNative);
+const eventEmitter = new NativeEventEmitter(StepTrackerNative);
 
 export interface PermissionStatus {
   motion: "granted" | "denied" | "unavailable" | "unknown";
@@ -62,36 +62,35 @@ export interface TrackingStatusResult {
 
 type EventCallback<T> = (event: T) => void;
 
-class WalkingTrackingService {
+class StepTrackerService {
   private listeners: Map<string, any> = new Map();
 
   /**
    * Request necessary permissions for tracking
    */
   async requestPermissions(): Promise<PermissionStatus> {
-    return WalkingTrackingNative.requestPermissions();
+    return StepTrackerNative.requestPermissions();
   }
 
   /**
    * Start tracking steps and location
    */
   async startTracking(): Promise<TrackingResult> {
-    return WalkingTrackingNative.startTracking();
+    return StepTrackerNative.startTracking();
   }
 
   /**
    * Stop tracking
    */
   async stopTracking(): Promise<TrackingResult> {
-    return WalkingTrackingNative.stopTracking();
+    return StepTrackerNative.stopTracking();
   }
 
   /**
    * Check if currently tracking
    */
   async isTracking(): Promise<boolean> {
-    const result: TrackingStatusResult =
-      await WalkingTrackingNative.isTracking();
+    const result: TrackingStatusResult = await StepTrackerNative.isTracking();
     return result.isTracking;
   }
 
@@ -101,7 +100,7 @@ class WalkingTrackingService {
    */
   async getPendingPositions(): Promise<PendingPosition[]> {
     try {
-      const positions = await WalkingTrackingNative.getPendingPositions();
+      const positions = await StepTrackerNative.getPendingPositions();
       return Array.isArray(positions) ? positions : [];
     } catch {
       return [];
@@ -167,4 +166,4 @@ class WalkingTrackingService {
   }
 }
 
-export default new WalkingTrackingService();
+export default new StepTrackerService();

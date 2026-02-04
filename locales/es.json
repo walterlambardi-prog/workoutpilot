@@ -12,7 +12,7 @@
     "settings": "Configuración",
     "routine": "Rutina",
     "aiCoach": "Coach IA",
-    "walking": "Caminata"
+    "stepTracker": "Contador de pasos"
   },
   "drawer": {
     "title": "Menú"
@@ -154,12 +154,12 @@
       "cancel": "Cancelar",
       "clearedTitle": "Historial borrado",
       "clearedMessage": "Todos los datos de sesiones han sido eliminados.",
-      "clearWalkingHistory": "Borrar historial de caminatas",
-      "clearWalkingHistoryConfirmTitle": "¿Borrar sesiones de caminata?",
-      "clearWalkingHistoryConfirmMessage": "Esto eliminará permanentemente todos tus datos de sesiones de caminata. Esta acción no se puede deshacer.",
-      "clearWalkingHistoryConfirm": "Borrar sesiones de caminata",
-      "clearedWalkingTitle": "Historial de caminatas borrado",
-      "clearedWalkingMessage": "Todos los datos de sesiones de caminata han sido eliminados.",
+      "clearStepTrackerHistory": "Borrar historial de seguimiento",
+      "clearStepTrackerHistoryConfirmTitle": "¿Borrar sesiones de seguimiento?",
+      "clearStepTrackerHistoryConfirmMessage": "Esto eliminará permanentemente todos tus datos de sesiones de seguimiento. Esta acción no se puede deshacer.",
+      "clearStepTrackerHistoryConfirm": "Borrar sesiones de seguimiento",
+      "clearedStepTrackerTitle": "Historial de caminatas borrado",
+      "clearedStepTrackerMessage": "Todos los datos de sesiones de seguimiento han sido eliminados.",
       "clearRoutineHistory": "Borrar historial de rutinas",
       "clearRoutineHistoryConfirmTitle": "¿Borrar historial de rutinas?",
       "clearRoutineHistoryConfirmMessage": "Esto eliminará permanentemente todas tus sesiones de rutina. Esta acción no se puede deshacer.",
@@ -225,16 +225,16 @@
       "exercisesLabel": "{{count}} ejercicios",
       "actions": {
         "start": "Iniciar",
-        "walking": {
-          "title": "Sesiones de caminata",
-          "empty": "Aún no hay sesiones de caminata",
-          "totalSteps": "Pasos totales",
-          "totalDistance": "Distancia total",
-          "totalTime": "Tiempo total caminando"
-        },
         "edit": "Editar",
         "analyze": "Análisis IA"
       }
+    },
+    "stepTracker": {
+      "title": "Sesiones de seguimiento",
+      "empty": "Aún no hay sesiones de seguimiento",
+      "totalSteps": "Pasos totales",
+      "totalDistance": "Distancia total",
+      "totalTime": "Tiempo total de seguimiento"
     },
     "breakdown": {
       "title": "Detalle por ejercicio",
@@ -380,9 +380,9 @@
           "title": "Elevaciones laterales de pierna",
           "description": "Eleva una pierna lateralmente para fortalecer abductores y mejorar equilibrio."
         },
-        "walking": {
+        "stepTracker": {
           "title": "Contador de pasos",
-          "description": "Sigue tus pasos y ruta en caminatas o cinta."
+          "description": "Registra pasos, ruta y tiempo para caminar o correr."
         }
       }
     },
@@ -551,7 +551,7 @@
       }
     }
   },
-  "walking": {
+  "stepTracker": {
     "title": "Contador de pasos",
     "subtitle": "Sigue tus pasos, ruta GPS y tiempo. Funciona en segundo plano.",
     "subtitleWeb": "Sigue tu distancia y ruta por GPS en web.",
@@ -561,7 +561,7 @@
     },
     "permissions": {
       "activityTitle": "Permiso de Actividad Física",
-      "activityMessage": "WorkoutPilot necesita acceso a tus datos de actividad física para contar tus pasos mientras caminas."
+      "activityMessage": "WorkoutPilot necesita acceso a tus datos de actividad física para contar tus pasos durante tu actividad."
     },
     "status": {
       "label": "Estado",
@@ -572,7 +572,7 @@
       "error": "Necesita permiso"
     },
     "errors": {
-      "permissionDenied": "Se requieren permisos de ubicación y movimiento para seguir tu caminata.",
+      "permissionDenied": "Se requieren permisos de ubicación y movimiento para seguir tu actividad.",
       "backgroundPermissionDenied": "Se recomienda el permiso de ubicación en segundo plano para rastreo continuo.",
       "insecureContext": "Usa HTTPS o localhost en el navegador para habilitar la ubicación.",
       "servicesDisabled": "Activa los servicios de ubicación para registrar la ruta.",
@@ -591,11 +591,11 @@
     },
     "map": {
       "title": "Mapa de ruta",
-      "ariaLabel": "Mapa con la ruta de caminata"
+      "ariaLabel": "Mapa con la ruta registrada"
     },
     "background": {
       "notification": {
-        "title": "Caminata en progreso",
+        "title": "Seguimiento en progreso",
         "body": "{{steps}} pasos • {{distance}} km • {{duration}}"
       }
     }

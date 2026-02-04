@@ -1,29 +1,29 @@
 import type { LatLng } from "@/components/MapView/MapView.types";
 
-export type WalkingStatusKey =
+export type StepTrackerStatusKey =
   | "idle"
   | "requesting"
   | "tracking"
   | "paused"
   | "error";
 
-export interface WalkingStats {
+export interface StepTrackerStats {
   steps?: number | null;
   distanceKm: number;
   durationMs: number;
 }
 
-export interface WalkingScreenProps {
+export interface StepTrackerScreenProps {
   autoStart?: boolean;
 }
 
 export interface GeoTrackingState {
   positions: LatLng[];
-  status: WalkingStatusKey;
+  status: StepTrackerStatusKey;
   errorMessage?: string;
 }
 
-export interface WalkingSessionEntry {
+export interface StepTrackerSessionEntry {
   startedAt: number;
   endedAt: number;
   durationMs: number;

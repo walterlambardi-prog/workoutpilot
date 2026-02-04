@@ -182,10 +182,10 @@ export default function RootLayout() {
             }}
           />
           <Stack.Screen
-            name="exercises/walking/index"
+            name="exercises/stepTracker/index"
             options={{
               ...appHeaderOptions,
-              title: t("walking.title"),
+              title: t("stepTracker.title"),
             }}
           />
           <Stack.Screen

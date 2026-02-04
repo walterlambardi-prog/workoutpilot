@@ -6,9 +6,9 @@ import { usePreferencesStore } from "@/stores/preferencesStore";
 import { useRoutineBuilderStore } from "@/stores/routineBuilderStore";
 import { useRoutineSessionStore } from "@/stores/routineSessionStore";
 import {
-  type WalkingSessionEntry,
-  useWalkingSessionStore,
-} from "@/stores/walkingSessionStore";
+  type StepTrackerSessionEntry,
+  useStepTrackerStore,
+} from "@/stores/stepTrackerStore";
 
 /**
  * Interface representing all exportable app data (excluding username)
@@ -37,8 +37,8 @@ export interface AppExportData {
     history: unknown[];
     analysisCache: unknown;
   };
-  walkingSessions?: {
-    history: WalkingSessionEntry[];
+  stepTrackerSessions?: {
+    history: StepTrackerSessionEntry[];
   };
 }
 
@@ -51,7 +51,7 @@ const collectAppData = (): AppExportData => {
   const exerciseSessionState = useExerciseSessionStore.getState();
   const routineBuilderState = useRoutineBuilderStore.getState();
   const routineSessionState = useRoutineSessionStore.getState();
-  const walkingSessionState = useWalkingSessionStore.getState();
+  const stepTrackerSessionState = useStepTrackerStore.getState();
 
   return {
     version: "1.0",
@@ -78,8 +78,8 @@ const collectAppData = (): AppExportData => {
       history: routineSessionState.history,
       analysisCache: routineSessionState.analysisCache,
     },
-    walkingSessions: {
-      history: walkingSessionState.history,
+    stepTrackerSessions: {
+      history: stepTrackerSessionState.history,
     },
   };
 };
@@ -217,11 +217,11 @@ const validateImportData = (data: unknown): data is AppExportData => {
 
   const d = data as Partial<AppExportData>;
 
-  const walkingValid =
-    d.walkingSessions === undefined ||
-    (d.walkingSessions !== undefined &&
-      typeof d.walkingSessions === "object" &&
-      Array.isArray((d.walkingSessions as { history?: unknown }).history));
+  const stepTrackerValid =
+    d.stepTrackerSessions === undefined ||
+    (d.stepTrackerSessions !== undefined &&
+      typeof d.stepTrackerSessions === "object" &&
+      Array.isArray((d.stepTrackerSessions as { history?: unknown }).history));
 
   return (
     typeof d.version === "string" &&
@@ -231,7 +231,7 @@ const validateImportData = (data: unknown): data is AppExportData => {
     d.exerciseSessions !== undefined &&
     d.routineBuilder !== undefined &&
     d.routineSessions !== undefined &&
-    walkingValid
+    stepTrackerValid
   );
 };
 
@@ -281,10 +281,10 @@ const applyImportData = (data: AppExportData): void => {
     analysisCache: data.routineSessions.analysisCache,
   } as Partial<ReturnType<typeof useRoutineSessionStore.getState>>);
 
-  // Walking sessions (optional for backward compatibility)
-  useWalkingSessionStore.setState({
-    history: data.walkingSessions?.history ?? [],
-  } as Partial<ReturnType<typeof useWalkingSessionStore.getState>>);
+  // Step tracker sessions (optional for backward compatibility)
+  useStepTrackerStore.setState({
+    history: data.stepTrackerSessions?.history ?? [],
+  } as Partial<ReturnType<typeof useStepTrackerStore.getState>>);
 };
 
 /**

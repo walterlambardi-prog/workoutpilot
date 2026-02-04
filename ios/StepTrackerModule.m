@@ -1,8 +1,8 @@
-#import "WalkingTrackingModule.h"
+#import "StepTrackerModule.h"
 #import <CoreMotion/CoreMotion.h>
 #import <CoreLocation/CoreLocation.h>
 
-@interface WalkingTrackingModule () <CLLocationManagerDelegate>
+@interface StepTrackerModule () <CLLocationManagerDelegate>
 @property (nonatomic, strong) CMPedometer *pedometer;
 @property (nonatomic, strong) CLLocationManager *locationManager;
 @property (nonatomic, strong) NSDate *sessionStartDate;
@@ -12,9 +12,9 @@
 @property (nonatomic, strong) NSMutableArray *pendingPositions;
 @end
 
-@implementation WalkingTrackingModule
+@implementation StepTrackerModule
 
-RCT_EXPORT_MODULE(WalkingTracking);
+RCT_EXPORT_MODULE(StepTracker);
 
 + (BOOL)requiresMainQueueSetup {
     return YES;
@@ -48,7 +48,7 @@ RCT_EXPORT_MODULE(WalkingTracking);
 
 
 - (void)loadPendingPositions {
-    NSArray *savedPositions = [[NSUserDefaults standardUserDefaults] arrayForKey:@"WalkingPendingPositions"];
+    NSArray *savedPositions = [[NSUserDefaults standardUserDefaults] arrayForKey:@"StepTrackerPendingPositions"];
     if (savedPositions) {
         _pendingPositions = [savedPositions mutableCopy];
     } else {
@@ -62,7 +62,7 @@ RCT_EXPORT_MODULE(WalkingTracking);
         NSRange range = NSMakeRange(_pendingPositions.count - 750, 750);
         _pendingPositions = [[_pendingPositions subarrayWithRange:range] mutableCopy];
     }
-    [[NSUserDefaults standardUserDefaults] setObject:_pendingPositions forKey:@"WalkingPendingPositions"];
+    [[NSUserDefaults standardUserDefaults] setObject:_pendingPositions forKey:@"StepTrackerPendingPositions"];
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
@@ -82,7 +82,7 @@ RCT_EXPORT_MODULE(WalkingTracking);
 
 - (void)clearPendingPositions {
     _pendingPositions = [[NSMutableArray alloc] init];
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"WalkingPendingPositions"];
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"StepTrackerPendingPositions"];
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 - (void)stopObserving {
@@ -254,7 +254,7 @@ RCT_EXPORT_METHOD(getPendingPositions:(RCTPromiseResolveBlock)resolve
     } else {
         // App in background, save to UserDefaults for later retrieval
         [self saveLocationToStorage:location];
-        NSLog(@"[WalkingTracking] App in background, saved position to UserDefaults");
+        NSLog(@"[StepTracker] App in background, saved position to UserDefaults");
     }
 }
 

@@ -29,8 +29,8 @@ export const useExercisesList = () => {
   // Handle exercise card press
   const handlePress = useCallback(
     (exerciseId: ExerciseId) => {
-      if (exerciseId === ExerciseId.WALKING) {
-        router.push("/exercises/walking");
+      if (exerciseId === ExerciseId.STEP_TRACKER) {
+        router.push("/exercises/stepTracker");
         return;
       }
 

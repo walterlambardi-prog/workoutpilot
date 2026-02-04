@@ -12,8 +12,8 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.anonymous.workoutpilot",
       "infoPlist": {
-        "NSLocationWhenInUseUsageDescription": "WorkoutPilot tracks your walking route to measure distance.",
-        "NSLocationAlwaysAndWhenInUseUsageDescription": "Allow background location to keep tracking your walk when the app is not open.",
+        "NSLocationWhenInUseUsageDescription": "WorkoutPilot tracks your route during step-based activities to measure distance.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "Allow background location to keep tracking your activity when the app is not open.",
         "UIBackgroundModes": ["location", "fetch"]
       }
     },

@@ -9,10 +9,10 @@ import { TCard } from "@/components/TCard";
 import { TPage } from "@/components/TPage";
 import { THeading, TText } from "@/components/TText";
 
-import { useWalkingSession } from "./hooks/useWalkingSession.web";
-import styles from "./walking.styles";
+import { useStepTrackerSession } from "./hooks/useStepTrackerSession";
+import styles from "./stepTracker.styles";
 
-const WalkingWebScreen: React.FC = () => {
+const StepTrackerScreen: React.FC = () => {
   const { t } = useTranslation();
   const {
     status,
@@ -21,24 +21,24 @@ const WalkingWebScreen: React.FC = () => {
     stats,
     startTracking,
     stopTracking,
-  } = useWalkingSession();
+  } = useStepTrackerSession();
 
-  const statusLabel = t(`walking.status.${status}`);
+  const statusLabel = t(`stepTracker.status.${status}`);
   const primaryCtaLabel =
     status === "tracking"
-      ? t("walking.actions.stop")
-      : t("walking.actions.start");
+      ? t("stepTracker.actions.stop")
+      : t("stepTracker.actions.start");
 
   return (
     <TPage scrollable hasHeader>
       <ScreenHeader
-        title={t("walking.title")}
-        subtitle={t("walking.subtitleWeb")}
+        title={t("stepTracker.title")}
+        subtitle={t("stepTracker.subtitle")}
       />
 
       <TCard padding="$4">
         <YStack gap="$2">
-          <TText variant="label">{t("walking.status.label")}</TText>
+          <TText variant="label">{t("stepTracker.status.label")}</TText>
           <THeading level={3}>{statusLabel}</THeading>
           {errorMessage ? (
             <TText color={"$red10" as any}>{errorMessage}</TText>
@@ -65,7 +65,7 @@ const WalkingWebScreen: React.FC = () => {
       </XStack>
 
       <YStack gap="$2">
-        <TText variant="label">{t("walking.map.title")}</TText>
+        <TText variant="label">{t("stepTracker.map.title")}</TText>
         <TCard padding="$1">
           <MapView positions={positions} style={styles.mapWrapper} />
         </TCard>
@@ -74,4 +74,4 @@ const WalkingWebScreen: React.FC = () => {
   );
 };
 
-export default WalkingWebScreen;
+export default StepTrackerScreen;

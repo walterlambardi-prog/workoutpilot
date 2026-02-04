@@ -3,9 +3,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import type { LatLng } from "@/components/MapView/MapView.types";
-import { useWalkingSessionStore } from "@/stores/walkingSessionStore";
+import { useStepTrackerStore } from "@/stores/stepTrackerStore";
 
-import type { WalkingStatusKey } from "../walking.types";
+import type { StepTrackerStatusKey } from "../stepTracker.types";
 
 const toRadians = (degrees: number) => (degrees * Math.PI) / 180;
 
@@ -40,9 +40,9 @@ export const formatDuration = (durationMs: number) => {
   return `${seconds}s`;
 };
 
-export const useWalkingSession = () => {
+export const useStepTrackerSession = () => {
   const { t } = useTranslation();
-  const [status, setStatus] = useState<WalkingStatusKey>("idle");
+  const [status, setStatus] = useState<StepTrackerStatusKey>("idle");
   const [errorMessage, setErrorMessage] = useState<string | undefined>();
   const [elapsedMs, setElapsedMs] = useState(0);
   const [isSecureContext, setIsSecureContext] = useState<boolean>(true);
@@ -55,17 +55,17 @@ export const useWalkingSession = () => {
   const browserWatchIdRef = useRef<number | null>(null);
 
   // Use Zustand selectors for proper reactivity
-  const activeSession = useWalkingSessionStore((state) => state.activeSession);
-  const startActiveSession = useWalkingSessionStore(
+  const activeSession = useStepTrackerStore((state) => state.activeSession);
+  const startActiveSession = useStepTrackerStore(
     (state) => state.startActiveSession,
   );
-  const addPositionToActiveSession = useWalkingSessionStore(
+  const addPositionToActiveSession = useStepTrackerStore(
     (state) => state.addPositionToActiveSession,
   );
-  const updateActiveSession = useWalkingSessionStore(
+  const updateActiveSession = useStepTrackerStore(
     (state) => state.updateActiveSession,
   );
-  const finalizeActiveSession = useWalkingSessionStore(
+  const finalizeActiveSession = useStepTrackerStore(
     (state) => state.finalizeActiveSession,
   );
 
@@ -79,7 +79,7 @@ export const useWalkingSession = () => {
     if (positions.length > 0) {
       const calculated = calculateDistanceKm(positions);
 
-      console.log("[WalkingSession.web] 📏 Distance calculated:", {
+      console.log("[StepTrackerSession.web] 📏 Distance calculated:", {
         positions: positions.length,
         distanceKm: calculated.toFixed(2),
       });
@@ -90,7 +90,7 @@ export const useWalkingSession = () => {
         Math.abs(calculated - activeSession.distanceKm) > 0.001
       ) {
         console.log(
-          "[WalkingSession.web] 💾 Updating store with distance:",
+          "[StepTrackerSession.web] 💾 Updating store with distance:",
           calculated.toFixed(2),
         );
         updateActiveSession({ distanceKm: calculated });
@@ -178,7 +178,7 @@ export const useWalkingSession = () => {
   const requestPermissions = useCallback(async () => {
     if (!isSecureContext) {
       setStatus("error");
-      setErrorMessage(t("walking.errors.insecureContext"));
+      setErrorMessage(t("stepTracker.errors.insecureContext"));
       return false;
     }
 
@@ -187,7 +187,7 @@ export const useWalkingSession = () => {
     // For mobile browsers, check native geolocation API first
     if (typeof navigator !== "undefined" && navigator.geolocation) {
       try {
-        console.log("[WalkingSession.web] 🔐 Checking native geolocation API");
+        console.log("[StepTrackerSession.web] 🔐 Checking native geolocation API");
 
         // Test with getCurrentPosition to trigger permission prompt
         await new Promise<GeolocationPosition>((resolve, reject) => {
@@ -198,15 +198,15 @@ export const useWalkingSession = () => {
           });
         });
 
-        console.log("[WalkingSession.web] ✅ Native geolocation available");
+        console.log("[StepTrackerSession.web] ✅ Native geolocation available");
         return true;
       } catch (error) {
         console.error(
-          "[WalkingSession.web] ❌ Native geolocation error:",
+          "[StepTrackerSession.web] ❌ Native geolocation error:",
           error,
         );
         setStatus("error");
-        setErrorMessage(t("walking.errors.permissionDenied"));
+        setErrorMessage(t("stepTracker.errors.permissionDenied"));
         return false;
       }
     }
@@ -214,27 +214,27 @@ export const useWalkingSession = () => {
     // Fallback to Expo Location API
     try {
       console.log(
-        "[WalkingSession.web] 🔐 Requesting location permissions via Expo",
+        "[StepTrackerSession.web] 🔐 Requesting location permissions via Expo",
       );
 
       const { status: fgStatus } =
         await Location.requestForegroundPermissionsAsync();
 
-      console.log("[WalkingSession.web] 📋 Permission status:", fgStatus);
+      console.log("[StepTrackerSession.web] 📋 Permission status:", fgStatus);
 
       if (fgStatus !== "granted") {
         setStatus("error");
-        setErrorMessage(t("walking.errors.permissionDenied"));
+        setErrorMessage(t("stepTracker.errors.permissionDenied"));
         return false;
       }
 
-      console.log("[WalkingSession.web] ✅ Location permissions granted");
+      console.log("[StepTrackerSession.web] ✅ Location permissions granted");
       return true;
     } catch (error) {
-      console.error("[WalkingSession.web] ❌ Permission error:", error);
+      console.error("[StepTrackerSession.web] ❌ Permission error:", error);
       setStatus("error");
       setErrorMessage(
-        error instanceof Error ? error.message : t("walking.errors.unknown"),
+        error instanceof Error ? error.message : t("stepTracker.errors.unknown"),
       );
       return false;
     }
@@ -255,11 +255,11 @@ export const useWalkingSession = () => {
       setStatus("tracking");
       startTimer();
 
-      console.log("[WalkingSession.web] 🌍 Starting location tracking");
+      console.log("[StepTrackerSession.web] 🌍 Starting location tracking");
 
       // Try native browser geolocation API first (better for mobile browsers)
       if (typeof navigator !== "undefined" && navigator.geolocation) {
-        console.log("[WalkingSession.web] 📱 Using native browser geolocation");
+        console.log("[StepTrackerSession.web] 📱 Using native browser geolocation");
 
         const watchId = navigator.geolocation.watchPosition(
           (position) => {
@@ -268,18 +268,18 @@ export const useWalkingSession = () => {
               longitude: position.coords.longitude,
             };
             console.log(
-              "[WalkingSession.web] 📍 New position (native):",
+              "[StepTrackerSession.web] 📍 New position (native):",
               newPosition,
             );
             addPositionToActiveSession(newPosition);
           },
           (error) => {
             console.error(
-              "[WalkingSession.web] ❌ Native geolocation error:",
+              "[StepTrackerSession.web] ❌ Native geolocation error:",
               error,
             );
             setStatus("error");
-            setErrorMessage(t("walking.errors.locationUnavailable"));
+            setErrorMessage(t("stepTracker.errors.locationUnavailable"));
           },
           {
             enableHighAccuracy: true,
@@ -289,12 +289,12 @@ export const useWalkingSession = () => {
         );
 
         browserWatchIdRef.current = watchId;
-        console.log("[WalkingSession.web] ✅ Native location tracking started");
+        console.log("[StepTrackerSession.web] ✅ Native location tracking started");
         return;
       }
 
       // Fallback to Expo Location API
-      console.log("[WalkingSession.web] 📱 Using Expo Location API");
+      console.log("[StepTrackerSession.web] 📱 Using Expo Location API");
       const subscription = await Location.watchPositionAsync(
         {
           accuracy: Location.Accuracy.Balanced,
@@ -308,7 +308,7 @@ export const useWalkingSession = () => {
             longitude: location.coords.longitude,
           };
           console.log(
-            "[WalkingSession.web] 📍 New position (Expo):",
+            "[StepTrackerSession.web] 📍 New position (Expo):",
             newPosition,
           );
           addPositionToActiveSession(newPosition);
@@ -316,12 +316,12 @@ export const useWalkingSession = () => {
       );
 
       locationSubscriptionRef.current = subscription;
-      console.log("[WalkingSession.web] ✅ Expo location tracking started");
+      console.log("[StepTrackerSession.web] ✅ Expo location tracking started");
     } catch (error) {
-      console.error("[WalkingSession.web] ❌ Location tracking error:", error);
+      console.error("[StepTrackerSession.web] ❌ Location tracking error:", error);
       setStatus("error");
       setErrorMessage(
-        error instanceof Error ? error.message : t("walking.errors.unknown"),
+        error instanceof Error ? error.message : t("stepTracker.errors.unknown"),
       );
     }
   }, [
@@ -342,7 +342,7 @@ export const useWalkingSession = () => {
       startTimestampRef.current = null;
     } catch (error) {
       setErrorMessage(
-        error instanceof Error ? error.message : t("walking.errors.unknown"),
+        error instanceof Error ? error.message : t("stepTracker.errors.unknown"),
       );
     }
   }, [finalizeActiveSession, stopSubscriptions, t]);
@@ -359,14 +359,14 @@ export const useWalkingSession = () => {
   const stats = [
     {
       key: "distance",
-      label: t("walking.stats.distance"),
-      value: t("walking.stats.distanceValue", {
+      label: t("stepTracker.stats.distance"),
+      value: t("stepTracker.stats.distanceValue", {
         distance: distanceKm.toFixed(2),
       }),
     },
     {
       key: "duration",
-      label: t("walking.stats.duration"),
+      label: t("stepTracker.stats.duration"),
       value: formatDuration(elapsedMs),
     },
   ];

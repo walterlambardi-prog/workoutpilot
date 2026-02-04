@@ -40,9 +40,9 @@ export const EXERCISE_DEFINITIONS: ExerciseDefinition[] = [
     image: exerciseImages[ExerciseId.STANDING_LEG_RAISES],
   },
   {
-    id: ExerciseId.WALKING,
-    copyKey: EXERCISE_COPY_KEYS[ExerciseId.WALKING],
-    image: exerciseImages[ExerciseId.WALKING],
+    id: ExerciseId.STEP_TRACKER,
+    copyKey: EXERCISE_COPY_KEYS[ExerciseId.STEP_TRACKER],
+    image: exerciseImages[ExerciseId.STEP_TRACKER],
   },
 ];
 

@@ -13,7 +13,7 @@ const HISTORY_LIMIT = 75;
 const createId = () =>
   `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
 
-export interface WalkingSessionEntry {
+export interface StepTrackerSessionEntry {
   id: string;
   startedAt: number;
   endedAt: number;
@@ -31,11 +31,11 @@ export interface ActiveSession {
   positions: LatLng[];
 }
 
-interface WalkingSessionState {
-  history: WalkingSessionEntry[];
+interface StepTrackerState {
+  history: StepTrackerSessionEntry[];
   activeSession: ActiveSession | null;
   addSession: (
-    session: Omit<WalkingSessionEntry, "id"> & { id?: string },
+    session: Omit<StepTrackerSessionEntry, "id"> & { id?: string },
   ) => void;
   startActiveSession: () => void;
   updateActiveSession: (
@@ -47,7 +47,7 @@ interface WalkingSessionState {
   resetHistory: () => void;
 }
 
-type PersistedState = WalkingSessionState;
+type PersistedState = StepTrackerState;
 
 const storage = createCrossPlatformStorage();
 
@@ -55,7 +55,7 @@ const createTyped = createFn as <T>(
   initializer: StateCreator<T, [], [], T>,
 ) => UseBoundStore<StoreApi<T>>;
 
-export const useWalkingSessionStore = createTyped<WalkingSessionState>(
+export const useStepTrackerStore = createTyped<StepTrackerState>(
   (
     persist as <T>(
       config: StateCreator<T, [], [], T>,
@@ -66,13 +66,13 @@ export const useWalkingSessionStore = createTyped<WalkingSessionState>(
       history: [],
       activeSession: null,
       addSession: (session) => {
-        const entry: WalkingSessionEntry = {
+        const entry: StepTrackerSessionEntry = {
           ...session,
           id: session.id ?? createId(),
           positions: session.positions.slice(-750),
         };
 
-        set((state: WalkingSessionState) => ({
+        set((state: StepTrackerState) => ({
           history: [entry, ...state.history].slice(0, HISTORY_LIMIT),
         }));
       },
@@ -88,16 +88,16 @@ export const useWalkingSessionStore = createTyped<WalkingSessionState>(
         });
       },
       updateActiveSession: (update) => {
-        set((state: WalkingSessionState) => {
+        set((state: StepTrackerState) => {
           if (!state.activeSession) {
             console.log(
-              "[WalkingSessionStore] ❌ Cannot update - no active session",
+              "[StepTrackerStore] ❌ Cannot update - no active session",
             );
             return state;
           }
 
-          console.log("[WalkingSessionStore] ✅ Updating session:", update);
-          console.log("[WalkingSessionStore] Before:", {
+          console.log("[StepTrackerStore] ✅ Updating session:", update);
+          console.log("[StepTrackerStore] Before:", {
             steps: state.activeSession.steps,
             distanceKm: state.activeSession.distanceKm,
           });
@@ -109,7 +109,7 @@ export const useWalkingSessionStore = createTyped<WalkingSessionState>(
             },
           };
 
-          console.log("[WalkingSessionStore] After:", {
+          console.log("[StepTrackerStore] After:", {
             steps: updated.activeSession.steps,
             distanceKm: updated.activeSession.distanceKm,
           });
@@ -118,10 +118,10 @@ export const useWalkingSessionStore = createTyped<WalkingSessionState>(
         });
       },
       addPositionToActiveSession: (position) => {
-        set((state: WalkingSessionState) => {
+        set((state: StepTrackerState) => {
           if (!state.activeSession) {
             console.log(
-              "[WalkingSessionStore] No active session, cannot add position",
+              "[StepTrackerStore] No active session, cannot add position",
             );
             return state;
           }
@@ -136,14 +136,14 @@ export const useWalkingSessionStore = createTyped<WalkingSessionState>(
             last.longitude === position.longitude
           ) {
             console.log(
-              "[WalkingSessionStore] Duplicate position detected, skipping",
+              "[StepTrackerStore] Duplicate position detected, skipping",
             );
             return state;
           }
 
           positions.push(position);
           console.log(
-            `[WalkingSessionStore] Added position, total positions: ${positions.length}`,
+            `[StepTrackerStore] Added position, total positions: ${positions.length}`,
           );
 
           return {
@@ -155,13 +155,13 @@ export const useWalkingSessionStore = createTyped<WalkingSessionState>(
         });
       },
       finalizeActiveSession: () => {
-        set((state: WalkingSessionState) => {
+        set((state: StepTrackerState) => {
           if (!state.activeSession) return state;
 
           const endedAt = Date.now();
           const durationMs = endedAt - state.activeSession.startedAt;
 
-          const entry: WalkingSessionEntry = {
+          const entry: StepTrackerSessionEntry = {
             id: state.activeSession.id,
             startedAt: state.activeSession.startedAt,
             endedAt,
@@ -183,7 +183,7 @@ export const useWalkingSessionStore = createTyped<WalkingSessionState>(
       resetHistory: () => set({ history: [] }),
     }),
     {
-      name: "walking-session-store",
+      name: "step-tracker-store",
       version: 1,
       storage,
       partialize: (state: PersistedState) => ({
@@ -205,9 +205,9 @@ if (
 ) {
   const reactotron = require("@/config/reactotron").default;
   if (reactotron) {
-    useWalkingSessionStore.subscribe((state: WalkingSessionState) => {
+    useStepTrackerStore.subscribe((state: StepTrackerState) => {
       reactotron?.display?.({
-        name: "WalkingSessionStore",
+        name: "StepTrackerStore",
         value: state,
         preview: `history=${state.history.length}`,
       });

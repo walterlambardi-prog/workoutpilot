@@ -1,8 +1,8 @@
-# Walking Tracker - Background Tracking Implementation
+# Step Tracker - Background Tracking Implementation
 
 ## 📱 Resumen de Cambios
 
-La funcionalidad de walking ha sido refactorizada para soportar **tracking en background** tanto en iOS como Android, utilizando módulos nativos personalizados.
+La funcionalidad de step tracking ha sido refactorizada para soportar **tracking en background** tanto en iOS como Android, utilizando módulos nativos personalizados.
 
 ### ✨ Características Nuevas
 
@@ -19,9 +19,9 @@ La funcionalidad de walking ha sido refactorizada para soportar **tracking en ba
 
 ### Módulos Nativos
 
-#### iOS (`WalkingTrackingModule`)
+#### iOS (`Step trackingTrackingModule`)
 
-- **Ubicación**: `ios/workoutpilot/WalkingTrackingModule.[h|m]`
+- **Ubicación**: `ios/workoutpilot/Step trackingTrackingModule.[h|m]`
 - **Tecnologías**:
   - `CMPedometer` para contador de pasos
   - `CLLocationManager` para ubicación GPS con updates en background
@@ -32,9 +32,9 @@ La funcionalidad de walking ha sido refactorizada para soportar **tracking en ba
   - `NSLocationAlwaysAndWhenInUseUsageDescription`
   - `UIBackgroundModes`: `location`
 
-#### Android (`WalkingTrackingModule`)
+#### Android (`Step trackingTrackingModule`)
 
-- **Ubicación**: `android/app/src/main/java/com/anonymous/workoutpilot/WalkingTrackingModule.kt`
+- **Ubicación**: `android/app/src/main/java/com/anonymous/workoutpilot/Step trackingTrackingModule.kt`
 - **Lenguaje**: Kotlin (moderno, conciso, recomendado por Google)
 - **Tecnologías**:
   - `Sensor.TYPE_STEP_COUNTER` para contar pasos
@@ -51,33 +51,33 @@ La funcionalidad de walking ha sido refactorizada para soportar **tracking en ba
 
 ### TypeScript Bridge
 
-**Archivo**: `utils/WalkingTrackingService.ts`
+**Archivo**: `utils/Step trackingTrackingService.ts`
 
 Expone una API limpia para React Native:
 
 ```typescript
 // Iniciar tracking
-await WalkingTrackingService.startTracking();
+await Step trackingTrackingService.startTracking();
 
 // Detener tracking
-await WalkingTrackingService.stopTracking();
+await Step trackingTrackingService.stopTracking();
 
 // Recuperar posiciones guardadas en background
-const positions = await WalkingTrackingService.getPendingPositions();
+const positions = await Step trackingTrackingService.getPendingPositions();
 
 // Suscribirse a eventos
-WalkingTrackingService.onStepUpdate((event) => {
+Step trackingTrackingService.onStepUpdate((event) => {
   console.log(`Pasos: ${event.steps}`);
 });
 
-WalkingTrackingService.onLocationUpdate((event) => {
+Step trackingTrackingService.onLocationUpdate((event) => {
   console.log(`Lat: ${event.latitude}, Lng: ${event.longitude}`);
 });
 ```
 
 ### Store Updates
 
-**Archivo**: `stores/walkingSessionStore.ts`
+**Archivo**: `stores/step trackingSessionStore.ts`
 
 Nuevos métodos agregados:
 
@@ -153,9 +153,9 @@ private fun savePendingPosition(location: Location) {
 Nuevo método nativo para recuperar ubicaciones guardadas:
 
 ```typescript
-// utils/WalkingTrackingService.ts
+// utils/Step trackingTrackingService.ts
 getPendingPositions(): Promise<LocationData[]> {
-  return WalkingTrackingModule.getPendingPositions();
+  return Step trackingTrackingModule.getPendingPositions();
 }
 ```
 
@@ -170,21 +170,21 @@ Este método:
 Cuando la app vuelve a foreground, el componente automáticamente:
 
 ```typescript
-// app/exercises/walking/index.tsx
+// app/exercises/step tracking/index.tsx
 const resumeTrackingIfNeeded = async () => {
-  const isCurrentlyTracking = await WalkingTrackingService.isTracking();
+  const isCurrentlyTracking = await Step trackingTrackingService.isTracking();
 
   if (isCurrentlyTracking && activeSession) {
     console.log(
-      "[WalkingTracker] Resuming tracking, syncing pending positions...",
+      "[Step trackingTracker] Resuming tracking, syncing pending positions...",
     );
 
     // Recuperar posiciones guardadas en background
-    const pendingPositions = await WalkingTrackingService.getPendingPositions();
+    const pendingPositions = await Step trackingTrackingService.getPendingPositions();
 
     if (pendingPositions.length > 0) {
       console.log(
-        `[WalkingTracker] Syncing ${pendingPositions.length} background positions`,
+        `[Step trackingTracker] Syncing ${pendingPositions.length} background positions`,
       );
 
       // Agregar cada posición al trayecto
@@ -405,14 +405,14 @@ El sistema usa el **mayor** de los dos valores para mayor precisión.
 
 ```bash
 # Android
-adb logcat | grep WalkingTracking
+adb logcat | grep Step trackingTracking
 
 # Deberías ver:
 # Saved position X: lat, lon (con todos los campos)
 # getPendingPositions called, found N positions
 # (y luego en React Native)
-# [WalkingSession] Retrieved pending positions: N
-# [WalkingSession] Adding position 1/N: lat, lon
+# [Step trackingSession] Retrieved pending positions: N
+# [Step trackingSession] Adding position 1/N: lat, lon
 ```
 
 **Problema**: Posiciones duplicadas detectadas al volver de background
@@ -460,18 +460,18 @@ adb logcat | grep WalkingTracking
 
 ### Archivos Nuevos
 
-- `ios/workoutpilot/WalkingTrackingModule.h`
-- `ios/workoutpilot/WalkingTrackingModule.m`
-- `android/app/src/main/java/com/anonymous/workoutpilot/WalkingTrackingModule.kt`
-- `android/app/src/main/java/com/anonymous/workoutpilot/WalkingTrackingPackage.kt`
-- `utils/WalkingTrackingService.ts`
-- `app/exercises/walking/index.tsx.backup` (backup del original)
+- `ios/workoutpilot/Step trackingTrackingModule.h`
+- `ios/workoutpilot/Step trackingTrackingModule.m`
+- `android/app/src/main/java/com/anonymous/workoutpilot/Step trackingTrackingModule.kt`
+- `android/app/src/main/java/com/anonymous/workoutpilot/Step trackingTrackingPackage.kt`
+- `utils/Step trackingTrackingService.ts`
+- `app/exercises/step tracking/index.tsx.backup` (backup del original)
 
 ### Archivos Modificados
 
-- `app/exercises/walking/index.tsx` (refactorizado completamente)
-- `stores/walkingSessionStore.ts` (agregado estado de sesión activa)
-- `android/app/src/main/java/com/anonymous/workoutpilot/MainApplication.kt` (registrado WalkingTrackingPackage)
+- `app/exercises/step tracking/index.tsx` (refactorizado completamente)
+- `stores/step trackingSessionStore.ts` (agregado estado de sesión activa)
+- `android/app/src/main/java/com/anonymous/workoutpilot/MainApplication.kt` (registrado Step trackingTrackingPackage)
 - `android/app/src/main/AndroidManifest.xml` (permisos adicionales)
 - `locales/en.json` (traducciones actualizadas)
 - `locales/es.json` (traducciones actualizadas)

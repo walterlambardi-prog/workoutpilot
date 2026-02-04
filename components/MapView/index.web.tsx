@@ -79,7 +79,7 @@ const MapViewWeb: React.FC<MapViewProps> = ({ positions, style, onReady }) => {
         zoom={zoom}
         scrollWheelZoom
         style={styles.map}
-        aria-label={t("walking.map.ariaLabel")}
+        aria-label={t("stepTracker.map.ariaLabel")}
       >
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
         {hasPath ? (

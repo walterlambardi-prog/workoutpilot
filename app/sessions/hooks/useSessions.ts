@@ -10,7 +10,7 @@ import {
   type RoutineSession,
   useRoutineSessionStore,
 } from "@/stores/routineSessionStore";
-import { useWalkingSessionStore } from "@/stores/walkingSessionStore";
+import { useStepTrackerStore } from "@/stores/stepTrackerStore";
 
 import type { RoutineListItem } from "../sessions.types";
 
@@ -49,12 +49,12 @@ export const useSessions = () => {
   const applyPlan = useRoutineBuilderStore((state) => state.applyPlan);
   const { history: routineHistory, lastCompletedSession } =
     useRoutineSessionStore();
-  const walkingHistory = useWalkingSessionStore((state) => state.history);
+  const stepTrackerHistory = useStepTrackerStore((state) => state.history);
 
   // Format helpers
   const formatDistance = useCallback(
     (distanceKm: number) =>
-      t("walking.stats.distanceValue", { distance: distanceKm.toFixed(2) }),
+      t("stepTracker.stats.distanceValue", { distance: distanceKm.toFixed(2) }),
     [t],
   );
 
@@ -101,21 +101,21 @@ export const useSessions = () => {
     };
   }, [currentSession, history]);
 
-  // Walking session totals
-  const walkingTotals = useMemo(() => {
-    const totalSteps = walkingHistory.reduce(
+  // Step tracker session totals
+  const stepTrackerTotals = useMemo(() => {
+    const totalSteps = stepTrackerHistory.reduce(
       (sum, entry) => sum + (entry.steps ?? 0),
       0,
     );
-    const totalDistanceKm = walkingHistory.reduce(
+    const totalDistanceKm = stepTrackerHistory.reduce(
       (sum, entry) => sum + (entry.distanceKm ?? 0),
       0,
     );
-    const totalDurationMs = walkingHistory.reduce(
+    const totalDurationMs = stepTrackerHistory.reduce(
       (sum, entry) => sum + (entry.durationMs ?? 0),
       0,
     );
-    const lastSession = walkingHistory[0] ?? null;
+    const lastSession = stepTrackerHistory[0] ?? null;
 
     return {
       totalSteps,
@@ -123,7 +123,7 @@ export const useSessions = () => {
       totalDurationMs,
       lastSession,
     };
-  }, [walkingHistory]);
+  }, [stepTrackerHistory]);
 
   // Routine sessions
   const routineSessions = useMemo(() => {
@@ -312,8 +312,8 @@ export const useSessions = () => {
   return {
     // Data
     totals,
-    walkingTotals,
-    walkingHistory,
+    stepTrackerTotals,
+    stepTrackerHistory,
     routineList,
     statHighlights,
 

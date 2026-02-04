@@ -902,12 +902,12 @@ const App = () => {
 ```
 app/
   exercises/
-    walking/
+    stepTracker/
       index.tsx              # Presentational component
       hooks/
-        useWalkingSession.ts # Business logic hook
-      walking.styles.ts
-      walking.types.ts
+        useStepTrackerSession.ts # Business logic hook
+      stepTracker.styles.ts
+      stepTracker.types.ts
 
   routine/
     index.tsx
@@ -1172,7 +1172,7 @@ const GoodScreen = () => {
 
 ### Overview
 
-This project uses **custom native modules** for features that require platform-specific APIs (iOS/Android) not available in standard React Native or Expo. The primary example is **walking tracking with background location and step counting**.
+This project uses **custom native modules** for features that require platform-specific APIs (iOS/Android) not available in standard React Native or Expo. The primary example is **stepTracker tracking with background location and step counting**.
 
 **Key principles:**
 
@@ -1181,26 +1181,26 @@ This project uses **custom native modules** for features that require platform-s
 - React hooks encapsulate **all business logic** (subscriptions, state, effects)
 - Components remain **100% presentational**
 
-### Walking Tracker Architecture
+### Step Tracker Architecture
 
-Located in `app/exercises/walking/`:
+Located in `app/exercises/stepTracker/`:
 
 ```
-walking/
+stepTracker/
 ├── index.tsx                  # Presentational component (UI only)
 ├── hooks/
-│   └── useWalkingSession.ts   # Business logic hook
-├── walking.styles.ts          # StyleSheet with theme constants
-└── walking.types.ts           # TypeScript interfaces
+│   └── useStepTrackerSession.ts   # Business logic hook
+├── stepTracker.styles.ts          # StyleSheet with theme constants
+└── stepTracker.types.ts           # TypeScript interfaces
 ```
 
 **Native modules:**
 
-- `ios/workoutpilot/WalkingTrackingModule.[h|m]` - iOS implementation
-- `android/.../WalkingTrackingModule.kt` - Android implementation
-- `utils/WalkingTrackingService.ts` - TypeScript bridge
+- `ios/workoutpilot/StepTrackerModule.[h|m]` - iOS implementation
+- `android/.../StepTrackerModule.kt` - Android implementation
+- `utils/StepTrackerService.ts` - TypeScript bridge
 
-**Documentation**: See `WALKING_BACKGROUND_TRACKING.md` for complete native module setup, permissions, and troubleshooting.
+**Documentation**: See `STEPTRACKER_BACKGROUND_TRACKING.md` for complete native module setup, permissions, and troubleshooting.
 
 ### Native Module Guidelines
 
@@ -1232,11 +1232,11 @@ Use `useEffect` to subscribe/unsubscribe from native events:
 
 ```typescript
 useEffect(() => {
-  const unsubscribeSteps = WalkingTrackingService.onStepUpdate((event) => {
+  const unsubscribeSteps = StepTrackerService.onStepUpdate((event) => {
     updateState({ steps: event.steps });
   });
 
-  const unsubscribeLocation = WalkingTrackingService.onLocationUpdate(
+  const unsubscribeLocation = StepTrackerService.onLocationUpdate(
     (event) => {
       addPosition({ latitude: event.latitude, longitude: event.longitude });
     },
@@ -1293,8 +1293,8 @@ useEffect(() => {
 Use Zustand stores for **persistent session state**:
 
 ```typescript
-// stores/walkingSessionStore.ts
-export const useWalkingSessionStore = create<WalkingStore>()(
+// stores/stepTrackerSessionStore.ts
+export const useStepTrackerSessionStore = create<WalkingStore>()(
   persist(
     (set) => ({
       activeSession: null,
@@ -1332,7 +1332,7 @@ export const useWalkingSessionStore = create<WalkingStore>()(
         }),
     }),
     {
-      name: "walking-session-storage",
+      name: "stepTracker-session-storage",
       storage: createJSONStorage(() => AsyncStorage),
     },
   ),
@@ -1411,7 +1411,7 @@ const startTracking = async () => {
 
 When adding/modifying native modules:
 
-1. **Update `WALKING_BACKGROUND_TRACKING.md`** (or create similar docs):
+1. **Update `STEPTRACKER_BACKGROUND_TRACKING.md`** (or create similar docs):
    - Architecture overview
    - Native implementation details
    - Permission requirements
@@ -1474,16 +1474,16 @@ useEffect(() => {
 
 ### Example: Complete Native Feature Implementation
 
-See `app/exercises/walking/` for reference implementation showing:
+See `app/exercises/stepTracker/` for reference implementation showing:
 
-- ✅ TypeScript bridge (`utils/WalkingTrackingService.ts`)
-- ✅ Custom hook (`hooks/useWalkingSession.ts`)
+- ✅ TypeScript bridge (`utils/StepTrackerService.ts`)
+- ✅ Custom hook (`hooks/useStepTrackerSession.ts`)
 - ✅ Presentational component (`index.tsx`)
-- ✅ Zustand store with persistence (`stores/walkingSessionStore.ts`)
+- ✅ Zustand store with persistence (`stores/stepTrackerSessionStore.ts`)
 - ✅ Native modules (iOS Objective-C, Android Kotlin)
 - ✅ Background position persistence
 - ✅ AppState synchronization
 - ✅ Error handling and permissions
-- ✅ Complete documentation (`WALKING_BACKGROUND_TRACKING.md`)
+- ✅ Complete documentation (`STEPTRACKER_BACKGROUND_TRACKING.md`)
 
 This is the **recommended pattern** for all future native features.

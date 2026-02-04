@@ -48,11 +48,11 @@
     <key>NSCameraUsageDescription</key>
     <string>This app uses camera to get pose landmarks that appear in the camera feed.</string>
     <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-    <string>Allow background location to keep tracking your walk when the app is not open.</string>
+    <string>Allow background location to keep tracking your activity when the app is not open.</string>
     <key>NSLocationAlwaysUsageDescription</key>
     <string>Allow $(PRODUCT_NAME) to access your location</string>
     <key>NSLocationWhenInUseUsageDescription</key>
-    <string>WorkoutPilot tracks your walking route to measure distance.</string>
+    <string>WorkoutPilot tracks your route during step-based activities to measure distance.</string>
     <key>NSMotionUsageDescription</key>
     <string>Allow $(PRODUCT_NAME) to access your device motion</string>
     <key>NSUserActivityTypes</key>

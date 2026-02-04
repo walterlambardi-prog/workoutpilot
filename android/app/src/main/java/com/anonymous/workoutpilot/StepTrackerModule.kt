@@ -34,14 +34,14 @@ import com.google.android.gms.location.Priority
 import org.json.JSONArray
 import org.json.JSONObject
 
-class WalkingTrackingModule(reactContext: ReactApplicationContext) :
+class StepTrackerModule(reactContext: ReactApplicationContext) :
     ReactContextBaseJavaModule(reactContext), SensorEventListener {
 
     companion object {
-        private const val MODULE_NAME = "WalkingTracking"
-        private const val CHANNEL_ID = "walking_tracking_channel"
+        private const val MODULE_NAME = "StepTracker"
+        private const val CHANNEL_ID = "step_tracker_channel"
         private const val NOTIFICATION_ID = 1001
-        private const val PREFS_NAME = "WalkingTrackingPrefs"
+        private const val PREFS_NAME = "StepTrackerPrefs"
         private const val KEY_POSITIONS = "pending_positions"
         private const val MAX_STORED_POSITIONS = 750
     }
@@ -77,7 +77,7 @@ class WalkingTrackingModule(reactContext: ReactApplicationContext) :
                 // If event wasn't sent (app in background), save to SharedPreferences
                 if (!eventSent) {
                     saveLocationToPrefs(location)
-                    android.util.Log.d("WalkingTracking", "App in background, saved position to SharedPreferences")
+                    android.util.Log.d("StepTracker", "App in background, saved position to SharedPreferences")
                 }
             }
         }
@@ -93,10 +93,10 @@ class WalkingTrackingModule(reactContext: ReactApplicationContext) :
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 CHANNEL_ID,
-                "Walking Tracking",
+                "Step Tracking",
                 NotificationManager.IMPORTANCE_LOW
             ).apply {
-                description = "Tracks your walking session in background"
+                description = "Tracks your step-based activities in background"
             }
             notificationManager.createNotificationChannel(channel)
         }
@@ -126,9 +126,9 @@ class WalkingTrackingModule(reactContext: ReactApplicationContext) :
             }
             
             sharedPrefs.edit().putString(KEY_POSITIONS, trimmedPositions.toString()).apply()
-            android.util.Log.d("WalkingTracking", "Saved position ${positions.length()}: ${location.latitude}, ${location.longitude}")
+            android.util.Log.d("StepTracker", "Saved position ${positions.length()}: ${location.latitude}, ${location.longitude}")
         } catch (e: Exception) {
-            android.util.Log.e("WalkingTracking", "Error saving position", e)
+            android.util.Log.e("StepTracker", "Error saving position", e)
             // Silently fail - don't crash the tracking
         }
     }
@@ -180,7 +180,7 @@ class WalkingTrackingModule(reactContext: ReactApplicationContext) :
         )
 
         return NotificationCompat.Builder(reactApplicationContext, CHANNEL_ID)
-            .setContentTitle("Walking in progress")
+            .setContentTitle("Step tracking in progress")
             .setContentText(contentText)
             .setSmallIcon(android.R.drawable.ic_menu_compass)
             .setContentIntent(pendingIntent)
@@ -202,14 +202,14 @@ class WalkingTrackingModule(reactContext: ReactApplicationContext) :
 
     @ReactMethod
     fun requestPermissions(promise: Promise) {
-        android.util.Log.d("WalkingTracking", "📋 Requesting permissions...")
+        android.util.Log.d("StepTracker", "📋 Requesting permissions...")
         
         val result = Arguments.createMap()
 
         // Check step counter availability
         val motionStatus = when {
             stepSensor == null -> {
-                android.util.Log.w("WalkingTracking", "❌ Step sensor not available on this device")
+                android.util.Log.w("StepTracker", "❌ Step sensor not available on this device")
                 "unavailable"
             }
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q -> {
@@ -218,15 +218,15 @@ class WalkingTrackingModule(reactContext: ReactApplicationContext) :
                     android.Manifest.permission.ACTIVITY_RECOGNITION
                 )
                 if (permission == PackageManager.PERMISSION_GRANTED) {
-                    android.util.Log.d("WalkingTracking", "✅ ACTIVITY_RECOGNITION permission already granted")
+                    android.util.Log.d("StepTracker", "✅ ACTIVITY_RECOGNITION permission already granted")
                     "granted"
                 } else {
-                    android.util.Log.d("WalkingTracking", "⚠️ ACTIVITY_RECOGNITION permission not granted, will be requested by Expo")
+                    android.util.Log.d("StepTracker", "⚠️ ACTIVITY_RECOGNITION permission not granted, will be requested by Expo")
                     "denied"
                 }
             }
             else -> {
-                android.util.Log.d("WalkingTracking", "✅ ACTIVITY_RECOGNITION not required (API < 29)")
+                android.util.Log.d("StepTracker", "✅ ACTIVITY_RECOGNITION not required (API < 29)")
                 "granted"
             }
         }
@@ -251,7 +251,7 @@ class WalkingTrackingModule(reactContext: ReactApplicationContext) :
         
         result.putString("location", locationStatus)
         
-        android.util.Log.d("WalkingTracking", "📋 Permissions status - Motion: $motionStatus, Location: $locationStatus")
+        android.util.Log.d("StepTracker", "📋 Permissions status - Motion: $motionStatus, Location: $locationStatus")
 
         promise.resolve(result)
     }
@@ -276,11 +276,11 @@ class WalkingTrackingModule(reactContext: ReactApplicationContext) :
 
         // Start step counting
         stepSensor?.let {
-            android.util.Log.d("WalkingTracking", "📱 Registering step sensor listener")
+            android.util.Log.d("StepTracker", "📱 Registering step sensor listener")
             sensorManager.registerListener(this, it, SensorManager.SENSOR_DELAY_UI)
-            android.util.Log.d("WalkingTracking", "✅ Step sensor listener registered")
+            android.util.Log.d("StepTracker", "✅ Step sensor listener registered")
         } ?: run {
-            android.util.Log.e("WalkingTracking", "❌ Step sensor is NULL - device doesn't support step counting")
+            android.util.Log.e("StepTracker", "❌ Step sensor is NULL - device doesn't support step counting")
         }
 
         // Start location updates
@@ -361,7 +361,7 @@ class WalkingTrackingModule(reactContext: ReactApplicationContext) :
             val positionsJson = sharedPrefs.getString(KEY_POSITIONS, "[]") ?: "[]"
             val positions = JSONArray(positionsJson)
             
-            android.util.Log.d("WalkingTracking", "getPendingPositions called, found ${positions.length()} positions")
+            android.util.Log.d("StepTracker", "getPendingPositions called, found ${positions.length()} positions")
             
             val result = Arguments.createArray()
             for (i in 0 until positions.length()) {
@@ -379,36 +379,36 @@ class WalkingTrackingModule(reactContext: ReactApplicationContext) :
             
             // Clear after reading
             sharedPrefs.edit().remove(KEY_POSITIONS).apply()
-            android.util.Log.d("WalkingTracking", "Cleared pending positions after reading")
+            android.util.Log.d("StepTracker", "Cleared pending positions after reading")
             
             promise.resolve(result)
         } catch (e: Exception) {
-            android.util.Log.e("WalkingTracking", "Error getting pending positions", e)
+            android.util.Log.e("StepTracker", "Error getting pending positions", e)
             promise.reject("GET_POSITIONS_ERROR", e.message)
         }
     }
 
     // SensorEventListener methods
     override fun onSensorChanged(event: SensorEvent) {
-        android.util.Log.d("WalkingTracking", "🔔 onSensorChanged: sensor=${event.sensor.type}, isTracking=$isTracking")
+        android.util.Log.d("StepTracker", "🔔 onSensorChanged: sensor=${event.sensor.type}, isTracking=$isTracking")
         
         if (!isTracking || event.sensor.type != Sensor.TYPE_STEP_COUNTER) {
-            android.util.Log.d("WalkingTracking", "⏭️ Skipping sensor event")
+            android.util.Log.d("StepTracker", "⏭️ Skipping sensor event")
             return
         }
 
         val totalSteps = event.values[0].toInt()
-        android.util.Log.d("WalkingTracking", "📊 Total steps from sensor: $totalSteps")
+        android.util.Log.d("StepTracker", "📊 Total steps from sensor: $totalSteps")
 
         if (initialStepCount == 0) {
             initialStepCount = totalSteps
-            android.util.Log.d("WalkingTracking", "🔢 Initial step count set to: $initialStepCount")
+            android.util.Log.d("StepTracker", "🔢 Initial step count set to: $initialStepCount")
         }
 
         currentSteps = totalSteps - initialStepCount
         val distanceKm = (currentSteps * 0.762) / 1000.0
         
-        android.util.Log.d("WalkingTracking", "✅ Current steps: $currentSteps, distance: $distanceKm km")
+        android.util.Log.d("StepTracker", "✅ Current steps: $currentSteps, distance: $distanceKm km")
 
         val params = Arguments.createMap().apply {
             putInt("steps", currentSteps)
@@ -416,9 +416,9 @@ class WalkingTrackingModule(reactContext: ReactApplicationContext) :
             putDouble("timestamp", System.currentTimeMillis().toDouble())
         }
         
-        android.util.Log.d("WalkingTracking", "📤 Sending onStepUpdate event: steps=$currentSteps, distance=$distanceKm")
+        android.util.Log.d("StepTracker", "📤 Sending onStepUpdate event: steps=$currentSteps, distance=$distanceKm")
         sendEvent("onStepUpdate", params)
-        android.util.Log.d("WalkingTracking", "✅ onStepUpdate event sent successfully")
+        android.util.Log.d("StepTracker", "✅ onStepUpdate event sent successfully")
 
         // Update notification every 10 steps
         if (currentSteps % 10 == 0) {

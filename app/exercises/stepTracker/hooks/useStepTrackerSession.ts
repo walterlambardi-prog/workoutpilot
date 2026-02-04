@@ -9,10 +9,10 @@ import {
 } from "react-native";
 
 import type { LatLng } from "@/components/MapView/MapView.types";
-import { useWalkingSessionStore } from "@/stores/walkingSessionStore";
-import WalkingTrackingService from "@/utils/WalkingTrackingService";
+import { useStepTrackerStore } from "@/stores/stepTrackerStore";
+import StepTrackerService from "@/utils/StepTrackerService";
 
-import type { WalkingStatusKey } from "../walking.types";
+import type { StepTrackerStatusKey } from "../stepTracker.types";
 
 const toRadians = (degrees: number) => (degrees * Math.PI) / 180;
 
@@ -47,26 +47,26 @@ export const formatDuration = (durationMs: number) => {
   return `${seconds}s`;
 };
 
-export const useWalkingSession = () => {
+export const useStepTrackerSession = () => {
   const { t } = useTranslation();
-  const [status, setStatus] = useState<WalkingStatusKey>("idle");
+  const [status, setStatus] = useState<StepTrackerStatusKey>("idle");
   const [errorMessage, setErrorMessage] = useState<string | undefined>();
   const [elapsedMs, setElapsedMs] = useState(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const appStateRef = useRef<AppStateStatus>(AppState.currentState);
 
   // Use selectors to subscribe to store changes correctly
-  const activeSession = useWalkingSessionStore((state) => state.activeSession);
-  const startActiveSession = useWalkingSessionStore(
+  const activeSession = useStepTrackerStore((state) => state.activeSession);
+  const startActiveSession = useStepTrackerStore(
     (state) => state.startActiveSession,
   );
-  const updateActiveSession = useWalkingSessionStore(
+  const updateActiveSession = useStepTrackerStore(
     (state) => state.updateActiveSession,
   );
-  const addPositionToActiveSession = useWalkingSessionStore(
+  const addPositionToActiveSession = useStepTrackerStore(
     (state) => state.addPositionToActiveSession,
   );
-  const finalizeActiveSession = useWalkingSessionStore(
+  const finalizeActiveSession = useStepTrackerStore(
     (state) => state.finalizeActiveSession,
   );
 
@@ -106,7 +106,7 @@ export const useWalkingSession = () => {
 
       if (foregroundStatus !== "granted") {
         setStatus("error");
-        setErrorMessage(t("walking.errors.permissionDenied"));
+        setErrorMessage(t("stepTracker.errors.permissionDenied"));
         return false;
       }
 
@@ -115,77 +115,77 @@ export const useWalkingSession = () => {
         const { status: backgroundStatus } =
           await Location.requestBackgroundPermissionsAsync();
         if (backgroundStatus !== "granted") {
-          setErrorMessage(t("walking.errors.backgroundPermissionDenied"));
+          setErrorMessage(t("stepTracker.errors.backgroundPermissionDenied"));
           // Continue anyway, but warn user
         }
       } else if (Platform.OS === "ios") {
         // iOS handles "always" permission through the native module
-        const permissions = await WalkingTrackingService.requestPermissions();
+        const permissions = await StepTrackerService.requestPermissions();
         if (permissions.location !== "granted") {
-          setErrorMessage(t("walking.errors.backgroundPermissionDenied"));
+          setErrorMessage(t("stepTracker.errors.backgroundPermissionDenied"));
         }
       }
 
       // Request activity recognition permission (Android 10+)
       if (Platform.OS === "android" && Platform.Version >= 29) {
         console.log(
-          "[WalkingSession] 📋 Requesting ACTIVITY_RECOGNITION permission...",
+          "[StepTrackerSession] 📋 Requesting ACTIVITY_RECOGNITION permission...",
         );
 
         const granted = await PermissionsAndroid.request(
           PermissionsAndroid.PERMISSIONS.ACTIVITY_RECOGNITION,
           {
-            title: t("walking.permissions.activityTitle"),
-            message: t("walking.permissions.activityMessage"),
+            title: t("stepTracker.permissions.activityTitle"),
+            message: t("stepTracker.permissions.activityMessage"),
             buttonPositive: t("common.allow"),
           },
         );
 
         if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
           console.log(
-            "[WalkingSession] ⚠️ ACTIVITY_RECOGNITION permission denied",
+            "[StepTrackerSession] ⚠️ ACTIVITY_RECOGNITION permission denied",
           );
-          setErrorMessage(t("walking.steps.unavailable"));
+          setErrorMessage(t("stepTracker.steps.unavailable"));
           // Allow to continue without step counting
         } else {
           console.log(
-            "[WalkingSession] ✅ ACTIVITY_RECOGNITION permission granted",
+            "[StepTrackerSession] ✅ ACTIVITY_RECOGNITION permission granted",
           );
         }
       }
 
       // Check motion/activity permissions from native module
       const nativePermissions =
-        await WalkingTrackingService.requestPermissions();
+        await StepTrackerService.requestPermissions();
 
-      console.log("[WalkingSession] 📋 Native permissions:", nativePermissions);
+      console.log("[StepTrackerSession] 📋 Native permissions:", nativePermissions);
 
       if (nativePermissions.motion === "denied") {
-        setErrorMessage(t("walking.steps.unavailable"));
+        setErrorMessage(t("stepTracker.steps.unavailable"));
         // Allow to continue without step counting
       }
 
       return true;
     } catch (error) {
-      console.log("[WalkingSession] ❌ Error requesting permissions:", error);
+      console.log("[StepTrackerSession] ❌ Error requesting permissions:", error);
       setStatus("error");
-      setErrorMessage(t("walking.errors.permissionDenied"));
+      setErrorMessage(t("stepTracker.errors.permissionDenied"));
       return false;
     }
   }, [t]);
 
   const startTracking = useCallback(async () => {
-    console.log("[WalkingSession] 🚀 Starting tracking...");
+    console.log("[StepTrackerSession] 🚀 Starting tracking...");
 
     const granted = await requestPermissions();
     if (!granted) {
-      console.log("[WalkingSession] ❌ Permissions not granted");
+      console.log("[StepTrackerSession] ❌ Permissions not granted");
       return;
     }
 
     try {
       // Initialize store session FIRST (before native events start arriving)
-      console.log("[WalkingSession] 📝 Creating active session in store");
+      console.log("[StepTrackerSession] 📝 Creating active session in store");
       startActiveSession();
 
       setErrorMessage(undefined);
@@ -193,12 +193,12 @@ export const useWalkingSession = () => {
       startTimer();
 
       // Start native tracking (events will now update the active session)
-      console.log("[WalkingSession] 📱 Starting native tracking module");
-      const result = await WalkingTrackingService.startTracking();
+      console.log("[StepTrackerSession] 📱 Starting native tracking module");
+      const result = await StepTrackerService.startTracking();
 
       if (!result.success) {
         console.log(
-          "[WalkingSession] ❌ Native tracking failed:",
+          "[StepTrackerSession] ❌ Native tracking failed:",
           result.message,
         );
         setStatus("error");
@@ -206,58 +206,58 @@ export const useWalkingSession = () => {
         return;
       }
 
-      console.log("[WalkingSession] ✅ Tracking started successfully");
+      console.log("[StepTrackerSession] ✅ Tracking started successfully");
     } catch (error) {
-      console.log("[WalkingSession] ❌ Error starting tracking:", error);
+      console.log("[StepTrackerSession] ❌ Error starting tracking:", error);
       setStatus("error");
       setErrorMessage(
-        error instanceof Error ? error.message : t("walking.errors.unknown"),
+        error instanceof Error ? error.message : t("stepTracker.errors.unknown"),
       );
     }
   }, [requestPermissions, startActiveSession, startTimer, t]);
 
   const stopTracking = useCallback(async () => {
     try {
-      await WalkingTrackingService.stopTracking();
+      await StepTrackerService.stopTracking();
       stopTimer();
       finalizeActiveSession();
       setStatus("paused");
       setElapsedMs(0);
     } catch (error) {
       setErrorMessage(
-        error instanceof Error ? error.message : t("walking.errors.unknown"),
+        error instanceof Error ? error.message : t("stepTracker.errors.unknown"),
       );
     }
   }, [finalizeActiveSession, stopTimer, t]);
 
   const resumeTrackingIfNeeded = useCallback(async () => {
     if (!activeSession) {
-      console.log("[WalkingSession] No active session, skipping resume");
+      console.log("[StepTrackerSession] No active session, skipping resume");
       return;
     }
 
     try {
-      const isTracking = await WalkingTrackingService.isTracking();
-      console.log("[WalkingSession] isTracking:", isTracking);
+      const isTracking = await StepTrackerService.isTracking();
+      console.log("[StepTrackerSession] isTracking:", isTracking);
 
       if (isTracking) {
-        console.log("[WalkingSession] Resuming tracking from background");
+        console.log("[StepTrackerSession] Resuming tracking from background");
         setStatus("tracking");
         startTimer();
 
         // Retrieve pending positions collected while in background
         const pendingPositions =
-          await WalkingTrackingService.getPendingPositions();
+          await StepTrackerService.getPendingPositions();
         console.log(
-          "[WalkingSession] Retrieved pending positions:",
+          "[StepTrackerSession] Retrieved pending positions:",
           pendingPositions.length,
         );
 
         if (pendingPositions.length > 0) {
-          console.log("[WalkingSession] Adding pending positions to session");
+          console.log("[StepTrackerSession] Adding pending positions to session");
           pendingPositions.forEach((pos, index) => {
             console.log(
-              `[WalkingSession] Adding position ${index + 1}/${pendingPositions.length}:`,
+              `[StepTrackerSession] Adding position ${index + 1}/${pendingPositions.length}:`,
               pos.latitude,
               pos.longitude,
             );
@@ -275,7 +275,7 @@ export const useWalkingSession = () => {
       const granted = await requestPermissions();
       if (!granted) return;
 
-      const result = await WalkingTrackingService.startTracking();
+      const result = await StepTrackerService.startTracking();
       if (result.success) {
         setStatus("tracking");
         startTimer();
@@ -292,20 +292,20 @@ export const useWalkingSession = () => {
 
   // Subscribe to native events
   useEffect(() => {
-    console.log("[WalkingSession] Setting up event listeners");
+    console.log("[StepTrackerSession] Setting up event listeners");
 
-    const unsubscribeSteps = WalkingTrackingService.onStepUpdate((event) => {
-      console.log("[WalkingSession] ✅ Step event:", JSON.stringify(event));
+    const unsubscribeSteps = StepTrackerService.onStepUpdate((event) => {
+      console.log("[StepTrackerSession] ✅ Step event:", JSON.stringify(event));
       updateActiveSession({
         steps: event.steps,
         distanceKm: event.distance,
       });
     });
 
-    const unsubscribeLocation = WalkingTrackingService.onLocationUpdate(
+    const unsubscribeLocation = StepTrackerService.onLocationUpdate(
       (event) => {
         console.log(
-          "[WalkingSession] ✅ Location event:",
+          "[StepTrackerSession] ✅ Location event:",
           event.latitude,
           event.longitude,
         );
@@ -316,13 +316,13 @@ export const useWalkingSession = () => {
       },
     );
 
-    const unsubscribeError = WalkingTrackingService.onError((event) => {
-      console.log("[WalkingSession] ❌ Error event:", event.message);
+    const unsubscribeError = StepTrackerService.onError((event) => {
+      console.log("[StepTrackerSession] ❌ Error event:", event.message);
       setErrorMessage(event.message);
     });
 
     return () => {
-      console.log("[WalkingSession] Cleaning up event listeners");
+      console.log("[StepTrackerSession] Cleaning up event listeners");
       unsubscribeSteps();
       unsubscribeLocation();
       unsubscribeError();
@@ -333,7 +333,7 @@ export const useWalkingSession = () => {
   useEffect(() => {
     const handleAppStateChange = (nextState: AppStateStatus) => {
       console.log(
-        "[WalkingSession] AppState changed from",
+        "[StepTrackerSession] AppState changed from",
         appStateRef.current,
         "to",
         nextState,
@@ -343,7 +343,7 @@ export const useWalkingSession = () => {
         nextState === "active"
       ) {
         console.log(
-          "[WalkingSession] App returned to foreground, resuming tracking",
+          "[StepTrackerSession] App returned to foreground, resuming tracking",
         );
         void resumeTrackingIfNeeded();
       }
@@ -382,19 +382,19 @@ export const useWalkingSession = () => {
     () => [
       {
         key: "steps",
-        label: t("walking.stats.steps"),
+        label: t("stepTracker.stats.steps"),
         value: steps.toLocaleString(),
       },
       {
         key: "distance",
-        label: t("walking.stats.distance"),
-        value: t("walking.stats.distanceValue", {
+        label: t("stepTracker.stats.distance"),
+        value: t("stepTracker.stats.distanceValue", {
           distance: distanceKm.toFixed(2),
         }),
       },
       {
         key: "duration",
-        label: t("walking.stats.duration"),
+        label: t("stepTracker.stats.duration"),
         value: formatDuration(elapsedMs),
       },
     ],

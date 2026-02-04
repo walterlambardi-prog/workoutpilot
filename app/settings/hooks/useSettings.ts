@@ -9,7 +9,7 @@ import { useExerciseSessionStore } from "@/stores/exerciseSessionStore";
 import { usePreferencesStore, type ThemeMode } from "@/stores/preferencesStore";
 import { useRoutineBuilderStore } from "@/stores/routineBuilderStore";
 import { useRoutineSessionStore } from "@/stores/routineSessionStore";
-import { useWalkingSessionStore } from "@/stores/walkingSessionStore";
+import { useStepTrackerStore } from "@/stores/stepTrackerStore";
 import { showAlert } from "@/utils/alert";
 import { exportAppData, importAppData } from "@/utils/dataExport";
 
@@ -45,7 +45,7 @@ export const useSettings = () => {
   const resetRoutineHistory = useRoutineSessionStore(
     (state) => state.resetHistory,
   );
-  const resetWalkingHistory = useWalkingSessionStore(
+  const resetStepTrackerHistory = useStepTrackerStore(
     (state) => state.resetHistory,
   );
   const resetRoutine = useRoutineBuilderStore((state) => state.resetRoutine);
@@ -153,29 +153,29 @@ export const useSettings = () => {
     );
   }, [resetRoutineHistory, t]);
 
-  const handleClearWalkingHistory = useCallback(() => {
+  const handleClearStepTrackerHistory = useCallback(() => {
     showAlert(
-      t("settings.data.clearWalkingHistoryConfirmTitle"),
-      t("settings.data.clearWalkingHistoryConfirmMessage"),
+      t("settings.data.clearStepTrackerHistoryConfirmTitle"),
+      t("settings.data.clearStepTrackerHistoryConfirmMessage"),
       [
         {
           text: t("settings.data.cancel"),
           style: "cancel",
         },
         {
-          text: t("settings.data.clearWalkingHistoryConfirm"),
+          text: t("settings.data.clearStepTrackerHistoryConfirm"),
           style: "destructive",
           onPress: () => {
-            resetWalkingHistory();
+            resetStepTrackerHistory();
             showAlert(
-              t("settings.data.clearedWalkingTitle"),
-              t("settings.data.clearedWalkingMessage"),
+              t("settings.data.clearedStepTrackerTitle"),
+              t("settings.data.clearedStepTrackerMessage"),
             );
           },
         },
       ],
     );
-  }, [resetWalkingHistory, t]);
+  }, [resetStepTrackerHistory, t]);
 
   const handleDeleteAccount = useCallback(() => {
     showAlert(
@@ -193,7 +193,7 @@ export const useSettings = () => {
             resetAuth();
             resetHistory();
             resetRoutineHistory();
-            resetWalkingHistory();
+            resetStepTrackerHistory();
             resetRoutine();
 
             showAlert(
@@ -211,7 +211,7 @@ export const useSettings = () => {
     resetHistory,
     resetRoutine,
     resetRoutineHistory,
-    resetWalkingHistory,
+    resetStepTrackerHistory,
     router,
     t,
   ]);
@@ -299,12 +299,12 @@ export const useSettings = () => {
         onPress: handleClearHistory,
       },
       {
-        key: "clear-walking-history",
-        title: t("settings.data.clearWalkingHistory"),
-        description: t("settings.data.clearWalkingHistoryConfirmMessage"),
+        key: "clear-steptracker-history",
+        title: t("settings.data.clearStepTrackerHistory"),
+        description: t("settings.data.clearStepTrackerHistoryConfirmMessage"),
         iconName: "walk-outline",
         tone: "danger",
-        onPress: handleClearWalkingHistory,
+        onPress: handleClearStepTrackerHistory,
       },
       {
         key: "clear-routine-history",
@@ -326,7 +326,7 @@ export const useSettings = () => {
     [
       handleClearHistory,
       handleClearRoutineHistory,
-      handleClearWalkingHistory,
+      handleClearStepTrackerHistory,
       handleDeleteAccount,
       handleExportData,
       handleImportData,
