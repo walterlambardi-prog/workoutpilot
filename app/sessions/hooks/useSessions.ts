@@ -7,11 +7,12 @@ import { ExerciseId } from "@/constants/exercises";
 import { useExerciseSessionStore } from "@/stores/exerciseSessionStore";
 import { useRoutineBuilderStore } from "@/stores/routineBuilderStore";
 import {
-  type RoutineSession,
-  useRoutineSessionStore,
+    type RoutineSession,
+    useRoutineSessionStore,
 } from "@/stores/routineSessionStore";
 import { useStepTrackerStore } from "@/stores/stepTrackerStore";
 
+import { MAX_PREVIEW_ITEMS } from "../sessions.constants";
 import type { RoutineListItem } from "../sessions.types";
 
 export const formatDuration = (ms?: number) => {
@@ -313,8 +314,12 @@ export const useSessions = () => {
     // Data
     totals,
     stepTrackerTotals,
-    stepTrackerHistory,
-    routineList,
+    stepTrackerHistory: stepTrackerHistory.slice(0, MAX_PREVIEW_ITEMS),
+    stepTrackerHistoryFull: stepTrackerHistory,
+    hasMoreStepTrackers: stepTrackerHistory.length > MAX_PREVIEW_ITEMS,
+    routineList: routineList.slice(0, MAX_PREVIEW_ITEMS),
+    routineListFull: routineList,
+    hasMoreRoutines: routineList.length > MAX_PREVIEW_ITEMS,
     statHighlights,
 
     // Formatters

@@ -146,6 +146,7 @@ export default function RootLayout() {
         <Stack
           screenOptions={{
             headerShown: !isWeb,
+            headerBackButtonDisplayMode: "minimal",
           }}
         >
           <Stack.Screen name="login/index" options={{ headerShown: false }} />
@@ -232,6 +233,20 @@ export default function RootLayout() {
             options={{
               ...appHeaderOptions,
               title: t("routineAnalysis.title"),
+            }}
+          />
+          <Stack.Screen
+            name="allStepTrackers/index"
+            options={{
+              ...appHeaderOptions,
+              title: t("sessions.stepTracker.allTitle"),
+            }}
+          />
+          <Stack.Screen
+            name="allRoutines/index"
+            options={{
+              ...appHeaderOptions,
+              title: t("sessions.routineList.allTitle"),
             }}
           />
         </Stack>

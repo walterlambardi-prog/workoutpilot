@@ -1,6 +1,7 @@
+import { useRouter } from "expo-router";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Platform, StyleSheet } from "react-native";
+import { Platform, StyleSheet, TouchableOpacity } from "react-native";
 
 import ActivityHeatmap from "@/components/ActivityHeatmap";
 import MapView from "@/components/MapView";
@@ -13,10 +14,10 @@ import { TRow, TStack } from "@/components/TStack";
 import { THeading, TText } from "@/components/TText";
 
 import {
-  formatDate,
-  formatDuration,
-  formatNumber,
-  useSessions,
+    formatDate,
+    formatDuration,
+    formatNumber,
+    useSessions,
 } from "./hooks/useSessions";
 
 const StatTile: React.FC<{
@@ -45,11 +46,14 @@ const EmptyState: React.FC<{ text: string }> = ({ text }) => (
 
 const SessionsScreen: React.FC = () => {
   const { t } = useTranslation();
+  const router = useRouter();
 
   const {
     stepTrackerTotals,
     stepTrackerHistory,
+    hasMoreStepTrackers,
     routineList,
+    hasMoreRoutines,
     statHighlights,
     formatDistance,
     handleStartRoutine,
@@ -79,7 +83,16 @@ const SessionsScreen: React.FC = () => {
       </TGrid>
 
       <TCard gap="$3">
-        <THeading level={3}>{t("sessions.stepTracker.title")}</THeading>
+        <TRow justifyContent="space-between" alignItems="center">
+          <THeading level={3}>{t("sessions.stepTracker.title")}</THeading>
+          {hasMoreStepTrackers ? (
+            <TouchableOpacity onPress={() => router.push("/allStepTrackers")}>
+              <TText variant="label" color="$color">
+                {t("sessions.viewAll")}
+              </TText>
+            </TouchableOpacity>
+          ) : null}
+        </TRow>
 
         <TGrid columns={Platform.OS === "web" ? 3 : 1} gap="$3">
           {stepTrackerTotals.totalSteps > 0 && (
@@ -163,7 +176,16 @@ const SessionsScreen: React.FC = () => {
       </TCard>
 
       <TCard gap="$3">
-        <THeading level={3}>{t("sessions.routineList.title")}</THeading>
+        <TRow justifyContent="space-between" alignItems="center">
+          <THeading level={3}>{t("sessions.routineList.title")}</THeading>
+          {hasMoreRoutines ? (
+            <TouchableOpacity onPress={() => router.push("/allRoutines")}>
+              <TText variant="label" color="$color">
+                {t("sessions.viewAll")}
+              </TText>
+            </TouchableOpacity>
+          ) : null}
+        </TRow>
         {routineList.length === 0 ? (
           <EmptyState text={t("sessions.routineList.empty")} />
         ) : (

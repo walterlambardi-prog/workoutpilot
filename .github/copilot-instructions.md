@@ -370,15 +370,67 @@ Layout.maxContentWidth; // 1280px - Maximum content width for web layout
 - Use `TPage` component with `fullWidth={false}` (default) to automatically apply responsive max-width on web
 - For full-width layouts (e.g., image galleries, maps), use `fullWidth={true}` prop
 
+#### TPage Component Usage
+
+**CRITICAL**: The `TPage` component is the container for all screen content. Always follow these rules:
+
+**Required Props**:
+
+- `hasHeader={true}` - **ALWAYS USE** when the screen has a Stack navigation header (most screens)
+  - This adds proper top padding to account for the navigation header
+  - Without it, content will appear too close to the header
+- `scrollable={true}` - Use when content may overflow (lists, long forms)
+  - Enables ScrollView behavior
+- `backgroundColor="$background"` - Use for consistent theming
+
+**Common Patterns**:
+
+```typescript
+// ✅ GOOD - Screen with Stack navigation header
+<TPage backgroundColor="$background" hasHeader gap="$4">
+  <ScreenHeader title={t("title")} subtitle={t("subtitle")} />
+  {/* Content */}
+</TPage>
+
+// ✅ GOOD - Scrollable screen with Stack header
+<TPage scrollable hasHeader>
+  <ScreenHeader title={t("title")} subtitle={t("subtitle")} />
+  {/* Long content */}
+</TPage>
+
+// ✅ GOOD - Full-width layout (no max-width constraint on web)
+<TPage fullWidth hasHeader backgroundColor="$background">
+  <ImageGallery />
+</TPage>
+
+// ❌ BAD - Missing hasHeader when screen has Stack header
+<TPage backgroundColor="$background" gap="$4">
+  {/* Content will be too close to header! */}
+</TPage>
+
+// ❌ BAD - Using hasHeader={false} explicitly (never needed)
+<TPage hasHeader={false} gap="$4">
+  {/* Just omit the prop */}
+</TPage>
+```
+
+**When NOT to use `hasHeader`**:
+
+- Full-screen experiences (login, onboarding)
+- Screens with `headerShown: false` in Stack navigation
+- Modal/overlay content
+
+**Default Layout Example**:
+
 ```typescript
 // ✅ GOOD - Responsive layout with max-width on web
-<TPage>
+<TPage hasHeader>
   <TWelcomeHeader title="Home" />
   {/* Content automatically centered and max-width on web */}
 </TPage>
 
 // ✅ GOOD - Full-width layout when needed
-<TPage fullWidth>
+<TPage fullWidth hasHeader>
   <ImageGallery />
   {/* Content uses full viewport width */}
 </TPage>
@@ -1236,11 +1288,9 @@ useEffect(() => {
     updateState({ steps: event.steps });
   });
 
-  const unsubscribeLocation = StepTrackerService.onLocationUpdate(
-    (event) => {
-      addPosition({ latitude: event.latitude, longitude: event.longitude });
-    },
-  );
+  const unsubscribeLocation = StepTrackerService.onLocationUpdate((event) => {
+    addPosition({ latitude: event.latitude, longitude: event.longitude });
+  });
 
   // CRITICAL: Always cleanup on unmount
   return () => {

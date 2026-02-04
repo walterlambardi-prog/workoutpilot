@@ -189,6 +189,7 @@
   "sessions": {
     "title": "Your progress",
     "subtitle": "Track your performance and analyze workout metrics.",
+    "viewAll": "View all",
     "labels": {
       "sessions": "Sessions",
       "reps": "reps",
@@ -217,6 +218,8 @@
     },
     "stepTracker": {
       "title": "Step tracking sessions",
+      "allTitle": "All Step Tracking Sessions",
+      "allSubtitle": "Complete history of your step tracking activities.",
       "empty": "No step tracking sessions yet",
       "totalSteps": "Total steps",
       "totalDistance": "Total distance",
@@ -224,6 +227,8 @@
     },
     "routineList": {
       "title": "Routines",
+      "allTitle": "All Routines",
+      "allSubtitle": "Complete history of your completed routines.",
       "empty": "No routines completed yet",
       "viewDetails": "View routine details",
       "rounds": "Rounds",
