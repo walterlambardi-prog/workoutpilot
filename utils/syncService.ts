@@ -23,14 +23,14 @@ import type { ExerciseSessionEntry } from "@/stores/exerciseSessionStore";
 import type { RoutineSession } from "@/stores/routineSessionStore";
 import type { StepTrackerSessionEntry } from "@/stores/stepTrackerStore";
 import {
-    mapFromExerciseSession,
-    mapFromRoutineAnalysis,
-    mapFromRoutineSession,
-    mapFromStepTrackerSession,
-    mapToExerciseSession,
-    mapToRoutineAnalysis,
-    mapToRoutineSession,
-    mapToStepTrackerSession,
+  mapFromExerciseSession,
+  mapFromRoutineAnalysis,
+  mapFromRoutineSession,
+  mapFromStepTrackerSession,
+  mapToExerciseSession,
+  mapToRoutineAnalysis,
+  mapToRoutineSession,
+  mapToStepTrackerSession,
 } from "@/types/supabase.types";
 
 export type SyncStatus = "idle" | "syncing" | "success" | "error";
@@ -615,6 +615,50 @@ class SyncService {
       return { success: true };
     } catch (error) {
       console.error("[SyncService] ❌ Failed to delete user data:", error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : "Unknown error",
+      };
+    }
+  }
+
+  /**
+   * Delete user account from Supabase Auth
+   * Called when: User permanently deletes account in Settings
+   * NOTE: This will cascade delete all user data via RLS policies
+   *
+   * @returns Promise<SyncResult>
+   */
+  async deleteUserAccount(): Promise<SyncResult> {
+    const user = useAuthStore.getState().user;
+
+    if (!user) {
+      console.log("[SyncService] No user, skipping account deletion");
+      return { success: false, error: "No authenticated user" };
+    }
+
+    try {
+      // First delete all user data from tables
+      const dataResult = await this.deleteAllUserData();
+      if (!dataResult.success) {
+        throw new Error(dataResult.error || "Failed to delete user data");
+      }
+
+      // Then delete the user from Supabase Auth
+      const { error } = await supabase.rpc("delete_user");
+
+      if (error) {
+        // If RPC fails, try direct auth deletion (requires admin privileges)
+        const { error: authError } = await supabase.auth.admin.deleteUser(
+          user.id,
+        );
+        if (authError) throw authError;
+      }
+
+      console.log("[SyncService] ✅ Deleted user account from Supabase");
+      return { success: true };
+    } catch (error) {
+      console.error("[SyncService] ❌ Failed to delete user account:", error);
       return {
         success: false,
         error: error instanceof Error ? error.message : "Unknown error",

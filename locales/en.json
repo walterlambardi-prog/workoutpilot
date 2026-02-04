@@ -3,7 +3,8 @@
     "allow": "Allow",
     "deny": "Deny",
     "cancel": "Cancel",
-    "ok": "OK"
+    "ok": "OK",
+    "error": "Error"
   },
   "sync": {
     "status": {
@@ -211,12 +212,13 @@
       "importSuccess": "Data imported successfully",
       "importError": "Failed to import data",
       "importCancelled": "Import cancelled",
-      "deleteAccount": "Delete account data",
-      "deleteAccountConfirmTitle": "Delete all data?",
-      "deleteAccountConfirmMessage": "This will delete your username, all session history, routine data, and reset the app. This action cannot be undone.",
-      "deleteAccountConfirm": "Delete everything",
-      "accountDeletedTitle": "Data deleted",
-      "accountDeletedMessage": "All your data has been deleted. The app will now restart."
+      "deleteAccount": "Delete account permanently",
+      "deleteAccountConfirmTitle": "Delete account permanently?",
+      "deleteAccountConfirmMessage": "This will permanently delete your account, all workout data, session history, routines, and remove access to your cloud data. This action cannot be undone and you will need to create a new account to use the app again.",
+      "deleteAccountConfirm": "Yes, delete permanently",
+      "accountDeletedTitle": "Account deleted",
+      "accountDeletedMessage": "Your account and all data have been permanently deleted.",
+      "deleteAccountError": "Failed to delete account. Please try again or contact support."
     }
   },
   "sessions": {

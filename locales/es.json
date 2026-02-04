@@ -3,7 +3,8 @@
     "allow": "Permitir",
     "deny": "Denegar",
     "cancel": "Cancelar",
-    "ok": "OK"
+    "ok": "OK",
+    "error": "Error"
   },
   "sync": {
     "status": {
@@ -211,12 +212,13 @@
       "importSuccess": "Datos importados exitosamente",
       "importError": "Error al importar datos",
       "importCancelled": "Importación cancelada",
-      "deleteAccount": "Borrar datos de la cuenta",
-      "deleteAccountConfirmTitle": "¿Borrar todos los datos?",
-      "deleteAccountConfirmMessage": "Esto eliminará tu nombre de usuario, historial de sesiones, datos de rutinas y reiniciará la app. Esta acción no se puede deshacer.",
-      "deleteAccountConfirm": "Borrar todo",
-      "accountDeletedTitle": "Datos eliminados",
-      "accountDeletedMessage": "Todos tus datos han sido eliminados. La app se reiniciará ahora."
+      "deleteAccount": "Eliminar cuenta permanentemente",
+      "deleteAccountConfirmTitle": "¿Eliminar cuenta permanentemente?",
+      "deleteAccountConfirmMessage": "Esto eliminará permanentemente tu cuenta, todos los datos de entrenamiento, historial de sesiones, rutinas y el acceso a tus datos en la nube. Esta acción no se puede deshacer y necesitarás crear una nueva cuenta para usar la app nuevamente.",
+      "deleteAccountConfirm": "Sí, eliminar permanentemente",
+      "accountDeletedTitle": "Cuenta eliminada",
+      "accountDeletedMessage": "Tu cuenta y todos los datos han sido eliminados permanentemente.",
+      "deleteAccountError": "Error al eliminar la cuenta. Por favor intenta nuevamente o contacta soporte."
     }
   },
   "sessions": {

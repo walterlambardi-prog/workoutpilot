@@ -8,9 +8,11 @@ The Dual-Layer Storage system has been successfully implemented! All code is rea
 
 ## 📋 Next Steps (Required)
 
-### 1. Run Database Migration
+### 1. Run Database Migrations
 
-**You need to execute the SQL migration in your Supabase project:**
+**You need to execute the SQL migrations in your Supabase project:**
+
+#### Migration 1: Create Sync Tables
 
 1. Open [Supabase Dashboard](https://app.supabase.com)
 2. Select your project
@@ -28,6 +30,20 @@ The Dual-Layer Storage system has been successfully implemented! All code is rea
    - `routine_sessions`
    - `step_tracker_sessions`
    - `routine_analyses`
+
+#### Migration 2: Create Delete User Function
+
+1. In the same **SQL Editor**
+2. Create a new query
+3. Copy **all contents** from: `supabase/migrations/002_delete_user_function.sql`
+4. Paste into SQL Editor
+5. Click **Run**
+6. Verify success:
+   ```sql
+   SELECT routine_name FROM information_schema.routines
+   WHERE routine_schema = 'public' AND routine_name = 'delete_user';
+   ```
+   Should return: `delete_user`
 
 ### 2. Verify RLS Policies
 

@@ -12,6 +12,7 @@ import { useRoutineSessionStore } from "@/stores/routineSessionStore";
 import { useStepTrackerStore } from "@/stores/stepTrackerStore";
 import { showAlert } from "@/utils/alert";
 import { exportAppData, importAppData } from "@/utils/dataExport";
+import { syncService } from "@/utils/syncService";
 
 import { SettingsAction } from "../settings.types";
 
@@ -229,44 +230,45 @@ export const useSettings = () => {
           text: t("settings.data.deleteAccountConfirm"),
           style: "destructive",
           onPress: async () => {
-            // Clear local data
-            resetAuth();
-            resetHistory();
-            resetRoutineHistory();
-            resetStepTrackerHistory();
-            resetRoutine();
-
-            // Clear all cloud data (sequential to respect foreign keys)
             try {
-              // Delete routine cloud history first (includes routine_analyses)
-              await deleteRoutineCloudHistory();
+              // Delete user account from Supabase (includes all data)
+              const result = await syncService.deleteUserAccount();
 
-              // Delete other histories in parallel (no dependencies)
-              await Promise.all([
-                deleteExerciseCloudHistory(),
-                deleteStepTrackerCloudHistory(),
-              ]);
+              if (!result.success) {
+                showAlert(
+                  t("common.error"),
+                  result.error || t("settings.data.deleteAccountError"),
+                );
+                return;
+              }
+
+              // Clear local data after successful cloud deletion
+              resetAuth();
+              resetHistory();
+              resetRoutineHistory();
+              resetStepTrackerHistory();
+              resetRoutine();
+
+              showAlert(
+                t("settings.data.accountDeletedTitle"),
+                t("settings.data.accountDeletedMessage"),
+              );
+
+              router.replace("/login");
             } catch (error) {
-              console.error(
-                "[Settings] Failed to delete user data from cloud:",
-                error,
+              console.error("[Settings] Failed to delete account:", error);
+              showAlert(
+                t("common.error"),
+                error instanceof Error
+                  ? error.message
+                  : t("settings.data.deleteAccountError"),
               );
             }
-
-            showAlert(
-              t("settings.data.accountDeletedTitle"),
-              t("settings.data.accountDeletedMessage"),
-            );
-
-            router.replace("/login");
           },
         },
       ],
     );
   }, [
-    deleteExerciseCloudHistory,
-    deleteRoutineCloudHistory,
-    deleteStepTrackerCloudHistory,
     resetAuth,
     resetHistory,
     resetRoutine,
