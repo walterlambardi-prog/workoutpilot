@@ -51,6 +51,8 @@ jobs:
           EXPO_PUBLIC_PATH: "${{ env.EXPO_PUBLIC_PATH }}"
           EXPO_PUBLIC_BASE_PATH: "${{ env.EXPO_PUBLIC_BASE_PATH }}"
           EXPO_PUBLIC_URL: "${{ env.EXPO_PUBLIC_URL }}"
+          EXPO_PUBLIC_SUPABASE_URL: "${{ secrets.EXPO_PUBLIC_SUPABASE_URL }}"
+          EXPO_PUBLIC_SUPABASE_ANON_KEY: "${{ secrets.EXPO_PUBLIC_SUPABASE_ANON_KEY }}"
         run: npx expo export --platform web
 
       - name: Prefix asset URLs with subpath
