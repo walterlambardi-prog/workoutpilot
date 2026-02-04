@@ -49,6 +49,7 @@ const SessionsScreen: React.FC = () => {
   const router = useRouter();
 
   const {
+    isSyncing,
     stepTrackerTotals,
     stepTrackerHistory,
     hasMoreStepTrackers,
@@ -66,7 +67,7 @@ const SessionsScreen: React.FC = () => {
     <TPage backgroundColor="$background" hasHeader gap="$4">
       <ScreenHeader
         title={t("sessions.title")}
-        subtitle={t("sessions.subtitle")}
+        subtitle={isSyncing ? t("sync.syncing") : t("sessions.subtitle")}
       />
 
       <ActivityHeatmap />

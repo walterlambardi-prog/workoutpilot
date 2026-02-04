@@ -1,5 +1,5 @@
-import { useRouter } from "expo-router";
-import { useCallback, useMemo } from "react";
+import { useFocusEffect, useRouter } from "expo-router";
+import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { EXERCISE_DEFINITION_MAP } from "@/app/exercises/exercises.data";
@@ -7,8 +7,8 @@ import { ExerciseId } from "@/constants/exercises";
 import { useExerciseSessionStore } from "@/stores/exerciseSessionStore";
 import { useRoutineBuilderStore } from "@/stores/routineBuilderStore";
 import {
-    type RoutineSession,
-    useRoutineSessionStore,
+  type RoutineSession,
+  useRoutineSessionStore,
 } from "@/stores/routineSessionStore";
 import { useStepTrackerStore } from "@/stores/stepTrackerStore";
 
@@ -45,12 +45,47 @@ export const useSessions = () => {
   const { t } = useTranslation();
   const router = useRouter();
 
+  // Sync loading state
+  const [isSyncing, setIsSyncing] = useState(false);
+
   // Store data
   const { currentSession, history } = useExerciseSessionStore();
+  const loadExerciseHistory = useExerciseSessionStore(
+    (state) => state.loadHistoryFromSupabase,
+  );
   const applyPlan = useRoutineBuilderStore((state) => state.applyPlan);
   const { history: routineHistory, lastCompletedSession } =
     useRoutineSessionStore();
+  const loadRoutineHistory = useRoutineSessionStore(
+    (state) => state.loadHistoryFromSupabase,
+  );
   const stepTrackerHistory = useStepTrackerStore((state) => state.history);
+  const loadStepTrackerHistory = useStepTrackerStore(
+    (state) => state.loadHistoryFromSupabase,
+  );
+
+  // Sync data from Supabase when screen is focused
+  useFocusEffect(
+    useCallback(() => {
+      const syncData = async () => {
+        setIsSyncing(true);
+        try {
+          await Promise.all([
+            loadExerciseHistory(),
+            loadRoutineHistory(),
+            loadStepTrackerHistory(),
+          ]);
+          console.log("[Sessions] ✅ Data synced from Supabase");
+        } catch (error) {
+          console.error("[Sessions] Failed to sync data:", error);
+        } finally {
+          setIsSyncing(false);
+        }
+      };
+
+      void syncData();
+    }, [loadExerciseHistory, loadRoutineHistory, loadStepTrackerHistory]),
+  );
 
   // Format helpers
   const formatDistance = useCallback(
@@ -321,6 +356,9 @@ export const useSessions = () => {
     routineListFull: routineList,
     hasMoreRoutines: routineList.length > MAX_PREVIEW_ITEMS,
     statHighlights,
+
+    // Sync state
+    isSyncing,
 
     // Formatters
     formatDistance,
