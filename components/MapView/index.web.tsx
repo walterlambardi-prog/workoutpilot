@@ -3,12 +3,12 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 
-import { useThemeColor } from "@/hooks/useThemeColor";
-
 import styles from "./MapView.styles";
 import type { MapViewProps } from "./MapView.types";
 
 const DEFAULT_CENTER: LatLngExpression = [0, 0];
+const MAP_PATH_COLOR = "#0a7ea4"; // Theme light mode tint color
+const MAP_MARKER_STROKE_COLOR = "#086f8f"; // Slightly darker for stroke
 
 const MapViewWeb: React.FC<MapViewProps> = ({ positions, style, onReady }) => {
   const { t } = useTranslation();
@@ -19,8 +19,6 @@ const MapViewWeb: React.FC<MapViewProps> = ({ positions, style, onReady }) => {
     Polyline: (typeof import("react-leaflet"))["Polyline"];
     CircleMarker: (typeof import("react-leaflet"))["CircleMarker"];
   } | null>(null);
-  const accentColor = useThemeColor({}, "tint") ?? "#22c55e";
-  const strokeColor = useThemeColor({}, "text") ?? accentColor;
 
   useEffect(() => {
     let mounted = true;
@@ -86,14 +84,14 @@ const MapViewWeb: React.FC<MapViewProps> = ({ positions, style, onReady }) => {
           <>
             <Polyline
               positions={path}
-              pathOptions={{ color: accentColor, weight: 5 }}
+              pathOptions={{ color: MAP_PATH_COLOR, weight: 5 }}
             />
             <CircleMarker
               center={path[path.length - 1]}
               radius={8}
               pathOptions={{
-                color: strokeColor,
-                fillColor: accentColor,
+                color: MAP_MARKER_STROKE_COLOR,
+                fillColor: MAP_PATH_COLOR,
                 fillOpacity: 0.9,
               }}
             />

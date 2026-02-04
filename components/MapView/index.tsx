@@ -2,12 +2,12 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { View } from "react-native";
 import { WebView, type WebViewMessageEvent } from "react-native-webview";
 
-import { useThemeColor } from "@/hooks/useThemeColor";
-
 import styles from "./MapView.styles";
 import type { MapViewProps } from "./MapView.types";
 
 const TILE_LAYER_URL = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
+const MAP_PATH_COLOR = "#0a7ea4"; // Theme light mode tint color
+const MAP_MARKER_STROKE_COLOR = "#086f8f"; // Slightly darker for stroke
 
 const createHtml = (
   accentColor: string,
@@ -81,14 +81,12 @@ const MapViewNative: React.FC<MapViewProps> = ({
   style,
   onReady,
 }) => {
-  const accentColor = useThemeColor({}, "tint") ?? "#22c55e";
-  const strokeColor = useThemeColor({}, "text") ?? accentColor;
   const webViewRef = useRef<WebView>(null);
   const [isReady, setIsReady] = useState(false);
 
   const html = useMemo(
-    () => createHtml(accentColor, strokeColor),
-    [accentColor, strokeColor],
+    () => createHtml(MAP_PATH_COLOR, MAP_MARKER_STROKE_COLOR),
+    [],
   );
 
   const handleMessage = (event: WebViewMessageEvent) => {
