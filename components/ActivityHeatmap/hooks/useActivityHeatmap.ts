@@ -6,13 +6,13 @@ import { useExerciseSessionStore } from "@/stores/exerciseSessionStore";
 import { useRoutineSessionStore } from "@/stores/routineSessionStore";
 
 import {
-    DEFAULT_GAP,
-    DEFAULT_SQUARE_SIZE,
-    DEFAULT_WEEKS,
+  DEFAULT_GAP,
+  DEFAULT_SQUARE_SIZE,
+  DEFAULT_WEEKS,
 } from "../ActivityHeatmap.styles";
 import type {
-    ActivityHeatmapDatum,
-    HeatmapCell,
+  ActivityHeatmapDatum,
+  HeatmapCell,
 } from "../ActivityHeatmap.types";
 
 const formatDateKey = (input: Date): string => {
@@ -106,8 +106,6 @@ export const useActivityHeatmap = () => {
     let maxValue = 0;
     let totalSessions = 0;
     let totalRoutines = 0;
-    let totalReps = 0;
-    let totalDurationMs = 0;
 
     for (let dayIndex = 0; dayIndex < totalDays; dayIndex += 1) {
       const date = new Date(startDate);
@@ -123,27 +121,6 @@ export const useActivityHeatmap = () => {
       maxValue = Math.max(maxValue, value);
       totalSessions += counts.sessions;
       totalRoutines += counts.routines;
-      // Sum exercise session reps and duration for this date
-      const exerciseEntries = sessionHistory.filter((entry) => {
-        const ended = entry.endedAt ?? entry.startedAt;
-        return formatDateKey(new Date(ended)) === key;
-      });
-      exerciseEntries.forEach((entry) => {
-        totalReps += entry.reps ?? 0;
-        const duration = entry.durationMs ?? 0;
-        totalDurationMs += duration;
-      });
-
-      const routineEntries = routineHistory.filter((entry) => {
-        const ended = entry.completedAt ?? entry.startedAt;
-        return formatDateKey(new Date(ended)) === key;
-      });
-      routineEntries.forEach((entry) => {
-        totalReps += entry.totalReps ?? 0;
-        if (entry.completedAt && entry.startedAt) {
-          totalDurationMs += Math.max(0, entry.completedAt - entry.startedAt);
-        }
-      });
 
       cells.push({
         key,
@@ -156,6 +133,40 @@ export const useActivityHeatmap = () => {
       });
     }
 
+    // Calculate total reps and duration from ALL history (not just heatmap range)
+    let totalReps = 0;
+    let totalDurationMs = 0;
+
+    // Sum all exercise session reps and duration
+    sessionHistory.forEach((entry) => {
+      totalReps += entry.reps ?? 0;
+
+      // Calculate duration: use durationMs if available, otherwise calculate from timestamps
+      const duration =
+        entry.durationMs ??
+        (entry.endedAt && entry.startedAt
+          ? Math.max(0, entry.endedAt - entry.startedAt)
+          : 0);
+      totalDurationMs += duration;
+    });
+
+    // Include current session if active
+    if (currentSession) {
+      totalReps += currentSession.reps ?? 0;
+      const currentDuration =
+        currentSession.durationMs ??
+        (currentSession.endedAt ?? Date.now()) - currentSession.startedAt;
+      totalDurationMs += Math.max(0, currentDuration);
+    }
+
+    // Sum all routine session reps and duration
+    routineSessions.forEach((entry) => {
+      totalReps += entry.totalReps ?? 0;
+      if (entry.completedAt && entry.startedAt) {
+        totalDurationMs += Math.max(0, entry.completedAt - entry.startedAt);
+      }
+    });
+
     return {
       cells,
       maxValue: Math.max(1, maxValue),
@@ -166,7 +177,15 @@ export const useActivityHeatmap = () => {
       width: safeWeeks * squareSize + (safeWeeks - 1) * gap,
       height: 7 * squareSize + 6 * gap,
     };
-  }, [data, gap, routineHistory, sessionHistory, squareSize, weeks]);
+  }, [
+    currentSession,
+    data,
+    gap,
+    routineSessions,
+    sessionHistory,
+    squareSize,
+    weeks,
+  ]);
 
   const colorForValue = useCallback(
     (value: number) => {
