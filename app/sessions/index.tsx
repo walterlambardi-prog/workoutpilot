@@ -14,10 +14,10 @@ import { TRow, TStack } from "@/components/TStack";
 import { THeading, TText } from "@/components/TText";
 
 import {
-    formatDate,
-    formatDuration,
-    formatNumber,
-    useSessions,
+  formatDate,
+  formatDuration,
+  formatNumber,
+  useSessions,
 } from "./hooks/useSessions";
 
 const StatTile: React.FC<{
@@ -67,7 +67,7 @@ const SessionsScreen: React.FC = () => {
     <TPage backgroundColor="$background" hasHeader gap="$4">
       <ScreenHeader
         title={t("sessions.title")}
-        subtitle={isSyncing ? t("sync.syncing") : t("sessions.subtitle")}
+        subtitle={isSyncing ? t("sync.status.syncing") : t("sessions.subtitle")}
       />
 
       <ActivityHeatmap />
