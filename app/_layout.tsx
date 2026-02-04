@@ -17,6 +17,7 @@ import { TDrawer } from "@/components/TDrawer";
 import "@/config/initReactotron";
 import { useAppLanguage } from "@/hooks/useAppLanguage";
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { useSyncInitialization } from "@/hooks/useSyncInitialization";
 import "@/locales/i18n";
 import { initializeAuth, useAuthStore } from "@/stores/authStore";
 import { usePreferencesStore } from "@/stores/preferencesStore";
@@ -99,6 +100,9 @@ export default function RootLayout() {
   // Initialize language preference on app startup
   useAppLanguage();
 
+  // Initialize Supabase sync (loads history from cloud)
+  const { syncStatus, isReady: isSyncReady } = useSyncInitialization();
+
   // Protected routes - handles authentication flow
   useEffect(() => {
     if (!authHasHydrated || !preferencesHasHydrated) return;
@@ -139,8 +143,13 @@ export default function RootLayout() {
     }
   }, [session, hasCompletedOnboarding, isNavigationReady, segments, router]);
 
-  // Show loader while stores are being loaded
-  if (!preferencesHasHydrated || !authHasHydrated || !isNavigationReady) {
+  // Show loader while stores are being loaded or data is syncing
+  if (
+    !preferencesHasHydrated ||
+    !authHasHydrated ||
+    !isNavigationReady ||
+    (session && !isSyncReady && syncStatus === "loading")
+  ) {
     return (
       <TamaguiProvider config={config} defaultTheme={colorScheme}>
         <AppLoader colorScheme={colorScheme} />

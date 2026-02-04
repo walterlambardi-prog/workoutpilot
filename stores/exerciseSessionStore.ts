@@ -3,6 +3,7 @@ import type { PersistOptions } from "zustand/middleware";
 
 import { ExerciseId } from "@/constants/exercises";
 import { createCrossPlatformStorage } from "@/utils/storage";
+import { syncService } from "@/utils/syncService";
 
 // Use require to force CJS entry (avoids import.meta in ESM build on web)
 // while keeping types via the imports above.
@@ -31,6 +32,8 @@ interface ExerciseSessionState {
   addRep: (exerciseId: ExerciseId, delta?: number) => void;
   endSession: () => void;
   resetHistory: () => void;
+  loadHistoryFromSupabase: () => Promise<void>;
+  deleteCloudHistory: () => Promise<void>;
 }
 
 const HISTORY_LIMIT = 200;
@@ -113,6 +116,15 @@ export const useExerciseSessionStore = createTyped<ExerciseSessionState>(
             endedAt: now,
             durationMs: now - state.currentSession.startedAt,
           };
+
+          // ✅ Sync to Supabase (non-blocking)
+          syncService.syncExerciseSession(finished).catch((error) => {
+            console.error(
+              "[ExerciseSessionStore] Sync failed, queued for retry:",
+              error,
+            );
+          });
+
           return {
             currentSession: null,
             history: [finished, ...state.history].slice(0, HISTORY_LIMIT),
@@ -120,6 +132,34 @@ export const useExerciseSessionStore = createTyped<ExerciseSessionState>(
         });
       },
       resetHistory: () => set({ history: [], currentSession: null }),
+      loadHistoryFromSupabase: async () => {
+        try {
+          const { exerciseSessions } = await syncService.loadFullHistory();
+          set({ history: exerciseSessions });
+          console.log(
+            "[ExerciseSessionStore] ✅ Loaded history from Supabase:",
+            exerciseSessions.length,
+          );
+        } catch (error) {
+          console.error(
+            "[ExerciseSessionStore] Failed to load from Supabase:",
+            error,
+          );
+          // Fallback: keep AsyncStorage data
+        }
+      },
+      deleteCloudHistory: async () => {
+        try {
+          await syncService.deleteAllExerciseSessions();
+          console.log("[ExerciseSessionStore] ✅ Deleted cloud history");
+        } catch (error) {
+          console.error(
+            "[ExerciseSessionStore] Failed to delete cloud history:",
+            error,
+          );
+          throw error;
+        }
+      },
     }),
     {
       name: "exercise-session-store",

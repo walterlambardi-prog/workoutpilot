@@ -5,6 +5,27 @@
     "cancel": "Cancel",
     "ok": "OK"
   },
+  "sync": {
+    "status": {
+      "idle": "Ready",
+      "loading": "Loading data...",
+      "syncing": "Syncing...",
+      "ready": "Synced",
+      "error": "Sync failed"
+    },
+    "messages": {
+      "syncSuccess": "Data synced successfully",
+      "syncFailed": "Sync failed, will retry later",
+      "queuedForRetry": "Queued for sync when online",
+      "loadingHistory": "Loading your workout history...",
+      "loadingFailed": "Failed to load data from cloud",
+      "usingLocalData": "Using local data"
+    },
+    "actions": {
+      "retry": "Retry sync",
+      "dismiss": "Dismiss"
+    }
+  },
   "navigation": {
     "home": "Home",
     "exercises": "Exercises",

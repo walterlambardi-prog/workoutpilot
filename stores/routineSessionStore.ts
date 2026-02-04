@@ -4,6 +4,7 @@ import type { PersistOptions } from "zustand/middleware";
 import type { RoutineAnalysisResponse } from "@/app/routineAnalysis/routineAnalysis.types";
 import { ExerciseId } from "@/constants/exercises";
 import { createCrossPlatformStorage } from "@/utils/storage";
+import { syncService } from "@/utils/syncService";
 
 const { create: createFn } = require("zustand");
 const { persist } = require("zustand/middleware");
@@ -62,6 +63,8 @@ interface RoutineSessionState {
   getAnalysis: (routineId: string) => RoutineAnalysisResponse | null;
   resetActive: () => void;
   resetHistory: () => void;
+  loadHistoryFromSupabase: () => Promise<void>;
+  deleteCloudHistory: () => Promise<void>;
 }
 
 type PersistedState = RoutineSessionState;
@@ -214,6 +217,14 @@ export const useRoutineSessionStore = createTyped<RoutineSessionState>(
           totalReps: session.totalReps + progressDelta,
         };
 
+        // ✅ Sync to Supabase (non-blocking)
+        syncService.syncRoutineSession(completedSession).catch((error) => {
+          console.error(
+            "[RoutineSessionStore] Sync failed, queued for retry:",
+            error,
+          );
+        });
+
         set((state) => ({
           activeSession: null,
           lastCompletedSession: completedSession,
@@ -269,6 +280,11 @@ export const useRoutineSessionStore = createTyped<RoutineSessionState>(
         );
       },
       saveAnalysis: (routineId, analysis) => {
+        // ✅ Sync to Supabase (non-blocking)
+        syncService.syncRoutineAnalysis(routineId, analysis).catch((error) => {
+          console.error("[RoutineSessionStore] Analysis sync failed:", error);
+        });
+
         set((state) => ({
           ...state,
           analysisCache: {
@@ -289,6 +305,34 @@ export const useRoutineSessionStore = createTyped<RoutineSessionState>(
           history: [],
           analysisCache: {},
         }),
+      loadHistoryFromSupabase: async () => {
+        try {
+          const { routineSessions } = await syncService.loadFullHistory();
+          set({ history: routineSessions });
+          console.log(
+            "[RoutineSessionStore] ✅ Loaded history from Supabase:",
+            routineSessions.length,
+          );
+        } catch (error) {
+          console.error(
+            "[RoutineSessionStore] Failed to load from Supabase:",
+            error,
+          );
+          // Fallback: keep AsyncStorage data
+        }
+      },
+      deleteCloudHistory: async () => {
+        try {
+          await syncService.deleteAllRoutineSessions();
+          console.log("[RoutineSessionStore] ✅ Deleted cloud history");
+        } catch (error) {
+          console.error(
+            "[RoutineSessionStore] Failed to delete cloud history:",
+            error,
+          );
+          throw error;
+        }
+      },
     }),
     {
       name: "routine-session-store",

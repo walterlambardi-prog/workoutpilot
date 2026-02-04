@@ -3,6 +3,7 @@ import type { PersistOptions } from "zustand/middleware";
 
 import type { LatLng } from "@/components/MapView/MapView.types";
 import { createCrossPlatformStorage } from "@/utils/storage";
+import { syncService } from "@/utils/syncService";
 
 // Use require to avoid import.meta issues on web builds
 const { create: createFn } = require("zustand");
@@ -45,6 +46,8 @@ interface StepTrackerState {
   finalizeActiveSession: () => void;
   clearActiveSession: () => void;
   resetHistory: () => void;
+  loadHistoryFromSupabase: () => Promise<void>;
+  deleteCloudHistory: () => Promise<void>;
 }
 
 type PersistedState = StepTrackerState;
@@ -171,6 +174,14 @@ export const useStepTrackerStore = createTyped<StepTrackerState>(
             positions: state.activeSession.positions,
           };
 
+          // ✅ Sync to Supabase (non-blocking)
+          syncService.syncStepTrackerSession(entry).catch((error) => {
+            console.error(
+              "[StepTrackerStore] Sync failed, queued for retry:",
+              error,
+            );
+          });
+
           return {
             activeSession: null,
             history: [entry, ...state.history].slice(0, HISTORY_LIMIT),
@@ -181,6 +192,34 @@ export const useStepTrackerStore = createTyped<StepTrackerState>(
         set({ activeSession: null });
       },
       resetHistory: () => set({ history: [] }),
+      loadHistoryFromSupabase: async () => {
+        try {
+          const { stepTrackerSessions } = await syncService.loadFullHistory();
+          set({ history: stepTrackerSessions });
+          console.log(
+            "[StepTrackerStore] ✅ Loaded history from Supabase:",
+            stepTrackerSessions.length,
+          );
+        } catch (error) {
+          console.error(
+            "[StepTrackerStore] Failed to load from Supabase:",
+            error,
+          );
+          // Fallback: keep AsyncStorage data
+        }
+      },
+      deleteCloudHistory: async () => {
+        try {
+          await syncService.deleteAllStepTrackerSessions();
+          console.log("[StepTrackerStore] ✅ Deleted cloud history");
+        } catch (error) {
+          console.error(
+            "[StepTrackerStore] Failed to delete cloud history:",
+            error,
+          );
+          throw error;
+        }
+      },
     }),
     {
       name: "step-tracker-store",

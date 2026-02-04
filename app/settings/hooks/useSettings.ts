@@ -42,11 +42,20 @@ export const useSettings = () => {
 
   // Store actions
   const resetHistory = useExerciseSessionStore((state) => state.resetHistory);
+  const deleteExerciseCloudHistory = useExerciseSessionStore(
+    (state) => state.deleteCloudHistory,
+  );
   const resetRoutineHistory = useRoutineSessionStore(
     (state) => state.resetHistory,
   );
+  const deleteRoutineCloudHistory = useRoutineSessionStore(
+    (state) => state.deleteCloudHistory,
+  );
   const resetStepTrackerHistory = useStepTrackerStore(
     (state) => state.resetHistory,
+  );
+  const deleteStepTrackerCloudHistory = useStepTrackerStore(
+    (state) => state.deleteCloudHistory,
   );
   const resetRoutine = useRoutineBuilderStore((state) => state.resetRoutine);
   const resetAuth = useAuthStore(
@@ -117,8 +126,18 @@ export const useSettings = () => {
         {
           text: t("settings.data.clearHistoryConfirm"),
           style: "destructive",
-          onPress: () => {
+          onPress: async () => {
+            // Clear local data
             resetHistory();
+
+            // Clear cloud data (non-blocking)
+            deleteExerciseCloudHistory().catch((error) => {
+              console.error(
+                "[Settings] Failed to delete exercise sessions from cloud:",
+                error,
+              );
+            });
+
             showAlert(
               t("settings.data.clearedTitle"),
               t("settings.data.clearedMessage"),
@@ -127,7 +146,7 @@ export const useSettings = () => {
         },
       ],
     );
-  }, [resetHistory, t]);
+  }, [deleteExerciseCloudHistory, resetHistory, t]);
 
   const handleClearRoutineHistory = useCallback(() => {
     showAlert(
@@ -141,8 +160,18 @@ export const useSettings = () => {
         {
           text: t("settings.data.clearRoutineHistoryConfirm"),
           style: "destructive",
-          onPress: () => {
+          onPress: async () => {
+            // Clear local data
             resetRoutineHistory();
+
+            // Clear cloud data (non-blocking)
+            deleteRoutineCloudHistory().catch((error) => {
+              console.error(
+                "[Settings] Failed to delete routine sessions from cloud:",
+                error,
+              );
+            });
+
             showAlert(
               t("settings.data.clearedRoutineTitle"),
               t("settings.data.clearedRoutineMessage"),
@@ -151,7 +180,7 @@ export const useSettings = () => {
         },
       ],
     );
-  }, [resetRoutineHistory, t]);
+  }, [deleteRoutineCloudHistory, resetRoutineHistory, t]);
 
   const handleClearStepTrackerHistory = useCallback(() => {
     showAlert(
@@ -165,8 +194,18 @@ export const useSettings = () => {
         {
           text: t("settings.data.clearStepTrackerHistoryConfirm"),
           style: "destructive",
-          onPress: () => {
+          onPress: async () => {
+            // Clear local data
             resetStepTrackerHistory();
+
+            // Clear cloud data (non-blocking)
+            deleteStepTrackerCloudHistory().catch((error) => {
+              console.error(
+                "[Settings] Failed to delete step tracker sessions from cloud:",
+                error,
+              );
+            });
+
             showAlert(
               t("settings.data.clearedStepTrackerTitle"),
               t("settings.data.clearedStepTrackerMessage"),
@@ -175,7 +214,7 @@ export const useSettings = () => {
         },
       ],
     );
-  }, [resetStepTrackerHistory, t]);
+  }, [deleteStepTrackerCloudHistory, resetStepTrackerHistory, t]);
 
   const handleDeleteAccount = useCallback(() => {
     showAlert(
@@ -189,12 +228,25 @@ export const useSettings = () => {
         {
           text: t("settings.data.deleteAccountConfirm"),
           style: "destructive",
-          onPress: () => {
+          onPress: async () => {
+            // Clear local data
             resetAuth();
             resetHistory();
             resetRoutineHistory();
             resetStepTrackerHistory();
             resetRoutine();
+
+            // Clear all cloud data (non-blocking)
+            Promise.all([
+              deleteExerciseCloudHistory(),
+              deleteRoutineCloudHistory(),
+              deleteStepTrackerCloudHistory(),
+            ]).catch((error) => {
+              console.error(
+                "[Settings] Failed to delete user data from cloud:",
+                error,
+              );
+            });
 
             showAlert(
               t("settings.data.accountDeletedTitle"),
@@ -207,6 +259,9 @@ export const useSettings = () => {
       ],
     );
   }, [
+    deleteExerciseCloudHistory,
+    deleteRoutineCloudHistory,
+    deleteStepTrackerCloudHistory,
     resetAuth,
     resetHistory,
     resetRoutine,

@@ -5,6 +5,27 @@
     "cancel": "Cancelar",
     "ok": "OK"
   },
+  "sync": {
+    "status": {
+      "idle": "Listo",
+      "loading": "Cargando datos...",
+      "syncing": "Sincronizando...",
+      "ready": "Sincronizado",
+      "error": "Error de sincronización"
+    },
+    "messages": {
+      "syncSuccess": "Datos sincronizados correctamente",
+      "syncFailed": "Sincronización fallida, se reintentará",
+      "queuedForRetry": "En cola para sincronizar cuando haya conexión",
+      "loadingHistory": "Cargando tu historial de entrenamientos...",
+      "loadingFailed": "Error al cargar datos de la nube",
+      "usingLocalData": "Usando datos locales"
+    },
+    "actions": {
+      "retry": "Reintentar sincronización",
+      "dismiss": "Descartar"
+    }
+  },
   "navigation": {
     "home": "Inicio",
     "exercises": "Ejercicios",
