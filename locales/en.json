@@ -15,7 +15,8 @@
     "stepTracker": "Step tracker"
   },
   "drawer": {
-    "title": "Menu"
+    "title": "Menu",
+    "logout": "Sign out"
   },
   "header": {
     "welcome": "Let’s crush today",
@@ -25,17 +26,28 @@
   "login": {
     "title": "Welcome to WorkoutPilot",
     "subtitle": "Let's get started",
-    "description": "Enter your name or nickname to personalize your experience.",
-    "inputLabel": "Your name",
-    "inputPlaceholder": "e.g. John",
-    "continueButton": "Continue",
-    "errorEmpty": "Please enter a name",
-    "errorTooShort": "Name must be at least 2 characters",
-    "errorTooLong": "Name must be less than 30 characters",
+    "description": "Sign in or create an account to start your fitness journey.",
+    "displayNameLabel": "Display name",
+    "displayNamePlaceholder": "How should we call you?",
+    "emailLabel": "Email",
+    "emailPlaceholder": "your.email@example.com",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "signInButton": "Sign in",
+    "signUpButton": "Create account",
+    "switchToSignUp": "Don't have an account? Sign up",
+    "switchToSignIn": "Already have an account? Sign in",
+    "errorEmpty": "Please enter your email and password",
+    "errorInvalidEmail": "Please enter a valid email address",
+    "errorPasswordTooShort": "Password must be at least 6 characters",
+    "errorDisplayNameTooShort": "Display name must be at least 2 characters",
+    "errorSignInFailed": "Sign in failed. Please check your credentials.",
+    "errorSignUpFailed": "Sign up failed. Please try again.",
+    "successSignUp": "Account created! Please check your email to verify.",
     "highlights": {
-      "secure": "Your data stays on device",
-      "fast": "Start in seconds with one field",
-      "personalized": "Get personalized coaching after login"
+      "secure": "Secure cloud authentication",
+      "fast": "Start in seconds",
+      "personalized": "Sync across all devices"
     }
   },
   "onboarding": {

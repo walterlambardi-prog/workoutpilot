@@ -1,5 +1,6 @@
 import { TDrawer } from "@/components/TDrawer";
 import { TText } from "@/components/TText";
+import type { AuthState } from "@/stores/authStore";
 import { useAuthStore } from "@/stores/authStore";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
@@ -10,9 +11,9 @@ import { useTheme, XStack, YStack } from "tamagui";
 
 import { usePathname, useRouter } from "expo-router";
 import {
-  avatarShadowStyle,
-  getAvatarPressableStyle,
-  getMenuButtonStyle,
+    avatarShadowStyle,
+    getAvatarPressableStyle,
+    getMenuButtonStyle,
 } from "./TAppHeader.styles";
 
 export interface TAppHeaderProps {
@@ -37,7 +38,7 @@ export const TAppHeader: React.FC<TAppHeaderProps> = ({
   showMenuButton = true,
   drawerState,
 }) => {
-  const username = useAuthStore((state: any) => state.username);
+  const username = useAuthStore((state: AuthState) => state.username);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const insets = useSafeAreaInsets();
   const theme = useTheme();

@@ -1,42 +1,74 @@
-import { useRouter } from "expo-router";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { SpaceTokens } from "tamagui";
 import { useMedia, useTheme } from "tamagui";
 
+import { supabase } from "@/config/supabase";
 import { useAuthStore } from "@/stores/authStore";
 
 export const useLogin = () => {
   const { t } = useTranslation();
-  const router = useRouter();
   const theme = useTheme();
   const media = useMedia();
 
-  // State
-  const [username, setUsername] = useState("");
-  const [error, setError] = useState("");
-
-  // Store actions
-  const setStoredUsername = useAuthStore(
-    (state: { setUsername: (username: string) => void }) => state.setUsername,
+  // Store
+  const setHasCompletedOnboarding = useAuthStore(
+    (state: { setHasCompletedOnboarding: (completed: boolean) => void }) =>
+      state.setHasCompletedOnboarding,
   );
 
+  // State
+  const [displayName, setDisplayName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(false);
+
   // Validation
-  const validateUsername = (value: string): string => {
+  const validateEmail = (value: string): string => {
+    if (!value.trim()) {
+      return t("login.errorEmpty");
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(value)) {
+      return t("login.errorInvalidEmail");
+    }
+    return "";
+  };
+
+  const validatePassword = (value: string): string => {
+    if (!value) {
+      return t("login.errorEmpty");
+    }
+    if (value.length < 6) {
+      return t("login.errorPasswordTooShort");
+    }
+    return "";
+  };
+
+  const validateDisplayName = (value: string): string => {
     if (!value.trim()) {
       return t("login.errorEmpty");
     }
     if (value.trim().length < 2) {
-      return t("login.errorTooShort");
-    }
-    if (value.trim().length > 30) {
-      return t("login.errorTooLong");
+      return t("login.errorDisplayNameTooShort");
     }
     return "";
   };
 
   // Computed values
-  const isValid = username.trim().length >= 2 && username.trim().length <= 30;
+  const isValid = isSignUp
+    ? displayName.trim().length >= 2 &&
+      email.trim().length > 0 &&
+      password.length >= 6 &&
+      validateDisplayName(displayName) === "" &&
+      validateEmail(email) === "" &&
+      validatePassword(password) === ""
+    : email.trim().length > 0 &&
+      password.length >= 6 &&
+      validateEmail(email) === "" &&
+      validatePassword(password) === "";
 
   // Responsive sizes
   const badgeIconSize = media.gtSm ? 20 : 18;
@@ -63,29 +95,132 @@ export const useLogin = () => {
   );
 
   // Event handlers
-  const handleContinue = () => {
-    const validationError = validateUsername(username);
-    if (validationError) {
-      setError(validationError);
+  const handleSignIn = async () => {
+    const emailError = validateEmail(email);
+    const passwordError = validatePassword(password);
+
+    if (emailError || passwordError) {
+      setError(emailError || passwordError);
       return;
     }
 
-    setStoredUsername(username.trim());
-    router.replace("/onboarding");
+    setLoading(true);
+    setError("");
+
+    try {
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: email.trim(),
+        password,
+      });
+
+      if (signInError) {
+        setError(t("login.errorSignInFailed"));
+        return;
+      }
+
+      // Sign in: don't touch hasCompletedOnboarding (persisted value remains)
+      // Navigation handled by _layout.tsx auth listener
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : t("login.errorSignInFailed"),
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleChangeText = (text: string) => {
-    setUsername(text);
+  const handleSignUp = async () => {
+    const displayNameError = validateDisplayName(displayName);
+    const emailError = validateEmail(email);
+    const passwordError = validatePassword(password);
+
+    if (displayNameError || emailError || passwordError) {
+      setError(displayNameError || emailError || passwordError);
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+
+    try {
+      const { data, error: signUpError } = await supabase.auth.signUp({
+        email: email.trim(),
+        password,
+        options: {
+          data: {
+            display_name: displayName.trim(),
+          },
+        },
+      });
+
+      if (signUpError) {
+        setError(t("login.errorSignUpFailed"));
+        return;
+      }
+
+      // If email confirmation is required, show success message
+      if (!data.session) {
+        setError(""); // Clear any previous errors
+        // Note: You might want to show a success toast here
+        // For now, we'll just switch to sign in mode
+        setIsSignUp(false);
+      } else {
+        // Update user metadata to ensure display_name is saved
+        await supabase.auth.updateUser({
+          data: {
+            display_name: displayName.trim(),
+          },
+        });
+
+        // Mark as NOT completed onboarding to show it for new users
+        setHasCompletedOnboarding(false);
+        // Navigation handled by _layout.tsx auth listener
+      }
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : t("login.errorSignUpFailed"),
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleChangeDisplayName = (text: string) => {
+    setDisplayName(text);
     if (error) {
       setError("");
     }
   };
 
+  const handleChangeEmail = (text: string) => {
+    setEmail(text);
+    if (error) {
+      setError("");
+    }
+  };
+
+  const handleChangePassword = (text: string) => {
+    setPassword(text);
+    if (error) {
+      setError("");
+    }
+  };
+
+  const toggleMode = () => {
+    setIsSignUp(!isSignUp);
+    setDisplayName("");
+    setError("");
+  };
+
   return {
     // State
-    username,
+    displayName,
+    email,
+    password,
     error,
+    loading,
     isValid,
+    isSignUp,
 
     // Theme
     theme,
@@ -97,7 +232,11 @@ export const useLogin = () => {
     highlights,
 
     // Actions
-    handleContinue,
-    handleChangeText,
+    handleSignIn,
+    handleSignUp,
+    handleChangeDisplayName,
+    handleChangeEmail,
+    handleChangePassword,
+    toggleMode,
   };
 };

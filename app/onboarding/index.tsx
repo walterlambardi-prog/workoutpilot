@@ -2,13 +2,13 @@ import { useRouter } from "expo-router";
 import React, { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
-  FlatList,
-  type ListRenderItem,
-  Pressable,
-  Text,
-  useWindowDimensions,
-  View,
-  type ViewToken,
+    FlatList,
+    type ListRenderItem,
+    Pressable,
+    Text,
+    useWindowDimensions,
+    View,
+    type ViewToken,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -80,9 +80,20 @@ const OnboardingScreen: React.FC = () => {
     handleComplete();
   };
 
-  const handleComplete = () => {
+  const handleComplete = async () => {
     setHasCompletedOnboarding(true);
-    router.replace("/");
+
+    // Update user metadata in Supabase to persist across devices
+    try {
+      const { supabase } = await import('@/config/supabase');
+      await supabase.auth.updateUser({
+        data: { has_completed_onboarding: true },
+      });
+    } catch (error) {
+      console.error('[Onboarding] Failed to update user metadata:', error);
+    }
+
+    router.replace('/');
   };
 
   const renderStep: ListRenderItem<OnboardingStep> = ({ item }) => (

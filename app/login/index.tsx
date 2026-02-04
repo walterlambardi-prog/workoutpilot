@@ -12,24 +12,34 @@ import { useLogin } from "./hooks/useLogin";
 import styles from "./login.styles";
 
 /**
- * Login screen - first entry point to the app
- * Collects and persists username before allowing access to the app
+ * Login screen - authentication with email/password
+ * Supports both sign in and sign up flows with Supabase Auth
  */
 const LoginScreen: React.FC = () => {
   const { t } = useTranslation();
 
   const {
-    username,
+    displayName,
+    email,
+    password,
     error,
+    loading,
     isValid,
+    isSignUp,
     theme,
     badgeIconSize,
     cardPadding,
     gapSize,
     highlights,
-    handleContinue,
-    handleChangeText,
+    handleSignIn,
+    handleSignUp,
+    handleChangeDisplayName,
+    handleChangeEmail,
+    handleChangePassword,
+    toggleMode,
   } = useLogin();
+
+  const handleSubmit = isSignUp ? handleSignUp : handleSignIn;
 
   return (
     <KeyboardAvoidingView
@@ -77,22 +87,47 @@ const LoginScreen: React.FC = () => {
             backgroundColor="$backgroundHover"
             padding={cardPadding}
           >
-            <YStack gap="$6">
+            <YStack gap="$3">
+              {isSignUp && (
+                <TInput
+                  label={t("login.displayNameLabel")}
+                  placeholder={t("login.displayNamePlaceholder")}
+                  value={displayName}
+                  onChangeText={handleChangeDisplayName}
+                  autoCapitalize="words"
+                  autoCorrect={false}
+                  returnKeyType="next"
+                  accessibilityHint={t("login.displayNameLabel")}
+                />
+              )}
+
               <TInput
-                label={t("login.inputLabel")}
-                placeholder={t("login.inputPlaceholder")}
-                value={username}
-                onChangeText={handleChangeText}
-                autoCapitalize="words"
+                label={t("login.emailLabel")}
+                placeholder={t("login.emailPlaceholder")}
+                value={email}
+                onChangeText={handleChangeEmail}
+                autoCapitalize="none"
                 autoCorrect={false}
-                maxLength={30}
-                returnKeyType="done"
-                onSubmitEditing={handleContinue}
+                keyboardType="email-address"
+                returnKeyType="next"
                 accessibilityHint={t("login.description")}
                 error={error || undefined}
               />
 
-              <XStack gap="$2" flexWrap="wrap">
+              <TInput
+                label={t("login.passwordLabel")}
+                placeholder={t("login.passwordPlaceholder")}
+                value={password}
+                onChangeText={handleChangePassword}
+                autoCapitalize="none"
+                autoCorrect={false}
+                secureTextEntry
+                returnKeyType="done"
+                onSubmitEditing={handleSubmit}
+                accessibilityHint={t("login.description")}
+              />
+
+              <XStack gap="$2" flexWrap="wrap" marginTop="$2">
                 {highlights.map((item) => (
                   <TTag
                     key={item.icon}
@@ -106,12 +141,29 @@ const LoginScreen: React.FC = () => {
 
               <TButton
                 fullWidth
-                onPress={handleContinue}
-                disabled={!isValid}
-                accessibilityLabel={t("login.continueButton")}
-                accessibilityState={{ disabled: !isValid }}
+                onPress={handleSubmit}
+                disabled={!isValid || loading}
+                accessibilityLabel={
+                  isSignUp ? t("login.signUpButton") : t("login.signInButton")
+                }
+                accessibilityState={{ disabled: !isValid || loading }}
               >
-                {t("login.continueButton")}
+                {loading
+                  ? "..."
+                  : isSignUp
+                    ? t("login.signUpButton")
+                    : t("login.signInButton")}
+              </TButton>
+
+              <TButton
+                fullWidth
+                variant="outline"
+                onPress={toggleMode}
+                disabled={loading}
+              >
+                {isSignUp
+                  ? t("login.switchToSignIn")
+                  : t("login.switchToSignUp")}
               </TButton>
             </YStack>
           </Card>

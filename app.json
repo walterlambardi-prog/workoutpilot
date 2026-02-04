@@ -14,7 +14,10 @@
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "WorkoutPilot tracks your route during step-based activities to measure distance.",
         "NSLocationAlwaysAndWhenInUseUsageDescription": "Allow background location to keep tracking your activity when the app is not open.",
-        "UIBackgroundModes": ["location", "fetch"]
+        "UIBackgroundModes": [
+          "location",
+          "fetch"
+        ]
       }
     },
     "android": {
@@ -57,7 +60,8 @@
             "backgroundColor": "#000000"
           }
         }
-      ]
+      ],
+      "expo-sqlite"
     ],
     "experiments": {
       "typedRoutes": true,

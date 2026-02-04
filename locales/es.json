@@ -15,7 +15,8 @@
     "stepTracker": "Contador de pasos"
   },
   "drawer": {
-    "title": "Menú"
+    "title": "Menú",
+    "logout": "Cerrar sesión"
   },
   "header": {
     "welcome": "Vamos a romperla hoy",
@@ -25,17 +26,28 @@
   "login": {
     "title": "Bienvenido a WorkoutPilot",
     "subtitle": "Comencemos",
-    "description": "Ingresa tu nombre o apodo para personalizar tu experiencia.",
-    "inputLabel": "Tu nombre",
-    "inputPlaceholder": "ej. Juan",
-    "continueButton": "Continuar",
-    "errorEmpty": "Por favor ingresa un nombre",
-    "errorTooShort": "El nombre debe tener al menos 2 caracteres",
-    "errorTooLong": "El nombre debe tener menos de 30 caracteres",
+    "description": "Inicia sesión o crea una cuenta para comenzar tu viaje fitness.",
+    "displayNameLabel": "Nombre de usuario",
+    "displayNamePlaceholder": "¿Cómo deberíamos llamarte?",
+    "emailLabel": "Correo electrónico",
+    "emailPlaceholder": "tu.correo@ejemplo.com",
+    "passwordLabel": "Contraseña",
+    "passwordPlaceholder": "Ingresa tu contraseña",
+    "signInButton": "Iniciar sesión",
+    "signUpButton": "Crear cuenta",
+    "switchToSignUp": "¿No tienes cuenta? Regístrate",
+    "switchToSignIn": "¿Ya tienes cuenta? Inicia sesión",
+    "errorEmpty": "Por favor ingresa tu correo y contraseña",
+    "errorInvalidEmail": "Por favor ingresa un correo válido",
+    "errorPasswordTooShort": "La contraseña debe tener al menos 6 caracteres",
+    "errorDisplayNameTooShort": "El nombre debe tener al menos 2 caracteres",
+    "errorSignInFailed": "Error al iniciar sesión. Verifica tus credenciales.",
+    "errorSignUpFailed": "Error al crear cuenta. Intenta de nuevo.",
+    "successSignUp": "¡Cuenta creada! Por favor verifica tu correo.",
     "highlights": {
-      "secure": "Tus datos se quedan en el dispositivo",
-      "fast": "Comienza en segundos con un solo campo",
-      "personalized": "Obtén coaching personalizado después de iniciar"
+      "secure": "Autenticación segura en la nube",
+      "fast": "Comienza en segundos",
+      "personalized": "Sincroniza en todos tus dispositivos"
     }
   },
   "onboarding": {

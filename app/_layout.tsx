@@ -18,7 +18,7 @@ import "@/config/initReactotron";
 import { useAppLanguage } from "@/hooks/useAppLanguage";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import "@/locales/i18n";
-import { useAuthStore } from "@/stores/authStore";
+import { initializeAuth, useAuthStore } from "@/stores/authStore";
 import { usePreferencesStore } from "@/stores/preferencesStore";
 import { Platform, Pressable } from "react-native";
 import config from "../tamagui.config";
@@ -40,13 +40,20 @@ export default function RootLayout() {
   const authHasHydrated = useAuthStore(
     (state: { _hasHydrated: boolean }) => state._hasHydrated,
   );
-  const username = useAuthStore(
-    (state: { username: string | null }) => state.username,
-  );
+  const session = useAuthStore((state: { session: unknown }) => state.session);
   const hasCompletedOnboarding = useAuthStore(
     (state: { hasCompletedOnboarding: boolean }) =>
       state.hasCompletedOnboarding,
   );
+
+  // Initialize Supabase auth listener
+  useEffect(() => {
+    const subscription = initializeAuth();
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
 
   const openDrawer = useCallback(() => {
     setIsDrawerOpen(true);
@@ -109,15 +116,16 @@ export default function RootLayout() {
 
     const inAuthGroup = segments[0] === "login" || segments[0] === "onboarding";
 
-    // User needs to set username first
-    if (!username) {
+    // User needs to authenticate first
+    if (!session) {
       if (segments[0] !== "login") {
         router.replace("/login");
       }
       return;
     }
 
-    // User has username but needs to complete onboarding
+    // User is authenticated but needs to complete onboarding
+    // Show onboarding only if user hasn't completed it (new signups)
     if (!hasCompletedOnboarding) {
       if (segments[0] !== "onboarding") {
         router.replace("/onboarding");
@@ -129,7 +137,7 @@ export default function RootLayout() {
     if (inAuthGroup) {
       router.replace("/");
     }
-  }, [username, hasCompletedOnboarding, isNavigationReady, segments, router]);
+  }, [session, hasCompletedOnboarding, isNavigationReady, segments, router]);
 
   // Show loader while stores are being loaded
   if (!preferencesHasHydrated || !authHasHydrated || !isNavigationReady) {

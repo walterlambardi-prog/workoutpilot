@@ -5,13 +5,15 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { Modal, Pressable } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { ScrollView, XStack, YStack, useTheme } from "tamagui";
+import { ScrollView, Separator, XStack, YStack, useTheme } from "tamagui";
+
+import { useAuthStore } from "@/stores/authStore";
 
 import {
-    drawerStyles,
-    getCloseButtonStyle,
-    getDrawerPanelStyle,
-    getNavItemPressableStyle,
+  drawerStyles,
+  getCloseButtonStyle,
+  getDrawerPanelStyle,
+  getNavItemPressableStyle,
 } from "./TDrawer.styles";
 
 export interface TDrawerProps {
@@ -81,10 +83,23 @@ export const TDrawer: React.FC<TDrawerProps> = ({ isOpen, onClose }) => {
   const insets = useSafeAreaInsets();
   const theme = useTheme();
   const iconColor = theme.color.get();
+  const signOut = useAuthStore(
+    (state: { signOut: () => Promise<void> }) => state.signOut,
+  );
 
   const handleNavigate = (href: string) => {
     onClose();
     router.push(href as any);
+  };
+
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      onClose();
+      router.replace("/login");
+    } catch (error) {
+      console.error("[TDrawer] Logout failed:", error);
+    }
   };
 
   return (
@@ -186,6 +201,49 @@ export const TDrawer: React.FC<TDrawerProps> = ({ isOpen, onClose }) => {
                 )}
               </YStack>
             </ScrollView>
+
+            {/* Logout button */}
+            <YStack paddingHorizontal="$4" paddingVertical="$3">
+              <Separator borderColor="$borderColor" />
+              <Pressable
+                onPress={handleLogout}
+                style={(state) => getNavItemPressableStyle(state, false)}
+              >
+                <XStack
+                  paddingHorizontal="$4"
+                  paddingVertical="$3"
+                  gap="$3"
+                  alignItems="center"
+                  marginTop="$2"
+                  hoverStyle={{
+                    backgroundColor: "$backgroundHover",
+                  }}
+                >
+                  {/* Icon */}
+                  <YStack
+                    width={48}
+                    height={48}
+                    borderRadius="$3"
+                    backgroundColor="#EF444415"
+                    alignItems="center"
+                    justifyContent="center"
+                  >
+                    <Ionicons
+                      name="log-out-outline"
+                      size={24}
+                      color="#EF4444"
+                    />
+                  </YStack>
+
+                  {/* Text */}
+                  <YStack flex={1}>
+                    <THeading level={4} fontSize="$4" color="#EF4444">
+                      {t("drawer.logout")}
+                    </THeading>
+                  </YStack>
+                </XStack>
+              </Pressable>
+            </YStack>
           </YStack>
         </Pressable>
       </Pressable>
