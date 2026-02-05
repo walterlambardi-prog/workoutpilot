@@ -89,6 +89,38 @@ const tokens = createTokens({
     // Transparent colors
     transparent: "rgba(0,0,0,0)",
     whiteTransparent: "rgba(255,255,255,0)",
+
+    // Stats card colors - Blue (Light mode)
+    blue3Light: "#dbeafe", // blue-100
+    blue11Light: "#2563eb", // blue-600
+
+    // Stats card colors - Blue (Dark mode)
+    blue3Dark: "#1e3a8a", // blue-800
+    blue11Dark: "#93c5fd", // blue-300
+
+    // Stats card colors - Green (Light mode)
+    green3Light: "#d1fae5", // green-100
+    green11Light: "#059669", // green-600
+
+    // Stats card colors - Green (Dark mode)
+    green3Dark: "#065f46", // green-800
+    green11Dark: "#6ee7b7", // green-300
+
+    // Stats card colors - Purple (Light mode)
+    purple3Light: "#e9d5ff", // purple-200
+    purple11Light: "#9333ea", // purple-600
+
+    // Stats card colors - Purple (Dark mode)
+    purple3Dark: "#581c87", // purple-900
+    purple11Dark: "#c084fc", // purple-400
+
+    // Stats card colors - Orange (Light mode)
+    orange3Light: "#fed7aa", // orange-200
+    orange11Light: "#ea580c", // orange-600
+
+    // Stats card colors - Orange (Dark mode)
+    orange3Dark: "#9a3412", // orange-800
+    orange11Dark: "#fdba74", // orange-300
   },
   radius: {
     $0: 0,
@@ -139,6 +171,16 @@ const lightTheme = {
   error: tokens.color.errorLight,
   warning: tokens.color.warningLight,
   info: tokens.color.infoLight,
+
+  // Stats card colors - Light mode
+  blue3: tokens.color.blue3Light,
+  blue11: tokens.color.blue11Light,
+  green3: tokens.color.green3Light,
+  green11: tokens.color.green11Light,
+  purple3: tokens.color.purple3Light,
+  purple11: tokens.color.purple11Light,
+  orange3: tokens.color.orange3Light,
+  orange11: tokens.color.orange11Light,
 };
 
 // Create dark theme
@@ -170,6 +212,16 @@ const darkTheme = {
   error: tokens.color.errorDark,
   warning: tokens.color.warningDark,
   info: tokens.color.infoDark,
+
+  // Stats card colors - Dark mode
+  blue3: tokens.color.blue3Dark,
+  blue11: tokens.color.blue11Dark,
+  green3: tokens.color.green3Dark,
+  green11: tokens.color.green11Dark,
+  purple3: tokens.color.purple3Dark,
+  purple11: tokens.color.purple11Dark,
+  orange3: tokens.color.orange3Dark,
+  orange11: tokens.color.orange11Dark,
 };
 
 // Create Tamagui configuration
