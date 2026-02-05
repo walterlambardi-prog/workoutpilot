@@ -137,10 +137,27 @@
       "complete": "complete",
       "resumeButton": "Resume",
       "tryButton": "Try it",
-      "startButton": "Start Now"
+      "startButton": "Start Now",
+      "editButton": "Edit",
+      "beginButton": "Begin",
+      "continueRoutineTitle": "Continue Your Routine",
+      "continueRoutineSubtitle": "{{completed}} of {{total}} exercises completed",
+      "restartRoutineTitle": "Restart Last Routine",
+      "restartRoutineSubtitle": "{{exercises}} exercises, {{rounds}} rounds",
+      "suggestedExerciseTitle": "Try Your Favorite",
+      "suggestedExerciseSubtitle": "You've done {{exerciseId}} {{count}} times",
+      "startFirstWorkoutTitle": "Start Your First Workout",
+      "startFirstWorkoutSubtitle": "Build a routine or try a quick exercise"
     },
     "achievement": {
-      "label": "NEW ACHIEVEMENT"
+      "label": "NEW ACHIEVEMENT",
+      "personalRecordTitle": "New Personal Record!",
+      "personalRecordDescription": "{{reps}} reps in {{exerciseId}}",
+      "streakTitle": "{{count}} Day Streak!",
+      "streakDescriptionOnFire": "You're on fire! Keep it up",
+      "streakDescriptionIncredible": "Incredible consistency!",
+      "milestoneTitle": "{{count}} Total Reps!",
+      "milestoneDescription": "Amazing milestone achieved"
     },
     "actions": {
       "home": {

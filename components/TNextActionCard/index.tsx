@@ -6,6 +6,7 @@ import type { ColorValue } from "react-native";
 import { Button, Card, H4, Progress, Text, XStack, YStack } from "tamagui";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { useRoutineSessionStore } from "@/stores/routineSessionStore";
 
 import type { NextAction } from "@/app/home/hooks/useHomeStats";
 
@@ -20,15 +21,70 @@ export const TNextActionCard: React.FC<TNextActionCardProps> = ({
   const router = useRouter();
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
+  const activeSession = useRoutineSessionStore((state) => state.activeSession);
+  const restartFromSession = useRoutineSessionStore(
+    (state) => state.restartFromSession,
+  );
 
   const handlePress = () => {
     if (nextAction.type === "continue-routine") {
-      // Navigate to routine session
+      // If there's an active session, resume it
+      if (activeSession && activeSession.plan.length > 0) {
+        const currentStep = activeSession.plan[activeSession.currentStepIndex];
+        if (currentStep) {
+          router.push({
+            pathname: "/exercises/[exerciseId]",
+            params: {
+              exerciseId: currentStep.exerciseId,
+              routineId: activeSession.id,
+              stepIndex: activeSession.currentStepIndex.toString(),
+            },
+          });
+          return;
+        }
+      }
+
+      // If there's a routineId but no active session, restart it
+      if (nextAction.routineId) {
+        const newSessionId = restartFromSession(nextAction.routineId);
+        if (newSessionId) {
+          // Get the first exercise of the restarted routine
+          const newActiveSession =
+            useRoutineSessionStore.getState().activeSession;
+          if (newActiveSession && newActiveSession.plan.length > 0) {
+            const firstStep = newActiveSession.plan[0];
+            router.push({
+              pathname: "/exercises/[exerciseId]",
+              params: {
+                exerciseId: firstStep.exerciseId,
+                routineId: newSessionId,
+                stepIndex: "0",
+              },
+            });
+            return;
+          }
+        }
+      }
+
+      // Otherwise, go to routine builder to set up and start
+      router.push("/routine");
+    } else if (nextAction.type === "suggested-exercise") {
+      // Navigate directly to exercise if we have the exerciseId
+      if (nextAction.exerciseId) {
+        router.push(`/exerciseSession?exerciseId=${nextAction.exerciseId}`);
+      } else {
+        router.push("/exercises");
+      }
+    } else {
+      router.push("/routine");
+    }
+  };
+
+  const handleEdit = () => {
+    if (nextAction.type === "continue-routine" || nextAction.type === "none") {
       router.push("/routine");
     } else if (nextAction.type === "suggested-exercise") {
       router.push("/exercises");
-    } else {
-      router.push("/routine");
     }
   };
 
@@ -128,22 +184,52 @@ export const TNextActionCard: React.FC<TNextActionCardProps> = ({
           </YStack>
         )}
 
-        <Button
-          size="$4"
-          backgroundColor={colors.accent as any}
-          color="white"
-          fontWeight="600"
-          onPress={handlePress}
-          hoverStyle={{ backgroundColor: colors.accentHover as any }}
-          pressStyle={{ opacity: 0.9 }}
-          iconAfter={<Ionicons name="arrow-forward" size={20} color="white" />}
-        >
-          {nextAction.type === "continue-routine"
-            ? t("home.nextAction.resumeButton")
-            : nextAction.type === "suggested-exercise"
-              ? t("home.nextAction.tryButton")
-              : t("home.nextAction.startButton")}
-        </Button>
+        <XStack gap="$3">
+          <Button
+            flex={1}
+            size="$4"
+            backgroundColor="transparent"
+            borderWidth={2}
+            borderColor={colors.accent as any}
+            color={colors.accent as any}
+            fontWeight="600"
+            onPress={handleEdit}
+            hoverStyle={{
+              backgroundColor: colors.accent as any,
+              opacity: 0.1,
+            }}
+            pressStyle={{ opacity: 0.8 }}
+            icon={
+              <Ionicons
+                name="create-outline"
+                size={18}
+                color={colors.accent as string}
+              />
+            }
+          >
+            {t("home.nextAction.editButton")}
+          </Button>
+
+          <Button
+            flex={1}
+            size="$4"
+            backgroundColor={colors.accent as any}
+            color="white"
+            fontWeight="600"
+            onPress={handlePress}
+            hoverStyle={{ backgroundColor: colors.accentHover as any }}
+            pressStyle={{ opacity: 0.9 }}
+            iconAfter={
+              <Ionicons name="arrow-forward" size={20} color="white" />
+            }
+          >
+            {nextAction.type === "continue-routine"
+              ? t("home.nextAction.resumeButton")
+              : nextAction.type === "suggested-exercise"
+                ? t("home.nextAction.beginButton")
+                : t("home.nextAction.startButton")}
+          </Button>
+        </XStack>
       </YStack>
     </Card>
   );

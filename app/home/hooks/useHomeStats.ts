@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 
 import { useExerciseSessionStore } from "@/stores/exerciseSessionStore";
 import { useRoutineSessionStore } from "@/stores/routineSessionStore";
@@ -23,6 +24,7 @@ export interface NextAction {
   subtitle: string;
   progress?: number;
   routineId?: string;
+  exerciseId?: string;
 }
 
 export interface Achievement {
@@ -35,6 +37,8 @@ export interface Achievement {
 }
 
 export const useHomeStats = () => {
+  const { t } = useTranslation();
+
   // Get data from stores
   const exerciseHistory = useExerciseSessionStore((state) => state.history);
   const routineHistory = useRoutineSessionStore((state) => state.history);
@@ -171,8 +175,11 @@ export const useHomeStats = () => {
 
       return {
         type: "continue-routine",
-        title: "Continue Your Routine",
-        subtitle: `${completedSteps} of ${totalSteps} exercises completed`,
+        title: t("home.nextAction.continueRoutineTitle"),
+        subtitle: t("home.nextAction.continueRoutineSubtitle", {
+          completed: completedSteps,
+          total: totalSteps,
+        }),
         progress,
         routineId: activeRoutine.id,
       };
@@ -182,8 +189,11 @@ export const useHomeStats = () => {
     if (lastCompletedRoutine) {
       return {
         type: "continue-routine",
-        title: "Restart Last Routine",
-        subtitle: `${lastCompletedRoutine.plan.length} exercises, ${lastCompletedRoutine.rounds} rounds`,
+        title: t("home.nextAction.restartRoutineTitle"),
+        subtitle: t("home.nextAction.restartRoutineSubtitle", {
+          exercises: lastCompletedRoutine.plan.length,
+          rounds: lastCompletedRoutine.rounds,
+        }),
         routineId: lastCompletedRoutine.id,
       };
     }
@@ -204,18 +214,22 @@ export const useHomeStats = () => {
         const [exerciseId, count] = mostFrequent;
         return {
           type: "suggested-exercise",
-          title: "Try Your Favorite",
-          subtitle: `You've done ${exerciseId} ${count} times`,
+          title: t("home.nextAction.suggestedExerciseTitle"),
+          subtitle: t("home.nextAction.suggestedExerciseSubtitle", {
+            exerciseId,
+            count,
+          }),
+          exerciseId,
         };
       }
     }
 
     return {
       type: "none",
-      title: "Start Your First Workout",
-      subtitle: "Build a routine or try a quick exercise",
+      title: t("home.nextAction.startFirstWorkoutTitle"),
+      subtitle: t("home.nextAction.startFirstWorkoutSubtitle"),
     };
-  }, [activeRoutine, lastCompletedRoutine, exerciseHistory]);
+  }, [activeRoutine, lastCompletedRoutine, exerciseHistory, t]);
 
   // Detect recent achievements
   const latestAchievement = useMemo((): Achievement | null => {
@@ -232,8 +246,11 @@ export const useHomeStats = () => {
           achievements.push({
             id: `record-${topSession.id}`,
             type: "record",
-            title: "New Personal Record!",
-            description: `${topSession.reps} reps in ${topSession.exerciseId}`,
+            title: t("home.achievement.personalRecordTitle"),
+            description: t("home.achievement.personalRecordDescription", {
+              reps: topSession.reps,
+              exerciseId: topSession.exerciseId,
+            }),
             icon: "🏆",
             timestamp: topSession.endedAt,
           });
@@ -246,8 +263,10 @@ export const useHomeStats = () => {
       achievements.push({
         id: `streak-${streakInfo.currentStreak}`,
         type: "streak",
-        title: `${streakInfo.currentStreak} Day Streak!`,
-        description: "You're on fire! Keep it up",
+        title: t("home.achievement.streakTitle", {
+          count: streakInfo.currentStreak,
+        }),
+        description: t("home.achievement.streakDescriptionOnFire"),
         icon: "🔥",
         timestamp: Date.now(),
       });
@@ -255,8 +274,10 @@ export const useHomeStats = () => {
       achievements.push({
         id: `streak-${streakInfo.currentStreak}`,
         type: "streak",
-        title: `${streakInfo.currentStreak} Day Streak!`,
-        description: "Incredible consistency!",
+        title: t("home.achievement.streakTitle", {
+          count: streakInfo.currentStreak,
+        }),
+        description: t("home.achievement.streakDescriptionIncredible"),
         icon: "⭐",
         timestamp: Date.now(),
       });
@@ -273,8 +294,8 @@ export const useHomeStats = () => {
         achievements.push({
           id: `milestone-${milestone}`,
           type: "milestone",
-          title: `${milestone} Total Reps!`,
-          description: "Amazing milestone achieved",
+          title: t("home.achievement.milestoneTitle", { count: milestone }),
+          description: t("home.achievement.milestoneDescription"),
           icon: "💪",
           timestamp: Date.now(),
         });
@@ -283,7 +304,7 @@ export const useHomeStats = () => {
 
     // Return most recent
     return achievements.length > 0 ? achievements[0] : null;
-  }, [exerciseHistory, routineHistory, streakInfo]);
+  }, [exerciseHistory, routineHistory, streakInfo, t]);
 
   return {
     todayStats,

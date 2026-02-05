@@ -137,10 +137,27 @@
       "complete": "completo",
       "resumeButton": "Reanudar",
       "tryButton": "Probarlo",
-      "startButton": "Comenzar Ahora"
+      "startButton": "Comenzar Ahora",
+      "editButton": "Editar",
+      "beginButton": "Comenzar",
+      "continueRoutineTitle": "Continúa tu Rutina",
+      "continueRoutineSubtitle": "{{completed}} de {{total}} ejercicios completados",
+      "restartRoutineTitle": "Reiniciar Última Rutina",
+      "restartRoutineSubtitle": "{{exercises}} ejercicios, {{rounds}} rondas",
+      "suggestedExerciseTitle": "Prueba tu Favorito",
+      "suggestedExerciseSubtitle": "Has hecho {{exerciseId}} {{count}} veces",
+      "startFirstWorkoutTitle": "Comienza tu Primer Entrenamiento",
+      "startFirstWorkoutSubtitle": "Crea una rutina o prueba un ejercicio rápido"
     },
     "achievement": {
-      "label": "NUEVO LOGRO"
+      "label": "NUEVO LOGRO",
+      "personalRecordTitle": "¡Nuevo Récord Personal!",
+      "personalRecordDescription": "{{reps}} reps en {{exerciseId}}",
+      "streakTitle": "¡Racha de {{count}} Días!",
+      "streakDescriptionOnFire": "¡Estás en llamas! Continúa así",
+      "streakDescriptionIncredible": "¡Consistencia increíble!",
+      "milestoneTitle": "¡{{count}} Reps Totales!",
+      "milestoneDescription": "Hito increíble alcanzado"
     },
     "actions": {
       "home": {

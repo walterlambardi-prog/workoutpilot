@@ -42,13 +42,6 @@ export const TStreakCard: React.FC<TStreakCardProps> = ({ streakInfo }) => {
     return days;
   }, [streakInfo.activeDays]);
 
-  const streakEmoji = useMemo(() => {
-    if (streakInfo.currentStreak === 0) return "💤";
-    if (streakInfo.currentStreak < 3) return "🔥";
-    if (streakInfo.currentStreak < 7) return "🔥🔥";
-    return "⭐🔥";
-  }, [streakInfo.currentStreak]);
-
   const streakMessage = useMemo(() => {
     if (streakInfo.currentStreak === 0) {
       return t("home.streak.startToday");
@@ -81,17 +74,14 @@ export const TStreakCard: React.FC<TStreakCardProps> = ({ streakInfo }) => {
             </Text>
           </YStack>
 
-          <YStack alignItems="center" gap="$1">
-            <Text fontSize="$10">{streakEmoji}</Text>
-            <XStack gap="$1" alignItems="baseline">
-              <Text fontSize="$8" fontWeight="700" color="#ea580c">
-                {streakInfo.currentStreak}
-              </Text>
-              <Text fontSize="$4" fontWeight="600" color="$color" opacity={0.8}>
-                {t("home.streak.days")}
-              </Text>
-            </XStack>
-          </YStack>
+          <XStack gap="$2" alignItems="baseline">
+            <Text fontSize="$8" fontWeight="700" color="#ea580c">
+              {streakInfo.currentStreak}
+            </Text>
+            <Text fontSize="$4" fontWeight="600" color="$color" opacity={0.8}>
+              {t("home.streak.days")}
+            </Text>
+          </XStack>
         </XStack>
 
         {/* Mini calendar */}
