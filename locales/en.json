@@ -114,6 +114,34 @@
       "english": "English",
       "spanish": "Spanish"
     },
+    "todayStats": {
+      "title": "Today's Activity",
+      "reps": "Reps",
+      "sessions": "Sessions",
+      "minutes": "Minutes",
+      "steps": "Steps"
+    },
+    "streak": {
+      "title": "Your Streak",
+      "days": "days",
+      "startToday": "Start your streak today!",
+      "keepGoing": "Great start! Keep it up",
+      "onFire": "You're on fire!",
+      "incredible": "Incredible consistency!",
+      "longestStreak": "Longest streak: {{count}} days"
+    },
+    "nextAction": {
+      "continue": "CONTINUE",
+      "suggested": "SUGGESTED",
+      "start": "GET STARTED",
+      "complete": "complete",
+      "resumeButton": "Resume",
+      "tryButton": "Try it",
+      "startButton": "Start Now"
+    },
+    "achievement": {
+      "label": "NEW ACHIEVEMENT"
+    },
     "actions": {
       "home": {
         "title": "Home",

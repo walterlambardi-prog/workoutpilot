@@ -114,6 +114,34 @@
       "english": "Inglés",
       "spanish": "Español"
     },
+    "todayStats": {
+      "title": "Actividad de Hoy",
+      "reps": "Reps",
+      "sessions": "Sesiones",
+      "minutes": "Minutos",
+      "steps": "Pasos"
+    },
+    "streak": {
+      "title": "Tu Racha",
+      "days": "días",
+      "startToday": "¡Comienza tu racha hoy!",
+      "keepGoing": "¡Buen comienzo! Sigue así",
+      "onFire": "¡Estás en llamas!",
+      "incredible": "¡Consistencia increíble!",
+      "longestStreak": "Racha más larga: {{count}} días"
+    },
+    "nextAction": {
+      "continue": "CONTINUAR",
+      "suggested": "SUGERIDO",
+      "start": "COMENZAR",
+      "complete": "completo",
+      "resumeButton": "Reanudar",
+      "tryButton": "Probarlo",
+      "startButton": "Comenzar Ahora"
+    },
+    "achievement": {
+      "label": "NUEVO LOGRO"
+    },
     "actions": {
       "home": {
         "title": "Inicio",

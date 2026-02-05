@@ -1,38 +1,51 @@
 import React from "react";
+import { YStack } from "tamagui";
 
-import { TActionCard } from "@/components/TActionCard";
-import { TGrid } from "@/components/TGrid";
+import ActivityHeatmap from "@/components/ActivityHeatmap";
+import { TAchievementCard } from "@/components/TAchievementCard";
+import { TNextActionCard } from "@/components/TNextActionCard";
 import { TPage } from "@/components/TPage";
+import { TStreakCard } from "@/components/TStreakCard";
+import { TTodayStatsCard } from "@/components/TTodayStatsCard";
 import { TWelcomeHeader } from "@/components/TWelcomeHeader";
 
 import { useHome } from "./hooks/useHome";
+import { useHomeStats } from "./hooks/useHomeStats";
 
 const HomeScreen: React.FC = () => {
-  const { headerTitle, headerSubtitle, headerDescription, actionCards } =
-    useHome();
+  const { headerTitle, headerSubtitle } = useHome();
+  const { todayStats, streakInfo, nextAction, latestAchievement } =
+    useHomeStats();
 
   return (
-    <TPage backgroundColor="$background" hasHeader>
-      <TWelcomeHeader
-        title={headerTitle}
-        subtitle={headerSubtitle}
-        description={headerDescription}
-        showWave
-      />
+    <TPage scrollable backgroundColor="$background" hasHeader>
+      <YStack gap="$5">
+        {/* Welcome header */}
+        <TWelcomeHeader
+          title={headerTitle}
+          subtitle={headerSubtitle}
+          showWave
+        />
 
-      <TGrid columns={3} gap="$4">
-        {actionCards.map((action) => (
-          <TActionCard
-            key={action.key}
-            title={action.title}
-            description={action.description}
-            icon={action.icon}
-            iconColor={action.color}
-            accessibilityHint={action.accessibilityHint}
-            onPress={action.onPress}
-          />
-        ))}
-      </TGrid>
+        {/* Next Action - Hero card */}
+        <TNextActionCard nextAction={nextAction} />
+
+        {/* Today's Stats */}
+        <TTodayStatsCard stats={todayStats} />
+
+        {/* Streak Info */}
+        {streakInfo.currentStreak > 0 && (
+          <TStreakCard streakInfo={streakInfo} />
+        )}
+
+        {/* Latest Achievement */}
+        {latestAchievement && (
+          <TAchievementCard achievement={latestAchievement} />
+        )}
+
+        {/* Activity Heatmap */}
+        {streakInfo.activeDays.length > 0 && <ActivityHeatmap />}
+      </YStack>
     </TPage>
   );
 };

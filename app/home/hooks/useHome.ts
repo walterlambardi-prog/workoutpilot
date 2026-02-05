@@ -48,7 +48,6 @@ export const useHome = () => {
   // Header content
   const headerTitle = t("home.title");
   const headerSubtitle = t("home.subtitle");
-  const headerDescription = t("home.description");
 
   // Action cards with translated content and pre-bound handlers
   const actionCards = useMemo(
@@ -66,7 +65,6 @@ export const useHome = () => {
   return {
     headerTitle,
     headerSubtitle,
-    headerDescription,
     actionCards,
   };
 };
