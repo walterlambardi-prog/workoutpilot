@@ -23,11 +23,18 @@
    Do not use arbitrary inline styles or raw CSS unless it’s a documented exception.
 2. **No hardcoded** visual values (colors, spacing, radius, shadows, font sizes).
    Use tokens: `p="$4"`, `bg="$background"`, `color="$color"`, `br="$6"`, etc.
-3. **Composition > platform conditionals**: avoid `Platform.OS` for UI decisions.
+3. **No hardcoded dimensions** - CRITICAL:
+   - ❌ FORBIDDEN: `width={24}`, `height={32}`, `size={20}`, `borderRadius={12}`, `fontSize={16}`
+   - ❌ FORBIDDEN: Numeric literals for spacing, sizing, or dimensions in Tamagui components
+   - ✅ REQUIRED: Use Tamagui size tokens: `width="$4"`, `height="$5"`, `size="$3"`, `borderRadius="$2"`
+   - ✅ REQUIRED: Use theme constants from `constants/theme.ts`: `Spacing.md`, `Spacing.lg`
+   - ✅ EXCEPTION: Icon sizes can be numeric (e.g., `<Ionicons size={24} />`) when passed to third-party icon components
+   - ✅ EXCEPTION: Documented edge cases in native modules or platform-specific styling
+4. **Composition > platform conditionals**: avoid `Platform.OS` for UI decisions.
    Prefer:
    - `media` (breakpoints) for layout/density
    - `Adapt` to switch interaction patterns (Popover ↔ Sheet, Dialog ↔ Sheet, Select ↔ Sheet)
-4. Every component/screen must:
+5. Every component/screen must:
    - work on **small and large screens**
    - support **dark/light theme**
    - support **touch** and **keyboard/mouse** on web
@@ -37,15 +44,16 @@
 See [COLOR_SYSTEM_RULES.md](../COLOR_SYSTEM_RULES.md) for complete documentation.
 
 **Quick reference - FORBIDDEN:**
+
 - ❌ Hex colors: `#dbeafe`, `#2563eb`
 - ❌ RGB/RGBA: `rgba(0,0,0,0.5)`
 - ❌ Ternaries: `isDark ? "#xxx" : "#yyy"`
 
 **REQUIRED - Use tokens:**
+
 - ✅ `$background`, `$color`, `$borderColor`
 - ✅ `$primary`, `$success`, `$error`, `$warning`, `$info`
 - ✅ `$blue3`/`$blue11`, `$green3`/`$green11` (stats cards)
-
 
 ## How to “understand the code” before writing
 

@@ -9,6 +9,7 @@ import {
     Text,
     XStack,
     YStack,
+    useMedia,
     useTheme,
 } from "tamagui";
 
@@ -23,6 +24,7 @@ const ExerciseDetailScreen: React.FC = () => {
   const { t } = useTranslation();
   const router = useRouter();
   const theme = useTheme();
+  const media = useMedia();
   const { exerciseId } = useLocalSearchParams<{ exerciseId: string }>();
 
   const exercise = EXERCISE_DEFINITIONS.find((ex) => ex.id === exerciseId);
@@ -72,98 +74,138 @@ const ExerciseDetailScreen: React.FC = () => {
             subtitle={t("exercises.detail.subtitle")}
           />
 
-          <Card
-            bordered
-            elevate={false}
-            padding={0}
-            overflow="hidden"
-            backgroundColor="$backgroundHover"
+          {/* Responsive Layout: Horizontal on web, vertical on mobile */}
+          <XStack
+            gap="$6"
+            flexDirection={media.gtSm ? "row" : "column"}
+            alignItems="flex-start"
           >
-            <Image
-              source={exercise.image}
-              style={{
-                width: "100%",
-                height: 400,
-              }}
-              resizeMode="contain"
-              accessibilityLabel={t(`${exercise.copyKey}.title`)}
-            />
-          </Card>
+            {/* Image Section */}
+            <Card
+              bordered
+              elevate={false}
+              padding={0}
+              overflow="hidden"
+              backgroundColor="$backgroundHover"
+              width={media.gtSm ? "45%" : "100%"}
+              flexShrink={0}
+            >
+              <Image
+                source={exercise.image}
+                style={{
+                  width: "100%",
+                  height: media.gtSm ? 500 : 400,
+                }}
+                resizeMode="contain"
+                accessibilityLabel={t(`${exercise.copyKey}.title`)}
+              />
+            </Card>
 
-          <YStack gap="$4">
-            <YStack gap="$2">
-              <Text fontSize="$7" fontWeight="700" color="$color">
-                {t("exercises.detail.description.title")}
-              </Text>
-              <Text fontSize="$5" color="$color" opacity={0.8} lineHeight="$6">
-                {t(`${exercise.copyKey}.description`)}
-              </Text>
-            </YStack>
-
-            <Separator />
-
-            <YStack gap="$2">
-              <Text fontSize="$7" fontWeight="700" color="$color">
-                {t("exercises.detail.benefits.title")}
-              </Text>
+            {/* Content Section */}
+            <YStack gap="$5" flex={1}>
+              {/* Description Section */}
               <YStack gap="$3">
-                {(
-                  t(`${exercise.copyKey}.benefits`, {
-                    returnObjects: true,
-                    defaultValue: [],
-                  }) as string[]
-                ).map((benefit: string, index: number) => (
-                  <XStack key={index} gap="$3" alignItems="flex-start">
-                    <Ionicons
-                      name="checkmark-circle"
-                      size={24}
-                      color={theme.success?.get() as string}
-                    />
-                    <Text fontSize="$5" color="$color" opacity={0.8} flex={1}>
-                      {benefit}
-                    </Text>
-                  </XStack>
-                ))}
+                <Text fontSize="$6" fontWeight="700" color="$color">
+                  {t("exercises.detail.description.title")}
+                </Text>
+                <Text
+                  fontSize="$4"
+                  color="$color"
+                  opacity={0.9}
+                  lineHeight="$6"
+                >
+                  {t(`${exercise.copyKey}.description`)}
+                </Text>
               </YStack>
-            </YStack>
 
-            <Separator />
+              <Separator borderColor="$borderColor" opacity={0.5} />
 
-            <YStack gap="$2">
-              <Text fontSize="$7" fontWeight="700" color="$color">
-                {t("exercises.detail.instructions.title")}
-              </Text>
-              <YStack gap="$3">
-                {(
-                  t(`${exercise.copyKey}.instructions`, {
-                    returnObjects: true,
-                    defaultValue: [],
-                  }) as string[]
-                ).map((instruction: string, index: number) => (
-                  <XStack key={index} gap="$3" alignItems="flex-start">
-                    <YStack
-                      width={28}
-                      height={28}
-                      backgroundColor="$primary"
-                      borderRadius={14}
-                      alignItems="center"
-                      justifyContent="center"
-                    >
-                      <Text fontSize="$4" fontWeight="700" color="$onPrimary">
-                        {index + 1}
+              {/* Benefits Section */}
+              <YStack gap="$4">
+                <Text fontSize="$6" fontWeight="700" color="$color">
+                  {t("exercises.detail.benefits.title")}
+                </Text>
+                <YStack gap="$3">
+                  {(
+                    t(`${exercise.copyKey}.benefits`, {
+                      returnObjects: true,
+                      defaultValue: [],
+                    }) as string[]
+                  ).map((benefit: string, index: number) => (
+                    <XStack key={index} gap="$3" alignItems="center">
+                      <YStack
+                        width={20}
+                        height={20}
+                        backgroundColor="$success"
+                        borderRadius={10}
+                        alignItems="center"
+                        justifyContent="center"
+                        flexShrink={0}
+                      >
+                        <Ionicons name="checkmark" size={14} color="#fff" />
+                      </YStack>
+                      <Text
+                        fontSize="$4"
+                        color="$color"
+                        opacity={0.9}
+                        flex={1}
+                        lineHeight="$5"
+                      >
+                        {benefit}
                       </Text>
-                    </YStack>
-                    <Text fontSize="$5" color="$color" opacity={0.8} flex={1}>
-                      {instruction}
-                    </Text>
-                  </XStack>
-                ))}
+                    </XStack>
+                  ))}
+                </YStack>
+              </YStack>
+
+              <Separator borderColor="$borderColor" opacity={0.5} />
+
+              {/* Instructions Section */}
+              <YStack gap="$4">
+                <Text fontSize="$6" fontWeight="700" color="$color">
+                  {t("exercises.detail.instructions.title")}
+                </Text>
+                <YStack gap="$3">
+                  {(
+                    t(`${exercise.copyKey}.instructions`, {
+                      returnObjects: true,
+                      defaultValue: [],
+                    }) as string[]
+                  ).map((instruction: string, index: number) => (
+                    <XStack key={index} gap="$3" alignItems="center">
+                      <YStack
+                        width={24}
+                        height={24}
+                        backgroundColor="$primary"
+                        borderRadius={12}
+                        alignItems="center"
+                        justifyContent="center"
+                        flexShrink={0}
+                      >
+                        <Text fontSize="$3" fontWeight="700" color="$onPrimary">
+                          {index + 1}
+                        </Text>
+                      </YStack>
+                      <Text
+                        fontSize="$4"
+                        color="$color"
+                        opacity={0.9}
+                        flex={1}
+                        lineHeight="$5"
+                      >
+                        {instruction}
+                      </Text>
+                    </XStack>
+                  ))}
+                </YStack>
               </YStack>
             </YStack>
-          </YStack>
+          </XStack>
 
-          <YStack gap="$3" paddingBottom="$6">
+          {/* Action Buttons - Horizontal Row */}
+          <XStack gap="$3" paddingBottom="$6">
             <TButton
+              flex={1}
               size="$5"
               onPress={handleStartExercise}
               iconAfterName="play-circle"
@@ -171,10 +213,16 @@ const ExerciseDetailScreen: React.FC = () => {
               {t("exercises.detail.startButton")}
             </TButton>
 
-            <TButton variant="outline" onPress={() => router.back()}>
+            <TButton
+              flex={1}
+              size="$5"
+              variant="outline"
+              onPress={() => router.back()}
+              iconName="arrow-back"
+            >
               {t("common.back")}
             </TButton>
-          </YStack>
+          </XStack>
         </YStack>
       </TPage>
     </>
