@@ -35,7 +35,7 @@ const ExerciseCard: React.FC<ExerciseCardProps> = ({
       cursor="pointer"
     >
       <XStack gap="$3" alignItems="center">
-        <Image source={image} style={thumbnailStyle} resizeMode="cover" />
+        <Image source={image} style={thumbnailStyle} resizeMode="contain" />
 
         <YStack flex={1} minWidth={0} gap="$1">
           <TText fontSize={headingSize} fontWeight="800" numberOfLines={2}>

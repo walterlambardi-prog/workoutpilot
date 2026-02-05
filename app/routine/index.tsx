@@ -176,7 +176,7 @@ const RoutineBuilderScreen: React.FC<RoutineBuilderScreenProps> = () => {
                     {/* Background Image */}
                     <Image
                       source={item.image}
-                      resizeMode="cover"
+                      resizeMode="contain"
                       style={styles.backgroundImage}
                       accessibilityElementsHidden
                       accessibilityIgnoresInvertColors
@@ -223,11 +223,11 @@ const RoutineBuilderScreen: React.FC<RoutineBuilderScreenProps> = () => {
                         <Text
                           fontSize={titleSize}
                           fontWeight="700"
-                          color="white"
+                          color="$color"
                         >
                           {item.title}
                         </Text>
-                        <Text fontSize={bodySize} color="white" opacity={0.95}>
+                        <Text fontSize={bodySize} color="$color" opacity={0.95}>
                           {item.description}
                         </Text>
                       </YStack>
