@@ -99,6 +99,468 @@ When Copilot writes UI, it must:
 - If you touch a file and remove its usage of a copy key, delete that key from the locale files unless it is still used elsewhere (avoid orphaned translations).
 - Reuse existing keys when possible; keep key names descriptive and scoped to the feature/screen for maintainability.
 
+## 🎨 Button System (MANDATORY)
+
+**CRITICAL**: WorkoutPilot uses a standardized button system via the `TButton` component. Direct use of Tamagui's `<Button>` with inline styles is **FORBIDDEN**.
+
+### Why TButton?
+
+- ✅ **Consistent design** across the entire app
+- ✅ **Automatic dark/light mode** adaptation
+- ✅ **Semantic variants** for common actions
+- ✅ **No hardcoded colors** or styles
+- ✅ **Type-safe** with proper TypeScript support
+- ✅ **Accessible** by default with proper states
+
+### Available Button Variants
+
+```typescript
+type TButtonVariant =
+  | "primary" // Main actions (Start, Continue, Save)
+  | "secondary" // Secondary actions (Cancel in dialogs)
+  | "outline" // Edit, View Details, Settings
+  | "ghost" // Subtle actions, navigation items
+  | "destructive" // Delete, Cancel session, Clear data (red)
+  | "success" // Confirm, Complete, Success feedback (green)
+  | "warning" // Caution actions, confirmations (orange)
+  | "info"; // Info actions, help buttons (blue)
+```
+
+### Semantic Usage Guide
+
+#### Primary Actions
+
+**Variant**: `primary`  
+**When to use**: Main call-to-action, most important button on screen  
+**Examples**: Start Routine, Save Changes, Continue, Log In
+
+```tsx
+<TButton variant="primary" onPress={handleStart} iconName="play">
+  {t("actions.startRoutine")}
+</TButton>
+```
+
+#### Secondary Actions
+
+**Variant**: `secondary`  
+**When to use**: Alternative action, less important than primary  
+**Examples**: Skip, Go Back, View More
+
+```tsx
+<TButton variant="secondary" onPress={handleSkip}>
+  {t("actions.skip")}
+</TButton>
+```
+
+#### Edit/View Actions
+
+**Variant**: `outline`  
+**When to use**: Edit, configure, view details, settings  
+**Examples**: Edit Routine, View Details, Settings
+
+```tsx
+<TButton variant="outline" onPress={handleEdit} iconName="create-outline">
+  {t("actions.edit")}
+</TButton>
+```
+
+#### Subtle Navigation
+
+**Variant**: `ghost`  
+**When to use**: Low-emphasis actions, menu items, tabs  
+**Examples**: Analyze, More Options, Drawer Items
+
+```tsx
+<TButton
+  variant="ghost"
+  onPress={handleAnalyze}
+  iconAfterName="sparkles-outline"
+>
+  {t("actions.analyze")}
+</TButton>
+```
+
+#### Dangerous/Destructive Actions
+
+**Variant**: `destructive`  
+**When to use**: Delete, remove, cancel active sessions, clear data  
+**Examples**: Delete Routine, Cancel Session, Clear History  
+**Color**: Red (adaptive for light/dark modes)
+
+```tsx
+<TButton variant="destructive" onPress={handleDelete} iconName="trash-outline">
+  {t("actions.delete")}
+</TButton>
+```
+
+#### Success Confirmation
+
+**Variant**: `success`  
+**When to use**: Confirm completion, mark as done, success feedback  
+**Examples**: Mark Complete, Confirm, Submit  
+**Color**: Green (adaptive)
+
+```tsx
+<TButton variant="success" onPress={handleComplete} iconName="checkmark-circle">
+  {t("actions.complete")}
+</TButton>
+```
+
+#### Warning/Caution
+
+**Variant**: `warning`  
+**When to use**: Actions that need attention, confirmations  
+**Examples**: Unsaved Changes warning, Reset to Default  
+**Color**: Orange (adaptive)
+
+```tsx
+<TButton variant="warning" onPress={handleReset}>
+  {t("actions.resetToDefault")}
+</TButton>
+```
+
+#### Informational
+
+**Variant**: `info`  
+**When to use**: Help, tips, info panels  
+**Examples**: Learn More, Show Help, Tutorial  
+**Color**: Blue (adaptive)
+
+```tsx
+<TButton variant="info" onPress={handleHelp} iconName="information-circle">
+  {t("actions.help")}
+</TButton>
+```
+
+### TButton Props
+
+```typescript
+interface TButtonProps {
+  // Variant (required for semantic clarity)
+  variant?: TButtonVariant; // Default: 'primary'
+
+  // Icons (Ionicons names)
+  iconName?: string; // Icon before text
+  iconAfterName?: string; // Icon after text
+  iconColor?: string; // Override icon color
+  iconOnly?: boolean; // Hide text, show only icon
+
+  // Layout
+  fullWidth?: boolean; // Stretch to full width
+  flex?: number; // Flex proportion in XStack
+  size?: "$3" | "$4" | "$5"; // Tamagui size token
+
+  // State
+  isLoading?: boolean; // Show spinner
+  disabled?: boolean; // Disable button
+
+  // Handler
+  onPress: () => void;
+
+  // Accessibility
+  accessibilityLabel?: string;
+  accessibilityHint?: string;
+
+  // Text
+  children: React.ReactNode; // Button label (from t())
+}
+```
+
+### Common Patterns
+
+#### Action Row (Edit + Execute)
+
+```tsx
+<XStack gap="$3">
+  <TButton
+    flex={1}
+    variant="outline"
+    onPress={handleEdit}
+    iconName="create-outline"
+  >
+    {t("actions.edit")}
+  </TButton>
+  <TButton
+    flex={1}
+    variant="primary"
+    onPress={handleStart}
+    iconAfterName="arrow-forward"
+  >
+    {t("actions.start")}
+  </TButton>
+</XStack>
+```
+
+#### Destructive Confirmation
+
+```tsx
+<XStack gap="$3">
+  <TButton flex={1} variant="outline" onPress={handleCancel}>
+    {t("actions.cancel")}
+  </TButton>
+  <TButton
+    flex={1}
+    variant="destructive"
+    onPress={handleDelete}
+    iconName="trash-outline"
+  >
+    {t("actions.delete")}
+  </TButton>
+</XStack>
+```
+
+#### Full-Width Primary CTA
+
+```tsx
+<TButton fullWidth variant="primary" onPress={handleContinue} size="$5">
+  {t("actions.continue")}
+</TButton>
+```
+
+### FORBIDDEN Patterns
+
+#### ❌ NEVER: Direct Tamagui Button with Inline Styles
+
+```tsx
+// ❌ BAD - DO NOT DO THIS
+<Button
+  backgroundColor="transparent"
+  borderWidth={2}
+  borderColor={isDark ? "#dc2626" : "#ef4444"}
+  color={isDark ? "#dc2626" : "#ef4444"}
+  fontWeight="600"
+  hoverStyle={{ backgroundColor: isDark ? "#dc2626" : "#ef4444", opacity: 0.1 }}
+  pressStyle={{ opacity: 0.8 }}
+  icon={
+    <Ionicons
+      name="close-circle-outline"
+      size={18}
+      color={isDark ? "#dc2626" : "#ef4444"}
+    />
+  }
+>
+  Cancel
+</Button>
+```
+
+**Why forbidden?**
+
+- Hardcoded colors break theme consistency
+- Doesn't adapt properly to dark/light mode
+- Manual dark mode checks (`isDark ? ...`) are error-prone
+- Duplicates styling logic across components
+- No type safety for colors
+- Harder to maintain and refactor
+
+#### ✅ CORRECT: TButton with Variant
+
+```tsx
+// ✅ GOOD - USE THIS INSTEAD
+<TButton
+  variant="destructive"
+  onPress={handleCancel}
+  iconName="close-circle-outline"
+>
+  {t("actions.cancel")}
+</TButton>
+```
+
+**Benefits:**
+
+- ✅ Automatic color adaptation for dark/light modes
+- ✅ Consistent hover/press states
+- ✅ Semantic clarity (variant name = intent)
+- ✅ Type-safe with autocomplete
+- ✅ Single source of truth for button styles
+
+#### ❌ NEVER: Hardcoded Hex Colors
+
+```tsx
+// ❌ BAD
+<TButton backgroundColor="#3b82f6" color="#ffffff">
+  Submit
+</TButton>
+```
+
+#### ✅ CORRECT: Use Variants
+
+```tsx
+// ✅ GOOD
+<TButton variant="info">{t("actions.submit")}</TButton>
+```
+
+#### ❌ NEVER: Hardcoded Text
+
+```tsx
+// ❌ BAD
+<TButton variant="primary">Start Routine</TButton>
+```
+
+#### ✅ CORRECT: Use Translations
+
+```tsx
+// ✅ GOOD
+<TButton variant="primary">{t("actions.startRoutine")}</TButton>
+```
+
+### Theme Adaptation
+
+TButton automatically adapts colors for dark/light modes using Tamagui's theme system:
+
+**Light Mode Colors** (more saturated):
+
+- `error`: #dc2626 (red-600)
+- `success`: #16a34a (green-600)
+- `warning`: #ea580c (orange-600)
+- `info`: #2563eb (blue-600)
+
+**Dark Mode Colors** (brighter for contrast):
+
+- `error`: #ef4444 (red-500)
+- `success`: #22c55e (green-500)
+- `warning`: #f59e0b (amber-500)
+- `info`: #3b82f6 (blue-500)
+
+All semantic colors are defined in `tamagui.config.ts` and automatically switch based on the active theme.
+
+### Migration Checklist
+
+When refactoring components with buttons:
+
+- [ ] Import `TButton` from `@/components/TButton`
+- [ ] Remove `Button` import from `tamagui`
+- [ ] Replace all `<Button>` with `<TButton>`
+- [ ] Replace inline style props with `variant` prop
+- [ ] Remove `isDark ? ... : ...` ternaries for colors
+- [ ] Replace `icon` prop with `iconName` (string)
+- [ ] Replace `iconAfter` prop with `iconAfterName` (string)
+- [ ] Ensure button text uses `t()` for translations
+- [ ] Remove hardcoded `backgroundColor`, `borderColor`, `color`
+- [ ] Remove manual `hoverStyle`, `pressStyle` (handled by variant)
+- [ ] Add `accessibilityLabel` if button has only an icon
+- [ ] Test in both light and dark modes
+
+### Before/After Examples
+
+#### Example 1: Destructive Action Button
+
+**Before (BAD):**
+
+```tsx
+<Button
+  flex={1}
+  size="$4"
+  backgroundColor="transparent"
+  borderWidth={2}
+  borderColor={isDark ? "#dc2626" : "#ef4444"}
+  color={isDark ? "#dc2626" : "#ef4444"}
+  fontWeight="600"
+  onPress={handleCancel}
+  hoverStyle={{
+    backgroundColor: isDark ? "#dc2626" : "#ef4444",
+    opacity: 0.1,
+  }}
+  pressStyle={{ opacity: 0.8 }}
+  icon={
+    <Ionicons
+      name="close-circle-outline"
+      size={18}
+      color={isDark ? "#dc2626" : "#ef4444"}
+    />
+  }
+>
+  Cancel Routine
+</Button>
+```
+
+**After (GOOD):**
+
+```tsx
+<TButton
+  flex={1}
+  size="$4"
+  variant="destructive"
+  onPress={handleCancel}
+  iconName="close-circle-outline"
+>
+  {t("home.nextAction.cancelButton")}
+</TButton>
+```
+
+**Improvements:**
+
+- 🔥 **15 lines → 8 lines** (47% reduction)
+- ✅ No hardcoded colors
+- ✅ No manual dark mode checks
+- ✅ Proper translation
+- ✅ Automatic theme adaptation
+- ✅ Type-safe variant
+
+#### Example 2: Outline Edit Button
+
+**Before (BAD):**
+
+```tsx
+<Button
+  flex={1}
+  size="$4"
+  backgroundColor="transparent"
+  borderWidth={2}
+  borderColor={colors.accent as any}
+  color={colors.accent as any}
+  fontWeight="600"
+  onPress={handleEdit}
+  hoverStyle={{
+    backgroundColor: colors.accent as any,
+    opacity: 0.1,
+  }}
+  pressStyle={{ opacity: 0.8 }}
+  icon={
+    <Ionicons name="create-outline" size={18} color={colors.accent as string} />
+  }
+>
+  Edit
+</Button>
+```
+
+**After (GOOD):**
+
+```tsx
+<TButton
+  flex={1}
+  size="$4"
+  variant="outline"
+  onPress={handleEdit}
+  iconName="create-outline"
+>
+  {t("home.nextAction.editButton")}
+</TButton>
+```
+
+**Improvements:**
+
+- 🔥 **17 lines → 8 lines** (53% reduction)
+- ✅ No `as any` type assertions
+- ✅ No accent color calculations
+- ✅ Proper translation
+- ✅ Semantic variant name
+
+### Enforcement
+
+**Code Review Checklist:**
+
+- ❌ Reject PRs with `<Button>` from tamagui unless in TButton implementation
+- ❌ Reject hardcoded color hex values in buttons
+- ❌ Reject `isDark ? "#xxx" : "#yyy"` patterns in button props
+- ❌ Reject buttons without `variant` prop
+- ❌ Reject hardcoded button text (must use `t()`)
+
+**Auto-Fix with Linter** (future):
+
+- Detect `<Button` from tamagui → Suggest `<TButton`
+- Detect hex colors in button props → Suggest `variant`
+- Detect missing `variant` → Suggest `variant="primary"`
+
 ## 📁 File Structure & Organization
 
 ### Component Structure

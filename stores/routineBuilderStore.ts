@@ -39,7 +39,7 @@ const storage = createCrossPlatformStorage();
 
 const createDefaultExerciseSettings = (): RoutineExerciseSettings => ({
   reps: ROUTINE_DEFAULT_REPS,
-  isSelected: true,
+  isSelected: false,
 });
 
 const createDefaultExercisesState = (): RoutineExerciseState => {

@@ -2,18 +2,16 @@ import { useRouter } from "expo-router";
 import React, { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
-    FlatList,
-    type ListRenderItem,
-    Pressable,
-    Text,
-    useWindowDimensions,
-    View,
-    type ViewToken,
+  FlatList,
+  type ListRenderItem,
+  useWindowDimensions,
+  View,
+  type ViewToken
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import ScreenHeader from "@/components/ScreenHeader";
-import { ThemedText } from "@/components/ThemedText";
+import { TButton } from "@/components/TButton";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { useAuthStore } from "@/stores/authStore";
 
@@ -40,10 +38,6 @@ const OnboardingScreen: React.FC = () => {
   );
   const backgroundColor = useThemeColor({}, "background");
   const tintColor = useThemeColor({}, "tint");
-  const buttonPrimaryBg = useThemeColor(
-    { light: "#0a7ea4", dark: "#0a7ea4" },
-    "tint",
-  );
   const steps = getOnboardingSteps(t);
 
   const onViewableItemsChanged = useRef(
@@ -85,15 +79,15 @@ const OnboardingScreen: React.FC = () => {
 
     // Update user metadata in Supabase to persist across devices
     try {
-      const { supabase } = await import('@/config/supabase');
+      const { supabase } = await import("@/config/supabase");
       await supabase.auth.updateUser({
         data: { has_completed_onboarding: true },
       });
     } catch (error) {
-      console.error('[Onboarding] Failed to update user metadata:', error);
+      console.error("[Onboarding] Failed to update user metadata:", error);
     }
 
-    router.replace('/');
+    router.replace("/");
   };
 
   const renderStep: ListRenderItem<OnboardingStep> = ({ item }) => (
@@ -143,45 +137,25 @@ const OnboardingScreen: React.FC = () => {
         </View>
 
         <View style={styles.buttonsRow}>
-          <Pressable
+          <TButton
+            flex={1}
+            variant="outline"
             onPress={handleSkip}
-            style={({ pressed }) => [
-              styles.button,
-              styles.buttonSecondary,
-              { borderColor: tintColor },
-              pressed && styles.buttonPressed,
-            ]}
-            accessibilityRole="button"
             accessibilityLabel={t("onboarding.skip")}
           >
-            <ThemedText
-              style={[
-                styles.buttonText,
-                styles.buttonTextSecondary,
-                { color: tintColor },
-              ]}
-            >
-              {t("onboarding.skip")}
-            </ThemedText>
-          </Pressable>
+            {t("onboarding.skip")}
+          </TButton>
 
-          <Pressable
+          <TButton
+            flex={1}
+            variant="primary"
             onPress={handleNext}
-            style={({ pressed }) => [
-              styles.button,
-              styles.buttonPrimary,
-              { backgroundColor: buttonPrimaryBg },
-              pressed && styles.buttonPressed,
-            ]}
-            accessibilityRole="button"
             accessibilityLabel={
               isLastStep ? t("onboarding.getStarted") : t("onboarding.next")
             }
           >
-            <Text style={[styles.buttonText, styles.buttonTextPrimary]}>
-              {isLastStep ? t("onboarding.getStarted") : t("onboarding.next")}
-            </Text>
-          </Pressable>
+            {isLastStep ? t("onboarding.getStarted") : t("onboarding.next")}
+          </TButton>
         </View>
       </View>
     </View>

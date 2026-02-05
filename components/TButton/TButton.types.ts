@@ -2,7 +2,15 @@ import type { Ionicons } from "@expo/vector-icons";
 import type React from "react";
 import type { ButtonProps } from "tamagui";
 
-export type TButtonVariant = "primary" | "secondary" | "outline" | "ghost";
+export type TButtonVariant =
+  | "primary"
+  | "secondary"
+  | "outline"
+  | "ghost"
+  | "destructive"
+  | "success"
+  | "warning"
+  | "info";
 
 export interface TButtonProps extends Omit<
   ButtonProps,

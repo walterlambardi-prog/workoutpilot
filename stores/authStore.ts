@@ -75,13 +75,33 @@ const storeCreator: StateCreator<AuthState> = (set, get) => ({
 
   signOut: async () => {
     try {
+      // Import stores dynamically to avoid circular dependencies
+      const { useRoutineSessionStore } = await import("./routineSessionStore");
+      const { useRoutineBuilderStore } = await import("./routineBuilderStore");
+      const { useStepTrackerStore } = await import("./stepTrackerStore");
+      const { useExerciseSessionStore } =
+        await import("./exerciseSessionStore");
+
+      // Sign out from Supabase
       await supabase.auth.signOut();
+
+      // Clear all user data from stores
+      useRoutineSessionStore.getState().resetActive();
+      useRoutineSessionStore.getState().resetHistory();
+      useRoutineBuilderStore.getState().resetRoutine();
+      useStepTrackerStore.getState().clearActiveSession();
+      useStepTrackerStore.getState().resetHistory();
+      useExerciseSessionStore.getState().resetHistory();
+
+      // Clear auth state
       set({
         session: null,
         user: null,
         username: null,
         hasCompletedOnboarding: false,
       });
+
+      console.log("[AuthStore] All stores cleared after sign out");
     } catch (error) {
       console.error("[AuthStore] Sign out failed:", error);
       throw error;

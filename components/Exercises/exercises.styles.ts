@@ -126,15 +126,6 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: "600",
   },
-  switchButton: {
-    borderRadius: 16,
-    paddingVertical: 16,
-    alignItems: "center",
-  },
-  switchButtonText: {
-    fontSize: 16,
-    fontWeight: "700",
-  },
 });
 
 export default styles;

@@ -38,7 +38,7 @@ const ExerciseCard: React.FC<ExerciseCardProps> = ({
         <Image source={image} style={thumbnailStyle} resizeMode="cover" />
 
         <YStack flex={1} minWidth={0} gap="$1">
-          <TText fontSize={headingSize} fontWeight="800" numberOfLines={1}>
+          <TText fontSize={headingSize} fontWeight="800" numberOfLines={2}>
             {title}
           </TText>
           <TText

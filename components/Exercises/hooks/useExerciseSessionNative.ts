@@ -157,10 +157,6 @@ export const useExerciseSessionNative = ({
     "text",
   );
   const accentColor = useThemeColor({}, "tint");
-  const buttonTextColor = useThemeColor(
-    { light: "#0b1220", dark: "#0b1220" },
-    "text",
-  );
 
   // Primary chip
   const primaryChip = useMemo(() => {
@@ -259,7 +255,6 @@ export const useExerciseSessionNative = ({
     cardBackground,
     messageColor,
     accentColor,
-    buttonTextColor,
 
     // Chips
     primaryChip,

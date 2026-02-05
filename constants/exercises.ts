@@ -27,6 +27,8 @@ export const ALLOWED_EXERCISES: ExerciseId[] = [
   ExerciseId.CALF_RAISES,
   ExerciseId.STANDING_LEG_RAISES,
   ExerciseId.STEP_TRACKER,
+  ExerciseId.PUSHUPS,
+  ExerciseId.LUNGES,
 ];
 
 export const ROUTINE_ALLOWED_EXERCISES: ExerciseId[] = [
@@ -35,4 +37,6 @@ export const ROUTINE_ALLOWED_EXERCISES: ExerciseId[] = [
   ExerciseId.LATERAL_RAISES,
   ExerciseId.CALF_RAISES,
   ExerciseId.STANDING_LEG_RAISES,
+  ExerciseId.PUSHUPS,
+  ExerciseId.LUNGES,
 ];

@@ -3,8 +3,9 @@ import { useRouter } from "expo-router";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import type { ColorValue } from "react-native";
-import { Button, Card, H4, Progress, Text, XStack, YStack } from "tamagui";
+import { Card, H4, Progress, Text, XStack, YStack } from "tamagui";
 
+import { TButton } from "@/components/TButton";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useRoutineSessionStore } from "@/stores/routineSessionStore";
 
@@ -25,6 +26,7 @@ export const TNextActionCard: React.FC<TNextActionCardProps> = ({
   const restartFromSession = useRoutineSessionStore(
     (state) => state.restartFromSession,
   );
+  const resetActive = useRoutineSessionStore((state) => state.resetActive);
 
   const handlePress = () => {
     if (nextAction.type === "continue-routine") {
@@ -86,6 +88,10 @@ export const TNextActionCard: React.FC<TNextActionCardProps> = ({
     } else if (nextAction.type === "suggested-exercise") {
       router.push("/exercises");
     }
+  };
+
+  const handleCancel = () => {
+    resetActive();
   };
 
   const getIcon = () => {
@@ -185,50 +191,69 @@ export const TNextActionCard: React.FC<TNextActionCardProps> = ({
         )}
 
         <XStack gap="$3">
-          <Button
-            flex={1}
-            size="$4"
-            backgroundColor="transparent"
-            borderWidth={2}
-            borderColor={colors.accent as any}
-            color={colors.accent as any}
-            fontWeight="600"
-            onPress={handleEdit}
-            hoverStyle={{
-              backgroundColor: colors.accent as any,
-              opacity: 0.1,
-            }}
-            pressStyle={{ opacity: 0.8 }}
-            icon={
-              <Ionicons
-                name="create-outline"
-                size={18}
-                color={colors.accent as string}
-              />
-            }
-          >
-            {t("home.nextAction.editButton")}
-          </Button>
+          {/* Edit button - only show when there's a routine to edit (active or last completed) */}
+          {(nextAction.type === "continue-routine" ||
+            nextAction.type === "suggested-exercise") && (
+            <TButton
+              flex={1}
+              size="$4"
+              variant="outline"
+              onPress={handleEdit}
+              iconName="create-outline"
+            >
+              {t("home.nextAction.editButton")}
+            </TButton>
+          )}
 
-          <Button
-            flex={1}
-            size="$4"
-            backgroundColor={colors.accent as any}
-            color="white"
-            fontWeight="600"
-            onPress={handlePress}
-            hoverStyle={{ backgroundColor: colors.accentHover as any }}
-            pressStyle={{ opacity: 0.9 }}
-            iconAfter={
-              <Ionicons name="arrow-forward" size={20} color="white" />
-            }
-          >
-            {nextAction.type === "continue-routine"
-              ? t("home.nextAction.resumeButton")
-              : nextAction.type === "suggested-exercise"
-                ? t("home.nextAction.beginButton")
-                : t("home.nextAction.startButton")}
-          </Button>
+          {/* Cancel button - only for active sessions */}
+          {nextAction.isActiveSession && (
+            <TButton
+              flex={1}
+              size="$4"
+              variant="destructive"
+              onPress={handleCancel}
+              iconName="close-circle-outline"
+            >
+              {t("home.nextAction.cancelButton")}
+            </TButton>
+          )}
+
+          {/* For first-time users: show both Create Routine and Try Exercise */}
+          {nextAction.type === "none" ? (
+            <>
+              <TButton
+                flex={1}
+                size="$4"
+                variant="outline"
+                onPress={() => router.push("/exercises")}
+                iconName="barbell-outline"
+              >
+                {t("home.nextAction.tryExerciseButton")}
+              </TButton>
+              <TButton
+                flex={1}
+                size="$4"
+                variant="primary"
+                onPress={handlePress}
+                iconAfterName="arrow-forward"
+              >
+                {t("home.nextAction.createRoutineButton")}
+              </TButton>
+            </>
+          ) : (
+            /* Main action button for other cases */
+            <TButton
+              flex={1}
+              size="$4"
+              variant="primary"
+              onPress={handlePress}
+              iconAfterName="arrow-forward"
+            >
+              {nextAction.type === "continue-routine"
+                ? t("home.nextAction.resumeButton")
+                : t("home.nextAction.beginButton")}
+            </TButton>
+          )}
         </XStack>
       </YStack>
     </Card>

@@ -30,15 +30,45 @@ export const VARIANT_STYLES: VariantStyles = {
   },
   outline: {
     backgroundColor: "transparent",
-    borderColor: "$borderColor",
-    color: "$color",
-    hoverStyle: { backgroundColor: "$backgroundHover" },
-    pressStyle: { backgroundColor: "$backgroundPress" },
+    borderColor: "$primary",
+    color: "$primary",
+    hoverStyle: {
+      backgroundColor: "$backgroundHover",
+      borderColor: "$primary",
+    },
+    pressStyle: {
+      backgroundColor: "$backgroundPress",
+      borderColor: "$primary",
+    },
   },
   ghost: {
     backgroundColor: "transparent",
     color: "$color",
     hoverStyle: { backgroundColor: "$backgroundHover" },
     pressStyle: { backgroundColor: "$backgroundPress" },
+  },
+  destructive: {
+    backgroundColor: "$error",
+    color: "#ffffff" as ButtonProps["color"],
+    hoverStyle: { backgroundColor: "$error", opacity: 0.9 },
+    pressStyle: { backgroundColor: "$error", opacity: 0.8 },
+  },
+  success: {
+    backgroundColor: "$success",
+    color: "#ffffff" as ButtonProps["color"],
+    hoverStyle: { backgroundColor: "$success", opacity: 0.9 },
+    pressStyle: { backgroundColor: "$success", opacity: 0.8 },
+  },
+  warning: {
+    backgroundColor: "$warning",
+    color: "#ffffff" as ButtonProps["color"],
+    hoverStyle: { backgroundColor: "$warning", opacity: 0.9 },
+    pressStyle: { backgroundColor: "$warning", opacity: 0.8 },
+  },
+  info: {
+    backgroundColor: "$info",
+    color: "#ffffff" as ButtonProps["color"],
+    hoverStyle: { backgroundColor: "$info", opacity: 0.9 },
+    pressStyle: { backgroundColor: "$info", opacity: 0.8 },
   },
 };

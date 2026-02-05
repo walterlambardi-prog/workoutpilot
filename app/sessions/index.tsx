@@ -1,7 +1,7 @@
 import { useRouter } from "expo-router";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Platform, StyleSheet, TouchableOpacity } from "react-native";
+import { Platform, StyleSheet } from "react-native";
 
 import ActivityHeatmap from "@/components/ActivityHeatmap";
 import MapView from "@/components/MapView";
@@ -87,11 +87,13 @@ const SessionsScreen: React.FC = () => {
         <TRow justifyContent="space-between" alignItems="center">
           <THeading level={3}>{t("sessions.stepTracker.title")}</THeading>
           {hasMoreStepTrackers ? (
-            <TouchableOpacity onPress={() => router.push("/allStepTrackers")}>
-              <TText variant="label" color="$color">
-                {t("sessions.viewAll")}
-              </TText>
-            </TouchableOpacity>
+            <TButton
+              variant="ghost"
+              onPress={() => router.push("/allStepTrackers")}
+              size="$3"
+            >
+              {t("sessions.viewAll")}
+            </TButton>
           ) : null}
         </TRow>
 
@@ -180,11 +182,13 @@ const SessionsScreen: React.FC = () => {
         <TRow justifyContent="space-between" alignItems="center">
           <THeading level={3}>{t("sessions.routineList.title")}</THeading>
           {hasMoreRoutines ? (
-            <TouchableOpacity onPress={() => router.push("/allRoutines")}>
-              <TText variant="label" color="$color">
-                {t("sessions.viewAll")}
-              </TText>
-            </TouchableOpacity>
+            <TButton
+              variant="ghost"
+              onPress={() => router.push("/allRoutines")}
+              size="$3"
+            >
+              {t("sessions.viewAll")}
+            </TButton>
           ) : null}
         </TRow>
         {routineList.length === 0 ? (

@@ -25,6 +25,7 @@ export interface NextAction {
   progress?: number;
   routineId?: string;
   exerciseId?: string;
+  isActiveSession?: boolean; // true = active routine (can cancel), false = completed routine (restart)
 }
 
 export interface Achievement {
@@ -53,37 +54,54 @@ export const useHomeStats = () => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const todayMs = today.getTime();
+    const tomorrowMs = todayMs + 24 * 60 * 60 * 1000;
 
-    // Exercise sessions today
+    // Exercise sessions completed today (EXCLUDE exercises that are part of a routine)
     const todayExercises = exerciseHistory.filter(
-      (session) => session.endedAt && session.endedAt >= todayMs,
+      (session) =>
+        session.endedAt &&
+        session.endedAt >= todayMs &&
+        session.endedAt < tomorrowMs &&
+        !session.routineId, // Only count standalone exercises
     );
 
-    // Routine sessions today
+    // Routine sessions completed today
     const todayRoutines = routineHistory.filter(
-      (session) => session.completedAt && session.completedAt >= todayMs,
+      (session) =>
+        session.completedAt &&
+        session.completedAt >= todayMs &&
+        session.completedAt < tomorrowMs,
     );
 
-    // Step tracker sessions today
+    // Step tracker sessions completed today (only count if both started AND ended today)
     const todaySteps = stepTrackerHistory.filter(
-      (session) => session.endedAt >= todayMs,
+      (session) =>
+        session.startedAt >= todayMs &&
+        session.endedAt >= todayMs &&
+        session.endedAt < tomorrowMs,
     );
 
+    // Total reps from exercises and routines
     const totalReps =
       todayExercises.reduce((sum, session) => sum + session.reps, 0) +
       todayRoutines.reduce((sum, session) => sum + session.totalReps, 0);
 
+    // Total minutes using actual duration (durationMs field)
     const totalMinutes = Math.round(
       (todayExercises.reduce(
         (sum, session) => sum + (session.durationMs || 0),
         0,
       ) +
-        todayRoutines.reduce(
-          (sum, session) =>
-            sum +
-            (session.completedAt ? session.completedAt - session.startedAt : 0),
-          0,
-        ) +
+        todayRoutines.reduce((sum, session) => {
+          // Use stepResults for accurate duration, fallback to completedAt - startedAt
+          const routineDuration =
+            session.stepResults?.reduce(
+              (acc, step) => acc + step.durationMs,
+              0,
+            ) ||
+            (session.completedAt ? session.completedAt - session.startedAt : 0);
+          return sum + routineDuration;
+        }, 0) +
         todaySteps.reduce((sum, session) => sum + session.durationMs, 0)) /
         60000,
     );
@@ -101,9 +119,11 @@ export const useHomeStats = () => {
 
   // Calculate streak
   const streakInfo = useMemo((): StreakInfo => {
-    // Combine all sessions with timestamps
+    // Combine all sessions with timestamps (EXCLUDE exercises that are part of a routine)
     const allSessions = [
-      ...exerciseHistory.map((s) => s.endedAt || s.startedAt),
+      ...exerciseHistory
+        .filter((s) => !s.routineId) // Only count standalone exercises
+        .map((s) => s.endedAt || s.startedAt),
       ...routineHistory.map((s) => s.completedAt || s.startedAt),
       ...stepTrackerHistory.map((s) => s.endedAt),
     ].filter(Boolean);
@@ -182,26 +202,35 @@ export const useHomeStats = () => {
         }),
         progress,
         routineId: activeRoutine.id,
+        isActiveSession: true, // Active session - can cancel
       };
     }
 
     // Priority 2: Last completed routine (restart)
     if (lastCompletedRoutine) {
+      // Count unique exercises (not total steps)
+      const uniqueExercises = new Set(
+        lastCompletedRoutine.plan.map((step) => step.exerciseId),
+      ).size;
+
       return {
         type: "continue-routine",
         title: t("home.nextAction.restartRoutineTitle"),
         subtitle: t("home.nextAction.restartRoutineSubtitle", {
-          exercises: lastCompletedRoutine.plan.length,
+          exercises: uniqueExercises,
           rounds: lastCompletedRoutine.rounds,
         }),
         routineId: lastCompletedRoutine.id,
+        isActiveSession: false, // Completed routine - restart only, no cancel
       };
     }
 
-    // Priority 3: Suggest most frequent exercise
-    if (exerciseHistory.length > 0) {
+    // Priority 3: Suggest most frequent exercise (only standalone exercises)
+    const standaloneExercises = exerciseHistory.filter((s) => !s.routineId);
+
+    if (standaloneExercises.length > 0) {
       const exerciseCounts: Record<string, number> = {};
-      exerciseHistory.forEach((session) => {
+      standaloneExercises.forEach((session) => {
         exerciseCounts[session.exerciseId] =
           (exerciseCounts[session.exerciseId] || 0) + 1;
       });

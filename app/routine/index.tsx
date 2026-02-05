@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Button, Card, Image, Separator, Text, XStack, YStack } from "tamagui";
+import { Card, Image, Separator, Text, XStack, YStack } from "tamagui";
 
 import type { RoutineBuilderScreenProps } from "@/app/routine/routine.types";
 import ScreenHeader from "@/components/ScreenHeader";
@@ -19,21 +19,19 @@ const StepperButton: React.FC<{
   onPress: () => void;
   accessibilityLabel: string;
   disabled?: boolean;
-  iconColor?: string;
-}> = ({ icon, onPress, accessibilityLabel, disabled, iconColor }) => (
-  <Button
+}> = ({ icon, onPress, accessibilityLabel, disabled }) => (
+  <TButton
     size="$3"
     circular
-    chromeless
+    variant="ghost"
     backgroundColor="$backgroundHover"
     borderColor="$borderColor"
     borderWidth={1}
     onPress={onPress}
     disabled={disabled}
     aria-label={accessibilityLabel}
-    icon={
-      <Ionicons name={icon} size={18} color={iconColor ?? "currentColor"} />
-    }
+    iconName={icon}
+    iconOnly
   />
 );
 
@@ -49,7 +47,6 @@ const RoutineBuilderScreen: React.FC<RoutineBuilderScreenProps> = () => {
     titleSize,
     bodySize,
     metaSize,
-    iconPrimary,
     selectedBorderColor,
     media,
     incrementRounds,
@@ -93,7 +90,6 @@ const RoutineBuilderScreen: React.FC<RoutineBuilderScreenProps> = () => {
                     onPress={decrementRounds}
                     accessibilityLabel={t("routineBuilder.rounds.decrement")}
                     disabled={rounds <= 1}
-                    iconColor={iconPrimary}
                   />
                   <Text fontSize={titleSize} fontWeight="700" color="$color">
                     {rounds}
@@ -102,7 +98,6 @@ const RoutineBuilderScreen: React.FC<RoutineBuilderScreenProps> = () => {
                     icon="add-outline"
                     onPress={incrementRounds}
                     accessibilityLabel={t("routineBuilder.rounds.increment")}
-                    iconColor={iconPrimary}
                   />
                 </XStack>
               </YStack>
@@ -258,7 +253,6 @@ const RoutineBuilderScreen: React.FC<RoutineBuilderScreenProps> = () => {
                               { exercise: item.title },
                             )}
                             disabled={isDisabled || config.reps <= 1}
-                            iconColor={iconPrimary}
                           />
                           <Text
                             fontSize={titleSize}
@@ -277,7 +271,6 @@ const RoutineBuilderScreen: React.FC<RoutineBuilderScreenProps> = () => {
                               { exercise: item.title },
                             )}
                             disabled={isDisabled}
-                            iconColor={iconPrimary}
                           />
                         </XStack>
 

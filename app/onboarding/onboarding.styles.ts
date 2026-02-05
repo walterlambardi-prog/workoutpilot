@@ -99,36 +99,6 @@ const styles = StyleSheet.create({
     width: "100%",
     alignSelf: "center",
   },
-  button: {
-    flex: 1,
-    borderRadius: Spacing.md,
-    padding: 18,
-    alignItems: "center",
-    justifyContent: "center",
-    minHeight: 56,
-  },
-  buttonPrimary: {
-    backgroundColor: "#3b82f6",
-  },
-  buttonSecondary: {
-    backgroundColor: "transparent",
-    borderWidth: 2,
-    borderColor: "#3b82f6",
-  },
-  buttonPressed: {
-    opacity: 0.7,
-    transform: [{ scale: 0.98 }],
-  },
-  buttonText: {
-    fontSize: 16,
-    fontWeight: "700",
-  },
-  buttonTextPrimary: {
-    color: "#ffffff",
-  },
-  buttonTextSecondary: {
-    color: "#3b82f6",
-  },
 });
 
 export default styles;

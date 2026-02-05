@@ -1,8 +1,8 @@
 import { RNMediapipe } from "@thinksys/react-native-mediapipe";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { TouchableOpacity } from "react-native";
 
+import { TButton } from "@/components/TButton";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 
@@ -37,7 +37,6 @@ export default function ExercisesNativeScreen(props: ExercisesProps) {
     cardBackground,
     messageColor,
     accentColor,
-    buttonTextColor,
     primaryChip,
     heroChips,
     routineProgress,
@@ -248,23 +247,18 @@ export default function ExercisesNativeScreen(props: ExercisesProps) {
               {feedback ?? t(`exercises.messages.${messageKey}`)}
             </ThemedText>
 
-            <TouchableOpacity
+            <TButton
+              variant="primary"
               onPress={handleSwitchCamera}
-              style={[styles.switchButton, { backgroundColor: accentColor }]}
-              activeOpacity={0.85}
-              accessible={true}
               accessibilityLabel={t("exercises.native.switchCamera.label")}
-              accessibilityRole="button"
               accessibilityHint={t(
                 "exercises.native.switchCamera.accessibilityHint",
               )}
+              iconName="camera-reverse-outline"
+              fullWidth
             >
-              <ThemedText
-                style={[styles.switchButtonText, { color: buttonTextColor }]}
-              >
-                {t("exercises.native.switchCamera.label")}
-              </ThemedText>
-            </TouchableOpacity>
+              {t("exercises.native.switchCamera.label")}
+            </TButton>
           </ThemedView>
         </ThemedView>
       </ThemedView>

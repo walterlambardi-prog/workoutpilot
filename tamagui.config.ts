@@ -34,31 +34,61 @@ const tokens = createTokens({
   },
   // Color tokens - we'll use Tamagui's color system
   color: {
-    // Light mode colors
+    // Text colors
     lightText: Colors.light.text,
-    lightBackground: Colors.light.background,
-    lightTint: Colors.light.tint,
-    lightIcon: Colors.light.icon,
-    lightTabIconDefault: Colors.light.tabIconDefault,
-    lightTabIconSelected: Colors.light.tabIconSelected,
-
-    // Dark mode colors
     darkText: Colors.dark.text,
+
+    // Background colors
+    lightBackground: Colors.light.background,
     darkBackground: Colors.dark.background,
+    lightBackgroundHover: "#f5f5f5",
+    darkBackgroundHover: "#1f2937",
+    lightBackgroundPress: "#e5e5e5",
+    darkBackgroundPress: "#374151",
+    lightBackgroundStrong: "#000",
+    darkBackgroundStrong: "#fff",
+
+    // Border colors
+    lightBorder: "#e5e5e5",
+    darkBorder: "#374151",
+    lightBorderHover: "#d4d4d4",
+    darkBorderHover: "#4b5563",
+    lightBorderPress: "#a3a3a3",
+    darkBorderPress: "#6b7280",
+
+    // Placeholder colors
+    lightPlaceholder: "#a3a3a3",
+    darkPlaceholder: "#6b7280",
+
+    // Primary/Tint colors
+    lightTint: Colors.light.tint,
     darkTint: Colors.dark.tint,
+    lightOnPrimary: "#ffffff",
+    darkOnPrimary: "#0f172a",
+
+    // Icon colors
+    lightIcon: Colors.light.icon,
     darkIcon: Colors.dark.icon,
+    lightTabIconDefault: Colors.light.tabIconDefault,
     darkTabIconDefault: Colors.dark.tabIconDefault,
+    lightTabIconSelected: Colors.light.tabIconSelected,
     darkTabIconSelected: Colors.dark.tabIconSelected,
 
-    // Semantic colors
-    primary: Colors.light.tint,
-    primaryDark: Colors.dark.tint,
+    // Semantic colors - Light mode (saturated for light backgrounds)
+    successLight: "#16a34a", // green-600
+    errorLight: "#dc2626", // red-600
+    warningLight: "#ea580c", // orange-600
+    infoLight: "#2563eb", // blue-600
 
-    // Exercise/fitness specific colors
-    success: "#22c55e",
-    error: "#ef4444",
-    warning: "#f59e0b",
-    info: "#3b82f6",
+    // Semantic colors - Dark mode (brighter for dark backgrounds)
+    successDark: "#22c55e", // green-500
+    errorDark: "#ef4444", // red-500
+    warningDark: "#f59e0b", // amber-500
+    infoDark: "#3b82f6", // blue-500
+
+    // Transparent colors
+    transparent: "rgba(0,0,0,0)",
+    whiteTransparent: "rgba(255,255,255,0)",
   },
   radius: {
     $0: 0,
@@ -86,29 +116,29 @@ const lightTheme = {
   colorHover: tokens.color.lightText,
   colorPress: tokens.color.lightText,
   colorFocus: tokens.color.lightText,
-  colorTransparent: "rgba(0,0,0,0)",
+  colorTransparent: tokens.color.transparent,
 
   background: tokens.color.lightBackground,
-  backgroundHover: "#f5f5f5",
-  backgroundPress: "#e5e5e5",
-  backgroundFocus: "#f5f5f5",
-  backgroundStrong: "#000",
-  backgroundTransparent: "rgba(255,255,255,0)",
+  backgroundHover: tokens.color.lightBackgroundHover,
+  backgroundPress: tokens.color.lightBackgroundPress,
+  backgroundFocus: tokens.color.lightBackgroundHover,
+  backgroundStrong: tokens.color.lightBackgroundStrong,
+  backgroundTransparent: tokens.color.whiteTransparent,
 
-  borderColor: "#e5e5e5",
-  borderColorHover: "#d4d4d4",
-  borderColorPress: "#a3a3a3",
+  borderColor: tokens.color.lightBorder,
+  borderColorHover: tokens.color.lightBorderHover,
+  borderColorPress: tokens.color.lightBorderPress,
   borderColorFocus: tokens.color.lightTint,
 
-  placeholderColor: "#a3a3a3",
+  placeholderColor: tokens.color.lightPlaceholder,
 
-  // Semantic colors
-  primary: tokens.color.primary,
-  onPrimary: "#ffffff",
-  success: tokens.color.success,
-  error: tokens.color.error,
-  warning: tokens.color.warning,
-  info: tokens.color.info,
+  // Semantic colors - Light mode (saturated for better contrast)
+  primary: tokens.color.lightTint,
+  onPrimary: tokens.color.lightOnPrimary,
+  success: tokens.color.successLight,
+  error: tokens.color.errorLight,
+  warning: tokens.color.warningLight,
+  info: tokens.color.infoLight,
 };
 
 // Create dark theme
@@ -117,29 +147,29 @@ const darkTheme = {
   colorHover: tokens.color.darkText,
   colorPress: tokens.color.darkText,
   colorFocus: tokens.color.darkText,
-  colorTransparent: "rgba(255,255,255,0)",
+  colorTransparent: tokens.color.whiteTransparent,
 
   background: tokens.color.darkBackground,
-  backgroundHover: "#1f2937",
-  backgroundPress: "#374151",
-  backgroundFocus: "#1f2937",
-  backgroundStrong: "#fff",
-  backgroundTransparent: "rgba(0,0,0,0)",
+  backgroundHover: tokens.color.darkBackgroundHover,
+  backgroundPress: tokens.color.darkBackgroundPress,
+  backgroundFocus: tokens.color.darkBackgroundHover,
+  backgroundStrong: tokens.color.darkBackgroundStrong,
+  backgroundTransparent: tokens.color.transparent,
 
-  borderColor: "#374151",
-  borderColorHover: "#4b5563",
-  borderColorPress: "#6b7280",
+  borderColor: tokens.color.darkBorder,
+  borderColorHover: tokens.color.darkBorderHover,
+  borderColorPress: tokens.color.darkBorderPress,
   borderColorFocus: tokens.color.darkTint,
 
-  placeholderColor: "#6b7280",
+  placeholderColor: tokens.color.darkPlaceholder,
 
-  // Semantic colors
-  primary: tokens.color.primaryDark,
-  onPrimary: "#0f172a",
-  success: tokens.color.success,
-  error: tokens.color.error,
-  warning: tokens.color.warning,
-  info: tokens.color.info,
+  // Semantic colors - Dark mode (brighter for better contrast on dark backgrounds)
+  primary: tokens.color.darkTint,
+  onPrimary: tokens.color.darkOnPrimary,
+  success: tokens.color.successDark,
+  error: tokens.color.errorDark,
+  warning: tokens.color.warningDark,
+  info: tokens.color.infoDark,
 };
 
 // Create Tamagui configuration
