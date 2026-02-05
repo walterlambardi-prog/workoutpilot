@@ -70,9 +70,9 @@ export const useRoutineBuilder = () => {
     [exerciseList, exercises],
   );
 
-  const titleSize: FontSizeTokens = "$5";
-  const bodySize: FontSizeTokens = "$3";
-  const metaSize: FontSizeTokens = "$3";
+  const titleSize: FontSizeTokens = media.gtSm ? "$5" : "$4";
+  const bodySize: FontSizeTokens = media.gtSm ? "$4" : "$3";
+  const metaSize: FontSizeTokens = media.gtSm ? "$4" : "$3";
 
   const resolveToken = useCallback(
     (token?: string) => {
