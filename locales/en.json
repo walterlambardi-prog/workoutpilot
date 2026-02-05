@@ -440,6 +440,10 @@
         "accessibilityHint": "Open session for {{exercise}}"
       },
       "items": {
+        "alternatingKneeRaises": {
+          "title": "Alternating knee raises",
+          "description": "Raise knees toward chest alternately to engage core and hip flexors."
+        },
         "hammerCurls": {
           "title": "Alternating hammer curls",
           "description": "Alternate arms to strengthen biceps and forearms."
@@ -608,6 +612,33 @@
       "armLabel": {
         "left": "Left arm",
         "right": "Right arm"
+      }
+    },
+    "alternatingKneeRaises": {
+      "feedback": {
+        "showBody": "Show your full body to the camera",
+        "noPose": "No pose detected",
+        "improveLight": "Improve lighting and face the camera",
+        "standReady": "Stand straight, ready to raise your knee",
+        "standUpright": "Stand upright — don't lean",
+        "raiseLeft": "Raise your left knee to chest",
+        "raiseRight": "Raise your right knee to chest",
+        "holdUp": "Hold at the top",
+        "lower": "Lower with control",
+        "raiseHigher": "Raise your knee higher — aim for chest level",
+        "oneAtTime": "Switch legs — lower one before raising the other",
+        "complete": "Good rep on your {{leg}}"
+      },
+      "legLabel": {
+        "left": "left leg",
+        "right": "right leg",
+        "none": "stable"
+      },
+      "labels": {
+        "activeLeg": "Active leg",
+        "kneeHeight": "Knee height",
+        "leftReps": "Left leg reps",
+        "rightReps": "Right leg reps"
       }
     },
     "standingLegRaises": {

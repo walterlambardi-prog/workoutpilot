@@ -5,6 +5,11 @@ import type { ExerciseDefinition } from "./exercises.types";
 
 export const EXERCISE_DEFINITIONS: ExerciseDefinition[] = [
   {
+    id: ExerciseId.ALTERNATING_KNEE_RAISES,
+    copyKey: EXERCISE_COPY_KEYS[ExerciseId.ALTERNATING_KNEE_RAISES],
+    image: exerciseImages[ExerciseId.ALTERNATING_KNEE_RAISES],
+  },
+  {
     id: ExerciseId.HAMMER_CURLS,
     copyKey: EXERCISE_COPY_KEYS[ExerciseId.HAMMER_CURLS],
     image: exerciseImages[ExerciseId.HAMMER_CURLS],

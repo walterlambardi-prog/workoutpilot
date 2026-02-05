@@ -7,6 +7,7 @@ import { ExerciseId } from "@/constants/exercises";
 
 import type { TFunction } from "i18next";
 import type { PoseLandmark, PoseMessageKey, Status } from "../exercises.types";
+import { useAlternatingKneeRaisesCounter } from "./useAlternatingKneeRaisesCounter";
 import { useCalfRaisesCounter } from "./useCalfRaisesCounter";
 import { useHammerCurlsCounter } from "./useHammerCurlsCounter";
 import { useLateralRaisesCounter } from "./useLateralRaisesCounter";
@@ -31,6 +32,7 @@ export const usePoseDetection = (params: {
   const lastRepCountRef = useRef(0);
   const reportedRepRef = useRef(0);
 
+  const alternatingKneeRaises = useAlternatingKneeRaisesCounter(t);
   const calfRaises = useCalfRaisesCounter(t);
   const hammerCurls = useHammerCurlsCounter(t);
   const lateralRaises = useLateralRaisesCounter(t);
@@ -242,6 +244,24 @@ export const usePoseDetection = (params: {
             }
             setFeedback(next?.feedback);
           }
+
+          if (exerciseId === ExerciseId.ALTERNATING_KNEE_RAISES) {
+            const next = alternatingKneeRaises.processLandmarks(landmarks);
+            const rep = next?.repCount ?? 0;
+            const stableRep = Math.max(lastRepCountRef.current, rep);
+            lastRepCountRef.current = stableRep;
+            setRepCount(stableRep);
+            if (exerciseId) {
+              const prev = reportedRepRef.current;
+              if (stableRep > prev) {
+                useExerciseSessionStore
+                  .getState()
+                  .addRep(exerciseId, stableRep - prev);
+                reportedRepRef.current = stableRep;
+              }
+            }
+            setFeedback(next?.feedback);
+          }
         } else {
           setPoseCount(0);
           setMessageKey("noPoseDetected");
@@ -360,6 +380,7 @@ export const usePoseDetection = (params: {
       }
     },
     [
+      alternatingKneeRaises,
       calfRaises,
       exerciseId,
       extractLandmarks,

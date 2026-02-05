@@ -172,7 +172,7 @@ const RoutineBuilderScreen: React.FC<RoutineBuilderScreenProps> = () => {
                       : undefined
                   }
                 >
-                  <YStack position="relative" height={280}>
+                  <YStack position="relative" height={380}>
                     {/* Background Image */}
                     <Image
                       source={item.image}

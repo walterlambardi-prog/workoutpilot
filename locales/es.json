@@ -440,6 +440,10 @@
         "accessibilityHint": "Abre la sesión de {{exercise}}"
       },
       "items": {
+        "alternatingKneeRaises": {
+          "title": "Elevaciones de rodilla alternadas",
+          "description": "Eleva las rodillas al pecho alternadamente para trabajar core y flexores de cadera."
+        },
         "hammerCurls": {
           "title": "Curl martillo alterno",
           "description": "Alterna brazos para trabajar bíceps y antebrazo."
@@ -608,6 +612,33 @@
       "armLabel": {
         "left": "Brazo izquierdo",
         "right": "Brazo derecho"
+      }
+    },
+    "alternatingKneeRaises": {
+      "feedback": {
+        "showBody": "Muestra tu cuerpo completo a la cámara",
+        "noPose": "No se detectó postura",
+        "improveLight": "Mejora la iluminación y pónete de frente a la cámara",
+        "standReady": "Párate derecho, listo para elevar tu rodilla",
+        "standUpright": "Mantén la espalda recta — no te inclines",
+        "raiseLeft": "Eleva tu rodilla izquierda al pecho",
+        "raiseRight": "Eleva tu rodilla derecha al pecho",
+        "holdUp": "Mantén arriba",
+        "lower": "Baja con control",
+        "raiseHigher": "Eleva la rodilla más alto — apunta al nivel del pecho",
+        "oneAtTime": "Alterna piernas — baja una antes de elevar la otra",
+        "complete": "Buena rep con tu {{leg}}"
+      },
+      "legLabel": {
+        "left": "pierna izquierda",
+        "right": "pierna derecha",
+        "none": "estable"
+      },
+      "labels": {
+        "activeLeg": "Pierna activa",
+        "kneeHeight": "Altura de rodilla",
+        "leftReps": "Reps pierna izquierda",
+        "rightReps": "Reps pierna derecha"
       }
     },
     "standingLegRaises": {

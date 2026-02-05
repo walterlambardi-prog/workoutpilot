@@ -16,6 +16,7 @@ import type {
   PoseStats,
   Status,
 } from "../exercises.types";
+import { useAlternatingKneeRaisesCounter } from "./useAlternatingKneeRaisesCounter";
 import { useCalfRaisesCounter } from "./useCalfRaisesCounter";
 import { useHammerCurlsCounter } from "./useHammerCurlsCounter";
 import { useLateralRaisesCounter } from "./useLateralRaisesCounter";
@@ -38,6 +39,7 @@ export const useWebPoseDetection = (
   const lastRepCountRef = useRef(0);
 
   const { t } = useTranslation();
+  const alternatingKneeRaises = useAlternatingKneeRaisesCounter(t);
   const calfRaises = useCalfRaisesCounter(t);
   const hammerCurls = useHammerCurlsCounter(t);
   const lateralRaises = useLateralRaisesCounter(t);
@@ -234,6 +236,26 @@ export const useWebPoseDetection = (
             progress: next?.progress,
             feedback: next?.feedback,
           });
+        } else if (exerciseId === ExerciseId.ALTERNATING_KNEE_RAISES) {
+          const next = alternatingKneeRaises.processLandmarks(landmarks);
+          const rep = next?.repCount ?? 0;
+          const stableRep = Math.max(lastRepCountRef.current, rep);
+          lastRepCountRef.current = stableRep;
+          if (exerciseId) {
+            const prev = reportedRepRef.current;
+            if (stableRep > prev) {
+              useExerciseSessionStore
+                .getState()
+                .addRep(exerciseId, stableRep - prev);
+              reportedRepRef.current = stableRep;
+            }
+          }
+          setStats({
+            poseCount: 1,
+            repCount: stableRep,
+            progress: next?.progress,
+            feedback: next?.feedback,
+          });
         } else {
           setStats({ poseCount: 1 });
         }
@@ -368,6 +390,7 @@ export const useWebPoseDetection = (
 
     rafRef.current = requestAnimationFrame(processFrame);
   }, [
+    alternatingKneeRaises,
     calfRaises,
     exerciseId,
     hammerCurls,
