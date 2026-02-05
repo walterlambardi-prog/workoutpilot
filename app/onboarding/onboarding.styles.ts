@@ -86,11 +86,11 @@ const styles = StyleSheet.create({
     width: Spacing.sm,
     height: Spacing.sm,
     borderRadius: Spacing.xxs,
-    backgroundColor: "#d1d5db",
+    // backgroundColor removed - use theme token in component
   },
   dotActive: {
     width: Spacing.xxl,
-    backgroundColor: "#3b82f6",
+    // backgroundColor removed - use theme token in component
   },
   buttonsRow: {
     flexDirection: "row",

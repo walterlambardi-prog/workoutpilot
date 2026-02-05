@@ -18,7 +18,7 @@ export const exerciseImages: Record<ExerciseId, ImageSourcePropType> = {
   [ExerciseId.LUNGES]: require("@/assets/images/exercises/realistic/hombre-zancadas-frente-fondo-transparente-png-1.png"),
   [ExerciseId.PUSHUPS]: require("@/assets/images/exercises/realistic/hombre-flexiones-brazo-frente-fondo-transparente-png-1.png"),
   [ExerciseId.SQUATS]: require("@/assets/images/exercises/realistic/mujer-sentadilla-frente-fondo-transparente-png-1.png"),
-  [ExerciseId.STANDING_CHEST_FLY]: require("@/assets/images/exercises/realistic/hombre-standing-chest-fly-png-1.png"),
+  [ExerciseId.STANDING_CHEST_FLY]: require("@/assets/images/exercises/realistic/quitar-fondo-definitivo-solo-persona-alpha-real-1-1-1.png"),
   [ExerciseId.STANDING_LEG_RAISES]: require("@/assets/images/exercises/realistic/mujer-elevacion-lateral-pierna-alternada-ultrafotoreal-pose-referencia-png-transparente-1.png"),
   [ExerciseId.STEP_TRACKER]: require("@/assets/images/exercises/realistic/mujer-caminando-fondo-transparente-png-1.png"),
 };

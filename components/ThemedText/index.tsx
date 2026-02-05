@@ -25,6 +25,7 @@ export function ThemedText({
   ...rest
 }: ThemedTextProps) {
   const color = useThemeColor({ light: lightColor, dark: darkColor }, "text");
+  const linkColor = useThemeColor({}, "tint"); // Use tint color for links
 
   const shadowStyle = textShadow
     ? {
@@ -45,7 +46,7 @@ export function ThemedText({
   return (
     <Text
       style={[
-        { color },
+        { color: type === "link" ? linkColor : color },
         shadowStyle,
         type === "default" ? styles.default : undefined,
         type === "title" ? styles.title : undefined,
@@ -81,6 +82,6 @@ const styles = StyleSheet.create({
   link: {
     lineHeight: 30,
     fontSize: 16,
-    color: "#0a7ea4",
+    // color removed - use $primary or $info token in component
   },
 });

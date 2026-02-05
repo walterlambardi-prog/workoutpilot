@@ -90,6 +90,10 @@ const tokens = createTokens({
     transparent: "rgba(0,0,0,0)",
     whiteTransparent: "rgba(255,255,255,0)",
 
+    // Overlay colors (semi-transparent backgrounds)
+    overlayLight: "rgba(0,0,0,0.45)", // Dark overlay on light content
+    overlayDark: "rgba(0,0,0,0.6)", // Darker overlay on dark content (more contrast needed)
+
     // Stats card colors - Blue (Light mode)
     blue3Light: "#dbeafe", // blue-100
     blue11Light: "#2563eb", // blue-600
@@ -121,6 +125,32 @@ const tokens = createTokens({
     // Stats card colors - Orange (Dark mode)
     orange3Dark: "#9a3412", // orange-800
     orange11Dark: "#fdba74", // orange-300
+
+    // Navigation icon colors - Light mode
+    iconCyanLight: "#22D3EE", // cyan-400
+    iconRedLight: "#F87171", // red-400
+    iconBlueLight: "#60A5FA", // blue-400
+    iconGreenLight: "#34D399", // green-400
+    iconPurpleLight: "#A78BFA", // purple-400
+
+    // Navigation icon colors - Dark mode (same, work well on dark bg)
+    iconCyanDark: "#22D3EE", // cyan-400
+    iconRedDark: "#F87171", // red-400
+    iconBlueDark: "#60A5FA", // blue-400
+    iconGreenDark: "#34D399", // green-400
+    iconPurpleDark: "#A78BFA", // purple-400
+
+    // Streak calendar colors - Active (both modes)
+    streakActive: "#22c55e", // green-500
+    streakActiveText: "#ffffff", // white
+
+    // Streak calendar colors - Inactive (Light mode)
+    streakInactiveBgLight: "#e5e7eb", // gray-200
+    streakInactiveTextLight: "#6b7280", // gray-500
+
+    // Streak calendar colors - Inactive (Dark mode)
+    streakInactiveBgDark: "#374151", // gray-700
+    streakInactiveTextDark: "#9ca3af", // gray-400
   },
   radius: {
     $0: 0,
@@ -181,6 +211,22 @@ const lightTheme = {
   purple11: tokens.color.purple11Light,
   orange3: tokens.color.orange3Light,
   orange11: tokens.color.orange11Light,
+
+  // Navigation icon colors - Light mode
+  iconCyan: tokens.color.iconCyanLight,
+  iconRed: tokens.color.iconRedLight,
+  iconBlue: tokens.color.iconBlueLight,
+  iconGreen: tokens.color.iconGreenLight,
+  iconPurple: tokens.color.iconPurpleLight,
+
+  // Streak calendar colors
+  streakActive: tokens.color.streakActive,
+  streakActiveText: tokens.color.streakActiveText,
+  streakInactiveBg: tokens.color.streakInactiveBgLight,
+  streakInactiveText: tokens.color.streakInactiveTextLight,
+
+  // Overlay
+  overlay: tokens.color.overlayLight,
 };
 
 // Create dark theme
@@ -222,6 +268,22 @@ const darkTheme = {
   purple11: tokens.color.purple11Dark,
   orange3: tokens.color.orange3Dark,
   orange11: tokens.color.orange11Dark,
+
+  // Navigation icon colors - Dark mode
+  iconCyan: tokens.color.iconCyanDark,
+  iconRed: tokens.color.iconRedDark,
+  iconBlue: tokens.color.iconBlueDark,
+  iconGreen: tokens.color.iconGreenDark,
+  iconPurple: tokens.color.iconPurpleDark,
+
+  // Streak calendar colors
+  streakActive: tokens.color.streakActive,
+  streakActiveText: tokens.color.streakActiveText,
+  streakInactiveBg: tokens.color.streakInactiveBgDark,
+  streakInactiveText: tokens.color.streakInactiveTextDark,
+
+  // Overlay
+  overlay: tokens.color.overlayDark,
 };
 
 // Create Tamagui configuration

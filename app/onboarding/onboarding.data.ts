@@ -1,11 +1,20 @@
 import type { OnboardingStep } from "./onboarding.types";
 
+interface OnboardingColors {
+  blue: string;
+  purple: string;
+  green: string;
+  orange: string;
+  cyan: string;
+}
+
 /**
  * Onboarding steps data
  * Images can be added to assets/images/ and referenced here
  */
 export const getOnboardingSteps = (
   t: (key: string) => string,
+  colors: OnboardingColors,
 ): OnboardingStep[] => [
   {
     id: 1,
@@ -14,7 +23,7 @@ export const getOnboardingSteps = (
     description: t("onboarding.step1.description"),
     imageKey: "step1",
     iconName: "camera-outline",
-    color: "#3b82f6", // Blue
+    color: colors.blue,
   },
   {
     id: 2,
@@ -23,7 +32,7 @@ export const getOnboardingSteps = (
     description: t("onboarding.step2.description"),
     imageKey: "step2",
     iconName: "repeat-outline",
-    color: "#8b5cf6", // Purple
+    color: colors.purple,
   },
   {
     id: 3,
@@ -32,7 +41,7 @@ export const getOnboardingSteps = (
     description: t("onboarding.step3.description"),
     imageKey: "step3",
     iconName: "stats-chart-outline",
-    color: "#10b981", // Green
+    color: colors.green,
   },
   {
     id: 4,
@@ -41,7 +50,7 @@ export const getOnboardingSteps = (
     description: t("onboarding.step4.description"),
     imageKey: "step4",
     iconName: "barbell-outline",
-    color: "#f59e0b", // Orange
+    color: colors.orange,
   },
   {
     id: 5,
@@ -50,6 +59,6 @@ export const getOnboardingSteps = (
     description: t("onboarding.step5.description"),
     imageKey: "step5",
     iconName: "chatbubble-ellipses-outline",
-    color: "#06b6d4", // Cyan
+    color: colors.cyan,
   },
 ];

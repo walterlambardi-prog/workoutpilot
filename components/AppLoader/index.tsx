@@ -1,5 +1,6 @@
 import React from "react";
 import { ActivityIndicator, View } from "react-native";
+import { useTheme } from "tamagui";
 
 import { styles } from "./AppLoader.styles";
 import type { AppLoaderProps } from "./AppLoader.types";
@@ -12,6 +13,7 @@ import type { AppLoaderProps } from "./AppLoader.types";
 const AppLoader: React.FC<AppLoaderProps> = React.memo(
   ({ colorScheme = "light" }) => {
     const isDark = colorScheme === "dark";
+    const theme = useTheme();
 
     return (
       <View
@@ -22,7 +24,7 @@ const AppLoader: React.FC<AppLoaderProps> = React.memo(
       >
         <ActivityIndicator
           size="large"
-          color={isDark ? "#fff" : "#000"}
+          color={theme.color?.get() as string}
           testID="app-loader"
         />
       </View>

@@ -202,7 +202,7 @@ const RoutineBuilderScreen: React.FC<RoutineBuilderScreenProps> = () => {
                         right={0}
                         bottom={0}
                         left={0}
-                        backgroundColor="rgba(0,0,0,0.45)"
+                        backgroundColor="$overlay"
                         pointerEvents="none"
                       />
                     )}

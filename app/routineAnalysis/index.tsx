@@ -10,11 +10,13 @@ import { useLocalSearchParams } from "expo-router";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { ActivityIndicator } from "react-native";
+import { useTheme } from "tamagui";
 import { useRoutineAnalysis } from "./hooks/useRoutineAnalysis";
 
 const RoutineAnalysisScreen: React.FC = () => {
   const { t } = useTranslation();
   const { routineId } = useLocalSearchParams<{ routineId: string }>();
+  const theme = useTheme();
 
   const {
     loading,
@@ -33,7 +35,10 @@ const RoutineAnalysisScreen: React.FC = () => {
           subtitle={t("routineAnalysis.subtitle")}
         />
         <TStack flex={1} alignItems="center" justifyContent="center" gap="$4">
-          <ActivityIndicator size="large" color="#10b981" />
+          <ActivityIndicator
+            size="large"
+            color={theme.success?.get() as string}
+          />
           <TText>{t("routineAnalysis.analyzing")}</TText>
         </TStack>
       </TPage>

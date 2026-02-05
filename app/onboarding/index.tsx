@@ -6,9 +6,10 @@ import {
   type ListRenderItem,
   useWindowDimensions,
   View,
-  type ViewToken
+  type ViewToken,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useTheme } from "tamagui";
 
 import ScreenHeader from "@/components/ScreenHeader";
 import { TButton } from "@/components/TButton";
@@ -31,6 +32,7 @@ const OnboardingScreen: React.FC = () => {
   const flatListRef = useRef<FlatList<OnboardingStep>>(null);
   const { width } = useWindowDimensions();
   const insets = useSafeAreaInsets();
+  const theme = useTheme();
 
   const setHasCompletedOnboarding = useAuthStore(
     (state: { setHasCompletedOnboarding: (completed: boolean) => void }) =>
@@ -38,7 +40,14 @@ const OnboardingScreen: React.FC = () => {
   );
   const backgroundColor = useThemeColor({}, "background");
   const tintColor = useThemeColor({}, "tint");
-  const steps = getOnboardingSteps(t);
+
+  const steps = getOnboardingSteps(t, {
+    blue: theme.info?.get() ?? "#3b82f6",
+    purple: theme.iconPurple?.get() ?? "#8b5cf6",
+    green: theme.success?.get() ?? "#10b981",
+    orange: theme.warning?.get() ?? "#f59e0b",
+    cyan: theme.iconCyan?.get() ?? "#06b6d4",
+  });
 
   const onViewableItemsChanged = useRef(
     ({
@@ -129,8 +138,13 @@ const OnboardingScreen: React.FC = () => {
               key={index}
               style={[
                 styles.dot,
+                {
+                  backgroundColor:
+                    index === currentIndex
+                      ? tintColor
+                      : (theme.borderColor?.get() as string),
+                },
                 index === currentIndex && styles.dotActive,
-                index === currentIndex && { backgroundColor: tintColor },
               ]}
             />
           ))}

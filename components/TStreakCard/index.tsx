@@ -1,9 +1,8 @@
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Card, H5, Text, XStack, YStack } from "tamagui";
+import { Card, H5, Text, XStack, YStack, useTheme } from "tamagui";
 
 import type { StreakInfo } from "@/app/home/hooks/useHomeStats";
-import { useColorScheme } from "@/hooks/useColorScheme";
 
 interface TStreakCardProps {
   streakInfo: StreakInfo;
@@ -11,17 +10,7 @@ interface TStreakCardProps {
 
 export const TStreakCard: React.FC<TStreakCardProps> = ({ streakInfo }) => {
   const { t } = useTranslation();
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
-
-  // Calendar colors that adapt to theme
-  const calendarColors = {
-    active: { bg: "#22c55e", text: "white" },
-    inactive: {
-      bg: isDark ? "#374151" : "#e5e7eb",
-      text: isDark ? "#9ca3af" : "#6b7280",
-    },
-  };
+  const theme = useTheme();
 
   // Generate last 14 days for calendar
   const last14Days = useMemo(() => {
@@ -75,7 +64,11 @@ export const TStreakCard: React.FC<TStreakCardProps> = ({ streakInfo }) => {
           </YStack>
 
           <XStack gap="$2" alignItems="baseline">
-            <Text fontSize="$8" fontWeight="700" color="#ea580c">
+            <Text
+              fontSize="$8"
+              fontWeight="700"
+              color={theme.warning?.get() as any}
+            >
               {streakInfo.currentStreak}
             </Text>
             <Text fontSize="$4" fontWeight="600" color="$color" opacity={0.8}>
@@ -96,16 +89,16 @@ export const TStreakCard: React.FC<TStreakCardProps> = ({ streakInfo }) => {
               borderRadius="$2"
               backgroundColor={
                 (day.isActive
-                  ? calendarColors.active.bg
-                  : calendarColors.inactive.bg) as any
+                  ? theme.streakActive?.get()
+                  : theme.streakInactiveBg?.get()) as any
               }
             >
               <Text
                 fontSize="$3"
                 color={
                   (day.isActive
-                    ? calendarColors.active.text
-                    : calendarColors.inactive.text) as any
+                    ? theme.streakActiveText?.get()
+                    : theme.streakInactiveText?.get()) as any
                 }
                 fontWeight={day.isActive ? "700" : "500"}
               >

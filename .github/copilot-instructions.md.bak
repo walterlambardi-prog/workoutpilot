@@ -32,21 +32,6 @@
    - support **dark/light theme**
    - support **touch** and **keyboard/mouse** on web
 
-## 🎨 Color System (CRITICAL - NO EXCEPTIONS)
-
-See [COLOR_SYSTEM_RULES.md](../COLOR_SYSTEM_RULES.md) for complete documentation.
-
-**Quick reference - FORBIDDEN:**
-- ❌ Hex colors: `#dbeafe`, `#2563eb`
-- ❌ RGB/RGBA: `rgba(0,0,0,0.5)`
-- ❌ Ternaries: `isDark ? "#xxx" : "#yyy"`
-
-**REQUIRED - Use tokens:**
-- ✅ `$background`, `$color`, `$borderColor`
-- ✅ `$primary`, `$success`, `$error`, `$warning`, `$info`
-- ✅ `$blue3`/`$blue11`, `$green3`/`$green11` (stats cards)
-
-
 ## How to “understand the code” before writing
 
 Before proposing changes, Copilot must:

@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
   reanalyzeButtonText: {
     fontSize: 15,
     fontWeight: "700",
-    color: "#ffffff",
+    // Color removed - use $onPrimary token in component
   },
   scoreCard: {
     padding: Spacing.xl,
