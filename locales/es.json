@@ -4,7 +4,10 @@
     "deny": "Denegar",
     "cancel": "Cancelar",
     "ok": "OK",
-    "error": "Error"
+    "error": "Error",
+    "back": "Volver",
+    "details": "Detalles",
+    "start": "Comenzar"
   },
   "sync": {
     "status": {
@@ -365,8 +368,6 @@
       "decrement": "Disminuir rondas"
     },
     "exercises": {
-      "title": "Ejercicios",
-      "subtitle": "Activa movimientos y ajusta las reps por ronda.",
       "toggleA11y": "Alternar {{exercise}} en la rutina",
       "buttonAdd": "Agregar",
       "buttonSelected": "Seleccionado",
@@ -407,6 +408,21 @@
     }
   },
   "exercises": {
+    "detail": {
+      "subtitle": "Información del ejercicio y cómo realizarlo correctamente",
+      "notFound": "Ejercicio no encontrado",
+      "description": {
+        "title": "Descripción"
+      },
+      "benefits": {
+        "title": "Beneficios"
+      },
+      "instructions": {
+        "title": "Cómo realizarlo"
+      },
+      "startButton": "Comenzar ejercicio",
+      "viewDetailsButton": "Ver detalles"
+    },
     "statuses": {
       "idle": "En espera",
       "loading": "Cargando",
@@ -436,49 +452,160 @@
     "list": {
       "title": "Elige tu ejercicio",
       "subtitle": "Selecciona un movimiento para iniciar el seguimiento de pose en tiempo real.",
+      "badge": "Ejercicio",
       "card": {
         "accessibilityHint": "Abre la sesión de {{exercise}}"
       },
       "items": {
         "alternatingKneeRaises": {
           "title": "Elevaciones de rodilla alternadas",
-          "description": "Eleva las rodillas al pecho alternadamente para trabajar core y flexores de cadera."
+          "description": "Eleva las rodillas al pecho alternadamente para trabajar core y flexores de cadera.",
+          "benefits": [
+            "Fortalece core y flexores de cadera",
+            "Mejora equilibrio y coordinación",
+            "Aumenta estabilidad del tren inferior"
+          ],
+          "instructions": [
+            "Párate con pies al ancho de caderas",
+            "Eleva una rodilla hacia tu pecho",
+            "Bájala con control",
+            "Alterna las piernas en ritmo constante"
+          ]
         },
         "hammerCurls": {
           "title": "Curl martillo alterno",
-          "description": "Alterna brazos para trabajar bíceps y antebrazo."
+          "description": "Alterna brazos para trabajar bíceps y antebrazo.",
+          "benefits": [
+            "Desarrolla fuerza en bíceps y antebrazos",
+            "Mejora fuerza de agarre",
+            "Define los brazos"
+          ],
+          "instructions": [
+            "Sostiene pesas con palmas enfrentadas",
+            "Mantén codos cerca del cuerpo",
+            "Eleva un peso hacia el hombro",
+            "Baja con control y alterna brazos"
+          ]
         },
         "lateralRaises": {
           "title": "Levantamiento lateral de brazos",
-          "description": "Eleva ambos brazos para trabajar hombros con control."
+          "description": "Eleva ambos brazos para trabajar hombros con control.",
+          "benefits": [
+            "Fortalece músculos del hombro",
+            "Mejora estabilidad de hombros",
+            "Realza estética del tren superior"
+          ],
+          "instructions": [
+            "Párate con pies al ancho de hombros",
+            "Sostiene pesas a los lados con palmas hacia adentro",
+            "Eleva ambos brazos hacia los lados hasta altura de hombros",
+            "Baja lentamente a la posición inicial"
+          ]
         },
         "calfRaises": {
           "title": "Elevaciones de talones",
-          "description": "Sube sobre la punta de los pies para fortalecer pantorrillas y tobillos."
+          "description": "Sube sobre la punta de los pies para fortalecer pantorrillas y tobillos.",
+          "benefits": [
+            "Fortalece pantorrillas y tobillos",
+            "Mejora equilibrio y estabilidad",
+            "Aumenta potencia explosiva para saltos"
+          ],
+          "instructions": [
+            "Párate con pies al ancho de caderas",
+            "Eleva el cuerpo sobre la punta de los pies",
+            "Mantén la posición por un momento",
+            "Baja con control a la posición inicial"
+          ]
         },
         "lunges": {
           "title": "Zancadas",
-          "description": "Da un paso al frente, baja con control y empuja con el talón delantero."
+          "description": "Da un paso al frente, baja con control y empuja con el talón delantero.",
+          "benefits": [
+            "Desarrolla fuerza en piernas y glúteos",
+            "Mejora equilibrio y coordinación",
+            "Fortalece cada pierna de forma individual"
+          ],
+          "instructions": [
+            "Párate con pies al ancho de caderas",
+            "Da un paso adelante con una pierna",
+            "Baja las caderas hasta que ambas rodillas estén a 90 grados",
+            "Empuja para volver a la posición inicial y alterna piernas"
+          ]
         },
         "pushups": {
           "title": "Flexiones de brazo",
-          "description": "Controla core y pecho en cada repetición."
+          "description": "Controla core y pecho en cada repetición.",
+          "benefits": [
+            "Fortalece pecho, hombros y tríceps",
+            "Desarrolla estabilidad del core",
+            "Mejora resistencia del tren superior"
+          ],
+          "instructions": [
+            "Inicia en posición de plancha con manos al ancho de hombros",
+            "Mantén el cuerpo en línea recta de cabeza a talones",
+            "Baja el pecho hacia el suelo con control",
+            "Empuja de vuelta a la posición inicial"
+          ]
         },
         "squats": {
           "title": "Sentadillas",
-          "description": "Impulsa con talones para estabilizar caderas y rodillas."
+          "description": "Impulsa con talones para estabilizar caderas y rodillas.",
+          "benefits": [
+            "Desarrolla fuerza en piernas y glúteos",
+            "Mejora estabilidad del core",
+            "Potencia movimiento funcional"
+          ],
+          "instructions": [
+            "Párate con pies al ancho de hombros",
+            "Baja caderas hacia atrás y abajo como si te sentaras",
+            "Mantén pecho arriba y rodillas alineadas con pies",
+            "Impulsa con talones para volver a la posición inicial"
+          ]
         },
         "standingLegRaises": {
           "title": "Elevaciones laterales de pierna",
-          "description": "Eleva una pierna lateralmente para fortalecer abductores y mejorar equilibrio."
+          "description": "Eleva una pierna lateralmente para fortalecer abductores y mejorar equilibrio.",
+          "benefits": [
+            "Fortalece abductores de cadera y glúteos",
+            "Mejora equilibrio y estabilidad",
+            "Aumenta movilidad lateral"
+          ],
+          "instructions": [
+            "Párate con pies juntos",
+            "Eleva una pierna hacia el lado, manténla recta",
+            "Mantén la posición por un momento",
+            "Baja con control y alterna piernas"
+          ]
         },
         "standingChestFly": {
           "title": "Aperturas de pecho de pie",
-          "description": "Junta los brazos con codos flexionados para trabajar pecho y hombros."
+          "description": "Junta los brazos con codos flexionados para trabajar pecho y hombros.",
+          "benefits": [
+            "Fortalece músculos del pecho y hombros",
+            "Mejora definición del tren superior",
+            "Aumenta potencia de empuje"
+          ],
+          "instructions": [
+            "Párate con pies al ancho de hombros",
+            "Sostiene pesas a la altura del pecho con codos ligeramente flexionados",
+            "Abre los brazos hacia los lados",
+            "Junta los brazos de nuevo frente al pecho"
+          ]
         },
         "stepTracker": {
           "title": "Contador de pasos",
-          "description": "Registra pasos, ruta y tiempo para caminar o correr."
+          "description": "Registra pasos, ruta y tiempo para caminar o correr.",
+          "benefits": [
+            "Mejora salud cardiovascular",
+            "Quema calorías y ayuda a controlar el peso",
+            "Aumenta resistencia y aguante"
+          ],
+          "instructions": [
+            "Habilita permisos de ubicación para rastrear la ruta",
+            "Presiona iniciar para comenzar a rastrear tu caminata o carrera",
+            "Mantén tu teléfono contigo durante la actividad",
+            "Revisa tu distancia, pasos y ruta al finalizar"
+          ]
         }
       }
     },

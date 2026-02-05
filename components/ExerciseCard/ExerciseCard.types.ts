@@ -5,5 +5,7 @@ export interface ExerciseCardProps {
   description: string;
   image: ImageSourcePropType;
   accessibilityHint: string;
-  onPress: () => void;
+  onPress?: () => void;
+  onViewDetails: () => void;
+  onStart: () => void;
 }

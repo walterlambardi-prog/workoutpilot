@@ -28851,23 +28851,77 @@
     "themes": {
       "dark": {
         "lightText": "#11181C",
-        "lightBackground": "#fff",
-        "lightTint": "#0a7ea4",
-        "lightIcon": "#687076",
-        "lightTabIconDefault": "#687076",
-        "lightTabIconSelected": "#0a7ea4",
         "darkText": "#ECEDEE",
+        "lightBackground": "#fff",
         "darkBackground": "#151718",
+        "lightBackgroundHover": "#f5f5f5",
+        "darkBackgroundHover": "#1f2937",
+        "lightBackgroundPress": "#e5e5e5",
+        "darkBackgroundPress": "#374151",
+        "lightBackgroundStrong": "#000",
+        "darkBackgroundStrong": "#fff",
+        "lightBorder": "#e5e5e5",
+        "darkBorder": "#374151",
+        "lightBorderHover": "#d4d4d4",
+        "darkBorderHover": "#4b5563",
+        "lightBorderPress": "#a3a3a3",
+        "darkBorderPress": "#6b7280",
+        "lightPlaceholder": "#a3a3a3",
+        "darkPlaceholder": "#6b7280",
+        "lightTint": "#0a7ea4",
         "darkTint": "#fff",
+        "lightOnPrimary": "#ffffff",
+        "darkOnPrimary": "#0f172a",
+        "lightIcon": "#687076",
         "darkIcon": "#9BA1A6",
+        "lightTabIconDefault": "#687076",
         "darkTabIconDefault": "#9BA1A6",
+        "lightTabIconSelected": "#0a7ea4",
         "darkTabIconSelected": "#fff",
-        "primary": "#fff",
-        "primaryDark": "#fff",
-        "success": "#22c55e",
-        "error": "#ef4444",
-        "warning": "#f59e0b",
-        "info": "#3b82f6",
+        "successLight": "#16a34a",
+        "errorLight": "#dc2626",
+        "warningLight": "#ea580c",
+        "infoLight": "#2563eb",
+        "successDark": "#22c55e",
+        "errorDark": "#ef4444",
+        "warningDark": "#f59e0b",
+        "infoDark": "#3b82f6",
+        "transparent": "rgba(0,0,0,0)",
+        "whiteTransparent": "rgba(255,255,255,0)",
+        "overlayLight": "rgba(0,0,0,0.45)",
+        "overlayDark": "rgba(0,0,0,0.6)",
+        "blue3Light": "#dbeafe",
+        "blue11Light": "#2563eb",
+        "blue3Dark": "#1e3a8a",
+        "blue11Dark": "#93c5fd",
+        "green3Light": "#d1fae5",
+        "green11Light": "#059669",
+        "green3Dark": "#065f46",
+        "green11Dark": "#6ee7b7",
+        "purple3Light": "#e9d5ff",
+        "purple11Light": "#9333ea",
+        "purple3Dark": "#581c87",
+        "purple11Dark": "#c084fc",
+        "orange3Light": "#fed7aa",
+        "orange11Light": "#ea580c",
+        "orange3Dark": "#9a3412",
+        "orange11Dark": "#fdba74",
+        "iconCyanLight": "#22D3EE",
+        "iconRedLight": "#F87171",
+        "iconBlueLight": "#60A5FA",
+        "iconGreenLight": "#34D399",
+        "iconPurpleLight": "#A78BFA",
+        "iconCyanDark": "#22D3EE",
+        "iconRedDark": "#F87171",
+        "iconBlueDark": "#60A5FA",
+        "iconGreenDark": "#34D399",
+        "iconPurpleDark": "#A78BFA",
+        "streakActive": "#22c55e",
+        "streakActiveText": "#ffffff",
+        "streakInactiveBgLight": "#e5e7eb",
+        "streakInactiveTextLight": "#6b7280",
+        "streakInactiveBgDark": "#374151",
+        "streakInactiveTextDark": "#9ca3af",
         "color": "#ECEDEE",
         "colorHover": "#ECEDEE",
         "colorPress": "#ECEDEE",
@@ -28884,28 +28938,103 @@
         "borderColorPress": "#6b7280",
         "borderColorFocus": "#fff",
         "placeholderColor": "#6b7280",
+        "primary": "#fff",
         "onPrimary": "#0f172a",
-        "id": "dark"
-      },
-      "light": {
-        "lightText": "#11181C",
-        "lightBackground": "#fff",
-        "lightTint": "#0a7ea4",
-        "lightIcon": "#687076",
-        "lightTabIconDefault": "#687076",
-        "lightTabIconSelected": "#0a7ea4",
-        "darkText": "#ECEDEE",
-        "darkBackground": "#151718",
-        "darkTint": "#fff",
-        "darkIcon": "#9BA1A6",
-        "darkTabIconDefault": "#9BA1A6",
-        "darkTabIconSelected": "#fff",
-        "primary": "#0a7ea4",
-        "primaryDark": "#fff",
         "success": "#22c55e",
         "error": "#ef4444",
         "warning": "#f59e0b",
         "info": "#3b82f6",
+        "blue3": "#1e3a8a",
+        "blue11": "#93c5fd",
+        "green3": "#065f46",
+        "green11": "#6ee7b7",
+        "purple3": "#581c87",
+        "purple11": "#c084fc",
+        "orange3": "#9a3412",
+        "orange11": "#fdba74",
+        "iconCyan": "#22D3EE",
+        "iconRed": "#F87171",
+        "iconBlue": "#60A5FA",
+        "iconGreen": "#34D399",
+        "iconPurple": "#A78BFA",
+        "streakInactiveBg": "#374151",
+        "streakInactiveText": "#9ca3af",
+        "overlay": "rgba(0,0,0,0.6)",
+        "id": "dark"
+      },
+      "light": {
+        "lightText": "#11181C",
+        "darkText": "#ECEDEE",
+        "lightBackground": "#fff",
+        "darkBackground": "#151718",
+        "lightBackgroundHover": "#f5f5f5",
+        "darkBackgroundHover": "#1f2937",
+        "lightBackgroundPress": "#e5e5e5",
+        "darkBackgroundPress": "#374151",
+        "lightBackgroundStrong": "#000",
+        "darkBackgroundStrong": "#fff",
+        "lightBorder": "#e5e5e5",
+        "darkBorder": "#374151",
+        "lightBorderHover": "#d4d4d4",
+        "darkBorderHover": "#4b5563",
+        "lightBorderPress": "#a3a3a3",
+        "darkBorderPress": "#6b7280",
+        "lightPlaceholder": "#a3a3a3",
+        "darkPlaceholder": "#6b7280",
+        "lightTint": "#0a7ea4",
+        "darkTint": "#fff",
+        "lightOnPrimary": "#ffffff",
+        "darkOnPrimary": "#0f172a",
+        "lightIcon": "#687076",
+        "darkIcon": "#9BA1A6",
+        "lightTabIconDefault": "#687076",
+        "darkTabIconDefault": "#9BA1A6",
+        "lightTabIconSelected": "#0a7ea4",
+        "darkTabIconSelected": "#fff",
+        "successLight": "#16a34a",
+        "errorLight": "#dc2626",
+        "warningLight": "#ea580c",
+        "infoLight": "#2563eb",
+        "successDark": "#22c55e",
+        "errorDark": "#ef4444",
+        "warningDark": "#f59e0b",
+        "infoDark": "#3b82f6",
+        "transparent": "rgba(0,0,0,0)",
+        "whiteTransparent": "rgba(255,255,255,0)",
+        "overlayLight": "rgba(0,0,0,0.45)",
+        "overlayDark": "rgba(0,0,0,0.6)",
+        "blue3Light": "#dbeafe",
+        "blue11Light": "#2563eb",
+        "blue3Dark": "#1e3a8a",
+        "blue11Dark": "#93c5fd",
+        "green3Light": "#d1fae5",
+        "green11Light": "#059669",
+        "green3Dark": "#065f46",
+        "green11Dark": "#6ee7b7",
+        "purple3Light": "#e9d5ff",
+        "purple11Light": "#9333ea",
+        "purple3Dark": "#581c87",
+        "purple11Dark": "#c084fc",
+        "orange3Light": "#fed7aa",
+        "orange11Light": "#ea580c",
+        "orange3Dark": "#9a3412",
+        "orange11Dark": "#fdba74",
+        "iconCyanLight": "#22D3EE",
+        "iconRedLight": "#F87171",
+        "iconBlueLight": "#60A5FA",
+        "iconGreenLight": "#34D399",
+        "iconPurpleLight": "#A78BFA",
+        "iconCyanDark": "#22D3EE",
+        "iconRedDark": "#F87171",
+        "iconBlueDark": "#60A5FA",
+        "iconGreenDark": "#34D399",
+        "iconPurpleDark": "#A78BFA",
+        "streakActive": "#22c55e",
+        "streakActiveText": "#ffffff",
+        "streakInactiveBgLight": "#e5e7eb",
+        "streakInactiveTextLight": "#6b7280",
+        "streakInactiveBgDark": "#374151",
+        "streakInactiveTextDark": "#9ca3af",
         "color": "#11181C",
         "colorHover": "#11181C",
         "colorPress": "#11181C",
@@ -28922,7 +29051,28 @@
         "borderColorPress": "#a3a3a3",
         "borderColorFocus": "#0a7ea4",
         "placeholderColor": "#a3a3a3",
+        "primary": "#0a7ea4",
         "onPrimary": "#ffffff",
+        "success": "#16a34a",
+        "error": "#dc2626",
+        "warning": "#ea580c",
+        "info": "#2563eb",
+        "blue3": "#dbeafe",
+        "blue11": "#2563eb",
+        "green3": "#d1fae5",
+        "green11": "#059669",
+        "purple3": "#e9d5ff",
+        "purple11": "#9333ea",
+        "orange3": "#fed7aa",
+        "orange11": "#ea580c",
+        "iconCyan": "#22D3EE",
+        "iconRed": "#F87171",
+        "iconBlue": "#60A5FA",
+        "iconGreen": "#34D399",
+        "iconPurple": "#A78BFA",
+        "streakInactiveBg": "#e5e7eb",
+        "streakInactiveText": "#6b7280",
+        "overlay": "rgba(0,0,0,0.45)",
         "id": "light"
       }
     },
@@ -29100,46 +29250,18 @@
           "val": "#11181C",
           "variable": ""
         },
-        "lightBackground": {
-          "isVar": true,
-          "key": "$lightBackground",
-          "name": "c-lightBackground",
-          "val": "#fff",
-          "variable": ""
-        },
-        "lightTint": {
-          "isVar": true,
-          "key": "$lightTint",
-          "name": "c-lightTint",
-          "val": "#0a7ea4",
-          "variable": ""
-        },
-        "lightIcon": {
-          "isVar": true,
-          "key": "$lightIcon",
-          "name": "c-lightIcon",
-          "val": "#687076",
-          "variable": ""
-        },
-        "lightTabIconDefault": {
-          "isVar": true,
-          "key": "$lightTabIconDefault",
-          "name": "c-lightTabIconDefault",
-          "val": "#687076",
-          "variable": ""
-        },
-        "lightTabIconSelected": {
-          "isVar": true,
-          "key": "$lightTabIconSelected",
-          "name": "c-lightTabIconSelected",
-          "val": "#0a7ea4",
-          "variable": ""
-        },
         "darkText": {
           "isVar": true,
           "key": "$darkText",
           "name": "c-darkText",
           "val": "#ECEDEE",
+          "variable": ""
+        },
+        "lightBackground": {
+          "isVar": true,
+          "key": "$lightBackground",
+          "name": "c-lightBackground",
+          "val": "#fff",
           "variable": ""
         },
         "darkBackground": {
@@ -29149,11 +29271,137 @@
           "val": "#151718",
           "variable": ""
         },
+        "lightBackgroundHover": {
+          "isVar": true,
+          "key": "$lightBackgroundHover",
+          "name": "c-lightBackgroundHover",
+          "val": "#f5f5f5",
+          "variable": ""
+        },
+        "darkBackgroundHover": {
+          "isVar": true,
+          "key": "$darkBackgroundHover",
+          "name": "c-darkBackgroundHover",
+          "val": "#1f2937",
+          "variable": ""
+        },
+        "lightBackgroundPress": {
+          "isVar": true,
+          "key": "$lightBackgroundPress",
+          "name": "c-lightBackgroundPress",
+          "val": "#e5e5e5",
+          "variable": ""
+        },
+        "darkBackgroundPress": {
+          "isVar": true,
+          "key": "$darkBackgroundPress",
+          "name": "c-darkBackgroundPress",
+          "val": "#374151",
+          "variable": ""
+        },
+        "lightBackgroundStrong": {
+          "isVar": true,
+          "key": "$lightBackgroundStrong",
+          "name": "c-lightBackgroundStrong",
+          "val": "#000",
+          "variable": ""
+        },
+        "darkBackgroundStrong": {
+          "isVar": true,
+          "key": "$darkBackgroundStrong",
+          "name": "c-darkBackgroundStrong",
+          "val": "#fff",
+          "variable": ""
+        },
+        "lightBorder": {
+          "isVar": true,
+          "key": "$lightBorder",
+          "name": "c-lightBorder",
+          "val": "#e5e5e5",
+          "variable": ""
+        },
+        "darkBorder": {
+          "isVar": true,
+          "key": "$darkBorder",
+          "name": "c-darkBorder",
+          "val": "#374151",
+          "variable": ""
+        },
+        "lightBorderHover": {
+          "isVar": true,
+          "key": "$lightBorderHover",
+          "name": "c-lightBorderHover",
+          "val": "#d4d4d4",
+          "variable": ""
+        },
+        "darkBorderHover": {
+          "isVar": true,
+          "key": "$darkBorderHover",
+          "name": "c-darkBorderHover",
+          "val": "#4b5563",
+          "variable": ""
+        },
+        "lightBorderPress": {
+          "isVar": true,
+          "key": "$lightBorderPress",
+          "name": "c-lightBorderPress",
+          "val": "#a3a3a3",
+          "variable": ""
+        },
+        "darkBorderPress": {
+          "isVar": true,
+          "key": "$darkBorderPress",
+          "name": "c-darkBorderPress",
+          "val": "#6b7280",
+          "variable": ""
+        },
+        "lightPlaceholder": {
+          "isVar": true,
+          "key": "$lightPlaceholder",
+          "name": "c-lightPlaceholder",
+          "val": "#a3a3a3",
+          "variable": ""
+        },
+        "darkPlaceholder": {
+          "isVar": true,
+          "key": "$darkPlaceholder",
+          "name": "c-darkPlaceholder",
+          "val": "#6b7280",
+          "variable": ""
+        },
+        "lightTint": {
+          "isVar": true,
+          "key": "$lightTint",
+          "name": "c-lightTint",
+          "val": "#0a7ea4",
+          "variable": ""
+        },
         "darkTint": {
           "isVar": true,
           "key": "$darkTint",
           "name": "c-darkTint",
           "val": "#fff",
+          "variable": ""
+        },
+        "lightOnPrimary": {
+          "isVar": true,
+          "key": "$lightOnPrimary",
+          "name": "c-lightOnPrimary",
+          "val": "#ffffff",
+          "variable": ""
+        },
+        "darkOnPrimary": {
+          "isVar": true,
+          "key": "$darkOnPrimary",
+          "name": "c-darkOnPrimary",
+          "val": "#0f172a",
+          "variable": ""
+        },
+        "lightIcon": {
+          "isVar": true,
+          "key": "$lightIcon",
+          "name": "c-lightIcon",
+          "val": "#687076",
           "variable": ""
         },
         "darkIcon": {
@@ -29163,11 +29411,25 @@
           "val": "#9BA1A6",
           "variable": ""
         },
+        "lightTabIconDefault": {
+          "isVar": true,
+          "key": "$lightTabIconDefault",
+          "name": "c-lightTabIconDefault",
+          "val": "#687076",
+          "variable": ""
+        },
         "darkTabIconDefault": {
           "isVar": true,
           "key": "$darkTabIconDefault",
           "name": "c-darkTabIconDefault",
           "val": "#9BA1A6",
+          "variable": ""
+        },
+        "lightTabIconSelected": {
+          "isVar": true,
+          "key": "$lightTabIconSelected",
+          "name": "c-lightTabIconSelected",
+          "val": "#0a7ea4",
           "variable": ""
         },
         "darkTabIconSelected": {
@@ -29177,46 +29439,312 @@
           "val": "#fff",
           "variable": ""
         },
-        "primary": {
+        "successLight": {
           "isVar": true,
-          "key": "$primary",
-          "name": "c-primary",
-          "val": "#0a7ea4",
+          "key": "$successLight",
+          "name": "c-successLight",
+          "val": "#16a34a",
           "variable": ""
         },
-        "primaryDark": {
+        "errorLight": {
           "isVar": true,
-          "key": "$primaryDark",
-          "name": "c-primaryDark",
-          "val": "#fff",
+          "key": "$errorLight",
+          "name": "c-errorLight",
+          "val": "#dc2626",
           "variable": ""
         },
-        "success": {
+        "warningLight": {
           "isVar": true,
-          "key": "$success",
-          "name": "c-success",
+          "key": "$warningLight",
+          "name": "c-warningLight",
+          "val": "#ea580c",
+          "variable": ""
+        },
+        "infoLight": {
+          "isVar": true,
+          "key": "$infoLight",
+          "name": "c-infoLight",
+          "val": "#2563eb",
+          "variable": ""
+        },
+        "successDark": {
+          "isVar": true,
+          "key": "$successDark",
+          "name": "c-successDark",
           "val": "#22c55e",
           "variable": ""
         },
-        "error": {
+        "errorDark": {
           "isVar": true,
-          "key": "$error",
-          "name": "c-error",
+          "key": "$errorDark",
+          "name": "c-errorDark",
           "val": "#ef4444",
           "variable": ""
         },
-        "warning": {
+        "warningDark": {
           "isVar": true,
-          "key": "$warning",
-          "name": "c-warning",
+          "key": "$warningDark",
+          "name": "c-warningDark",
           "val": "#f59e0b",
           "variable": ""
         },
-        "info": {
+        "infoDark": {
           "isVar": true,
-          "key": "$info",
-          "name": "c-info",
+          "key": "$infoDark",
+          "name": "c-infoDark",
           "val": "#3b82f6",
+          "variable": ""
+        },
+        "transparent": {
+          "isVar": true,
+          "key": "$transparent",
+          "name": "c-transparent",
+          "val": "rgba(0,0,0,0)",
+          "variable": ""
+        },
+        "whiteTransparent": {
+          "isVar": true,
+          "key": "$whiteTransparent",
+          "name": "c-whiteTransparent",
+          "val": "rgba(255,255,255,0)",
+          "variable": ""
+        },
+        "overlayLight": {
+          "isVar": true,
+          "key": "$overlayLight",
+          "name": "c-overlayLight",
+          "val": "rgba(0,0,0,0.45)",
+          "variable": ""
+        },
+        "overlayDark": {
+          "isVar": true,
+          "key": "$overlayDark",
+          "name": "c-overlayDark",
+          "val": "rgba(0,0,0,0.6)",
+          "variable": ""
+        },
+        "blue3Light": {
+          "isVar": true,
+          "key": "$blue3Light",
+          "name": "c-blue3Light",
+          "val": "#dbeafe",
+          "variable": ""
+        },
+        "blue11Light": {
+          "isVar": true,
+          "key": "$blue11Light",
+          "name": "c-blue11Light",
+          "val": "#2563eb",
+          "variable": ""
+        },
+        "blue3Dark": {
+          "isVar": true,
+          "key": "$blue3Dark",
+          "name": "c-blue3Dark",
+          "val": "#1e3a8a",
+          "variable": ""
+        },
+        "blue11Dark": {
+          "isVar": true,
+          "key": "$blue11Dark",
+          "name": "c-blue11Dark",
+          "val": "#93c5fd",
+          "variable": ""
+        },
+        "green3Light": {
+          "isVar": true,
+          "key": "$green3Light",
+          "name": "c-green3Light",
+          "val": "#d1fae5",
+          "variable": ""
+        },
+        "green11Light": {
+          "isVar": true,
+          "key": "$green11Light",
+          "name": "c-green11Light",
+          "val": "#059669",
+          "variable": ""
+        },
+        "green3Dark": {
+          "isVar": true,
+          "key": "$green3Dark",
+          "name": "c-green3Dark",
+          "val": "#065f46",
+          "variable": ""
+        },
+        "green11Dark": {
+          "isVar": true,
+          "key": "$green11Dark",
+          "name": "c-green11Dark",
+          "val": "#6ee7b7",
+          "variable": ""
+        },
+        "purple3Light": {
+          "isVar": true,
+          "key": "$purple3Light",
+          "name": "c-purple3Light",
+          "val": "#e9d5ff",
+          "variable": ""
+        },
+        "purple11Light": {
+          "isVar": true,
+          "key": "$purple11Light",
+          "name": "c-purple11Light",
+          "val": "#9333ea",
+          "variable": ""
+        },
+        "purple3Dark": {
+          "isVar": true,
+          "key": "$purple3Dark",
+          "name": "c-purple3Dark",
+          "val": "#581c87",
+          "variable": ""
+        },
+        "purple11Dark": {
+          "isVar": true,
+          "key": "$purple11Dark",
+          "name": "c-purple11Dark",
+          "val": "#c084fc",
+          "variable": ""
+        },
+        "orange3Light": {
+          "isVar": true,
+          "key": "$orange3Light",
+          "name": "c-orange3Light",
+          "val": "#fed7aa",
+          "variable": ""
+        },
+        "orange11Light": {
+          "isVar": true,
+          "key": "$orange11Light",
+          "name": "c-orange11Light",
+          "val": "#ea580c",
+          "variable": ""
+        },
+        "orange3Dark": {
+          "isVar": true,
+          "key": "$orange3Dark",
+          "name": "c-orange3Dark",
+          "val": "#9a3412",
+          "variable": ""
+        },
+        "orange11Dark": {
+          "isVar": true,
+          "key": "$orange11Dark",
+          "name": "c-orange11Dark",
+          "val": "#fdba74",
+          "variable": ""
+        },
+        "iconCyanLight": {
+          "isVar": true,
+          "key": "$iconCyanLight",
+          "name": "c-iconCyanLight",
+          "val": "#22D3EE",
+          "variable": ""
+        },
+        "iconRedLight": {
+          "isVar": true,
+          "key": "$iconRedLight",
+          "name": "c-iconRedLight",
+          "val": "#F87171",
+          "variable": ""
+        },
+        "iconBlueLight": {
+          "isVar": true,
+          "key": "$iconBlueLight",
+          "name": "c-iconBlueLight",
+          "val": "#60A5FA",
+          "variable": ""
+        },
+        "iconGreenLight": {
+          "isVar": true,
+          "key": "$iconGreenLight",
+          "name": "c-iconGreenLight",
+          "val": "#34D399",
+          "variable": ""
+        },
+        "iconPurpleLight": {
+          "isVar": true,
+          "key": "$iconPurpleLight",
+          "name": "c-iconPurpleLight",
+          "val": "#A78BFA",
+          "variable": ""
+        },
+        "iconCyanDark": {
+          "isVar": true,
+          "key": "$iconCyanDark",
+          "name": "c-iconCyanDark",
+          "val": "#22D3EE",
+          "variable": ""
+        },
+        "iconRedDark": {
+          "isVar": true,
+          "key": "$iconRedDark",
+          "name": "c-iconRedDark",
+          "val": "#F87171",
+          "variable": ""
+        },
+        "iconBlueDark": {
+          "isVar": true,
+          "key": "$iconBlueDark",
+          "name": "c-iconBlueDark",
+          "val": "#60A5FA",
+          "variable": ""
+        },
+        "iconGreenDark": {
+          "isVar": true,
+          "key": "$iconGreenDark",
+          "name": "c-iconGreenDark",
+          "val": "#34D399",
+          "variable": ""
+        },
+        "iconPurpleDark": {
+          "isVar": true,
+          "key": "$iconPurpleDark",
+          "name": "c-iconPurpleDark",
+          "val": "#A78BFA",
+          "variable": ""
+        },
+        "streakActive": {
+          "isVar": true,
+          "key": "$streakActive",
+          "name": "c-streakActive",
+          "val": "#22c55e",
+          "variable": ""
+        },
+        "streakActiveText": {
+          "isVar": true,
+          "key": "$streakActiveText",
+          "name": "c-streakActiveText",
+          "val": "#ffffff",
+          "variable": ""
+        },
+        "streakInactiveBgLight": {
+          "isVar": true,
+          "key": "$streakInactiveBgLight",
+          "name": "c-streakInactiveBgLight",
+          "val": "#e5e7eb",
+          "variable": ""
+        },
+        "streakInactiveTextLight": {
+          "isVar": true,
+          "key": "$streakInactiveTextLight",
+          "name": "c-streakInactiveTextLight",
+          "val": "#6b7280",
+          "variable": ""
+        },
+        "streakInactiveBgDark": {
+          "isVar": true,
+          "key": "$streakInactiveBgDark",
+          "name": "c-streakInactiveBgDark",
+          "val": "#374151",
+          "variable": ""
+        },
+        "streakInactiveTextDark": {
+          "isVar": true,
+          "key": "$streakInactiveTextDark",
+          "name": "c-streakInactiveTextDark",
+          "val": "#9ca3af",
           "variable": ""
         }
       },
@@ -29422,6 +29950,34 @@
     "getNewCSS": "Function",
     "fontSizeTokens": {},
     "specificTokens": {
+      "$color.blue11Dark": {
+        "isVar": true,
+        "key": "$blue11Dark",
+        "name": "c-blue11Dark",
+        "val": "#93c5fd",
+        "variable": ""
+      },
+      "$color.blue11Light": {
+        "isVar": true,
+        "key": "$blue11Light",
+        "name": "c-blue11Light",
+        "val": "#2563eb",
+        "variable": ""
+      },
+      "$color.blue3Dark": {
+        "isVar": true,
+        "key": "$blue3Dark",
+        "name": "c-blue3Dark",
+        "val": "#1e3a8a",
+        "variable": ""
+      },
+      "$color.blue3Light": {
+        "isVar": true,
+        "key": "$blue3Light",
+        "name": "c-blue3Light",
+        "val": "#dbeafe",
+        "variable": ""
+      },
       "$color.darkBackground": {
         "isVar": true,
         "key": "$darkBackground",
@@ -29429,11 +29985,67 @@
         "val": "#151718",
         "variable": ""
       },
+      "$color.darkBackgroundHover": {
+        "isVar": true,
+        "key": "$darkBackgroundHover",
+        "name": "c-darkBackgroundHover",
+        "val": "#1f2937",
+        "variable": ""
+      },
+      "$color.darkBackgroundPress": {
+        "isVar": true,
+        "key": "$darkBackgroundPress",
+        "name": "c-darkBackgroundPress",
+        "val": "#374151",
+        "variable": ""
+      },
+      "$color.darkBackgroundStrong": {
+        "isVar": true,
+        "key": "$darkBackgroundStrong",
+        "name": "c-darkBackgroundStrong",
+        "val": "#fff",
+        "variable": ""
+      },
+      "$color.darkBorder": {
+        "isVar": true,
+        "key": "$darkBorder",
+        "name": "c-darkBorder",
+        "val": "#374151",
+        "variable": ""
+      },
+      "$color.darkBorderHover": {
+        "isVar": true,
+        "key": "$darkBorderHover",
+        "name": "c-darkBorderHover",
+        "val": "#4b5563",
+        "variable": ""
+      },
+      "$color.darkBorderPress": {
+        "isVar": true,
+        "key": "$darkBorderPress",
+        "name": "c-darkBorderPress",
+        "val": "#6b7280",
+        "variable": ""
+      },
       "$color.darkIcon": {
         "isVar": true,
         "key": "$darkIcon",
         "name": "c-darkIcon",
         "val": "#9BA1A6",
+        "variable": ""
+      },
+      "$color.darkOnPrimary": {
+        "isVar": true,
+        "key": "$darkOnPrimary",
+        "name": "c-darkOnPrimary",
+        "val": "#0f172a",
+        "variable": ""
+      },
+      "$color.darkPlaceholder": {
+        "isVar": true,
+        "key": "$darkPlaceholder",
+        "name": "c-darkPlaceholder",
+        "val": "#6b7280",
         "variable": ""
       },
       "$color.darkTabIconDefault": {
@@ -29464,18 +30076,130 @@
         "val": "#fff",
         "variable": ""
       },
-      "$color.error": {
+      "$color.errorDark": {
         "isVar": true,
-        "key": "$error",
-        "name": "c-error",
+        "key": "$errorDark",
+        "name": "c-errorDark",
         "val": "#ef4444",
         "variable": ""
       },
-      "$color.info": {
+      "$color.errorLight": {
         "isVar": true,
-        "key": "$info",
-        "name": "c-info",
+        "key": "$errorLight",
+        "name": "c-errorLight",
+        "val": "#dc2626",
+        "variable": ""
+      },
+      "$color.green11Dark": {
+        "isVar": true,
+        "key": "$green11Dark",
+        "name": "c-green11Dark",
+        "val": "#6ee7b7",
+        "variable": ""
+      },
+      "$color.green11Light": {
+        "isVar": true,
+        "key": "$green11Light",
+        "name": "c-green11Light",
+        "val": "#059669",
+        "variable": ""
+      },
+      "$color.green3Dark": {
+        "isVar": true,
+        "key": "$green3Dark",
+        "name": "c-green3Dark",
+        "val": "#065f46",
+        "variable": ""
+      },
+      "$color.green3Light": {
+        "isVar": true,
+        "key": "$green3Light",
+        "name": "c-green3Light",
+        "val": "#d1fae5",
+        "variable": ""
+      },
+      "$color.iconBlueDark": {
+        "isVar": true,
+        "key": "$iconBlueDark",
+        "name": "c-iconBlueDark",
+        "val": "#60A5FA",
+        "variable": ""
+      },
+      "$color.iconBlueLight": {
+        "isVar": true,
+        "key": "$iconBlueLight",
+        "name": "c-iconBlueLight",
+        "val": "#60A5FA",
+        "variable": ""
+      },
+      "$color.iconCyanDark": {
+        "isVar": true,
+        "key": "$iconCyanDark",
+        "name": "c-iconCyanDark",
+        "val": "#22D3EE",
+        "variable": ""
+      },
+      "$color.iconCyanLight": {
+        "isVar": true,
+        "key": "$iconCyanLight",
+        "name": "c-iconCyanLight",
+        "val": "#22D3EE",
+        "variable": ""
+      },
+      "$color.iconGreenDark": {
+        "isVar": true,
+        "key": "$iconGreenDark",
+        "name": "c-iconGreenDark",
+        "val": "#34D399",
+        "variable": ""
+      },
+      "$color.iconGreenLight": {
+        "isVar": true,
+        "key": "$iconGreenLight",
+        "name": "c-iconGreenLight",
+        "val": "#34D399",
+        "variable": ""
+      },
+      "$color.iconPurpleDark": {
+        "isVar": true,
+        "key": "$iconPurpleDark",
+        "name": "c-iconPurpleDark",
+        "val": "#A78BFA",
+        "variable": ""
+      },
+      "$color.iconPurpleLight": {
+        "isVar": true,
+        "key": "$iconPurpleLight",
+        "name": "c-iconPurpleLight",
+        "val": "#A78BFA",
+        "variable": ""
+      },
+      "$color.iconRedDark": {
+        "isVar": true,
+        "key": "$iconRedDark",
+        "name": "c-iconRedDark",
+        "val": "#F87171",
+        "variable": ""
+      },
+      "$color.iconRedLight": {
+        "isVar": true,
+        "key": "$iconRedLight",
+        "name": "c-iconRedLight",
+        "val": "#F87171",
+        "variable": ""
+      },
+      "$color.infoDark": {
+        "isVar": true,
+        "key": "$infoDark",
+        "name": "c-infoDark",
         "val": "#3b82f6",
+        "variable": ""
+      },
+      "$color.infoLight": {
+        "isVar": true,
+        "key": "$infoLight",
+        "name": "c-infoLight",
+        "val": "#2563eb",
         "variable": ""
       },
       "$color.lightBackground": {
@@ -29485,11 +30209,67 @@
         "val": "#fff",
         "variable": ""
       },
+      "$color.lightBackgroundHover": {
+        "isVar": true,
+        "key": "$lightBackgroundHover",
+        "name": "c-lightBackgroundHover",
+        "val": "#f5f5f5",
+        "variable": ""
+      },
+      "$color.lightBackgroundPress": {
+        "isVar": true,
+        "key": "$lightBackgroundPress",
+        "name": "c-lightBackgroundPress",
+        "val": "#e5e5e5",
+        "variable": ""
+      },
+      "$color.lightBackgroundStrong": {
+        "isVar": true,
+        "key": "$lightBackgroundStrong",
+        "name": "c-lightBackgroundStrong",
+        "val": "#000",
+        "variable": ""
+      },
+      "$color.lightBorder": {
+        "isVar": true,
+        "key": "$lightBorder",
+        "name": "c-lightBorder",
+        "val": "#e5e5e5",
+        "variable": ""
+      },
+      "$color.lightBorderHover": {
+        "isVar": true,
+        "key": "$lightBorderHover",
+        "name": "c-lightBorderHover",
+        "val": "#d4d4d4",
+        "variable": ""
+      },
+      "$color.lightBorderPress": {
+        "isVar": true,
+        "key": "$lightBorderPress",
+        "name": "c-lightBorderPress",
+        "val": "#a3a3a3",
+        "variable": ""
+      },
       "$color.lightIcon": {
         "isVar": true,
         "key": "$lightIcon",
         "name": "c-lightIcon",
         "val": "#687076",
+        "variable": ""
+      },
+      "$color.lightOnPrimary": {
+        "isVar": true,
+        "key": "$lightOnPrimary",
+        "name": "c-lightOnPrimary",
+        "val": "#ffffff",
+        "variable": ""
+      },
+      "$color.lightPlaceholder": {
+        "isVar": true,
+        "key": "$lightPlaceholder",
+        "name": "c-lightPlaceholder",
+        "val": "#a3a3a3",
         "variable": ""
       },
       "$color.lightTabIconDefault": {
@@ -29520,32 +30300,158 @@
         "val": "#0a7ea4",
         "variable": ""
       },
-      "$color.primary": {
+      "$color.orange11Dark": {
         "isVar": true,
-        "key": "$primary",
-        "name": "c-primary",
-        "val": "#0a7ea4",
+        "key": "$orange11Dark",
+        "name": "c-orange11Dark",
+        "val": "#fdba74",
         "variable": ""
       },
-      "$color.primaryDark": {
+      "$color.orange11Light": {
         "isVar": true,
-        "key": "$primaryDark",
-        "name": "c-primaryDark",
-        "val": "#fff",
+        "key": "$orange11Light",
+        "name": "c-orange11Light",
+        "val": "#ea580c",
         "variable": ""
       },
-      "$color.success": {
+      "$color.orange3Dark": {
         "isVar": true,
-        "key": "$success",
-        "name": "c-success",
+        "key": "$orange3Dark",
+        "name": "c-orange3Dark",
+        "val": "#9a3412",
+        "variable": ""
+      },
+      "$color.orange3Light": {
+        "isVar": true,
+        "key": "$orange3Light",
+        "name": "c-orange3Light",
+        "val": "#fed7aa",
+        "variable": ""
+      },
+      "$color.overlayDark": {
+        "isVar": true,
+        "key": "$overlayDark",
+        "name": "c-overlayDark",
+        "val": "rgba(0,0,0,0.6)",
+        "variable": ""
+      },
+      "$color.overlayLight": {
+        "isVar": true,
+        "key": "$overlayLight",
+        "name": "c-overlayLight",
+        "val": "rgba(0,0,0,0.45)",
+        "variable": ""
+      },
+      "$color.purple11Dark": {
+        "isVar": true,
+        "key": "$purple11Dark",
+        "name": "c-purple11Dark",
+        "val": "#c084fc",
+        "variable": ""
+      },
+      "$color.purple11Light": {
+        "isVar": true,
+        "key": "$purple11Light",
+        "name": "c-purple11Light",
+        "val": "#9333ea",
+        "variable": ""
+      },
+      "$color.purple3Dark": {
+        "isVar": true,
+        "key": "$purple3Dark",
+        "name": "c-purple3Dark",
+        "val": "#581c87",
+        "variable": ""
+      },
+      "$color.purple3Light": {
+        "isVar": true,
+        "key": "$purple3Light",
+        "name": "c-purple3Light",
+        "val": "#e9d5ff",
+        "variable": ""
+      },
+      "$color.streakActive": {
+        "isVar": true,
+        "key": "$streakActive",
+        "name": "c-streakActive",
         "val": "#22c55e",
         "variable": ""
       },
-      "$color.warning": {
+      "$color.streakActiveText": {
         "isVar": true,
-        "key": "$warning",
-        "name": "c-warning",
+        "key": "$streakActiveText",
+        "name": "c-streakActiveText",
+        "val": "#ffffff",
+        "variable": ""
+      },
+      "$color.streakInactiveBgDark": {
+        "isVar": true,
+        "key": "$streakInactiveBgDark",
+        "name": "c-streakInactiveBgDark",
+        "val": "#374151",
+        "variable": ""
+      },
+      "$color.streakInactiveBgLight": {
+        "isVar": true,
+        "key": "$streakInactiveBgLight",
+        "name": "c-streakInactiveBgLight",
+        "val": "#e5e7eb",
+        "variable": ""
+      },
+      "$color.streakInactiveTextDark": {
+        "isVar": true,
+        "key": "$streakInactiveTextDark",
+        "name": "c-streakInactiveTextDark",
+        "val": "#9ca3af",
+        "variable": ""
+      },
+      "$color.streakInactiveTextLight": {
+        "isVar": true,
+        "key": "$streakInactiveTextLight",
+        "name": "c-streakInactiveTextLight",
+        "val": "#6b7280",
+        "variable": ""
+      },
+      "$color.successDark": {
+        "isVar": true,
+        "key": "$successDark",
+        "name": "c-successDark",
+        "val": "#22c55e",
+        "variable": ""
+      },
+      "$color.successLight": {
+        "isVar": true,
+        "key": "$successLight",
+        "name": "c-successLight",
+        "val": "#16a34a",
+        "variable": ""
+      },
+      "$color.transparent": {
+        "isVar": true,
+        "key": "$transparent",
+        "name": "c-transparent",
+        "val": "rgba(0,0,0,0)",
+        "variable": ""
+      },
+      "$color.warningDark": {
+        "isVar": true,
+        "key": "$warningDark",
+        "name": "c-warningDark",
         "val": "#f59e0b",
+        "variable": ""
+      },
+      "$color.warningLight": {
+        "isVar": true,
+        "key": "$warningLight",
+        "name": "c-warningLight",
+        "val": "#ea580c",
+        "variable": ""
+      },
+      "$color.whiteTransparent": {
+        "isVar": true,
+        "key": "$whiteTransparent",
+        "name": "c-whiteTransparent",
+        "val": "rgba(255,255,255,0)",
         "variable": ""
       },
       "$radius.0": {

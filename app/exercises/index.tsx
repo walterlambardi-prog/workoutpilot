@@ -11,7 +11,7 @@ import { useExercisesList } from "./hooks/useExercisesList";
 
 const ExercisesScreen: React.FC<ExercisesScreenProps> = () => {
   const { t } = useTranslation();
-  const { exercises, handlePress } = useExercisesList();
+  const { exercises, handlePress, handleViewDetails } = useExercisesList();
 
   return (
     <TPage scrollable hasHeader>
@@ -29,7 +29,8 @@ const ExercisesScreen: React.FC<ExercisesScreenProps> = () => {
             accessibilityHint={t("exercises.list.card.accessibilityHint", {
               exercise: item.title,
             })}
-            onPress={() => handlePress(item.id)}
+            onViewDetails={() => handleViewDetails(item.id)}
+            onStart={() => handlePress(item.id)}
           />
         ))}
       </TGrid>

@@ -1,7 +1,9 @@
 import { Ionicons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Card, Image, Separator, Text, XStack, YStack } from "tamagui";
+import { Image as RNImage, StyleSheet as RNStyleSheet } from "react-native";
+import { Card, Separator, Text, XStack, YStack } from "tamagui";
 
 import type { RoutineBuilderScreenProps } from "@/app/routine/routine.types";
 import ScreenHeader from "@/components/ScreenHeader";
@@ -12,7 +14,19 @@ import { Spacing } from "@/constants/theme";
 import { ROUTINE_DEFAULT_REPS } from "@/stores/routineBuilderStore";
 
 import { useRoutineBuilder } from "./hooks/useRoutineBuilder";
-import { styles } from "./routine.styles";
+
+// Gradient overlays for card states
+const GRADIENT_DESELECTED = [
+  "rgba(0, 0, 0, 0.6)", // Lighter black at edges
+  "rgba(0, 0, 0, 0.2)", // Very light in center
+  "rgba(0, 0, 0, 0.6)", // Lighter black at bottom
+] as const;
+
+const GRADIENT_SELECTED = [
+  "rgba(10, 126, 164, 0.65)", // App tint color (#0a7ea4) at edges
+  "rgba(10, 126, 164, 0.15)", // Lighter tint in center
+  "rgba(10, 126, 164, 0.65)", // App tint color at bottom
+] as const;
 
 const StepperButton: React.FC<{
   icon: keyof typeof Ionicons.glyphMap;
@@ -47,7 +61,6 @@ const RoutineBuilderScreen: React.FC<RoutineBuilderScreenProps> = () => {
     titleSize,
     bodySize,
     metaSize,
-    selectedBorderColor,
     media,
     incrementRounds,
     decrementRounds,
@@ -138,15 +151,6 @@ const RoutineBuilderScreen: React.FC<RoutineBuilderScreenProps> = () => {
         </Card>
 
         <YStack gap={Spacing.md}>
-          <YStack gap="$1">
-            <Text fontSize={titleSize} fontWeight="700" color="$color">
-              {t("routineBuilder.exercises.title")}
-            </Text>
-            <Text fontSize={bodySize} color="$color" opacity={0.7}>
-              {t("routineBuilder.exercises.subtitle")}
-            </Text>
-          </YStack>
-
           <TGrid columns={3} gap="$3">
             {exerciseList.map((item) => {
               const config = exercises[item.id] ?? {
@@ -163,141 +167,180 @@ const RoutineBuilderScreen: React.FC<RoutineBuilderScreenProps> = () => {
                 <Card
                   key={item.id}
                   bordered
+                  borderColor={config.isSelected ? "$primary" : "$borderColor"}
                   elevate={false}
                   padding={0}
                   overflow="hidden"
-                  style={
-                    config.isSelected && selectedBorderColor
-                      ? { borderColor: selectedBorderColor }
-                      : undefined
-                  }
+                  animation="quick"
+                  hoverStyle={{
+                    elevation: "$3",
+                    scale: 1.01,
+                    borderColor: "$primary",
+                  }}
+                  pressStyle={{
+                    scale: 0.99,
+                  }}
+                  height={380}
                 >
-                  <YStack position="relative" height={380}>
-                    {/* Background Image */}
-                    <Image
-                      source={item.image}
-                      resizeMode="contain"
-                      style={styles.backgroundImage}
-                      accessibilityElementsHidden
-                      accessibilityIgnoresInvertColors
-                    />
-
-                    {/* Dark overlay for better text readability */}
+                  <YStack position="relative" width="100%" height="100%">
+                    {/* Layer 1: Background Image (with conditional opacity) */}
                     <YStack
                       position="absolute"
                       top={0}
+                      left={0}
                       right={0}
                       bottom={0}
-                      left={0}
-                      backgroundColor="$background"
-                      opacity={0.15}
+                      zIndex={1}
+                    >
+                      <RNImage
+                        source={item.image}
+                        style={routineCardStyles.image}
+                        resizeMode="contain"
+                      />
+                    </YStack>
+
+                    {/* Layer 2: Gradient Overlay (always full opacity) */}
+                    <LinearGradient
+                      colors={
+                        isDisabled ? GRADIENT_DESELECTED : GRADIENT_SELECTED
+                      }
+                      style={routineCardStyles.gradient}
                       pointerEvents="none"
                     />
 
-                    {/* Additional overlay for disabled state */}
-                    {isDisabled && (
-                      <YStack
-                        position="absolute"
-                        top={0}
-                        right={0}
-                        bottom={0}
-                        left={0}
-                        backgroundColor="$overlay"
-                        pointerEvents="none"
-                      />
-                    )}
-
-                    {/* Content Layout */}
+                    {/* Layer 3: Title and Description - Top */}
                     <YStack
-                      flex={1}
-                      justifyContent="space-between"
+                      position="absolute"
+                      top={0}
+                      left={0}
+                      right={0}
                       padding={media.md ? "$4" : "$3"}
-                      pointerEvents="box-none"
+                      zIndex={5}
+                      pointerEvents="none"
                     >
-                      {/* Header - Title and Description */}
-                      <YStack
-                        gap="$1"
-                        pointerEvents="none"
-                        backgroundColor="$background"
-                        opacity={0.66}
-                        padding="$3"
-                        borderRadius="$4"
-                      >
-                        <Text
-                          fontSize={titleSize}
-                          fontWeight="700"
-                          color="$color"
-                        >
-                          {item.title}
-                        </Text>
-                        <Text fontSize={bodySize} color="$color" opacity={0.95}>
-                          {item.description}
-                        </Text>
-                      </YStack>
-
-                      {/* Footer - Controls */}
-                      <XStack
-                        alignItems="center"
-                        justifyContent="space-between"
-                        gap="$2"
-                        backgroundColor="$background"
-                        opacity={0.85}
-                        padding="$3"
-                        borderRadius="$4"
-                        pointerEvents="box-none"
-                      >
-                        {/* Reps Stepper */}
-                        <XStack alignItems="center" gap="$2">
-                          <StepperButton
-                            icon="remove-outline"
-                            onPress={handleDecrement}
-                            accessibilityLabel={t(
-                              "routineBuilder.exercises.decrement",
-                              { exercise: item.title },
-                            )}
-                            disabled={isDisabled || config.reps <= 1}
-                          />
+                      <YStack position="relative">
+                        {/* Background layer */}
+                        <YStack
+                          position="absolute"
+                          top={0}
+                          left={0}
+                          right={0}
+                          bottom={0}
+                          backgroundColor="$background"
+                          opacity={0.75}
+                          borderRadius="$4"
+                          zIndex={-1}
+                        />
+                        {/* Content layer */}
+                        <YStack gap="$1" padding="$3">
                           <Text
                             fontSize={titleSize}
-                            fontWeight="700"
+                            fontWeight="800"
                             color="$color"
-                            minWidth={40}
-                            textAlign="center"
+                            numberOfLines={2}
                           >
-                            {config.reps}
+                            {item.title}
                           </Text>
-                          <StepperButton
-                            icon="add-outline"
-                            onPress={handleIncrement}
-                            accessibilityLabel={t(
-                              "routineBuilder.exercises.increment",
-                              { exercise: item.title },
-                            )}
-                            disabled={isDisabled}
-                          />
-                        </XStack>
+                          <Text
+                            fontSize={bodySize}
+                            color="$color"
+                            opacity={0.95}
+                            numberOfLines={2}
+                          >
+                            {item.description}
+                          </Text>
+                        </YStack>
+                      </YStack>
+                    </YStack>
 
-                        {/* Add/Remove Button */}
-                        <TButton
-                          onPress={handleToggle}
-                          variant={config.isSelected ? "primary" : "outline"}
-                          size="$3"
-                          iconName={
-                            config.isSelected
-                              ? "checkmark-circle"
-                              : "add-circle"
-                          }
-                          accessibilityRole="switch"
-                          aria-checked={config.isSelected}
-                          aria-label={t("routineBuilder.exercises.toggleA11y", {
-                            exercise: item.title,
-                          })}
+                    {/* Layer 4: Controls - Bottom */}
+                    <YStack
+                      position="absolute"
+                      bottom={0}
+                      left={0}
+                      right={0}
+                      padding={media.md ? "$4" : "$3"}
+                      zIndex={5}
+                      pointerEvents="box-none"
+                    >
+                      <YStack position="relative">
+                        {/* Background layer */}
+                        <YStack
+                          position="absolute"
+                          top={0}
+                          left={0}
+                          right={0}
+                          bottom={0}
+                          backgroundColor="$background"
+                          opacity={0.8}
+                          borderRadius="$4"
+                          zIndex={-1}
+                          pointerEvents="none"
+                        />
+                        {/* Content layer */}
+                        <XStack
+                          alignItems="center"
+                          justifyContent="space-between"
+                          gap="$2"
+                          padding="$3"
+                          pointerEvents="auto"
                         >
-                          {config.isSelected
-                            ? t("routineBuilder.exercises.buttonSelected")
-                            : t("routineBuilder.exercises.buttonAdd")}
-                        </TButton>
-                      </XStack>
+                          {/* Reps Stepper */}
+                          <XStack alignItems="center" gap="$2">
+                            <StepperButton
+                              icon="remove-outline"
+                              onPress={handleDecrement}
+                              accessibilityLabel={t(
+                                "routineBuilder.exercises.decrement",
+                                { exercise: item.title },
+                              )}
+                              disabled={isDisabled || config.reps <= 1}
+                            />
+                            <Text
+                              fontSize={titleSize}
+                              fontWeight="700"
+                              color="$color"
+                              minWidth={40}
+                              textAlign="center"
+                            >
+                              {config.reps}
+                            </Text>
+                            <StepperButton
+                              icon="add-outline"
+                              onPress={handleIncrement}
+                              accessibilityLabel={t(
+                                "routineBuilder.exercises.increment",
+                                { exercise: item.title },
+                              )}
+                              disabled={isDisabled}
+                            />
+                          </XStack>
+
+                          {/* Add/Remove Button */}
+                          <TButton
+                            onPress={handleToggle}
+                            variant={config.isSelected ? "primary" : "outline"}
+                            size="$3"
+                            iconName={
+                              config.isSelected
+                                ? "checkmark-circle"
+                                : "add-circle"
+                            }
+                            accessibilityRole="switch"
+                            aria-checked={config.isSelected}
+                            aria-label={t(
+                              "routineBuilder.exercises.toggleA11y",
+                              {
+                                exercise: item.title,
+                              },
+                            )}
+                          >
+                            {config.isSelected
+                              ? t("routineBuilder.exercises.buttonSelected")
+                              : t("routineBuilder.exercises.buttonAdd")}
+                          </TButton>
+                        </XStack>
+                      </YStack>
                     </YStack>
                   </YStack>
                 </Card>
@@ -315,5 +358,20 @@ const RoutineBuilderScreen: React.FC<RoutineBuilderScreenProps> = () => {
     </TPage>
   );
 };
+
+const routineCardStyles = RNStyleSheet.create({
+  image: {
+    width: "100%",
+    height: "100%",
+  },
+  gradient: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    zIndex: 2,
+  },
+});
 
 export default RoutineBuilderScreen;

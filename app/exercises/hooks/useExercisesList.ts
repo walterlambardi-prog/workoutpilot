@@ -42,8 +42,20 @@ export const useExercisesList = () => {
     [router],
   );
 
+  // Handle view exercise details
+  const handleViewDetails = useCallback(
+    (exerciseId: ExerciseId) => {
+      router.push({
+        pathname: "/exercises/detail/[exerciseId]",
+        params: { exerciseId },
+      });
+    },
+    [router],
+  );
+
   return {
     exercises,
     handlePress,
+    handleViewDetails,
   };
 };

@@ -4,7 +4,10 @@
     "deny": "Deny",
     "cancel": "Cancel",
     "ok": "OK",
-    "error": "Error"
+    "error": "Error",
+    "back": "Back",
+    "details": "Details",
+    "start": "Start"
   },
   "sync": {
     "status": {
@@ -365,8 +368,6 @@
       "decrement": "Decrease rounds"
     },
     "exercises": {
-      "title": "Exercises",
-      "subtitle": "Toggle movements and fine-tune reps per round.",
       "toggleA11y": "Toggle {{exercise}} in the routine",
       "buttonAdd": "Add",
       "buttonSelected": "Selected",
@@ -407,6 +408,21 @@
     }
   },
   "exercises": {
+    "detail": {
+      "subtitle": "Exercise information and how to perform it correctly",
+      "notFound": "Exercise not found",
+      "description": {
+        "title": "Description"
+      },
+      "benefits": {
+        "title": "Benefits"
+      },
+      "instructions": {
+        "title": "How to perform"
+      },
+      "startButton": "Start exercise",
+      "viewDetailsButton": "View details"
+    },
     "statuses": {
       "idle": "Idle",
       "loading": "Loading",
@@ -436,49 +452,160 @@
     "list": {
       "title": "Pick your exercise",
       "subtitle": "Select a movement to start real-time pose tracking.",
+      "badge": "Exercise",
       "card": {
         "accessibilityHint": "Open session for {{exercise}}"
       },
       "items": {
         "alternatingKneeRaises": {
           "title": "Alternating knee raises",
-          "description": "Raise knees toward chest alternately to engage core and hip flexors."
+          "description": "Raise knees toward chest alternately to engage core and hip flexors.",
+          "benefits": [
+            "Strengthens core and hip flexors",
+            "Improves balance and coordination",
+            "Enhances lower body stability"
+          ],
+          "instructions": [
+            "Stand with feet hip-width apart",
+            "Raise one knee toward your chest",
+            "Lower it back down with control",
+            "Alternate legs in a steady rhythm"
+          ]
         },
         "hammerCurls": {
           "title": "Alternating hammer curls",
-          "description": "Alternate arms to strengthen biceps and forearms."
+          "description": "Alternate arms to strengthen biceps and forearms.",
+          "benefits": [
+            "Builds biceps and forearm strength",
+            "Improves grip strength",
+            "Develops arm definition"
+          ],
+          "instructions": [
+            "Hold weights with palms facing each other",
+            "Keep elbows close to your sides",
+            "Curl one weight up toward your shoulder",
+            "Lower with control and alternate arms"
+          ]
         },
         "lateralRaises": {
           "title": "Lateral raises",
-          "description": "Lift both arms to target shoulders with control."
+          "description": "Lift both arms to target shoulders with control.",
+          "benefits": [
+            "Strengthens shoulder muscles",
+            "Improves shoulder stability",
+            "Enhances upper body aesthetics"
+          ],
+          "instructions": [
+            "Stand with feet shoulder-width apart",
+            "Hold weights at your sides with palms facing in",
+            "Raise both arms out to the sides to shoulder height",
+            "Lower slowly back to starting position"
+          ]
         },
         "calfRaises": {
           "title": "Calf raises",
-          "description": "Rise onto your toes to strengthen calves and ankles."
+          "description": "Rise onto your toes to strengthen calves and ankles.",
+          "benefits": [
+            "Strengthens calf muscles and ankles",
+            "Improves balance and stability",
+            "Enhances explosive power for jumping"
+          ],
+          "instructions": [
+            "Stand with feet hip-width apart",
+            "Rise up onto the balls of your feet",
+            "Hold at the top for a moment",
+            "Lower back down with control"
+          ]
         },
         "lunges": {
           "title": "Lunges",
-          "description": "Step forward, lower with control, and drive through the front heel."
+          "description": "Step forward, lower with control, and drive through the front heel.",
+          "benefits": [
+            "Builds leg and glute strength",
+            "Improves balance and coordination",
+            "Develops unilateral leg power"
+          ],
+          "instructions": [
+            "Stand with feet hip-width apart",
+            "Step forward with one leg",
+            "Lower your hips until both knees are bent at 90 degrees",
+            "Push back to starting position and alternate legs"
+          ]
         },
         "pushups": {
           "title": "Push-ups",
-          "description": "Control your core and chest through each rep."
+          "description": "Control your core and chest through each rep.",
+          "benefits": [
+            "Strengthens chest, shoulders, and triceps",
+            "Builds core stability",
+            "Improves upper body endurance"
+          ],
+          "instructions": [
+            "Start in plank position with hands shoulder-width apart",
+            "Keep your body in a straight line from head to heels",
+            "Lower your chest toward the ground with control",
+            "Push back up to starting position"
+          ]
         },
         "squats": {
           "title": "Squats",
-          "description": "Drive through your heels to stabilize hips and knees."
+          "description": "Drive through your heels to stabilize hips and knees.",
+          "benefits": [
+            "Builds leg and glute strength",
+            "Improves core stability",
+            "Enhances functional movement"
+          ],
+          "instructions": [
+            "Stand with feet shoulder-width apart",
+            "Lower your hips back and down as if sitting",
+            "Keep chest up and knees tracking over toes",
+            "Drive through heels to return to standing"
+          ]
         },
         "standingLegRaises": {
           "title": "Standing leg raises",
-          "description": "Lift one leg laterally to strengthen hip abductors and improve balance."
+          "description": "Lift one leg laterally to strengthen hip abductors and improve balance.",
+          "benefits": [
+            "Strengthens hip abductors and glutes",
+            "Improves balance and stability",
+            "Enhances lateral mobility"
+          ],
+          "instructions": [
+            "Stand with feet together",
+            "Lift one leg out to the side, keeping it straight",
+            "Hold for a moment at the top",
+            "Lower with control and alternate legs"
+          ]
         },
         "standingChestFly": {
           "title": "Standing chest fly",
-          "description": "Bring arms together with bent elbows to engage chest and shoulders."
+          "description": "Bring arms together with bent elbows to engage chest and shoulders.",
+          "benefits": [
+            "Strengthens chest and shoulder muscles",
+            "Improves upper body definition",
+            "Enhances pushing power"
+          ],
+          "instructions": [
+            "Stand with feet shoulder-width apart",
+            "Hold weights at chest height with elbows slightly bent",
+            "Open arms wide to the sides",
+            "Bring arms back together in front of your chest"
+          ]
         },
         "stepTracker": {
           "title": "Step tracker",
-          "description": "Track your steps, route, and time for walking or running."
+          "description": "Track your steps, route, and time for walking or running.",
+          "benefits": [
+            "Improves cardiovascular health",
+            "Burns calories and supports weight management",
+            "Enhances endurance and stamina"
+          ],
+          "instructions": [
+            "Enable location permissions for route tracking",
+            "Press start to begin tracking your walk or run",
+            "Keep your phone with you during the activity",
+            "Review your distance, steps, and route when finished"
+          ]
         }
       }
     },

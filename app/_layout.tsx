@@ -219,6 +219,21 @@ export default function RootLayout() {
             }
           />
           <Stack.Screen
+            name="exercises/detail/[exerciseId]"
+            options={
+              isWeb
+                ? {
+                    headerShown: true,
+                    header: () => <TAppHeader drawerState={drawerState} />,
+                  }
+                : {
+                    headerShown: true,
+                    headerRight: renderDrawerToggle,
+                    title: t("exercises.detail.subtitle"),
+                  }
+            }
+          />
+          <Stack.Screen
             name="exerciseSession/index"
             options={{
               headerShown: false,

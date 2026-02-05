@@ -8,8 +8,8 @@ import { EXERCISE_DEFINITIONS } from "@/app/exercises/exercises.data";
 import type { RoutineExerciseListItem } from "@/app/routine/routine.types";
 import { ROUTINE_ALLOWED_EXERCISES } from "@/constants/exercises";
 import {
-    ROUTINE_DEFAULT_REPS,
-    useRoutineBuilderStore,
+  ROUTINE_DEFAULT_REPS,
+  useRoutineBuilderStore,
 } from "@/stores/routineBuilderStore";
 import { useRoutineSessionStore } from "@/stores/routineSessionStore";
 
@@ -70,9 +70,9 @@ export const useRoutineBuilder = () => {
     [exerciseList, exercises],
   );
 
-  const titleSize: FontSizeTokens = media.md ? "$6" : "$5";
-  const bodySize: FontSizeTokens = media.md ? "$4" : "$3";
-  const metaSize: FontSizeTokens = media.md ? "$3" : "$2";
+  const titleSize: FontSizeTokens = "$5";
+  const bodySize: FontSizeTokens = "$3";
+  const metaSize: FontSizeTokens = "$3";
 
   const resolveToken = useCallback(
     (token?: string) => {
