@@ -472,6 +472,10 @@
           "title": "Standing leg raises",
           "description": "Lift one leg laterally to strengthen hip abductors and improve balance."
         },
+        "standingChestFly": {
+          "title": "Standing chest fly",
+          "description": "Bring arms together with bent elbows to engage chest and shoulders."
+        },
         "stepTracker": {
           "title": "Step tracker",
           "description": "Track your steps, route, and time for walking or running."
@@ -667,6 +671,24 @@
         "hipAngle": "Hip angle",
         "leftReps": "Left leg reps",
         "rightReps": "Right leg reps"
+      }
+    },
+    "standingChestFly": {
+      "feedback": {
+        "showBody": "Show your full body to the camera",
+        "noPose": "No pose detected",
+        "improveLight": "Improve lighting and face the camera",
+        "standReady": "Stand straight, arms open to sides with elbows bent",
+        "bringTogether": "Bring your arms together in front of chest",
+        "holdCenter": "Hold arms at center",
+        "openArms": "Open arms back to starting position",
+        "complete": "Good rep!",
+        "keepElbowsBent": "Keep elbows bent at 90 degrees",
+        "standUpright": "Stand upright — don't lean"
+      },
+      "labels": {
+        "leftArmAngle": "Left elbow angle",
+        "rightArmAngle": "Right elbow angle"
       }
     }
   },

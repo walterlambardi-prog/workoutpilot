@@ -472,6 +472,10 @@
           "title": "Elevaciones laterales de pierna",
           "description": "Eleva una pierna lateralmente para fortalecer abductores y mejorar equilibrio."
         },
+        "standingChestFly": {
+          "title": "Aperturas de pecho de pie",
+          "description": "Junta los brazos con codos flexionados para trabajar pecho y hombros."
+        },
         "stepTracker": {
           "title": "Contador de pasos",
           "description": "Registra pasos, ruta y tiempo para caminar o correr."
@@ -667,6 +671,24 @@
         "hipAngle": "Ángulo de cadera",
         "leftReps": "Reps pierna izquierda",
         "rightReps": "Reps pierna derecha"
+      }
+    },
+    "standingChestFly": {
+      "feedback": {
+        "showBody": "Muestra tu cuerpo completo a la cámara",
+        "noPose": "No se detectó postura",
+        "improveLight": "Mejora la iluminación y pónete de frente a la cámara",
+        "standReady": "Párate derecho, brazos abiertos a los lados con codos flexionados",
+        "bringTogether": "Junta los brazos frente al pecho",
+        "holdCenter": "Mantén los brazos al centro",
+        "openArms": "Abre los brazos de vuelta a la posición inicial",
+        "complete": "¡Buena rep!",
+        "keepElbowsBent": "Mantén los codos flexionados a 90 grados",
+        "standUpright": "Mantén la espalda recta — no te inclines"
+      },
+      "labels": {
+        "leftArmAngle": "Ángulo codo izquierdo",
+        "rightArmAngle": "Ángulo codo derecho"
       }
     }
   },

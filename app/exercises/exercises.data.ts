@@ -40,6 +40,11 @@ export const EXERCISE_DEFINITIONS: ExerciseDefinition[] = [
     image: exerciseImages[ExerciseId.SQUATS],
   },
   {
+    id: ExerciseId.STANDING_CHEST_FLY,
+    copyKey: EXERCISE_COPY_KEYS[ExerciseId.STANDING_CHEST_FLY],
+    image: exerciseImages[ExerciseId.STANDING_CHEST_FLY],
+  },
+  {
     id: ExerciseId.STANDING_LEG_RAISES,
     copyKey: EXERCISE_COPY_KEYS[ExerciseId.STANDING_LEG_RAISES],
     image: exerciseImages[ExerciseId.STANDING_LEG_RAISES],

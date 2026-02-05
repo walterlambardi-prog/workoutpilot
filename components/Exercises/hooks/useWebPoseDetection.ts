@@ -22,6 +22,7 @@ import { useHammerCurlsCounter } from "./useHammerCurlsCounter";
 import { useLateralRaisesCounter } from "./useLateralRaisesCounter";
 import { useLungesCounter } from "./useLungesCounter";
 import { useSquatsCounter } from "./useSquatsCounter";
+import { useStandingChestFlyCounter } from "./useStandingChestFlyCounter";
 import { useStandingLegRaisesCounter } from "./useStandingLegRaisesCounter";
 
 /**
@@ -45,6 +46,7 @@ export const useWebPoseDetection = (
   const lateralRaises = useLateralRaisesCounter(t);
   const lunges = useLungesCounter(t);
   const squats = useSquatsCounter(t);
+  const standingChestFly = useStandingChestFlyCounter(t);
   const standingLegRaises = useStandingLegRaisesCounter(t);
   const reportedRepRef = useRef(0);
 
@@ -256,6 +258,26 @@ export const useWebPoseDetection = (
             progress: next?.progress,
             feedback: next?.feedback,
           });
+        } else if (exerciseId === ExerciseId.STANDING_CHEST_FLY) {
+          const next = standingChestFly.processLandmarks(landmarks);
+          const rep = next?.repCount ?? 0;
+          const stableRep = Math.max(lastRepCountRef.current, rep);
+          lastRepCountRef.current = stableRep;
+          if (exerciseId) {
+            const prev = reportedRepRef.current;
+            if (stableRep > prev) {
+              useExerciseSessionStore
+                .getState()
+                .addRep(exerciseId, stableRep - prev);
+              reportedRepRef.current = stableRep;
+            }
+          }
+          setStats({
+            poseCount: 1,
+            repCount: stableRep,
+            progress: next?.progress,
+            feedback: next?.feedback,
+          });
         } else {
           setStats({ poseCount: 1 });
         }
@@ -397,6 +419,7 @@ export const useWebPoseDetection = (
     lateralRaises,
     lunges,
     squats,
+    standingChestFly,
     standingLegRaises,
   ]);
 
