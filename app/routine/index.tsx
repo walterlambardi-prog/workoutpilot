@@ -218,7 +218,10 @@ const RoutineBuilderScreen: React.FC<RoutineBuilderScreenProps> = () => {
                       <YStack
                         gap="$1"
                         pointerEvents="none"
-                        paddingHorizontal="$2"
+                        backgroundColor="$background"
+                        opacity={0.66}
+                        padding="$3"
+                        borderRadius="$4"
                       >
                         <Text
                           fontSize={titleSize}
