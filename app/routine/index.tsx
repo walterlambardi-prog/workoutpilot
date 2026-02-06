@@ -17,15 +17,15 @@ import { useRoutineBuilder } from "./hooks/useRoutineBuilder";
 
 // Gradient overlays for card states
 const GRADIENT_DESELECTED = [
-  "rgba(0, 0, 0, 0.6)", // Lighter black at edges
-  "rgba(0, 0, 0, 0.2)", // Very light in center
-  "rgba(0, 0, 0, 0.6)", // Lighter black at bottom
+  "rgba(0, 0, 0, 0.2)", // Lighter black at edges
+  "rgba(0, 0, 0, 0.3)", // Very light in center
+  "rgba(0, 0, 0, 0.4)", // Lighter black at bottom
 ] as const;
 
 const GRADIENT_SELECTED = [
-  "rgba(10, 126, 164, 0.65)", // App tint color (#0a7ea4) at edges
-  "rgba(10, 126, 164, 0.15)", // Lighter tint in center
-  "rgba(10, 126, 164, 0.65)", // App tint color at bottom
+  "rgba(0, 0, 0, 0)", // Lighter black at edges
+  "rgba(0, 0, 0, 0.1)", // Very light in center
+  "rgba(0, 0, 0, 0.4)", // Lighter black at bottom
 ] as const;
 
 const StepperButton: React.FC<{

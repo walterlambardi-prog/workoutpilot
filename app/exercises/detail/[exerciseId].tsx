@@ -18,6 +18,7 @@ import ScreenHeader from "@/components/ScreenHeader";
 import { TButton } from "@/components/TButton";
 import { TPage } from "@/components/TPage";
 import { ExerciseId } from "@/constants/exercises";
+import { BACKGROUND_IMAGES } from "@/constants/images";
 import { Spacing } from "@/constants/theme";
 
 const ExerciseDetailScreen: React.FC = () => {
@@ -90,6 +91,14 @@ const ExerciseDetailScreen: React.FC = () => {
               width={media.gtSm ? "45%" : "100%"}
               flexShrink={0}
             >
+              <Image
+                source={
+                  exerciseId === ExerciseId.STEP_TRACKER
+                    ? BACKGROUND_IMAGES.park
+                    : BACKGROUND_IMAGES.home
+                }
+                style={{ position: "absolute", width: "100%", height: "100%" }}
+              />
               <Image
                 source={exercise.image}
                 style={{
