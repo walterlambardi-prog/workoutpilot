@@ -37,7 +37,8 @@
     "settings": "Configuración",
     "routine": "Rutina",
     "aiCoach": "Coach IA",
-    "stepTracker": "Contador de pasos"
+    "stepTracker": "Contador de pasos",
+    "tutorial": "Tutoriales"
   },
   "drawer": {
     "title": "Menú",
@@ -195,6 +196,11 @@
         "title": "Configuración",
         "description": "Configura el idioma y gestiona tus datos.",
         "accessibilityHint": "Abre la pantalla de configuración"
+      },
+      "tutorial": {
+        "title": "Tutoriales",
+        "description": "Aprende a usar la detección de pose y ejecutar ejercicios correctamente.",
+        "accessibilityHint": "Abre la pantalla de tutoriales"
       }
     }
   },
@@ -578,7 +584,7 @@
           ]
         },
         "standingChestFly": {
-          "title": "Aperturas de pecho de pie",
+          "title": "Aperturas de pecho",
           "description": "Junta los brazos con codos flexionados para trabajar pecho y hombros.",
           "benefits": [
             "Fortalece músculos del pecho y hombros",
@@ -912,5 +918,209 @@
     "editPlanCta": "Editar rutina",
     "fetchError": "No pude generar la respuesta. Intenta de nuevo.",
     "retrySystemPrompt": "Repite la respuesta usando SOLO el JSON válido y nada más."
+  },
+  "tutorial": {
+    "title": "Tutoriales y Guías",
+    "subtitle": "Aprende a sacar el máximo provecho de WorkoutPilot",
+    "viewGuide": "Ver guía",
+    "startPracticing": "Comenzar a practicar",
+    "mediapipe": {
+      "title": "Cómo Funciona la Detección de Pose",
+      "description": "Entiende cómo la IA detecta tus movimientos corporales y cuenta repeticiones con precisión",
+      "intro": "La detección de pose es una tecnología de IA avanzada que rastrea tus movimientos corporales en tiempo real usando la cámara de tu dispositivo. Identifica 33 puntos clave en tu cuerpo para analizar tu forma de ejercicio y contar repeticiones automáticamente.",
+      "howItWorks": {
+        "title": "¿Cómo Funciona?",
+        "description": "El sistema usa visión por computadora para detectar y rastrear puntos corporales:",
+        "steps": {
+          "1": "La cámara captura tus movimientos en tiempo real",
+          "2": "La IA identifica 33 puntos del cuerpo (hombros, codos, caderas, rodillas, etc.)",
+          "3": "La app calcula ángulos entre articulaciones para analizar el movimiento",
+          "4": "Cuando completas el rango completo de movimiento, se cuenta una repetición"
+        }
+      },
+      "bestPractices": "Mejores Prácticas para Detección Precisa",
+      "positioning": {
+        "title": "Posicionamiento de tu Dispositivo",
+        "subtitle": "La ubicación correcta de la cámara es esencial para un seguimiento preciso",
+        "mobile": {
+          "title": "Dispositivo Móvil",
+          "description": "Coloca tu teléfono en una superficie estable o trípode a la altura del pecho, a 2-2.5 metros de distancia. Asegúrate de que todo tu cuerpo sea visible en el encuadre."
+        },
+        "laptop": {
+          "title": "Laptop/Webcam",
+          "description": "Posiciona tu laptop o cámara web externa a la altura del pecho o cabeza. Retrocede hasta que tu cuerpo completo quepa en el encuadre (cabeza a pies)."
+        }
+      },
+      "privacy": {
+        "title": "Tu Privacidad Está Protegida",
+        "description": "Toda la detección de pose ocurre directamente en tu dispositivo. No se envían videos ni imágenes a servidores externos. Tus datos de entrenamiento permanecen completamente privados y seguros."
+      },
+      "tips": {
+        "distance": {
+          "title": "Distancia Óptima de la Cámara",
+          "description": "Colócate a 2-2.5 metros de tu dispositivo. Tu cuerpo entero debe ser visible en el encuadre de pies a cabeza. Muy cerca y la cámara no puede ver tu movimiento completo; muy lejos y la detección es menos precisa."
+        },
+        "positioning": {
+          "title": "Posicionamiento del Cuerpo",
+          "description": "Posiciónate para que tu cuerpo completo sea visible. Para ejercicios como sentadillas o flexiones, asegura que tu cabeza, torso, brazos y piernas estén en el encuadre. Gira de costado para mejor seguimiento de movimientos de profundidad (como sentadillas)."
+        },
+        "lighting": {
+          "title": "Buena Iluminación",
+          "description": "Ejercita en un área bien iluminada. La luz natural funciona mejor, pero evita luz solar directa o retroiluminación que crea sombras. La IA necesita ver claramente el contorno de tu cuerpo y articulaciones."
+        },
+        "clothing": {
+          "title": "Usa Ropa Ajustada",
+          "description": "Usa ropa deportiva ajustada. La ropa holgada puede ocultar los movimientos de tu cuerpo y dificultar que el sistema rastree las posiciones de las articulaciones con precisión."
+        },
+        "background": {
+          "title": "Fondo Despejado",
+          "description": "Elige un fondo simple y sin obstáculos. Evita espejos, patrones ocupados u otras personas en el encuadre. Una pared simple o espacio abierto funciona mejor para detección corporal clara."
+        },
+        "movement": {
+          "title": "Movimientos Suaves y Controlados",
+          "description": "Realiza ejercicios con movimientos deliberados y controlados. Ir muy rápido puede hacer que la IA pierda el rango completo de movimiento. Calidad sobre velocidad asegura conteo preciso de repeticiones."
+        }
+      },
+      "commonIssues": {
+        "title": "Solución de Problemas Comunes",
+        "issues": {
+          "1": {
+            "problem": "Las repeticiones no se cuentan",
+            "solution": "Asegúrate de completar el rango completo de movimiento. Muévete lenta y deliberadamente en cada rep. Verifica que tu cuerpo entero esté visible en el encuadre."
+          },
+          "2": {
+            "problem": "La detección es inestable o entrecortada",
+            "solution": "Mejora las condiciones de iluminación y muévete a un fondo más despejado. Asegúrate de estar a la distancia correcta (2-2.5 metros) de la cámara."
+          },
+          "3": {
+            "problem": "Los puntos del cuerpo no se detectan",
+            "solution": "Usa ropa más ajustada y asegura buena iluminación. Evita posiciones donde partes de tu cuerpo se superpongan o estén ocultas de la vista de la cámara."
+          },
+          "4": {
+            "problem": "Cuenta repeticiones extra o se salta reps",
+            "solution": "Reduce la velocidad de tus movimientos y asegura que cada rep tenga una posición de inicio y fin clara. Evita rebotes o reps parciales."
+          },
+          "5": {
+            "problem": "La cámara no se activa o muestra error de permisos",
+            "mobileTitle": "Móvil",
+            "mobileSolution": "Ve a Configuración > WorkoutPilot > Permisos y habilita el acceso a la cámara.",
+            "webTitle": "Web",
+            "webSolution": "Cuando el navegador solicite acceso a la cámara, selecciona 'Permitir'. Si ya lo bloqueaste, haz clic en el ícono de candado/cámara en la barra de direcciones y cambia el permiso de cámara a 'Permitir'."
+          }
+        }
+      }
+    },
+    "exercises": {
+      "title": "Guía de Ejecución de Ejercicios",
+      "description": "Domina la forma correcta y maximiza la precisión del conteo de repeticiones para todos los ejercicios",
+      "intro": "La ejecución correcta del ejercicio es crucial tanto para tu seguridad como para el conteo preciso de repeticiones. Esta guía te ayudará a entender cómo realizar ejercicios correctamente para que el sistema pueda rastrear tus movimientos efectivamente.",
+      "privacy": {
+        "title": "Tu Privacidad Está Protegida",
+        "description": "Toda la detección de pose ocurre directamente en tu dispositivo. No se envían videos ni imágenes a servidores externos. Tus datos de entrenamiento permanecen completamente privados y seguros."
+      },
+      "repCounting": {
+        "title": "Cómo se Cuentan las Repeticiones",
+        "description": "El sistema cuenta repeticiones analizando ángulos de articulaciones y patrones de movimiento:",
+        "steps": {
+          "1": "Se detecta la posición inicial (ej: parado erguido para sentadillas, brazos extendidos para flexiones)",
+          "2": "Te mueves a través del rango completo de movimiento hasta la posición inferior",
+          "3": "Regresas a la posición inicial - esto completa una repetición"
+        }
+      },
+      "guidelinesTitle": "Directrices Generales de Ejercicios",
+      "guidelines": {
+        "visibility": {
+          "title": "Mantén Todas las Partes del Cuerpo Visibles",
+          "description": "Asegura que tu cabeza, torso, brazos y piernas permanezcan en el encuadre de la cámara durante todo el ejercicio. Salir del encuadre interrumpirá el seguimiento y puede perder el conteo de reps."
+        },
+        "tempo": {
+          "title": "Usa Tempo Controlado",
+          "description": "Realiza cada repetición con descenso de 2 segundos y ascenso de 1 segundo (tempo 2-0-1). Esto asegura que el sistema tenga tiempo para analizar tu movimiento y contar con precisión. Apurarse reduce la precisión."
+        },
+        "form": {
+          "title": "Mantén la Forma Correcta",
+          "description": "Enfócate en calidad sobre cantidad. La forma correcta no solo previene lesiones sino que también asegura que la IA pueda detectar claramente el rango completo de movimiento requerido para contar una rep. Las reps parciales no se contarán."
+        },
+        "pauses": {
+          "title": "Pausa en Posiciones Finales",
+          "description": "Pausa brevemente (0.5-1 segundo) en la parte superior e inferior de cada rep. Esto le da al sistema una señal clara de que completaste el movimiento y ayuda a distinguir entre reps."
+        }
+      },
+      "specificTips": {
+        "title": "Consejos Específicos por Ejercicio",
+        "squats": {
+          "title": "Sentadillas",
+          "tips": {
+            "1": "Párate con pies al ancho de hombros, dedos ligeramente hacia afuera",
+            "2": "Desciende hasta que los muslos estén paralelos al suelo (flexión de rodilla de 90 grados)",
+            "3": "Mantén el pecho levantado y core activado durante todo el movimiento"
+          }
+        },
+        "pushups": {
+          "title": "Flexiones",
+          "tips": {
+            "1": "Comienza en posición de plancha con manos al ancho de hombros",
+            "2": "Baja tu pecho hasta que los brazos formen un ángulo de 90 grados",
+            "3": "Mantén tu cuerpo en línea recta de cabeza a talones - sin caderas caídas"
+          }
+        },
+        "lateralRaises": {
+          "title": "Elevaciones Laterales",
+          "tips": {
+            "1": "Párate con brazos a los lados, ligera flexión en codos",
+            "2": "Eleva los brazos hasta que estén paralelos al suelo (altura de hombros)",
+            "3": "Controla el descenso - no dejes que la gravedad baje tus brazos"
+          }
+        },
+        "alternatingKneeRaises": {
+          "title": "Elevaciones Alternas de Rodilla",
+          "tips": {
+            "1": "Párate erguido con pies al ancho de caderas",
+            "2": "Eleva una rodilla hasta altura de cadera (90 grados), mantén equilibrio",
+            "3": "Alterna las piernas de forma controlada, evita balancearte"
+          }
+        },
+        "hammerCurls": {
+          "title": "Curl de Martillo",
+          "tips": {
+            "1": "Párate con brazos extendidos, palmas enfrentadas (agarre neutral)",
+            "2": "Flexiona los codos llevando las manos hacia los hombros",
+            "3": "Mantén los codos pegados al cuerpo durante todo el movimiento"
+          }
+        },
+        "calfRaises": {
+          "title": "Elevaciones de Pantorrilla",
+          "tips": {
+            "1": "Párate con pies al ancho de caderas, peso en las puntas de los pies",
+            "2": "Eleva los talones lo más alto posible, contrae las pantorrillas",
+            "3": "Baja de forma controlada hasta que los talones casi toquen el suelo"
+          }
+        },
+        "lunges": {
+          "title": "Estocadas",
+          "tips": {
+            "1": "Da un paso adelante amplio, mantén el torso erguido",
+            "2": "Baja hasta que ambas rodillas formen ángulos de 90 grados",
+            "3": "Rodilla trasera casi toca el suelo, rodilla delantera sobre el tobillo"
+          }
+        },
+        "standingChestFly": {
+          "title": "Apertura de Pecho de Pie",
+          "tips": {
+            "1": "Párate con brazos extendidos al frente, ligera flexión en codos",
+            "2": "Abre los brazos hacia los lados hasta sentir estiramiento en el pecho",
+            "3": "Regresa a la posición inicial juntando los brazos al frente"
+          }
+        },
+        "standingLegRaises": {
+          "title": "Elevaciones de Pierna de Pie",
+          "tips": {
+            "1": "Párate apoyado en una pierna, mantén el core activado",
+            "2": "Eleva la pierna extendida hacia adelante hasta altura de cadera",
+            "3": "Baja de forma controlada sin tocar el suelo entre repeticiones"
+          }
+        }
+      }
+    }
   }
 }

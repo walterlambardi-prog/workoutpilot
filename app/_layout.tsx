@@ -281,6 +281,51 @@ export default function RootLayout() {
               title: t("sessions.routineList.allTitle"),
             }}
           />
+          <Stack.Screen
+            name="tutorial/index"
+            options={
+              isWeb
+                ? {
+                    headerShown: true,
+                    header: () => <TAppHeader drawerState={drawerState} />,
+                  }
+                : {
+                    headerShown: true,
+                    headerRight: renderDrawerToggle,
+                    title: t("tutorial.title"),
+                  }
+            }
+          />
+          <Stack.Screen
+            name="tutorial/poseDetection"
+            options={
+              isWeb
+                ? {
+                    headerShown: true,
+                    header: () => <TAppHeader drawerState={drawerState} />,
+                  }
+                : {
+                    headerShown: true,
+                    headerRight: renderDrawerToggle,
+                    title: t("tutorial.mediapipe.title"),
+                  }
+            }
+          />
+          <Stack.Screen
+            name="tutorial/exercises"
+            options={
+              isWeb
+                ? {
+                    headerShown: true,
+                    header: () => <TAppHeader drawerState={drawerState} />,
+                  }
+                : {
+                    headerShown: true,
+                    headerRight: renderDrawerToggle,
+                    title: t("tutorial.exercises.title"),
+                  }
+            }
+          />
         </Stack>
         <TDrawer isOpen={drawerState.isOpen} onClose={drawerState.close} />
         <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />

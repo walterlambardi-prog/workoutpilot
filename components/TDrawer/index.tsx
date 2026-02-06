@@ -60,6 +60,12 @@ const drawerItems: DrawerItem[] = [
     color: "#34D399",
   },
   {
+    href: "/tutorial",
+    key: "tutorial",
+    icon: "book-outline",
+    color: "#FBBF24",
+  },
+  {
     href: "/settings",
     key: "settings",
     icon: "settings-outline",

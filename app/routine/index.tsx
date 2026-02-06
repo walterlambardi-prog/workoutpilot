@@ -151,7 +151,7 @@ const RoutineBuilderScreen: React.FC<RoutineBuilderScreenProps> = () => {
         </Card>
 
         <YStack gap={Spacing.md}>
-          <TGrid columns={3} gap="$3">
+          <TGrid columns={3} gap="$6">
             {exerciseList.map((item) => {
               const config = exercises[item.id] ?? {
                 reps: ROUTINE_DEFAULT_REPS,

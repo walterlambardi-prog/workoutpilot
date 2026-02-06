@@ -37,7 +37,8 @@
     "settings": "Settings",
     "routine": "Routine",
     "aiCoach": "AI Coach",
-    "stepTracker": "Step tracker"
+    "stepTracker": "Step tracker",
+    "tutorial": "Tutorials"
   },
   "drawer": {
     "title": "Menu",
@@ -195,6 +196,11 @@
         "title": "Settings",
         "description": "Configure language and manage your data.",
         "accessibilityHint": "Opens the settings screen"
+      },
+      "tutorial": {
+        "title": "Tutorials",
+        "description": "Learn how to use pose detection and execute exercises correctly.",
+        "accessibilityHint": "Opens the tutorials screen"
       }
     }
   },
@@ -912,5 +918,205 @@
     "editPlanCta": "Edit routine",
     "fetchError": "I couldn't generate a response. Please try again.",
     "retrySystemPrompt": "Repeat the reply using ONLY the valid JSON schema and nothing else."
+  },
+  "tutorial": {
+    "title": "Tutorials & Guides",
+    "subtitle": "Learn how to get the most out of WorkoutPilot",
+    "viewGuide": "View guide",
+    "startPracticing": "Start practicing",
+    "mediapipe": {
+      "title": "How Pose Detection Works",
+      "description": "Understand how AI detects your body movements and counts repetitions accurately",
+      "intro": "Pose detection is an advanced AI technology that tracks your body movements in real-time using your device's camera. It identifies 33 key points on your body to analyze your exercise form and count repetitions automatically.",
+      "howItWorks": {
+        "title": "How Does It Work?",
+        "description": "The system uses computer vision to detect and track body landmarks:",
+        "steps": {
+          "1": "The camera captures your movements in real-time",
+          "2": "AI identifies 33 body points (shoulders, elbows, hips, knees, etc.)",
+          "3": "The app calculates angles between joints to analyze movement",
+          "4": "When you complete a full range of motion, a repetition is counted"
+        }
+      },
+      "bestPractices": "Best Practices for Accurate Detection",
+      "positioning": {
+        "title": "Positioning Your Device",
+        "subtitle": "Proper camera placement is essential for accurate tracking",
+        "mobile": {
+          "title": "Mobile Device",
+          "description": "Place your phone on a stable surface or tripod at chest height, 6-8 feet away. Ensure your entire body is visible in the frame."
+        },
+        "laptop": {
+          "title": "Laptop/Webcam",
+          "description": "Position your laptop or external webcam at chest to head height. Step back until your full body fits in the frame (head to feet)."
+        }
+      },
+      "privacy": {
+        "title": "Your Privacy is Protected",
+        "description": "All pose detection happens directly on your device. No videos or images are sent to external servers. Your workout data stays completely private and secure."
+      },
+      "tips": {
+        "distance": {
+          "title": "Optimal Camera Distance",
+          "description": "Stand 6-8 feet (2-2.5 meters) away from your device. Your entire body should be visible in the frame from head to feet. Too close and the camera can't see your full movement; too far and detection becomes less accurate."
+        },
+        "positioning": {
+          "title": "Body Positioning",
+          "description": "Position yourself so your full body is visible. For exercises like squats or push-ups, ensure your head, torso, arms, and legs are all in frame. Turn sideways for better tracking of depth movements (like squats)."
+        },
+        "lighting": {
+          "title": "Good Lighting",
+          "description": "Exercise in a well-lit area. Natural light works best, but avoid direct sunlight or backlighting that creates shadows. The AI needs to clearly see your body outline and joints."
+        },
+        "clothing": {
+          "title": "Wear Fitted Clothing",
+          "description": "Wear form-fitting athletic wear. Baggy clothes can hide your body's movements and make it harder for the system to track joint positions accurately."
+        },
+        "background": {
+          "title": "Clear Background",
+          "description": "Choose a plain, uncluttered background. Avoid mirrors, busy patterns, or other people in the frame. A simple wall or open space works best for clear body detection."
+        },
+        "movement": {
+          "title": "Smooth, Controlled Movements",
+          "description": "Perform exercises with deliberate, controlled movements. Going too fast can cause the AI to miss the full range of motion. Quality over speed ensures accurate rep counting."
+        }
+      },
+      "commonIssues": {
+        "title": "Troubleshooting Common Issues",
+        "issues": {
+          "1": {
+            "problem": "Repetitions not counting",
+            "solution": "Ensure you're completing the full range of motion. Move slowly and deliberately through each rep. Check that your entire body is visible in the frame."
+          },
+          "2": {
+            "problem": "Detection is unstable or jumpy",
+            "solution": "Improve lighting conditions and move to a clearer background. Make sure you're at the right distance (6-8 feet) from the camera."
+          },
+          "3": {
+            "problem": "Body points not being detected",
+            "solution": "Wear more fitted clothing and ensure good lighting. Avoid positions where your body parts overlap or are hidden from the camera's view."
+          },
+          "4": {
+            "problem": "Counting extra reps or skipping reps",
+            "solution": "Slow down your movements and ensure each rep has a clear starting and ending position. Avoid bouncing or partial reps."
+          },
+          "5": {
+            "problem": "Camera not activating or showing permission error",
+            "mobileTitle": "Mobile",
+            "mobileSolution": "Go to Settings > WorkoutPilot > Permissions and enable camera access.",
+            "webTitle": "Web",
+            "webSolution": "When the browser requests camera access, select 'Allow'. If you already blocked it, click the lock/camera icon in the address bar and change the camera permission to 'Allow'."
+          }
+        }
+      }
+    },
+    "exercises": {
+      "title": "Exercise Execution Guide",
+      "description": "Master proper form and maximize rep counting accuracy for all exercises",
+      "intro": "Proper exercise execution is crucial for both your safety and accurate rep counting. This guide will help you understand how to perform exercises correctly so the system can track your movements effectively.",
+      "repCounting": {
+        "title": "How Reps Are Counted",
+        "description": "The system counts repetitions by analyzing joint angles and movement patterns:",
+        "steps": {
+          "1": "The starting position is detected (e.g., standing upright for squats, arms extended for push-ups)",
+          "2": "You move through the full range of motion to the bottom position",
+          "3": "You return to the starting position - this completes one repetition"
+        }
+      },
+      "guidelinesTitle": "General Exercise Guidelines",
+      "guidelines": {
+        "visibility": {
+          "title": "Keep All Body Parts Visible",
+          "description": "Ensure your head, torso, arms, and legs remain in the camera frame throughout the entire exercise. Stepping out of frame will interrupt tracking and may miss counting reps."
+        },
+        "tempo": {
+          "title": "Use Controlled Tempo",
+          "description": "Perform each repetition with a 2-second descent and 1-second ascent (2-0-1 tempo). This ensures the system has time to analyze your movement and count accurately. Rushing through reps reduces accuracy."
+        },
+        "form": {
+          "title": "Maintain Proper Form",
+          "description": "Focus on quality over quantity. Proper form not only prevents injury but also ensures the AI can clearly detect the full range of motion required to count a rep. Partial reps won't be counted."
+        },
+        "pauses": {
+          "title": "Pause at End Positions",
+          "description": "Briefly pause (0.5-1 second) at the top and bottom of each rep. This gives the system a clear signal that you've completed the movement and helps distinguish between reps."
+        }
+      },
+      "specificTips": {
+        "title": "Exercise-Specific Tips",
+        "squats": {
+          "title": "Squats",
+          "tips": {
+            "1": "Stand with feet shoulder-width apart, toes slightly pointed out",
+            "2": "Descend until thighs are parallel to the ground (90-degree knee bend)",
+            "3": "Keep your chest up and core engaged throughout the movement"
+          }
+        },
+        "pushups": {
+          "title": "Push-Ups",
+          "tips": {
+            "1": "Start in plank position with hands shoulder-width apart",
+            "2": "Lower your chest until arms form a 90-degree angle",
+            "3": "Keep your body in a straight line from head to heels - no sagging hips"
+          }
+        },
+        "lateralRaises": {
+          "title": "Lateral Raises",
+          "tips": {
+            "1": "Stand with arms at your sides, slight bend in elbows",
+            "2": "Raise arms until parallel to the floor (shoulder height)",
+            "3": "Control the descent - don't let gravity drop your arms"
+          }
+        },
+        "alternatingKneeRaises": {
+          "title": "Alternating Knee Raises",
+          "tips": {
+            "1": "Stand upright with feet hip-width apart",
+            "2": "Raise one knee to hip height (90 degrees), maintain balance",
+            "3": "Alternate legs in a controlled manner, avoid swaying"
+          }
+        },
+        "hammerCurls": {
+          "title": "Hammer Curls",
+          "tips": {
+            "1": "Stand with arms extended, palms facing each other (neutral grip)",
+            "2": "Bend elbows bringing hands toward shoulders",
+            "3": "Keep elbows close to your body throughout the movement"
+          }
+        },
+        "calfRaises": {
+          "title": "Calf Raises",
+          "tips": {
+            "1": "Stand with feet hip-width apart, weight on the balls of your feet",
+            "2": "Raise heels as high as possible, contract your calves",
+            "3": "Lower in a controlled manner until heels almost touch the ground"
+          }
+        },
+        "lunges": {
+          "title": "Lunges",
+          "tips": {
+            "1": "Take a large step forward, keep torso upright",
+            "2": "Lower until both knees form 90-degree angles",
+            "3": "Back knee nearly touches ground, front knee over ankle"
+          }
+        },
+        "standingChestFly": {
+          "title": "Standing Chest Fly",
+          "tips": {
+            "1": "Stand with arms extended in front, slight bend in elbows",
+            "2": "Open arms to the sides until you feel a stretch in your chest",
+            "3": "Return to starting position by bringing arms together in front"
+          }
+        },
+        "standingLegRaises": {
+          "title": "Standing Leg Raises",
+          "tips": {
+            "1": "Stand on one leg, keep core engaged for balance",
+            "2": "Raise extended leg forward to hip height",
+            "3": "Lower in a controlled manner without touching the ground between reps"
+          }
+        }
+      }
+    }
   }
 }
