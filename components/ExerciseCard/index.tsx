@@ -49,7 +49,7 @@ const ExerciseCard: React.FC<ExerciseCardProps> = ({
       >
         {/* Dark Gradient Overlay - More prominent for better text visibility */}
         <LinearGradient
-          colors={["rgba(0,0,0,0.85)", "rgba(0,0,0,0.3)", "rgba(0,0,0,0.85)"]}
+          colors={["rgba(0,0,0,0.4)", "rgba(0,0,0,0.2)", "rgba(0,0,0,0.3)"]}
           style={styles.gradient}
           pointerEvents="none"
         />

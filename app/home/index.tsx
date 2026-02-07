@@ -1,8 +1,6 @@
 import React from "react";
 import { YStack } from "tamagui";
 
-import ActivityHeatmap from "@/components/ActivityHeatmap";
-import { TAchievementCard } from "@/components/TAchievementCard";
 import { TNextActionCard } from "@/components/TNextActionCard";
 import { TPage } from "@/components/TPage";
 import { TStreakCard } from "@/components/TStreakCard";
@@ -14,8 +12,7 @@ import { useHomeStats } from "./hooks/useHomeStats";
 
 const HomeScreen: React.FC = () => {
   const { headerTitle, headerSubtitle } = useHome();
-  const { todayStats, streakInfo, nextAction, latestAchievement } =
-    useHomeStats();
+  const { todayStats, streakInfo, nextAction } = useHomeStats();
 
   return (
     <TPage scrollable backgroundColor="$background" hasHeader>
@@ -37,14 +34,6 @@ const HomeScreen: React.FC = () => {
         {streakInfo.currentStreak > 0 && (
           <TStreakCard streakInfo={streakInfo} />
         )}
-
-        {/* Latest Achievement */}
-        {latestAchievement && (
-          <TAchievementCard achievement={latestAchievement} />
-        )}
-
-        {/* Activity Heatmap */}
-        {streakInfo.activeDays.length > 0 && <ActivityHeatmap />}
       </YStack>
     </TPage>
   );

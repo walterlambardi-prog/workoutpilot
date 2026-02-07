@@ -3,7 +3,6 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { Platform, StyleSheet } from "react-native";
 
-import ActivityHeatmap from "@/components/ActivityHeatmap";
 import MapView from "@/components/MapView";
 import ScreenHeader from "@/components/ScreenHeader";
 import { TButton } from "@/components/TButton";
@@ -69,8 +68,6 @@ const SessionsScreen: React.FC = () => {
         title={t("sessions.title")}
         subtitle={isSyncing ? t("sync.status.syncing") : t("sessions.subtitle")}
       />
-
-      <ActivityHeatmap />
 
       <TGrid columns={3} gap="$3">
         {statHighlights.map((item) => (

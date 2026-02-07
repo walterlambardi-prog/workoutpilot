@@ -260,85 +260,9 @@ export const useHomeStats = () => {
     };
   }, [activeRoutine, lastCompletedRoutine, exerciseHistory, t]);
 
-  // Detect recent achievements
-  const latestAchievement = useMemo((): Achievement | null => {
-    const achievements: Achievement[] = [];
-
-    // Check for new personal records (most reps in a session)
-    if (exerciseHistory.length > 0) {
-      const sortedByReps = [...exerciseHistory].sort((a, b) => b.reps - a.reps);
-      const topSession = sortedByReps[0];
-
-      if (topSession && topSession.endedAt) {
-        const oneDayAgo = Date.now() - 24 * 60 * 60 * 1000;
-        if (topSession.endedAt >= oneDayAgo) {
-          achievements.push({
-            id: `record-${topSession.id}`,
-            type: "record",
-            title: t("home.achievement.personalRecordTitle"),
-            description: t("home.achievement.personalRecordDescription", {
-              reps: topSession.reps,
-              exerciseId: topSession.exerciseId,
-            }),
-            icon: "🏆",
-            timestamp: topSession.endedAt,
-          });
-        }
-      }
-    }
-
-    // Check for streak milestones
-    if (streakInfo.currentStreak >= 3 && streakInfo.currentStreak <= 7) {
-      achievements.push({
-        id: `streak-${streakInfo.currentStreak}`,
-        type: "streak",
-        title: t("home.achievement.streakTitle", {
-          count: streakInfo.currentStreak,
-        }),
-        description: t("home.achievement.streakDescriptionOnFire"),
-        icon: "🔥",
-        timestamp: Date.now(),
-      });
-    } else if (streakInfo.currentStreak >= 7) {
-      achievements.push({
-        id: `streak-${streakInfo.currentStreak}`,
-        type: "streak",
-        title: t("home.achievement.streakTitle", {
-          count: streakInfo.currentStreak,
-        }),
-        description: t("home.achievement.streakDescriptionIncredible"),
-        icon: "⭐",
-        timestamp: Date.now(),
-      });
-    }
-
-    // Check for total reps milestones
-    const totalAllTimeReps =
-      exerciseHistory.reduce((sum, session) => sum + session.reps, 0) +
-      routineHistory.reduce((sum, session) => sum + session.totalReps, 0);
-
-    const milestones = [100, 500, 1000, 5000, 10000];
-    for (const milestone of milestones) {
-      if (totalAllTimeReps >= milestone && totalAllTimeReps < milestone + 50) {
-        achievements.push({
-          id: `milestone-${milestone}`,
-          type: "milestone",
-          title: t("home.achievement.milestoneTitle", { count: milestone }),
-          description: t("home.achievement.milestoneDescription"),
-          icon: "💪",
-          timestamp: Date.now(),
-        });
-      }
-    }
-
-    // Return most recent
-    return achievements.length > 0 ? achievements[0] : null;
-  }, [exerciseHistory, routineHistory, streakInfo, t]);
-
   return {
     todayStats,
     streakInfo,
     nextAction,
-    latestAchievement,
   };
 };
