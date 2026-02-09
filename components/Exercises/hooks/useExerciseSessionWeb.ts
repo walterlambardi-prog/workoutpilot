@@ -20,7 +20,11 @@ export const useExerciseSessionWeb = ({
     canvasRef,
     startCamera,
     stopCamera,
-  } = useWebPoseDetection(exerciseId, routineContext?.stepIndex);
+  } = useWebPoseDetection(
+    exerciseId,
+    routineContext?.stepIndex,
+    routineContext,
+  );
 
   const { t } = useTranslation();
   const media = useMedia();
@@ -176,6 +180,25 @@ export const useExerciseSessionWeb = ({
   // Camera status
   const isCameraRunning = status === "running";
 
+  // Skip to next exercise (manual)
+  const handleSkipExercise = () => {
+    if (!routineIsActive || !routineOnComplete) return;
+    const currentReps = stats?.repCount ?? 0;
+    advanceRef.current = true;
+    routineOnComplete(currentReps);
+  };
+
+  // Finish entire routine (manual)
+  const handleFinishRoutine = () => {
+    if (!routineIsActive || !routineContext?.routineId) return;
+    stopCamera();
+    // Navigate to routine complete screen
+    // The useRoutineStep hook will handle the session completion
+    import("expo-router").then(({ router }) => {
+      router.replace("/routine/complete");
+    });
+  };
+
   return {
     // Camera
     status,
@@ -200,6 +223,9 @@ export const useExerciseSessionWeb = ({
     // Progress
     progress,
     routineIsActive,
+    hasNextExercise: !!routineContext?.nextExerciseId,
+    handleSkipExercise,
+    handleFinishRoutine,
 
     // Responsive
     media,

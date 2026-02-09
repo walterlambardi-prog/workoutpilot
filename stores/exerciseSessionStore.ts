@@ -29,7 +29,12 @@ interface ExerciseSessionState {
     routineId?: string | null;
     targetReps?: number | null;
   }) => void;
-  addRep: (exerciseId: ExerciseId, delta?: number) => void;
+  addRep: (
+    exerciseId: ExerciseId,
+    delta?: number,
+    routineId?: string | null,
+    targetReps?: number | null,
+  ) => void;
   endSession: () => void;
   resetHistory: () => void;
   loadHistoryFromSupabase: () => Promise<void>;
@@ -87,11 +92,11 @@ export const useExerciseSessionStore = createTyped<ExerciseSessionState>(
           };
         });
       },
-      addRep: (exerciseId, delta = 1) => {
+      addRep: (exerciseId, delta = 1, routineId = null, targetReps = null) => {
         const ensureSession = get().startSession;
         const current = get().currentSession;
         if (!current || current.exerciseId !== exerciseId) {
-          ensureSession({ exerciseId });
+          ensureSession({ exerciseId, routineId, targetReps });
         }
 
         const now = Date.now();

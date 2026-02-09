@@ -26,6 +26,7 @@ export const useExerciseSessionNative = ({
       exerciseId,
       t,
       resetKey: routineContext?.stepIndex,
+      routineContext,
     });
 
   const advanceRef = useRef(false);
@@ -149,7 +150,7 @@ export const useExerciseSessionNative = ({
     "text",
   );
   const cardBackground = useThemeColor(
-    { light: "#0b122066", dark: "rgba(15,23,42,0.45)" },
+    { light: "rgba(15,23,42,0.35)", dark: "rgba(15,23,42,0.45)" },
     "background",
   );
   const messageColor = useThemeColor(
@@ -226,6 +227,21 @@ export const useExerciseSessionNative = ({
     return t(`${nextKey}.title`);
   }, [routineContext?.nextExerciseId, t]);
 
+  // Skip to next exercise (manual)
+  const handleSkipExercise = () => {
+    if (!routineIsActive || !routineOnComplete) return;
+    const currentReps = repCount ?? 0;
+    advanceRef.current = true;
+    routineOnComplete(currentReps);
+  };
+
+  // Finish entire routine (manual)
+  const handleFinishRoutine = async () => {
+    if (!routineIsActive || !routineContext?.routineId) return;
+    const { router } = await import("expo-router");
+    router.replace("/routine/complete");
+  };
+
   return {
     // Camera state
     showCamera,
@@ -263,5 +279,8 @@ export const useExerciseSessionNative = ({
     // Progress
     routineProgress,
     nextExerciseTitle,
+    hasNextExercise: !!routineContext?.nextExerciseId,
+    handleSkipExercise,
+    handleFinishRoutine,
   };
 };

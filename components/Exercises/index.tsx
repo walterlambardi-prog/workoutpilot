@@ -23,10 +23,10 @@ export default function ExercisesNativeScreen(props: ExercisesProps) {
     cameraSessionKey,
     cameraWidth,
     cameraHeight,
-    messageKey,
-    feedback,
+    //messageKey,
+    //feedback,
     handleLandmark,
-    handleSwitchCamera,
+    //handleSwitchCamera,
     headerTitle,
     headerSubtitle,
     insets,
@@ -41,6 +41,9 @@ export default function ExercisesNativeScreen(props: ExercisesProps) {
     heroChips,
     routineProgress,
     nextExerciseTitle,
+    hasNextExercise,
+    handleSkipExercise,
+    handleFinishRoutine,
   } = useExerciseSessionNative(props);
 
   return (
@@ -181,12 +184,12 @@ export default function ExercisesNativeScreen(props: ExercisesProps) {
                 ]}
                 lightColor="transparent"
                 darkColor="transparent"
-                pointerEvents="none"
               >
                 <ThemedView
                   style={styles.progressHeader}
                   lightColor="transparent"
                   darkColor="transparent"
+                  pointerEvents="none"
                 >
                   <ThemedText
                     style={[styles.progressLabel, { color: overlayHeading }]}
@@ -202,11 +205,11 @@ export default function ExercisesNativeScreen(props: ExercisesProps) {
                     {Math.round(routineProgress.ratio * 100)}%
                   </ThemedText>
                 </ThemedView>
-
                 <ThemedView
                   style={styles.progressTrack}
                   lightColor="transparent"
                   darkColor="transparent"
+                  pointerEvents="none"
                 >
                   <ThemedView
                     style={[
@@ -220,22 +223,52 @@ export default function ExercisesNativeScreen(props: ExercisesProps) {
                     darkColor="transparent"
                   />
                 </ThemedView>
-
                 {nextExerciseTitle ? (
                   <ThemedText
                     style={[styles.nextExercise, { color: overlayMuted }]}
                     numberOfLines={1}
+                    pointerEvents="none"
                   >
                     {t("routineRun.nextExercise", {
                       exercise: nextExerciseTitle,
                     })}
                   </ThemedText>
                 ) : null}
+                {hasNextExercise ? (
+                  <ThemedView
+                    style={{ marginTop: 16 }}
+                    lightColor="transparent"
+                    darkColor="transparent"
+                  >
+                    <TButton
+                      variant="outline"
+                      onPress={handleSkipExercise}
+                      iconAfterName="arrow-forward"
+                      fullWidth
+                    >
+                      {t("routineRun.skipToNext")}
+                    </TButton>
+                  </ThemedView>
+                ) : null}
+                <ThemedView
+                  style={{ marginTop: 12 }}
+                  lightColor="transparent"
+                  darkColor="transparent"
+                >
+                  <TButton
+                    variant="destructive"
+                    onPress={handleFinishRoutine}
+                    iconName="checkmark-done"
+                    fullWidth
+                  >
+                    {t("routineRun.finishRoutine")}
+                  </TButton>
+                </ThemedView>{" "}
               </ThemedView>
             ) : null}
           </ThemedView>
 
-          <ThemedView
+          {/* <ThemedView
             style={[
               styles.bottomCard,
               { backgroundColor: cardBackground, borderColor: overlayBorder },
@@ -259,7 +292,7 @@ export default function ExercisesNativeScreen(props: ExercisesProps) {
             >
               {t("exercises.native.switchCamera.label")}
             </TButton>
-          </ThemedView>
+          </ThemedView> */}
         </ThemedView>
       </ThemedView>
     </ThemedView>

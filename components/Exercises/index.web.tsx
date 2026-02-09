@@ -2,6 +2,8 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { Button, Card, Separator, Text, Theme, XStack, YStack } from "tamagui";
 
+import { TButton } from "@/components/TButton";
+
 import type { ExercisesProps } from "./exercises.types";
 import { webMediaStyles } from "./exercises.web.styles";
 import { useExerciseSessionWeb } from "./hooks/useExerciseSessionWeb";
@@ -28,6 +30,9 @@ export default function ExercisesWebScreen(props: ExercisesProps) {
     heroChips,
     progress,
     routineIsActive,
+    hasNextExercise,
+    handleSkipExercise,
+    handleFinishRoutine,
     media,
     heroTitleSize,
     heroSubtitleSize,
@@ -289,6 +294,26 @@ export default function ExercisesWebScreen(props: ExercisesProps) {
                   ) : null}
                 </YStack>
               ) : null}
+
+              {hasNextExercise && (
+                <TButton
+                  variant="outline"
+                  onPress={handleSkipExercise}
+                  iconAfterName="arrow-forward"
+                  fullWidth
+                >
+                  {t("routineRun.skipToNext")}
+                </TButton>
+              )}
+
+              <TButton
+                variant="destructive"
+                onPress={handleFinishRoutine}
+                iconName="checkmark-done"
+                fullWidth
+              >
+                {t("routineRun.finishRoutine")}
+              </TButton>
             </YStack>
           )}
         </YStack>

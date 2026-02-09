@@ -391,7 +391,9 @@
       "step": "Step"
     },
     "progressLabel": "Progress: {{current}} / {{target}} reps",
-    "nextExercise": "Next: {{exercise}}"
+    "nextExercise": "Next: {{exercise}}",
+    "skipToNext": "Skip to next exercise",
+    "finishRoutine": "Finish routine"
   },
   "routineComplete": {
     "navTitle": "Routine complete",

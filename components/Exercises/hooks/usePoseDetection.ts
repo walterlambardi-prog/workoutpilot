@@ -6,7 +6,12 @@ import { useExerciseSessionStore } from "@/stores/exerciseSessionStore";
 import { ExerciseId } from "@/constants/exercises";
 
 import type { TFunction } from "i18next";
-import type { PoseLandmark, PoseMessageKey, Status } from "../exercises.types";
+import type {
+  PoseLandmark,
+  PoseMessageKey,
+  RoutineContext,
+  Status,
+} from "../exercises.types";
 import { useAlternatingKneeRaisesCounter } from "./useAlternatingKneeRaisesCounter";
 import { useCalfRaisesCounter } from "./useCalfRaisesCounter";
 import { useHammerCurlsCounter } from "./useHammerCurlsCounter";
@@ -23,8 +28,11 @@ export const usePoseDetection = (params: {
   exerciseId?: ExerciseId;
   t: TFunction;
   resetKey?: string | number;
+  routineContext?: RoutineContext;
 }) => {
-  const { exerciseId, t, resetKey } = params;
+  const { exerciseId, t, resetKey, routineContext } = params;
+  const routineId = routineContext?.routineId ?? null;
+  const targetReps = routineContext?.targetReps ?? null;
   const [status, setStatus] = useState<Status>("idle");
   const [messageKey, setMessageKey] = useState<PoseMessageKey>("cameraReady");
   const [poseCount, setPoseCount] = useState(0);
@@ -150,7 +158,7 @@ export const usePoseDetection = (params: {
               if (stableRep > prev) {
                 useExerciseSessionStore
                   .getState()
-                  .addRep(exerciseId, stableRep - prev);
+                  .addRep(exerciseId, stableRep - prev, routineId, targetReps);
                 reportedRepRef.current = stableRep;
               }
             }
@@ -168,7 +176,7 @@ export const usePoseDetection = (params: {
               if (stableRep > prev) {
                 useExerciseSessionStore
                   .getState()
-                  .addRep(exerciseId, stableRep - prev);
+                  .addRep(exerciseId, stableRep - prev, routineId, targetReps);
                 reportedRepRef.current = stableRep;
               }
             }
@@ -186,7 +194,7 @@ export const usePoseDetection = (params: {
               if (stableRep > prev) {
                 useExerciseSessionStore
                   .getState()
-                  .addRep(exerciseId, stableRep - prev);
+                  .addRep(exerciseId, stableRep - prev, routineId, targetReps);
                 reportedRepRef.current = stableRep;
               }
             }
@@ -204,7 +212,7 @@ export const usePoseDetection = (params: {
               if (stableRep > prev) {
                 useExerciseSessionStore
                   .getState()
-                  .addRep(exerciseId, stableRep - prev);
+                  .addRep(exerciseId, stableRep - prev, routineId, targetReps);
                 reportedRepRef.current = stableRep;
               }
             }
@@ -222,7 +230,7 @@ export const usePoseDetection = (params: {
               if (stableRep > prev) {
                 useExerciseSessionStore
                   .getState()
-                  .addRep(exerciseId, stableRep - prev);
+                  .addRep(exerciseId, stableRep - prev, routineId, targetReps);
                 reportedRepRef.current = stableRep;
               }
             }
@@ -240,7 +248,7 @@ export const usePoseDetection = (params: {
               if (stableRep > prev) {
                 useExerciseSessionStore
                   .getState()
-                  .addRep(exerciseId, stableRep - prev);
+                  .addRep(exerciseId, stableRep - prev, routineId, targetReps);
                 reportedRepRef.current = stableRep;
               }
             }
@@ -258,7 +266,7 @@ export const usePoseDetection = (params: {
               if (stableRep > prev) {
                 useExerciseSessionStore
                   .getState()
-                  .addRep(exerciseId, stableRep - prev);
+                  .addRep(exerciseId, stableRep - prev, routineId, targetReps);
                 reportedRepRef.current = stableRep;
               }
             }
@@ -276,7 +284,7 @@ export const usePoseDetection = (params: {
               if (stableRep > prev) {
                 useExerciseSessionStore
                   .getState()
-                  .addRep(exerciseId, stableRep - prev);
+                  .addRep(exerciseId, stableRep - prev, routineId, targetReps);
                 reportedRepRef.current = stableRep;
               }
             }
@@ -296,7 +304,7 @@ export const usePoseDetection = (params: {
               if (stableRep > prev) {
                 useExerciseSessionStore
                   .getState()
-                  .addRep(exerciseId, stableRep - prev);
+                  .addRep(exerciseId, stableRep - prev, routineId, targetReps);
                 reportedRepRef.current = stableRep;
               }
             }
@@ -314,7 +322,7 @@ export const usePoseDetection = (params: {
               if (stableRep > prev) {
                 useExerciseSessionStore
                   .getState()
-                  .addRep(exerciseId, stableRep - prev);
+                  .addRep(exerciseId, stableRep - prev, routineId, targetReps);
                 reportedRepRef.current = stableRep;
               }
             }
@@ -332,7 +340,7 @@ export const usePoseDetection = (params: {
               if (stableRep > prev) {
                 useExerciseSessionStore
                   .getState()
-                  .addRep(exerciseId, stableRep - prev);
+                  .addRep(exerciseId, stableRep - prev, routineId, targetReps);
                 reportedRepRef.current = stableRep;
               }
             }
@@ -350,7 +358,7 @@ export const usePoseDetection = (params: {
               if (stableRep > prev) {
                 useExerciseSessionStore
                   .getState()
-                  .addRep(exerciseId, stableRep - prev);
+                  .addRep(exerciseId, stableRep - prev, routineId, targetReps);
                 reportedRepRef.current = stableRep;
               }
             }
@@ -368,7 +376,7 @@ export const usePoseDetection = (params: {
               if (stableRep > prev) {
                 useExerciseSessionStore
                   .getState()
-                  .addRep(exerciseId, stableRep - prev);
+                  .addRep(exerciseId, stableRep - prev, routineId, targetReps);
                 reportedRepRef.current = stableRep;
               }
             }
@@ -386,7 +394,7 @@ export const usePoseDetection = (params: {
               if (stableRep > prev) {
                 useExerciseSessionStore
                   .getState()
-                  .addRep(exerciseId, stableRep - prev);
+                  .addRep(exerciseId, stableRep - prev, routineId, targetReps);
                 reportedRepRef.current = stableRep;
               }
             }
@@ -407,9 +415,11 @@ export const usePoseDetection = (params: {
       hammerCurls,
       lateralRaises,
       lunges,
+      routineId,
       squats,
       standingChestFly,
       standingLegRaises,
+      targetReps,
     ],
   );
 

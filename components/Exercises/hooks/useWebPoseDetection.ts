@@ -14,6 +14,7 @@ import type {
   MediaPipeResult,
   PoseMessageKey,
   PoseStats,
+  RoutineContext,
   Status,
 } from "../exercises.types";
 import { useAlternatingKneeRaisesCounter } from "./useAlternatingKneeRaisesCounter";
@@ -32,6 +33,7 @@ import { useStandingLegRaisesCounter } from "./useStandingLegRaisesCounter";
 export const useWebPoseDetection = (
   exerciseId?: ExerciseId,
   resetKey?: string | number,
+  routineContext?: RoutineContext,
 ) => {
   const [status, setStatus] = useState<Status>("idle");
   const [messageKey, setMessageKey] =
@@ -49,6 +51,10 @@ export const useWebPoseDetection = (
   const standingChestFly = useStandingChestFlyCounter(t);
   const standingLegRaises = useStandingLegRaisesCounter(t);
   const reportedRepRef = useRef(0);
+
+  // Extract routine context for session tracking
+  const routineId = routineContext?.routineId ?? null;
+  const targetReps = routineContext?.targetReps ?? null;
 
   const poseRef = useRef<any>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -128,7 +134,7 @@ export const useWebPoseDetection = (
             if (stableRep > prev) {
               useExerciseSessionStore
                 .getState()
-                .addRep(exerciseId, stableRep - prev);
+                .addRep(exerciseId, stableRep - prev, routineId, targetReps);
               reportedRepRef.current = stableRep;
             }
           }
@@ -148,7 +154,7 @@ export const useWebPoseDetection = (
             if (stableRep > prev) {
               useExerciseSessionStore
                 .getState()
-                .addRep(exerciseId, stableRep - prev);
+                .addRep(exerciseId, stableRep - prev, routineId, targetReps);
               reportedRepRef.current = stableRep;
             }
           }
@@ -168,7 +174,7 @@ export const useWebPoseDetection = (
             if (stableRep > prev) {
               useExerciseSessionStore
                 .getState()
-                .addRep(exerciseId, stableRep - prev);
+                .addRep(exerciseId, stableRep - prev, routineId, targetReps);
               reportedRepRef.current = stableRep;
             }
           }
@@ -188,7 +194,7 @@ export const useWebPoseDetection = (
             if (stableRep > prev) {
               useExerciseSessionStore
                 .getState()
-                .addRep(exerciseId, stableRep - prev);
+                .addRep(exerciseId, stableRep - prev, routineId, targetReps);
               reportedRepRef.current = stableRep;
             }
           }
@@ -208,7 +214,7 @@ export const useWebPoseDetection = (
             if (stableRep > prev) {
               useExerciseSessionStore
                 .getState()
-                .addRep(exerciseId, stableRep - prev);
+                .addRep(exerciseId, stableRep - prev, routineId, targetReps);
               reportedRepRef.current = stableRep;
             }
           }
@@ -228,7 +234,7 @@ export const useWebPoseDetection = (
             if (stableRep > prev) {
               useExerciseSessionStore
                 .getState()
-                .addRep(exerciseId, stableRep - prev);
+                .addRep(exerciseId, stableRep - prev, routineId, targetReps);
               reportedRepRef.current = stableRep;
             }
           }
@@ -248,7 +254,7 @@ export const useWebPoseDetection = (
             if (stableRep > prev) {
               useExerciseSessionStore
                 .getState()
-                .addRep(exerciseId, stableRep - prev);
+                .addRep(exerciseId, stableRep - prev, routineId, targetReps);
               reportedRepRef.current = stableRep;
             }
           }
@@ -268,7 +274,7 @@ export const useWebPoseDetection = (
             if (stableRep > prev) {
               useExerciseSessionStore
                 .getState()
-                .addRep(exerciseId, stableRep - prev);
+                .addRep(exerciseId, stableRep - prev, routineId, targetReps);
               reportedRepRef.current = stableRep;
             }
           }
@@ -293,7 +299,7 @@ export const useWebPoseDetection = (
             if (stableRep > prev) {
               useExerciseSessionStore
                 .getState()
-                .addRep(exerciseId, stableRep - prev);
+                .addRep(exerciseId, stableRep - prev, routineId, targetReps);
               reportedRepRef.current = stableRep;
             }
           }
@@ -313,7 +319,7 @@ export const useWebPoseDetection = (
             if (stableRep > prev) {
               useExerciseSessionStore
                 .getState()
-                .addRep(exerciseId, stableRep - prev);
+                .addRep(exerciseId, stableRep - prev, routineId, targetReps);
               reportedRepRef.current = stableRep;
             }
           }
@@ -333,7 +339,7 @@ export const useWebPoseDetection = (
             if (stableRep > prev) {
               useExerciseSessionStore
                 .getState()
-                .addRep(exerciseId, stableRep - prev);
+                .addRep(exerciseId, stableRep - prev, routineId, targetReps);
               reportedRepRef.current = stableRep;
             }
           }
@@ -353,7 +359,7 @@ export const useWebPoseDetection = (
             if (stableRep > prev) {
               useExerciseSessionStore
                 .getState()
-                .addRep(exerciseId, stableRep - prev);
+                .addRep(exerciseId, stableRep - prev, routineId, targetReps);
               reportedRepRef.current = stableRep;
             }
           }
@@ -373,7 +379,7 @@ export const useWebPoseDetection = (
             if (stableRep > prev) {
               useExerciseSessionStore
                 .getState()
-                .addRep(exerciseId, stableRep - prev);
+                .addRep(exerciseId, stableRep - prev, routineId, targetReps);
               reportedRepRef.current = stableRep;
             }
           }
@@ -393,7 +399,7 @@ export const useWebPoseDetection = (
             if (stableRep > prev) {
               useExerciseSessionStore
                 .getState()
-                .addRep(exerciseId, stableRep - prev);
+                .addRep(exerciseId, stableRep - prev, routineId, targetReps);
               reportedRepRef.current = stableRep;
             }
           }
@@ -418,9 +424,11 @@ export const useWebPoseDetection = (
     hammerCurls,
     lateralRaises,
     lunges,
+    routineId,
     squats,
     standingChestFly,
     standingLegRaises,
+    targetReps,
   ]);
 
   const startCamera = useCallback(async () => {

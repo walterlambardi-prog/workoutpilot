@@ -10,7 +10,6 @@ import {
     XStack,
     YStack,
     useMedia,
-    useTheme,
 } from "tamagui";
 
 import { TButton } from "@/components/TButton";
@@ -21,7 +20,6 @@ import { Spacing } from "@/constants/theme";
 const ExercisesTutorialScreen: React.FC = () => {
   const { t } = useTranslation();
   const router = useRouter();
-  const theme = useTheme();
   const media = useMedia();
 
   const guidelines = [
