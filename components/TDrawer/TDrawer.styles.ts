@@ -1,8 +1,10 @@
+import { Layout } from "@/constants/theme";
 import {
-    Platform,
-    PressableStateCallbackType,
-    StyleSheet,
-    ViewStyle,
+  Dimensions,
+  Platform,
+  PressableStateCallbackType,
+  StyleSheet,
+  ViewStyle,
 } from "react-native";
 
 const drawerPanelBase: ViewStyle = {
@@ -14,6 +16,19 @@ export const drawerStyles = StyleSheet.create({
   backdrop: {
     flex: 1,
     backgroundColor: "rgba(0, 0, 0, 0.5)",
+    flexDirection: "row",
+  },
+  // Web: backdrop with centered content area
+  backdropWeb: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    alignItems: "center",
+  },
+  // Web: container respecting maxContentWidth
+  webContentContainer: {
+    width: "100%",
+    maxWidth: Layout.maxContentWidth,
+    height: "100%",
     flexDirection: "row",
   },
   closeButton: {
@@ -31,10 +46,21 @@ export const drawerStyles = StyleSheet.create({
   },
 });
 
-export const getDrawerPanelStyle = (): ViewStyle => ({
-  ...drawerPanelBase,
-  width: Platform.OS === "web" ? 320 : "80%",
-});
+export const getDrawerPanelStyle = (): ViewStyle => {
+  if (Platform.OS === "web") {
+    const screenWidth = Dimensions.get("window").width;
+    const contentWidth = Math.min(screenWidth, Layout.maxContentWidth);
+    return {
+      ...drawerPanelBase,
+      width: Math.min(320, contentWidth * 0.35), // Max 35% of content area or 320px
+    };
+  }
+
+  return {
+    ...drawerPanelBase,
+    width: "80%",
+  };
+};
 
 export const getCloseButtonStyle = ({
   pressed,

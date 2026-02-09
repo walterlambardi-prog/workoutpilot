@@ -3,7 +3,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { usePathname, useRouter } from "expo-router";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Modal, Pressable } from "react-native";
+import { Modal, Platform, Pressable, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ScrollView, Separator, XStack, YStack, useTheme } from "tamagui";
 
@@ -108,6 +108,8 @@ export const TDrawer: React.FC<TDrawerProps> = ({ isOpen, onClose }) => {
     }
   };
 
+  const isWeb = Platform.OS === "web";
+
   return (
     <Modal
       visible={isOpen}
@@ -116,142 +118,292 @@ export const TDrawer: React.FC<TDrawerProps> = ({ isOpen, onClose }) => {
       onRequestClose={onClose}
     >
       {/* Backdrop */}
-      <Pressable style={drawerStyles.backdrop} onPress={onClose}>
-        {/* Drawer panel */}
-        <Pressable
-          style={getDrawerPanelStyle()}
-          onPress={(e) => e.stopPropagation()}
-        >
-          <YStack
-            flex={1}
-            backgroundColor="$background"
-            paddingTop={insets.top + 16}
-            paddingBottom={insets.bottom}
-            borderRightWidth={1}
-            borderRightColor="$borderColor"
-          >
-            {/* Header */}
-            <XStack
-              paddingHorizontal="$4"
-              paddingBottom="$4"
-              alignItems="center"
-              justifyContent="space-between"
-              borderBottomWidth={1}
-              borderBottomColor="$borderColor"
+      <Pressable
+        style={isWeb ? drawerStyles.backdropWeb : drawerStyles.backdrop}
+        onPress={onClose}
+      >
+        {/* Web: Centered content container */}
+        {isWeb ? (
+          <View style={drawerStyles.webContentContainer}>
+            {/* Drawer panel */}
+            <Pressable
+              style={getDrawerPanelStyle()}
+              onPress={(e) => e.stopPropagation()}
             >
-              <THeading level={2}>{t("drawer.title")}</THeading>
-              <Pressable onPress={onClose} style={getCloseButtonStyle}>
-                <Ionicons name="close" size={28} color={iconColor} />
-              </Pressable>
-            </XStack>
-
-            {/* Navigation items */}
-            <ScrollView flex={1}>
-              <YStack paddingVertical="$2">
-                {drawerItems.map((item) =>
-                  (() => {
-                    const isActive =
-                      pathname === item.href ||
-                      (item.href !== "/" &&
-                        pathname.startsWith(`${item.href}/`));
-                    const itemIconColor = isActive ? iconColor : item.color;
-
-                    return (
-                      <Pressable
-                        key={item.key}
-                        onPress={() => handleNavigate(item.href)}
-                        style={(state) =>
-                          getNavItemPressableStyle(state, isActive)
-                        }
-                      >
-                        <XStack
-                          paddingHorizontal="$4"
-                          paddingVertical="$3"
-                          gap="$3"
-                          alignItems="center"
-                          backgroundColor={
-                            isActive ? "$backgroundHover" : undefined
-                          }
-                          borderLeftWidth={isActive ? 3 : 0}
-                          borderLeftColor={isActive ? "$primary" : undefined}
-                          hoverStyle={{
-                            backgroundColor: "$backgroundHover",
-                          }}
-                        >
-                          {/* Icon */}
-                          <YStack
-                            width={48}
-                            height={48}
-                            borderRadius="$3"
-                            {...{ backgroundColor: `${item.color}15` as any }}
-                            alignItems="center"
-                            justifyContent="center"
-                          >
-                            <Ionicons
-                              name={item.icon as any}
-                              size={24}
-                              color={itemIconColor}
-                            />
-                          </YStack>
-
-                          {/* Text */}
-                          <YStack flex={1}>
-                            <THeading level={4} fontSize="$4">
-                              {t(`home.actions.${item.key}.title`)}
-                            </THeading>
-                          </YStack>
-                        </XStack>
-                      </Pressable>
-                    );
-                  })(),
-                )}
-              </YStack>
-            </ScrollView>
-
-            {/* Logout button */}
-            <YStack paddingHorizontal="$4" paddingVertical="$3">
-              <Separator borderColor="$borderColor" />
-              <Pressable
-                onPress={handleLogout}
-                style={(state) => getNavItemPressableStyle(state, false)}
+              <YStack
+                flex={1}
+                backgroundColor="$background"
+                paddingTop={insets.top + 16}
+                paddingBottom={insets.bottom}
+                borderRightWidth={1}
+                borderRightColor="$borderColor"
               >
+                {/* Header */}
                 <XStack
                   paddingHorizontal="$4"
-                  paddingVertical="$3"
-                  gap="$3"
+                  paddingBottom="$4"
                   alignItems="center"
-                  marginTop="$2"
-                  hoverStyle={{
-                    backgroundColor: "$backgroundHover",
-                  }}
+                  justifyContent="space-between"
+                  borderBottomWidth={1}
+                  borderBottomColor="$borderColor"
                 >
-                  {/* Icon */}
-                  <YStack
-                    width={48}
-                    height={48}
-                    borderRadius="$3"
-                    backgroundColor="#EF444415"
-                    alignItems="center"
-                    justifyContent="center"
-                  >
-                    <Ionicons
-                      name="log-out-outline"
-                      size={24}
-                      color="#EF4444"
-                    />
-                  </YStack>
-
-                  {/* Text */}
-                  <YStack flex={1}>
-                    <THeading level={4} fontSize="$4" color="#EF4444">
-                      {t("drawer.logout")}
-                    </THeading>
-                  </YStack>
+                  <THeading level={2}>{t("drawer.title")}</THeading>
+                  <Pressable onPress={onClose} style={getCloseButtonStyle}>
+                    <Ionicons name="close" size={28} color={iconColor} />
+                  </Pressable>
                 </XStack>
-              </Pressable>
+
+                {/* Navigation items */}
+                <ScrollView flex={1}>
+                  <YStack paddingVertical="$2">
+                    {drawerItems.map((item) =>
+                      (() => {
+                        const isActive =
+                          pathname === item.href ||
+                          (item.href !== "/" &&
+                            pathname.startsWith(`${item.href}/`));
+                        const itemIconColor = isActive ? iconColor : item.color;
+
+                        return (
+                          <Pressable
+                            key={item.key}
+                            onPress={() => handleNavigate(item.href)}
+                            style={(state) =>
+                              getNavItemPressableStyle(state, isActive)
+                            }
+                          >
+                            <XStack
+                              paddingHorizontal="$4"
+                              paddingVertical="$3"
+                              gap="$3"
+                              alignItems="center"
+                              backgroundColor={
+                                isActive ? "$backgroundHover" : undefined
+                              }
+                              borderLeftWidth={isActive ? 3 : 0}
+                              borderLeftColor={
+                                isActive ? "$primary" : undefined
+                              }
+                              hoverStyle={{
+                                backgroundColor: "$backgroundHover",
+                              }}
+                            >
+                              {/* Icon */}
+                              <YStack
+                                width={48}
+                                height={48}
+                                borderRadius="$3"
+                                {...{
+                                  backgroundColor: `${item.color}15` as any,
+                                }}
+                                alignItems="center"
+                                justifyContent="center"
+                              >
+                                <Ionicons
+                                  name={item.icon as any}
+                                  size={24}
+                                  color={itemIconColor}
+                                />
+                              </YStack>
+
+                              {/* Text */}
+                              <YStack flex={1}>
+                                <THeading level={4} fontSize="$4">
+                                  {t(`home.actions.${item.key}.title`)}
+                                </THeading>
+                              </YStack>
+                            </XStack>
+                          </Pressable>
+                        );
+                      })(),
+                    )}
+                  </YStack>
+                </ScrollView>
+
+                {/* Logout button */}
+                <YStack paddingHorizontal="$4" paddingVertical="$3">
+                  <Separator borderColor="$borderColor" />
+                  <Pressable
+                    onPress={handleLogout}
+                    style={(state) => getNavItemPressableStyle(state, false)}
+                  >
+                    <XStack
+                      paddingHorizontal="$4"
+                      paddingVertical="$3"
+                      gap="$3"
+                      alignItems="center"
+                      marginTop="$2"
+                      hoverStyle={{
+                        backgroundColor: "$backgroundHover",
+                      }}
+                    >
+                      {/* Icon */}
+                      <YStack
+                        width={48}
+                        height={48}
+                        borderRadius="$3"
+                        backgroundColor="#EF444415"
+                        alignItems="center"
+                        justifyContent="center"
+                      >
+                        <Ionicons
+                          name="log-out-outline"
+                          size={24}
+                          color="#EF4444"
+                        />
+                      </YStack>
+
+                      {/* Text */}
+                      <YStack flex={1}>
+                        <THeading level={4} fontSize="$4" color="#EF4444">
+                          {t("drawer.logout")}
+                        </THeading>
+                      </YStack>
+                    </XStack>
+                  </Pressable>
+                </YStack>
+              </YStack>
+            </Pressable>
+          </View>
+        ) : (
+          /* Mobile: Standard side drawer */
+          <Pressable
+            style={getDrawerPanelStyle()}
+            onPress={(e) => e.stopPropagation()}
+          >
+            <YStack
+              flex={1}
+              backgroundColor="$background"
+              paddingTop={insets.top + 16}
+              paddingBottom={insets.bottom}
+              borderRightWidth={1}
+              borderRightColor="$borderColor"
+            >
+              {/* Header */}
+              <XStack
+                paddingHorizontal="$4"
+                paddingBottom="$4"
+                alignItems="center"
+                justifyContent="space-between"
+                borderBottomWidth={1}
+                borderBottomColor="$borderColor"
+              >
+                <THeading level={2}>{t("drawer.title")}</THeading>
+                <Pressable onPress={onClose} style={getCloseButtonStyle}>
+                  <Ionicons name="close" size={28} color={iconColor} />
+                </Pressable>
+              </XStack>
+
+              {/* Navigation items */}
+              <ScrollView flex={1}>
+                <YStack paddingVertical="$2">
+                  {drawerItems.map((item) =>
+                    (() => {
+                      const isActive =
+                        pathname === item.href ||
+                        (item.href !== "/" &&
+                          pathname.startsWith(`${item.href}/`));
+                      const itemIconColor = isActive ? iconColor : item.color;
+
+                      return (
+                        <Pressable
+                          key={item.key}
+                          onPress={() => handleNavigate(item.href)}
+                          style={(state) =>
+                            getNavItemPressableStyle(state, isActive)
+                          }
+                        >
+                          <XStack
+                            paddingHorizontal="$4"
+                            paddingVertical="$3"
+                            gap="$3"
+                            alignItems="center"
+                            backgroundColor={
+                              isActive ? "$backgroundHover" : undefined
+                            }
+                            borderLeftWidth={isActive ? 3 : 0}
+                            borderLeftColor={isActive ? "$primary" : undefined}
+                            hoverStyle={{
+                              backgroundColor: "$backgroundHover",
+                            }}
+                          >
+                            {/* Icon */}
+                            <YStack
+                              width={48}
+                              height={48}
+                              borderRadius="$3"
+                              {...{
+                                backgroundColor: `${item.color}15` as any,
+                              }}
+                              alignItems="center"
+                              justifyContent="center"
+                            >
+                              <Ionicons
+                                name={item.icon as any}
+                                size={24}
+                                color={itemIconColor}
+                              />
+                            </YStack>
+
+                            {/* Text */}
+                            <YStack flex={1}>
+                              <THeading level={4} fontSize="$4">
+                                {t(`home.actions.${item.key}.title`)}
+                              </THeading>
+                            </YStack>
+                          </XStack>
+                        </Pressable>
+                      );
+                    })(),
+                  )}
+                </YStack>
+              </ScrollView>
+
+              {/* Logout button */}
+              <YStack paddingVertical="$3">
+                <Separator borderColor="$borderColor" />
+                <Pressable
+                  onPress={handleLogout}
+                  style={(state) => getNavItemPressableStyle(state, false)}
+                >
+                  <XStack
+                    paddingHorizontal="$4"
+                    paddingVertical="$3"
+                    gap="$3"
+                    alignItems="center"
+                    marginTop="$2"
+                    hoverStyle={{
+                      backgroundColor: "$backgroundHover",
+                    }}
+                  >
+                    {/* Icon */}
+                    <YStack
+                      width={48}
+                      height={48}
+                      borderRadius="$3"
+                      backgroundColor="#EF444415"
+                      alignItems="center"
+                      justifyContent="center"
+                    >
+                      <Ionicons
+                        name="log-out-outline"
+                        size={24}
+                        color="#EF4444"
+                      />
+                    </YStack>
+
+                    {/* Text */}
+                    <YStack flex={1}>
+                      <THeading level={4} fontSize="$4" color="#EF4444">
+                        {t("drawer.logout")}
+                      </THeading>
+                    </YStack>
+                  </XStack>
+                </Pressable>
+              </YStack>
             </YStack>
-          </YStack>
-        </Pressable>
+          </Pressable>
+        )}
       </Pressable>
     </Modal>
   );

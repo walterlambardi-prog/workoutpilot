@@ -58,6 +58,14 @@ export const TAppHeader: React.FC<TAppHeaderProps> = ({
       }
     : {};
 
+  // Responsive padding
+  const horizontalPadding = media.gtMd ? "$6" : "$4";
+
+  // Responsive sizes
+  const avatarSize = media.gtSm ? 44 : 40;
+  const iconSize = media.gtSm ? 22 : 20;
+  const menuIconSize = media.gtSm ? 28 : 24;
+
   const handleMenuPress = () => {
     if (drawerState) {
       drawerState.open();
@@ -92,11 +100,15 @@ export const TAppHeader: React.FC<TAppHeaderProps> = ({
         backgroundColor="$background"
         borderBottomWidth={1}
         borderBottomColor="$borderColor"
+        $gtMd={{
+          paddingBottom: "$5",
+        }}
       >
         <XStack
-          paddingHorizontal="$4"
+          paddingHorizontal={horizontalPadding}
           alignItems="center"
           justifyContent="space-between"
+          width="100%"
           style={headerContentStyle}
         >
           {/* Left side */}
@@ -107,9 +119,9 @@ export const TAppHeader: React.FC<TAppHeaderProps> = ({
             <XStack gap="$3" alignItems="center" flex={1} minWidth={0}>
               {/* User avatar/icon */}
               <YStack
-                width={44}
-                height={44}
-                borderRadius={22}
+                width={avatarSize}
+                height={avatarSize}
+                borderRadius={avatarSize / 2}
                 backgroundColor="$backgroundHover"
                 alignItems="center"
                 justifyContent="center"
@@ -117,20 +129,26 @@ export const TAppHeader: React.FC<TAppHeaderProps> = ({
                 borderColor="$background"
                 style={avatarShadowStyle}
               >
-                <Ionicons name="person" size={22} color={iconColor} />
+                <Ionicons name="person" size={iconSize} color={iconColor} />
               </YStack>
 
               {/* Username */}
-              <YStack flex={1}>
+              <YStack flex={1} minWidth={0}>
                 <TText
                   fontSize="$3"
                   variant="caption"
                   opacity={0.6}
                   color="$color"
+                  display={media.xs ? "none" : "flex"}
+                  $gtSm={{ display: "flex" }}
                 >
                   {t("header.welcome")}
                 </TText>
-                <TText fontSize="$5" numberOfLines={1} color="$color">
+                <TText
+                  fontSize={media.gtSm ? "$5" : "$4"}
+                  numberOfLines={1}
+                  color="$color"
+                >
                   {t("header.greeting", {
                     name: username || t("header.defaultUser"),
                   })}
@@ -142,7 +160,7 @@ export const TAppHeader: React.FC<TAppHeaderProps> = ({
           {/* Right side: Menu button */}
           {showMenuButton && (
             <Pressable onPress={handleMenuPress} style={getMenuButtonStyle}>
-              <Ionicons name="menu" size={28} color={iconColor} />
+              <Ionicons name="menu" size={menuIconSize} color={iconColor} />
             </Pressable>
           )}
         </XStack>
