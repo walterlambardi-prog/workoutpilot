@@ -4,6 +4,7 @@ import type { SpaceTokens } from "tamagui";
 import { useMedia } from "tamagui";
 
 import { EXERCISE_COPY_KEYS } from "@/constants/exercises";
+import { useRoutineSessionStore } from "@/stores/routineSessionStore";
 
 import type { ExercisesProps } from "../exercises.types";
 import { useWebPoseDetection } from "./useWebPoseDetection";
@@ -192,8 +193,21 @@ export const useExerciseSessionWeb = ({
   const handleFinishRoutine = () => {
     if (!routineIsActive || !routineContext?.routineId) return;
     stopCamera();
+
+    // Complete all remaining exercises with 0 reps
+    const { activeSession } = useRoutineSessionStore.getState();
+    if (activeSession) {
+      const remainingSteps =
+        activeSession.plan.length - activeSession.currentStepIndex;
+
+      // Complete each remaining step (including current) with 0 reps
+      for (let i = 0; i < remainingSteps; i++) {
+        const { completeCurrentStep } = useRoutineSessionStore.getState();
+        completeCurrentStep({ repsOverride: 0 });
+      }
+    }
+
     // Navigate to routine complete screen
-    // The useRoutineStep hook will handle the session completion
     import("expo-router").then(({ router }) => {
       router.replace("/routine/complete");
     });

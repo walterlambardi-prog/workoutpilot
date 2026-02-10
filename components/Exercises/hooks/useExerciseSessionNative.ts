@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { EXERCISE_COPY_KEYS } from "@/constants/exercises";
 import { useThemeColor } from "@/hooks/useThemeColor";
+import { useRoutineSessionStore } from "@/stores/routineSessionStore";
 
 import { CAMERA_HEIGHT, CAMERA_WIDTH } from "../exercises.constants";
 import type { ExercisesProps } from "../exercises.types";
@@ -238,6 +239,20 @@ export const useExerciseSessionNative = ({
   // Finish entire routine (manual)
   const handleFinishRoutine = async () => {
     if (!routineIsActive || !routineContext?.routineId) return;
+
+    // Complete all remaining exercises with 0 reps
+    const { activeSession } = useRoutineSessionStore.getState();
+    if (activeSession) {
+      const remainingSteps =
+        activeSession.plan.length - activeSession.currentStepIndex;
+
+      // Complete each remaining step (including current) with 0 reps
+      for (let i = 0; i < remainingSteps; i++) {
+        const { completeCurrentStep } = useRoutineSessionStore.getState();
+        completeCurrentStep({ repsOverride: 0 });
+      }
+    }
+
     const { router } = await import("expo-router");
     router.replace("/routine/complete");
   };

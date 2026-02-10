@@ -6,7 +6,12 @@ import { useMedia, useTheme } from "tamagui";
 
 import { EXERCISE_DEFINITIONS } from "@/app/exercises/exercises.data";
 import type { RoutineExerciseListItem } from "@/app/routine/routine.types";
-import { ROUTINE_ALLOWED_EXERCISES } from "@/constants/exercises";
+import {
+  CATEGORY_ORDER,
+  EXERCISE_CATEGORIES,
+  type ExerciseCategory,
+  ROUTINE_ALLOWED_EXERCISES,
+} from "@/constants/exercises";
 import {
   ROUTINE_DEFAULT_REPS,
   useRoutineBuilderStore,
@@ -36,19 +41,52 @@ export const useRoutineBuilder = () => {
     (state) => state.startSession,
   );
 
-  const exerciseList = useMemo<RoutineExerciseListItem[]>(
-    () =>
-      EXERCISE_DEFINITIONS.filter(({ id }) =>
-        ROUTINE_ALLOWED_EXERCISES.includes(id),
-      ).map(({ id, copyKey, image }) => ({
+  const exerciseList = useMemo<RoutineExerciseListItem[]>(() => {
+    // Create a map for quick lookup of exercise order by category
+    const categoryOrderMap = new Map(
+      CATEGORY_ORDER.map((category, index) => [category, index]),
+    );
+
+    return EXERCISE_DEFINITIONS.filter(({ id }) =>
+      ROUTINE_ALLOWED_EXERCISES.includes(id),
+    )
+      .map(({ id, copyKey, image }) => ({
         id,
         copyKey,
         image,
         title: t(`${copyKey}.title`),
         description: t(`${copyKey}.description`),
-      })),
-    [t],
-  );
+      }))
+      .sort((a, b) => {
+        const categoryA = EXERCISE_CATEGORIES[a.id];
+        const categoryB = EXERCISE_CATEGORIES[b.id];
+
+        const orderA = categoryOrderMap.get(categoryA) ?? 999;
+        const orderB = categoryOrderMap.get(categoryB) ?? 999;
+
+        return orderA - orderB;
+      });
+  }, [t]);
+
+  const exercisesByCategory = useMemo<
+    Record<ExerciseCategory, RoutineExerciseListItem[]>
+  >(() => {
+    const grouped = exerciseList.reduce(
+      (acc, exercise) => {
+        const category = EXERCISE_CATEGORIES[exercise.id];
+        if (category) {
+          if (!acc[category]) {
+            acc[category] = [];
+          }
+          acc[category].push(exercise);
+        }
+        return acc;
+      },
+      {} as Record<ExerciseCategory, RoutineExerciseListItem[]>,
+    );
+
+    return grouped;
+  }, [exerciseList]);
 
   const selectedCount = useMemo(
     () =>
@@ -119,10 +157,24 @@ export const useRoutineBuilder = () => {
       return;
     }
 
+    // Create a map for quick lookup of exercise order by category
+    const categoryOrderMap = new Map(
+      CATEGORY_ORDER.map((category, index) => [category, index]),
+    );
+
     const selectedExercises = EXERCISE_DEFINITIONS.filter(
       ({ id }) =>
         ROUTINE_ALLOWED_EXERCISES.includes(id) && exercises[id]?.isSelected,
-    );
+    ).sort((a, b) => {
+      // Sort by category order
+      const categoryA = EXERCISE_CATEGORIES[a.id];
+      const categoryB = EXERCISE_CATEGORIES[b.id];
+
+      const orderA = categoryOrderMap.get(categoryA) ?? 999;
+      const orderB = categoryOrderMap.get(categoryB) ?? 999;
+
+      return orderA - orderB;
+    });
 
     if (selectedExercises.length === 0) {
       return;
@@ -158,6 +210,7 @@ export const useRoutineBuilder = () => {
     rounds,
     exercises,
     exerciseList,
+    exercisesByCategory,
     selectedCount,
     hasReadyExercises,
 
