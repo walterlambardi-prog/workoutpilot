@@ -134,6 +134,42 @@
       "incredible": "Incredible consistency!",
       "longestStreak": "Longest streak: {{count}} days"
     },
+    "weeklyProgress": {
+      "title": "Weekly Progress",
+      "trendUp": "↑ {{percent}}%",
+      "trendDown": "↓ {{percent}}%",
+      "reps": "reps",
+      "minutes": "min",
+      "sessions": "sessions",
+      "steps": "steps",
+      "trainingFocus": "Training Focus",
+      "personalRecords": "Personal Records",
+      "bestSession": "Best session",
+      "bestSessionValue": "{{reps}} reps · {{exercise}}",
+      "totalAllTime": "All-time total",
+      "totalAllTimeValue": "{{count}} reps",
+      "longestWalk": "Longest walk",
+      "longestWalkValue": "{{steps}} steps · {{km}} km",
+      "topExercise": "Top exercise",
+      "topExerciseValue": "{{exercise}} · {{count}} sessions",
+      "emptyWeek": "Train this week to see your progress chart",
+      "days": {
+        "mon": "Mon",
+        "tue": "Tue",
+        "wed": "Wed",
+        "thu": "Thu",
+        "fri": "Fri",
+        "sat": "Sat",
+        "sun": "Sun"
+      },
+      "categories": {
+        "legs": "Legs",
+        "arms": "Arms",
+        "chest": "Chest",
+        "core": "Core",
+        "cardio": "Cardio"
+      }
+    },
     "nextAction": {
       "continue": "CONTINUE",
       "suggested": "SUGGESTED",

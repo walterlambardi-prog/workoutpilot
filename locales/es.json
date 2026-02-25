@@ -134,6 +134,42 @@
       "incredible": "¡Consistencia increíble!",
       "longestStreak": "Racha más larga: {{count}} días"
     },
+    "weeklyProgress": {
+      "title": "Progreso Semanal",
+      "trendUp": "↑ {{percent}}%",
+      "trendDown": "↓ {{percent}}%",
+      "reps": "reps",
+      "minutes": "min",
+      "sessions": "sesiones",
+      "steps": "pasos",
+      "trainingFocus": "Enfoque de Entrenamiento",
+      "personalRecords": "Récords Personales",
+      "bestSession": "Mejor sesión",
+      "bestSessionValue": "{{reps}} reps · {{exercise}}",
+      "totalAllTime": "Total histórico",
+      "totalAllTimeValue": "{{count}} reps",
+      "longestWalk": "Caminata más larga",
+      "longestWalkValue": "{{steps}} pasos · {{km}} km",
+      "topExercise": "Ejercicio favorito",
+      "topExerciseValue": "{{exercise}} · {{count}} sesiones",
+      "emptyWeek": "Entrena esta semana para ver tu gráfico de progreso",
+      "days": {
+        "mon": "Lun",
+        "tue": "Mar",
+        "wed": "Mié",
+        "thu": "Jue",
+        "fri": "Vie",
+        "sat": "Sáb",
+        "sun": "Dom"
+      },
+      "categories": {
+        "legs": "Piernas",
+        "arms": "Brazos",
+        "chest": "Pecho",
+        "core": "Core",
+        "cardio": "Cardio"
+      }
+    },
     "nextAction": {
       "continue": "CONTINUAR",
       "suggested": "SUGERIDO",
