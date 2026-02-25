@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { YStack } from "tamagui";
 
 import { TNextActionCard } from "@/components/TNextActionCard";
@@ -11,8 +12,9 @@ import { useHome } from "./hooks/useHome";
 import { useHomeStats } from "./hooks/useHomeStats";
 
 const HomeScreen: React.FC = () => {
+  const { t } = useTranslation();
   const { headerTitle, headerSubtitle } = useHome();
-  const { todayStats, streakInfo, nextAction } = useHomeStats();
+  const { isSyncing, todayStats, streakInfo, nextAction } = useHomeStats();
 
   return (
     <TPage scrollable backgroundColor="$background" hasHeader>
@@ -20,7 +22,7 @@ const HomeScreen: React.FC = () => {
         {/* Welcome header */}
         <TWelcomeHeader
           title={headerTitle}
-          subtitle={headerSubtitle}
+          subtitle={isSyncing ? t("sync.status.syncing") : headerSubtitle}
           showWave
         />
 

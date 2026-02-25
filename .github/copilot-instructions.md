@@ -115,12 +115,53 @@ When Copilot writes UI, it must:
 - Fix the onboarding.types.ts warning if touched; lint must be clean when you modify that area.
 - When modifying UI, audit and delete unused style files/entries and copies left from prior implementations (especially during Tamagui migrations).
 
-## 🗣 Copy & Localization
+## 🗣 Copy & Localization (MANDATORY)
 
-- Every user-visible string must come from a copy source (e.g., locales/en.json and locales/es.json). Do not hardcode UI text in components, hooks, or utilities.
-- When adding or changing copy, update both languages and keep placeholders/variables consistent.
-- If you touch a file and remove its usage of a copy key, delete that key from the locale files unless it is still used elsewhere (avoid orphaned translations).
-- Reuse existing keys when possible; keep key names descriptive and scoped to the feature/screen for maintainability.
+**CRITICAL**: Every user-visible string MUST come from translation files (`locales/en.json` and `locales/es.json`). Hardcoded text is **FORBIDDEN**.
+
+### FORBIDDEN - Never hardcode user-facing text:
+
+```tsx
+// ❌ BAD - Hardcoded strings
+<TText>Loading...</TText>
+<TButton>Start Workout</TButton>
+subtitle={isSyncing ? "Syncing..." : headerSubtitle}
+title="Welcome to WorkoutPilot"
+```
+
+### REQUIRED - Use translation keys:
+
+```tsx
+// ✅ GOOD - Using t() for all user-facing text
+<TText>{t("common.loading")}</TText>
+<TButton>{t("actions.startWorkout")}</TButton>
+subtitle={isSyncing ? t("sync.status.syncing") : headerSubtitle}
+title={t("login.title")}
+```
+
+### Translation Rules:
+
+1. **Every user-visible string** must come from locales (en.json, es.json)
+   - UI labels, buttons, titles, subtitles, placeholders
+   - Error messages, success messages, status text
+   - Navigation labels, drawer items, headers
+2. **Update both languages** when adding or changing copy
+   - Add to `locales/en.json` AND `locales/es.json`
+   - Keep placeholders/variables consistent (e.g., `{{count}}`, `{{name}}`)
+3. **Delete orphaned keys** when removing usage
+   - If you remove the last usage of a key, delete it from locale files
+   - Use grep/search to verify no other usages exist
+4. **Reuse existing keys** when possible
+   - Check locales for similar text before creating new keys
+   - Keep key names descriptive and scoped (e.g., `home.stats.reps`, not just `reps`)
+
+### Code Review Checklist:
+
+- ❌ Reject PRs with hardcoded UI strings
+- ❌ Reject strings added to only one locale file
+- ❌ Reject generic key names (use `feature.section.label` pattern)
+- ✅ Approve all text using `t("key.path")`
+- ✅ Approve keys added to both en.json and es.json
 
 ## 🎨 Button System (MANDATORY)
 

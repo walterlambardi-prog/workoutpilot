@@ -1,4 +1,5 @@
-import { useMemo } from "react";
+import { useFocusEffect } from "expo-router";
+import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { useExerciseSessionStore } from "@/stores/exerciseSessionStore";
@@ -40,14 +41,49 @@ export interface Achievement {
 export const useHomeStats = () => {
   const { t } = useTranslation();
 
+  // Sync loading state
+  const [isSyncing, setIsSyncing] = useState(false);
+
   // Get data from stores
   const exerciseHistory = useExerciseSessionStore((state) => state.history);
+  const loadExerciseHistory = useExerciseSessionStore(
+    (state) => state.loadHistoryFromSupabase,
+  );
   const routineHistory = useRoutineSessionStore((state) => state.history);
+  const loadRoutineHistory = useRoutineSessionStore(
+    (state) => state.loadHistoryFromSupabase,
+  );
   const activeRoutine = useRoutineSessionStore((state) => state.activeSession);
   const lastCompletedRoutine = useRoutineSessionStore(
     (state) => state.lastCompletedSession,
   );
   const stepTrackerHistory = useStepTrackerStore((state) => state.history);
+  const loadStepTrackerHistory = useStepTrackerStore(
+    (state) => state.loadHistoryFromSupabase,
+  );
+
+  // Sync data from Supabase when screen is focused
+  useFocusEffect(
+    useCallback(() => {
+      const syncData = async () => {
+        setIsSyncing(true);
+        try {
+          await Promise.all([
+            loadExerciseHistory(),
+            loadRoutineHistory(),
+            loadStepTrackerHistory(),
+          ]);
+          console.log("[Home] ✅ Data synced from Supabase");
+        } catch (error) {
+          console.error("[Home] Failed to sync data:", error);
+        } finally {
+          setIsSyncing(false);
+        }
+      };
+
+      void syncData();
+    }, [loadExerciseHistory, loadRoutineHistory, loadStepTrackerHistory]),
+  );
 
   // Calculate today's stats
   const todayStats = useMemo((): TodayStats => {
@@ -261,6 +297,7 @@ export const useHomeStats = () => {
   }, [activeRoutine, lastCompletedRoutine, exerciseHistory, t]);
 
   return {
+    isSyncing,
     todayStats,
     streakInfo,
     nextAction,
