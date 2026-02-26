@@ -374,7 +374,38 @@ export const useRoutineSessionStore = createTyped<RoutineSessionState>(
         analysisCache: state.analysisCache,
       }),
       merge: (persisted, current) => {
+        // persisted can be null/undefined on first install, storage corruption,
+        // or version mismatch without a migrate function.
+        if (!persisted || typeof persisted !== "object") {
+          return current as RoutineSessionState;
+        }
+
         const data = persisted as PersistedState;
+
+        // Validate persisted activeSession to prevent crash from corrupt data
+        try {
+          if (data.activeSession) {
+            if (!Array.isArray(data.activeSession.plan)) {
+              data.activeSession.plan = [];
+            }
+            if (typeof data.activeSession.currentStepIndex !== "number") {
+              data.activeSession.currentStepIndex = 0;
+            }
+            if (!Array.isArray(data.activeSession.stepResults)) {
+              data.activeSession.stepResults = [];
+            }
+            if (typeof data.activeSession.restSeconds !== "number") {
+              data.activeSession.restSeconds = 0;
+            }
+            if (typeof data.activeSession.totalRestMs !== "number") {
+              data.activeSession.totalRestMs = 0;
+            }
+          }
+        } catch (e) {
+          console.error("[RoutineSessionStore] merge validation failed", e);
+          return current as RoutineSessionState;
+        }
+
         return { ...current, ...data } as RoutineSessionState;
       },
     },
@@ -394,7 +425,7 @@ if (
         name: "RoutineSessionStore",
         value: state,
         preview: active
-          ? `session=${active.id} step=${active.currentStepIndex + 1}/${active.plan.length}`
+          ? `session=${active.id} step=${(active.currentStepIndex ?? 0) + 1}/${(active.plan ?? []).length}`
           : `history=${state.history.length}`,
       });
     });

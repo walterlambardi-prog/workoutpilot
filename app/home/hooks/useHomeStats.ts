@@ -1,5 +1,4 @@
-import { useFocusEffect } from "expo-router";
-import { useCallback, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { useExerciseSessionStore } from "@/stores/exerciseSessionStore";
@@ -42,48 +41,20 @@ export const useHomeStats = () => {
   const { t } = useTranslation();
 
   // Sync loading state
-  const [isSyncing, setIsSyncing] = useState(false);
+  const [isSyncing] = useState(false);
 
   // Get data from stores
   const exerciseHistory = useExerciseSessionStore((state) => state.history);
-  const loadExerciseHistory = useExerciseSessionStore(
-    (state) => state.loadHistoryFromSupabase,
-  );
   const routineHistory = useRoutineSessionStore((state) => state.history);
-  const loadRoutineHistory = useRoutineSessionStore(
-    (state) => state.loadHistoryFromSupabase,
-  );
   const activeRoutine = useRoutineSessionStore((state) => state.activeSession);
   const lastCompletedRoutine = useRoutineSessionStore(
     (state) => state.lastCompletedSession,
   );
   const stepTrackerHistory = useStepTrackerStore((state) => state.history);
-  const loadStepTrackerHistory = useStepTrackerStore(
-    (state) => state.loadHistoryFromSupabase,
-  );
 
-  // Sync data from Supabase when screen is focused
-  useFocusEffect(
-    useCallback(() => {
-      const syncData = async () => {
-        setIsSyncing(true);
-        try {
-          await Promise.all([
-            loadExerciseHistory(),
-            loadRoutineHistory(),
-            loadStepTrackerHistory(),
-          ]);
-          console.log("[Home] ✅ Data synced from Supabase");
-        } catch (error) {
-          console.error("[Home] Failed to sync data:", error);
-        } finally {
-          setIsSyncing(false);
-        }
-      };
-
-      void syncData();
-    }, [loadExerciseHistory, loadRoutineHistory, loadStepTrackerHistory]),
-  );
+  // NOTE: Data is loaded by useSyncInitialization in _layout.tsx on app start.
+  // No need to re-fetch here — the stores are reactive and will update
+  // automatically when sync completes.
 
   // Calculate today's stats
   const todayStats = useMemo((): TodayStats => {
@@ -225,9 +196,10 @@ export const useHomeStats = () => {
   const nextAction = useMemo((): NextAction => {
     // Priority 1: Active routine
     if (activeRoutine) {
-      const completedSteps = activeRoutine.currentStepIndex;
-      const totalSteps = activeRoutine.plan.length;
-      const progress = (completedSteps / totalSteps) * 100;
+      const plan = activeRoutine.plan ?? [];
+      const completedSteps = activeRoutine.currentStepIndex ?? 0;
+      const totalSteps = plan.length;
+      const progress = totalSteps > 0 ? (completedSteps / totalSteps) * 100 : 0;
 
       return {
         type: "continue-routine",
@@ -245,9 +217,8 @@ export const useHomeStats = () => {
     // Priority 2: Last completed routine (restart)
     if (lastCompletedRoutine) {
       // Count unique exercises (not total steps)
-      const uniqueExercises = new Set(
-        lastCompletedRoutine.plan.map((step) => step.exerciseId),
-      ).size;
+      const plan = lastCompletedRoutine.plan ?? [];
+      const uniqueExercises = new Set(plan.map((step) => step.exerciseId)).size;
 
       return {
         type: "continue-routine",

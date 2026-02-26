@@ -23,14 +23,14 @@ import type { ExerciseSessionEntry } from "@/stores/exerciseSessionStore";
 import type { RoutineSession } from "@/stores/routineSessionStore";
 import type { StepTrackerSessionEntry } from "@/stores/stepTrackerStore";
 import {
-  mapFromExerciseSession,
-  mapFromRoutineAnalysis,
-  mapFromRoutineSession,
-  mapFromStepTrackerSession,
-  mapToExerciseSession,
-  mapToRoutineAnalysis,
-  mapToRoutineSession,
-  mapToStepTrackerSession,
+    mapFromExerciseSession,
+    mapFromRoutineAnalysis,
+    mapFromRoutineSession,
+    mapFromStepTrackerSession,
+    mapToExerciseSession,
+    mapToRoutineAnalysis,
+    mapToRoutineSession,
+    mapToStepTrackerSession,
 } from "@/types/supabase.types";
 
 export type SyncStatus = "idle" | "syncing" | "success" | "error";
@@ -311,7 +311,14 @@ class SyncService {
     const user = useAuthStore.getState().user;
 
     if (!user) {
-      throw new Error("No authenticated user");
+      console.log(
+        "[SyncService] No authenticated user, returning empty history",
+      );
+      return {
+        exerciseSessions: [],
+        routineSessions: [],
+        stepTrackerSessions: [],
+      };
     }
 
     try {

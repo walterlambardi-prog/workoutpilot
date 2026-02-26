@@ -5,13 +5,14 @@ import {
   ThemeProvider,
 } from "@react-navigation/native";
 import { Stack, useRouter, useSegments } from "expo-router";
+import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { Platform, Pressable } from "react-native";
 import "react-native-reanimated";
 import { TamaguiProvider } from "tamagui";
 
-import AppLoader from "@/components/AppLoader";
 import { TAppHeader } from "@/components/TAppHeader";
 import { TDrawer } from "@/components/TDrawer";
 import "@/config/initReactotron";
@@ -21,16 +22,17 @@ import { useSyncInitialization } from "@/hooks/useSyncInitialization";
 import "@/locales/i18n";
 import { initializeAuth, useAuthStore } from "@/stores/authStore";
 import { usePreferencesStore } from "@/stores/preferencesStore";
-import { Platform, Pressable } from "react-native";
 import config from "../tamagui.config";
 import { getDrawerButtonStyle } from "./navigation/navigation.styles";
+
+// Keep the native splash screen visible until we're ready
+SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const { t } = useTranslation();
   const colorScheme = useColorScheme();
   const segments = useSegments();
   const router = useRouter();
-  const [isNavigationReady, setIsNavigationReady] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const isWeb = Platform.OS === "web";
   const navigationTheme = colorScheme === "dark" ? DarkTheme : DefaultTheme;
@@ -40,6 +42,9 @@ export default function RootLayout() {
   );
   const authHasHydrated = useAuthStore(
     (state: { _hasHydrated: boolean }) => state._hasHydrated,
+  );
+  const isAuthInitialized = useAuthStore(
+    (state: { _isAuthInitialized: boolean }) => state._isAuthInitialized,
   );
   const session = useAuthStore((state: { session: unknown }) => state.session);
   const hasCompletedOnboarding = useAuthStore(
@@ -101,61 +106,67 @@ export default function RootLayout() {
   useAppLanguage();
 
   // Initialize Supabase sync (loads history from cloud)
-  const { syncStatus, isReady: isSyncReady } = useSyncInitialization();
+  const { isReady: isSyncReady } = useSyncInitialization();
 
-  // Protected routes - handles authentication flow
+  // ── Auth gate ──────────────────────────────────────────────────────
+  // All prerequisites for routing decisions
+  const isReady =
+    preferencesHasHydrated && authHasHydrated && isAuthInitialized;
+
+  // Determine where the user SHOULD be based on auth state
+  const authTarget = useMemo<"login" | "onboarding" | "app" | null>(() => {
+    if (!isReady) return null;
+    if (!session) return "login";
+    if (!hasCompletedOnboarding) return "onboarding";
+    return "app";
+  }, [isReady, session, hasCompletedOnboarding]);
+
+  // Check if the current route already matches the auth target
+  const currentSegment = segments[0];
+  const isRouteAligned = useMemo(() => {
+    if (!authTarget) return false;
+    switch (authTarget) {
+      case "login":
+        return currentSegment === "login";
+      case "onboarding":
+        return currentSegment === "onboarding";
+      case "app":
+        return currentSegment !== "login" && currentSegment !== "onboarding";
+    }
+  }, [authTarget, currentSegment]);
+
+  // Redirect to the correct route when misaligned
   useEffect(() => {
-    if (!authHasHydrated || !preferencesHasHydrated) return;
+    if (!authTarget || isRouteAligned) return;
 
-    // Mark navigation as ready after a small delay to ensure Stack is mounted
-    const timer = setTimeout(() => {
-      setIsNavigationReady(true);
-    }, 100);
-
-    return () => clearTimeout(timer);
-  }, [authHasHydrated, preferencesHasHydrated]);
-
-  useEffect(() => {
-    if (!isNavigationReady) return;
-
-    const inAuthGroup = segments[0] === "login" || segments[0] === "onboarding";
-
-    // User needs to authenticate first
-    if (!session) {
-      if (segments[0] !== "login") {
+    switch (authTarget) {
+      case "login":
         router.replace("/login");
-      }
-      return;
-    }
-
-    // User is authenticated but needs to complete onboarding
-    // Show onboarding only if user hasn't completed it (new signups)
-    if (!hasCompletedOnboarding) {
-      if (segments[0] !== "onboarding") {
+        break;
+      case "onboarding":
         router.replace("/onboarding");
-      }
-      return;
+        break;
+      case "app":
+        router.replace("/");
+        break;
     }
+  }, [authTarget, isRouteAligned, router]);
 
-    // User is authenticated and onboarded, redirect away from auth screens
-    if (inAuthGroup) {
-      router.replace("/");
+  // Show a full-screen loader when:
+  //  1. Stores haven't hydrated / auth hasn't initialised yet
+  //  2. Auth is ready but the current route doesn't match auth target yet
+  //  3. Authenticated user is still loading initial data from Supabase
+  const showOverlay = !isReady || !isRouteAligned;
+  const showSyncLoader = !!session && !isSyncReady;
+  const isLoading = showOverlay || showSyncLoader;
+
+  // Hide the native splash screen once everything is ready.
+  // The splash stays on top of the Stack, preventing any flash.
+  useEffect(() => {
+    if (!isLoading) {
+      SplashScreen.hideAsync();
     }
-  }, [session, hasCompletedOnboarding, isNavigationReady, segments, router]);
-
-  // Show loader while stores are being loaded or data is syncing
-  if (
-    !preferencesHasHydrated ||
-    !authHasHydrated ||
-    !isNavigationReady ||
-    (session && !isSyncReady && syncStatus === "loading")
-  ) {
-    return (
-      <TamaguiProvider config={config} defaultTheme={colorScheme}>
-        <AppLoader colorScheme={colorScheme} />
-      </TamaguiProvider>
-    );
-  }
+  }, [isLoading]);
 
   return (
     <TamaguiProvider config={config} defaultTheme={colorScheme}>
@@ -190,6 +201,13 @@ export default function RootLayout() {
             options={{
               ...appHeaderOptions,
               title: t("routineComplete.navTitle"),
+            }}
+          />
+          <Stack.Screen
+            name="routine/rest"
+            options={{
+              headerShown: false,
+              gestureEnabled: false,
             }}
           />
           <Stack.Screen

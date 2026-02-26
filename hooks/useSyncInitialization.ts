@@ -28,6 +28,9 @@ interface UseSyncInitializationResult {
   retrySync: () => Promise<void>;
 }
 
+/** Max time (ms) to wait for initial sync before unblocking the UI */
+const SYNC_TIMEOUT_MS = 10_000;
+
 export const useSyncInitialization = (): UseSyncInitializationResult => {
   const [syncStatus, setSyncStatus] = useState<SyncInitStatus>("idle");
   const [error, setError] = useState<string | null>(null);
@@ -85,6 +88,26 @@ export const useSyncInitialization = (): UseSyncInitializationResult => {
 
     void loadInitialData();
   }, [user, hasHydrated, syncStatus]);
+
+  // ============================================================
+  // Safety timeout: unblock the UI if sync takes too long
+  // (e.g. slow / no network where fetch hangs without timing out)
+  // ============================================================
+  useEffect(() => {
+    if (syncStatus !== "loading" && syncStatus !== "syncing") return;
+
+    const timer = setTimeout(() => {
+      console.warn(
+        "[SyncInit] ⏱ Sync timed out after",
+        SYNC_TIMEOUT_MS,
+        "ms — unblocking UI",
+      );
+      setSyncStatus("error");
+      setError("Sync timed out");
+    }, SYNC_TIMEOUT_MS);
+
+    return () => clearTimeout(timer);
+  }, [syncStatus]);
 
   // ============================================================
   // AppState Listener: Flush queue when app returns to foreground

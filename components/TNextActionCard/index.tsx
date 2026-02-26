@@ -31,7 +31,7 @@ export const TNextActionCard: React.FC<TNextActionCardProps> = ({
   const handlePress = () => {
     if (nextAction.type === "continue-routine") {
       // If there's an active session, resume it
-      if (activeSession && activeSession.plan.length > 0) {
+      if (activeSession && (activeSession.plan?.length ?? 0) > 0) {
         const currentStep = activeSession.plan[activeSession.currentStepIndex];
         if (currentStep) {
           router.push({
@@ -53,7 +53,7 @@ export const TNextActionCard: React.FC<TNextActionCardProps> = ({
           // Get the first exercise of the restarted routine
           const newActiveSession =
             useRoutineSessionStore.getState().activeSession;
-          if (newActiveSession && newActiveSession.plan.length > 0) {
+          if (newActiveSession && (newActiveSession.plan?.length ?? 0) > 0) {
             const firstStep = newActiveSession.plan[0];
             router.push({
               pathname: "/exercises/[exerciseId]",
