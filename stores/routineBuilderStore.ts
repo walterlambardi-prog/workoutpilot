@@ -9,6 +9,8 @@ const { persist } = require("zustand/middleware");
 
 export const ROUTINE_DEFAULT_ROUNDS = 2;
 export const ROUTINE_DEFAULT_REPS = 10;
+export const ROUTINE_DEFAULT_REST_SECONDS = 30;
+export const ROUTINE_REST_OPTIONS = [0, 15, 30, 45, 60, 90, 120] as const;
 
 export interface RoutineExerciseSettings {
   reps: number;
@@ -19,8 +21,11 @@ export type RoutineExerciseState = Record<ExerciseId, RoutineExerciseSettings>;
 
 interface RoutineBuilderState {
   rounds: number;
+  /** Rest time between exercises in seconds. 0 = no rest (immediate transition). */
+  restSeconds: number;
   exercises: RoutineExerciseState;
   setRounds: (rounds: number) => void;
+  setRestSeconds: (seconds: number) => void;
   incrementRounds: () => void;
   decrementRounds: () => void;
   incrementReps: (exerciseId: ExerciseId) => void;
@@ -54,9 +59,10 @@ const createDefaultExercisesState = (): RoutineExerciseState => {
 
 const createDefaultState = (): Pick<
   RoutineBuilderState,
-  "rounds" | "exercises"
+  "rounds" | "restSeconds" | "exercises"
 > => ({
   rounds: ROUTINE_DEFAULT_ROUNDS,
+  restSeconds: ROUTINE_DEFAULT_REST_SECONDS,
   exercises: createDefaultExercisesState(),
 });
 
@@ -75,6 +81,8 @@ export const useRoutineBuilderStore = createTyped<RoutineBuilderState>(
       ...createDefaultState(),
       setRounds: (rounds) =>
         set(() => ({ rounds: Math.max(1, Math.floor(rounds)) })),
+      setRestSeconds: (seconds) =>
+        set(() => ({ restSeconds: Math.max(0, Math.floor(seconds)) })),
       incrementRounds: () => set((state) => ({ rounds: state.rounds + 1 })),
       decrementRounds: () =>
         set((state) => ({ rounds: Math.max(1, state.rounds - 1) })),

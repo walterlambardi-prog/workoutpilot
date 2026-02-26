@@ -149,6 +149,8 @@ export function mapToRoutineSession(row: RoutineSessionRow): RoutineSession {
     stepStartedAt: row.started_at,
     stepResults: row.step_results,
     totalReps: row.total_reps,
+    restSeconds: 0,
+    totalRestMs: 0,
   };
 }
 

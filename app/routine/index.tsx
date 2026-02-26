@@ -54,6 +54,8 @@ const RoutineBuilderScreen: React.FC<RoutineBuilderScreenProps> = () => {
 
   const {
     rounds,
+    restSeconds,
+    restOptions,
     exercises,
     exerciseList,
     selectedCount,
@@ -64,6 +66,7 @@ const RoutineBuilderScreen: React.FC<RoutineBuilderScreenProps> = () => {
     media,
     incrementRounds,
     decrementRounds,
+    setRestSeconds,
     createDecrementHandler,
     createIncrementHandler,
     createToggleHandler,
@@ -86,7 +89,7 @@ const RoutineBuilderScreen: React.FC<RoutineBuilderScreenProps> = () => {
           overflow="hidden"
           elevate={false}
         >
-          <YStack gap="$3">
+          <YStack gap="$4">
             <XStack
               alignItems="flex-start"
               justifyContent="space-between"
@@ -147,6 +150,41 @@ const RoutineBuilderScreen: React.FC<RoutineBuilderScreenProps> = () => {
                 />
               </YStack>
             </XStack>
+
+            <Separator />
+
+            {/* Rest time selector */}
+            <YStack gap="$2">
+              <Text
+                fontSize={metaSize}
+                color="$color"
+                opacity={0.7}
+                textAlign="center"
+              >
+                {t("routineBuilder.rest.label")}
+              </Text>
+              <XStack flexWrap="wrap" justifyContent="center" gap="$2">
+                {restOptions.map((option) => {
+                  const isActive = restSeconds === option;
+                  return (
+                    <TButton
+                      key={option}
+                      size="$3"
+                      variant={isActive ? "primary" : "outline"}
+                      onPress={() => setRestSeconds(option)}
+                      accessibilityRole="radio"
+                      aria-checked={isActive}
+                    >
+                      {option === 0
+                        ? t("routineBuilder.rest.noRest")
+                        : t("routineBuilder.rest.seconds", {
+                            seconds: option,
+                          })}
+                    </TButton>
+                  );
+                })}
+              </XStack>
+            </YStack>
           </YStack>
         </Card>
 

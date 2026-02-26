@@ -68,7 +68,9 @@ const RoutineCompleteScreen: React.FC<RoutineCompleteScreenProps> = () => {
   }, [router, session]);
 
   const duration = session?.completedAt
-    ? formatDuration(session.completedAt - session.startedAt)
+    ? formatDuration(
+        session.completedAt - session.startedAt - (session.totalRestMs ?? 0),
+      )
     : "--";
   const totalReps = session?.totalReps ?? 0;
   const uniqueExercises = session

@@ -418,7 +418,22 @@
       "decrement": "Decrease reps for {{exercise}}",
       "selectedLabel": "Exercises"
     },
-    "cta": "Start routine"
+    "cta": "Start routine",
+    "rest": {
+      "label": "Rest",
+      "noRest": "None",
+      "seconds": "{{seconds}}s"
+    }
+  },
+  "routineRest": {
+    "title": "Rest time",
+    "subtitle": "Recover before the next exercise",
+    "seconds": "seconds",
+    "nextUp": "Coming up next",
+    "skip": "Skip rest",
+    "pause": "Pause",
+    "resume": "Resume",
+    "addTime": "+15s"
   },
   "routineRun": {
     "chips": {

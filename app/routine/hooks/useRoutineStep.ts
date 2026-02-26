@@ -40,6 +40,7 @@ export const useRoutineStep = (exerciseId?: ExerciseId) => {
   const awaitingCompletionRef = useRef(false);
   const completionGuardRef = useRef(false);
   const completionNavigatedRef = useRef(false);
+  const navigatingToRestRef = useRef(false);
   const appliedInitialStepRef = useRef(false);
   const pendingSyncRef = useRef<{
     routineId: string | null;
@@ -78,6 +79,7 @@ export const useRoutineStep = (exerciseId?: ExerciseId) => {
       awaitingCompletionRef.current = false;
       completionGuardRef.current = false;
       completionNavigatedRef.current = false;
+      navigatingToRestRef.current = false;
       appliedInitialStepRef.current = false;
       pendingSyncRef.current = null;
       handledMissingSessionRef.current = false;
@@ -148,6 +150,7 @@ export const useRoutineStep = (exerciseId?: ExerciseId) => {
     if (!isRoutine || !session || !currentStep) return;
     if (completionNavigatedRef.current) return;
     if (awaitingCompletionRef.current) return;
+    if (navigatingToRestRef.current) return;
     if (!exerciseId) return;
 
     const needsSync =
@@ -268,19 +271,39 @@ export const useRoutineStep = (exerciseId?: ExerciseId) => {
       }
 
       if (following && nextStepIndex !== null) {
-        debug("advanceToNextStep", {
-          nextStepIndex,
-          exerciseId: following.exerciseId,
-          sessionId: activeSession.id,
-        });
-        router.replace({
-          pathname: "/exercises/[exerciseId]",
-          params: {
+        // Check if we should show a rest screen before the next exercise
+        const restSec = activeSession.restSeconds ?? 0;
+        if (restSec > 0) {
+          navigatingToRestRef.current = true;
+          debug("navigateToRest", {
+            nextStepIndex,
+            restSeconds: restSec,
+            sessionId: activeSession.id,
+          });
+          router.replace({
+            pathname: "/routine/rest",
+            params: {
+              routineId: activeSession.id,
+              nextExerciseId: following.exerciseId,
+              nextStepIndex: String(nextStepIndex),
+              restSeconds: String(restSec),
+            },
+          });
+        } else {
+          debug("advanceToNextStep", {
+            nextStepIndex,
             exerciseId: following.exerciseId,
-            routineId: activeSession.id,
-            stepIndex: String(nextStepIndex),
-          },
-        });
+            sessionId: activeSession.id,
+          });
+          router.replace({
+            pathname: "/exercises/[exerciseId]",
+            params: {
+              exerciseId: following.exerciseId,
+              routineId: activeSession.id,
+              stepIndex: String(nextStepIndex),
+            },
+          });
+        }
         return;
       }
 

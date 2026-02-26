@@ -43,6 +43,10 @@ export interface RoutineSession {
   stepStartedAt: number;
   stepResults: RoutineStepResult[];
   totalReps: number;
+  /** Configured rest time between exercises in seconds. 0 = no rest. */
+  restSeconds: number;
+  /** Accumulated rest time in ms (subtracted from total duration on complete screen). */
+  totalRestMs: number;
 }
 
 interface RoutineSessionState {
@@ -50,13 +54,19 @@ interface RoutineSessionState {
   lastCompletedSession: RoutineSession | null;
   history: RoutineSession[];
   analysisCache: Record<string, RoutineAnalysisResponse>;
-  startSession: (plan: RoutinePlanStepBase[], rounds: number) => string;
+  startSession: (
+    plan: RoutinePlanStepBase[],
+    rounds: number,
+    restSeconds?: number,
+  ) => string;
   recordProgress: (reps: number) => void;
   completeCurrentStep: (params?: { repsOverride?: number }) => {
     nextStep: RoutinePlanStep | null;
     completedSession: RoutineSession | null;
     nextStepIndex: number | null;
   };
+  /** Record that a rest period was taken (adds to totalRestMs). */
+  addRestTime: (ms: number) => void;
   jumpToStep: (stepIndex: number) => void;
   restartFromSession: (sessionId: string) => string | null;
   saveAnalysis: (routineId: string, analysis: RoutineAnalysisResponse) => void;
@@ -107,7 +117,7 @@ export const useRoutineSessionStore = createTyped<RoutineSessionState>(
       lastCompletedSession: null,
       history: [],
       analysisCache: {},
-      startSession: (plan, rounds) => {
+      startSession: (plan, rounds, restSeconds = 0) => {
         const normalizedPlan = mapPlanWithIndex(plan);
         if (normalizedPlan.length === 0) {
           return "";
@@ -123,6 +133,8 @@ export const useRoutineSessionStore = createTyped<RoutineSessionState>(
           currentStepReps: 0,
           stepResults: [],
           totalReps: 0,
+          restSeconds: Math.max(0, restSeconds),
+          totalRestMs: 0,
         };
 
         set({ activeSession: session });
@@ -199,6 +211,7 @@ export const useRoutineSessionStore = createTyped<RoutineSessionState>(
             currentStepReps: 0,
             stepStartedAt: now,
             totalReps: session.totalReps + progressDelta,
+            totalRestMs: session.totalRestMs,
           };
           set({ activeSession: updated } as RoutineSessionState);
 
@@ -236,6 +249,21 @@ export const useRoutineSessionStore = createTyped<RoutineSessionState>(
           completedSession,
           nextStepIndex: null,
         };
+      },
+      addRestTime: (ms) => {
+        set((state) => {
+          const session = state.activeSession;
+          if (!session) return state;
+          return {
+            ...state,
+            activeSession: {
+              ...session,
+              totalRestMs: session.totalRestMs + Math.max(0, ms),
+              // Slide stepStartedAt forward so rest isn't counted in next step's durationMs
+              stepStartedAt: session.stepStartedAt + Math.max(0, ms),
+            },
+          } as RoutineSessionState;
+        });
       },
       jumpToStep: (stepIndex) => {
         set((state) => {
@@ -277,6 +305,7 @@ export const useRoutineSessionStore = createTyped<RoutineSessionState>(
             targetReps: step.targetReps,
           })),
           source.rounds,
+          source.restSeconds ?? 0,
         );
       },
       saveAnalysis: (routineId, analysis) => {

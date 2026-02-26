@@ -418,7 +418,22 @@
       "decrement": "Disminuir reps para {{exercise}}",
       "selectedLabel": "Ejercicios"
     },
-    "cta": "Iniciar rutina"
+    "cta": "Iniciar rutina",
+    "rest": {
+      "label": "Descanso",
+      "noRest": "Sin",
+      "seconds": "{{seconds}}s"
+    }
+  },
+  "routineRest": {
+    "title": "Tiempo de descanso",
+    "subtitle": "Recuperate antes del siguiente ejercicio",
+    "seconds": "segundos",
+    "nextUp": "Siguiente ejercicio",
+    "skip": "Saltar descanso",
+    "pause": "Pausar",
+    "resume": "Reanudar",
+    "addTime": "+15s"
   },
   "routineRun": {
     "chips": {

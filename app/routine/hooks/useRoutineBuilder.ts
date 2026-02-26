@@ -7,14 +7,15 @@ import { useMedia, useTheme } from "tamagui";
 import { EXERCISE_DEFINITIONS } from "@/app/exercises/exercises.data";
 import type { RoutineExerciseListItem } from "@/app/routine/routine.types";
 import {
-  CATEGORY_ORDER,
-  EXERCISE_CATEGORIES,
-  type ExerciseCategory,
-  ROUTINE_ALLOWED_EXERCISES,
+    CATEGORY_ORDER,
+    EXERCISE_CATEGORIES,
+    type ExerciseCategory,
+    ROUTINE_ALLOWED_EXERCISES,
 } from "@/constants/exercises";
 import {
-  ROUTINE_DEFAULT_REPS,
-  useRoutineBuilderStore,
+    ROUTINE_DEFAULT_REPS,
+    ROUTINE_REST_OPTIONS,
+    useRoutineBuilderStore,
 } from "@/stores/routineBuilderStore";
 import { useRoutineSessionStore } from "@/stores/routineSessionStore";
 
@@ -25,6 +26,10 @@ export const useRoutineBuilder = () => {
   const router = useRouter();
 
   const rounds = useRoutineBuilderStore((state) => state.rounds);
+  const restSeconds = useRoutineBuilderStore((state) => state.restSeconds);
+  const setRestSeconds = useRoutineBuilderStore(
+    (state) => state.setRestSeconds,
+  );
   const exercises = useRoutineBuilderStore((state) => state.exercises);
   const incrementRounds = useRoutineBuilderStore(
     (state) => state.incrementRounds,
@@ -188,7 +193,7 @@ export const useRoutineBuilder = () => {
       })),
     );
 
-    const sessionId = startRoutineSession(plan, rounds);
+    const sessionId = startRoutineSession(plan, rounds, restSeconds);
     const firstStep = plan[0];
 
     if (!sessionId || !firstStep) {
@@ -203,11 +208,20 @@ export const useRoutineBuilder = () => {
         stepIndex: "0",
       },
     });
-  }, [exercises, hasReadyExercises, rounds, startRoutineSession, router]);
+  }, [
+    exercises,
+    hasReadyExercises,
+    restSeconds,
+    rounds,
+    startRoutineSession,
+    router,
+  ]);
 
   return {
     // State
     rounds,
+    restSeconds,
+    restOptions: ROUTINE_REST_OPTIONS,
     exercises,
     exerciseList,
     exercisesByCategory,
@@ -227,6 +241,7 @@ export const useRoutineBuilder = () => {
     // Actions
     incrementRounds,
     decrementRounds,
+    setRestSeconds,
     createDecrementHandler,
     createIncrementHandler,
     createToggleHandler,
